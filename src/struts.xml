@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+	"http://struts.apache.org/dtds/struts-2.5.dtd">
+	
+<struts>
+	<constant name="struts.devMode" value="true"/>
+	<constant name="struts.i18n.encoding" value="UTF-8"/>
+	
+	<package name="Login" extends="struts-default">
+		<interceptors>
+			<interceptor name="interceptor_action" class="token.ActionInterceptor" />
+			<interceptor-stack name="interceptor_stack_action">
+				<interceptor-ref name="interceptor_action" />
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>
+		</interceptors>
+		
+		<!--设置全局过滤器-->
+		<default-interceptor-ref name="interceptor_stack_action" />
+		
+		<!--设置全局result页面-->
+		<global-results>
+			<result name="error"> error.jsp</result>
+		</global-results>
+		
+		<!--动作：login配置-->
+		<action name="login" class="action.login.LoginAction" method="execute">
+			<result name="login"> login.jsp</result>
+			<result> submit.jsp</result>
+			<result name="教务处">	jiaowuchu.jsp</result>
+			<result name="教务员">	jiaowuyuan.jsp</result>
+			<result name="教学院长">	jiaoxueyuanzhang.jsp</result>
+			<result name="领导">		lingdao.jsp</result>
+			<result name="教师">		jiaoshi.jsp</result>
+			<!--该登录动作不受token过滤器影响-->
+			<interceptor-ref name="defaultStack" />
+		</action>
+		<action name="logout" class="action.login.LoginAction" method="logout">
+			<result> login.jsp</result>
+			<!--该登录动作不受token过滤器影响-->
+			<interceptor-ref name="defaultStack" />
+		</action>
+		
+		<action name="inner_info" class="action.login.InnerInfoAction" method="execute">
+			<result> inner_info.jsp</result>
+			<result name="none"> inner_info.jsp</result>
+		</action>
+		
+		<!--动作：SQL Operation配置-->
+		<action name="sql_operation_select" class="action.sqloperation.SQLOperationSelectAction" method="execute">
+			<result name="none"> sql_operation_select.jsp</result>
+			<result> sql_operation_select.jsp</result>
+		</action>
+		
+		<action name="sql_operation" class="action.sqloperation.SQLOperationAction" method="execute">
+			<result> sql_operation.jsp</result>
+			<result name="none" type="chain"> sql_operation_select</result>
+		</action>
+		
+		<!--动作：submit配置-->
+		<action name="submit" class="submit.SubmitAction" method="execute">
+			<result> submit_success.jsp</result>
+		</action>
+	</package>
+	
+	
+</struts>

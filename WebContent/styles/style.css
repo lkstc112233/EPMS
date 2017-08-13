@@ -1,0 +1,149 @@
+@CHARSET "UTF-8";
+
+center {
+    display: block;
+    text-align: -webkit-center;
+}
+body {
+    clear: both;
+}
+/**********头**********/
+.title {/*抬头，包含左侧logo*/
+	background-image: url(logo.png);
+	background-repeat: no-repeat;
+	background-position: center top;
+	height: 140px;
+	width: 100%;
+}
+
+.right{
+	/*主要用于抬头右侧，用户信息栏*/
+	float: right;
+}
+#title_tabel{
+	height: 140px;
+	border: 0;
+}
+.title_label{/*抬头标签*/
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    line-height: 44px;
+    color: #0071bc;
+    font-weight: bold;
+}
+.title_button{/*抬头按钮（注销）*/
+	width: 50px;
+    height: 24px;
+    background: #0071BC;
+    color: white;
+    font-family: "Microsoft YaHei UI", Arial;
+    font-size: 14px;
+}
+.title_xian{/*抬头下面的一条分割线,*/
+	background-image: url(xian.png);
+    background-position: center top;
+    height: 2px;
+    margin: 0px;
+    float: none;
+    background-repeat: repeat;
+    width: 100%;
+    text-align: center;
+}
+
+/**********中**********/
+.bag{/*主体包，定义了宽度和背景*/
+    background-image: url(background.jpg);
+    background-repeat: repeat;
+    width: 100%;
+    margin-top: 0px;
+}
+.listHeader{/*表格抬头*/
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: bold;
+    color: #FFFFFF;
+    text-indent: 25px;
+    vertical-align: middle;
+    background-image: none;
+    line-height: 35px;
+    border: 1px solid #999999;
+    background-color: #0071bc;
+    height: 36px;
+}
+.listHeaderLeft{
+    float: left;
+    display: block;
+    height: 36px;
+}
+.listContent{/*表格内容，每一行*/
+    padding: 3px;
+    margin-top: 3px;
+    margin-right: 0px;
+    margin-bottom: 3px;
+    margin-left: 0px;
+    background-color: #FFFFFF;
+    color: #EDEDED;
+    border-bottom-width: 1px;
+    border-bottom-style: dashed;
+    border-bottom-color: #999999;
+}
+.listContent li {
+    background-position: left 5px;
+    text-align: left;
+    padding-left: 16px;
+    border-bottom-color: #999999;
+    border-bottom-width: 1px;
+    border-bottom-style: none;
+    list-style-type: none;
+    position: relative;
+    background-image: url(dot.jpg);
+    background-repeat: no-repeat;
+    height: 30px;
+}
+.time {
+    POSITION: absolute;
+    LINE-HEIGHT: 12px;
+    DISPLAY: block;
+    COLOR: #666;
+    FONT-SIZE: 11px;
+    RIGHT: 0px;
+    TOP: 4px;
+    padding: 0px;
+    margin-top: 0px;
+    margin-right: 10px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+}
+
+
+/**********尾**********/
+.footer{/*底部*/
+    width: 100%;
+    background-color: #0071bc;
+    height: 90px;
+    text-align: center;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    line-height: 2em;
+    color: #FFFFFF;
+}
+.footer_center{/*底部中央，用于友情链接*/
+    margin-right: 10%;
+    margin-left: 10%;
+    vertical-align: middle;
+    background-position: center center;
+    text-align: center;
+    color: #FFFFFF;
+    margin-top: 4px;
+}
+
+tbody {
+    display: table-row-group;
+    vertical-align: middle;
+    border-color: inherit;
+}
+
+
+
+

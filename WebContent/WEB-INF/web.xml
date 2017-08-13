@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+	<display-name>Struts2Learn</display-name>
+	
+	<welcome-file-list>
+		<welcome-file>login.jsp</welcome-file>
+	</welcome-file-list>
+
+
+	<listener>
+		<listener-class>persistence.Initialization</listener-class>
+	</listener>
+
+	
+	<!--session 失效时间-->
+	<session-config>
+		<session-timeout> 1 </session-timeout>  <!--单位为分钟-->
+	</session-config>
+	
+	<!--登入安全检查-->
+	<filter>
+		<filter-name>TokenChecker</filter-name>
+		<filter-class>token.TokenChecker</filter-class>
+	   	<init-param> <!--需要检查的session中的token的名字-->
+    		<param-name>sessionToken</param-name>
+     		<param-value>inner</param-value>
+   		</init-param>
+   		<init-param> <!--过滤重定向的地址-->
+    		<param-name>redirectURL</param-name>
+    		<param-value>/index.jsp</param-value>
+   		</init-param>
+   		<init-param> <!--不需要过滤的页面-->
+    		<param-name>noCheckURLList</param-name>
+    		<param-value>login.action,overtime.jsp,index.jsp,error.jsp</param-value>
+   		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>TokenChecker</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+	<!--
+	<filter-mapping>
+		<filter-name>TokenChecker</filter-name>
+		<url-pattern>*.action</url-pattern>
+	</filter-mapping>
+	-->
+	
+	<!--struts2 核心控制器（过滤器）-->
+	<filter>
+		<filter-name>struts2</filter-name>  
+		<filter-class>org.apache.struts2.dispatcher.filter.StrutsPrepareAndExecuteFilter</filter-class> 
+	</filter>
+  
+	<filter-mapping>
+		<filter-name>struts2</filter-name>  
+		<url-pattern>/*</url-pattern>  
+	</filter-mapping>
+</web-app>
