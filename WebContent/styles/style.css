@@ -6,6 +6,8 @@ center {
 }
 body {
     clear: both;
+    font-family: "Microsoft YaHei UI", Arial;
+    font-size: 9pt;
 }
 /**********头**********/
 .title {/*抬头，包含左侧logo*/
@@ -100,26 +102,74 @@ body {
     background-image: url(dot.jpg);
     background-repeat: no-repeat;
     height: 30px;
+    font-size: 20px;
 }
-.tableContent tbody{/*表格内容，每一行*/
-    padding: 3px;
-    margin-top: 3px;
-    margin-right: 0px;
-    margin-bottom: 3px;
-    margin-left: 0px;
-   /* border-bottom-width: 1px;
-    border-bottom-style: dashed;
-    border-bottom-color: #999999;*/
-}
-.tableContent td {
+.mytable tbody{/*表格内容，每一行*/
+	position: relative;
     text-align: left;
-    padding-left: 16px;
-    border-bottom-color: #999999;
-    border-bottom-width: 1px;
-    border-bottom-style: none;
-    list-style-type: none;
-    position: relative;
-    height: 30px;
+    table-layout: fixed;
+    display: table;
+    -webkit-border-horizontal-spacing: 0px;
+    -webkit-border-vertical-spacing: 0px;
+    border-top-width: 0px;
+    border-right-width: 0px;
+    border-bottom-width: 0px;
+    border-left-width: 0px;
+    border-collapse: separate;
+    border-color: grey;
+}
+.myform tbody{
+	position: relative;
+    text-align: left;
+    table-layout: fixed;
+    display: table;
+    -webkit-border-horizontal-spacing: 0px;
+    -webkit-border-vertical-spacing: 0px;
+    border-top-width: 0px;
+    border-right-width: 0px;
+    border-bottom-width: 0px;
+    border-left-width: 0px;
+}
+.myform td{
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 7px;
+    padding-right: 7px;
+}
+.myform .tdInput *{
+    width: 100%;
+    height: 20px;
+    border: 1px solid #0071BC;
+    margin-left: 25px;
+    background-color: white;
+    padding: 1px;
+    text-align: start;
+    margin: 0em;
+    font-size: 15px;
+    border-radius: 3px;
+}
+.myform .tdLabel{
+    text-align: left;
+    font-size: 15px;
+    color: #363636;
+}
+.mytableTitle td{
+    text-align: center;
+	background: #d3d3d3;
+}
+.mytable td {
+    overflow: hidden;
+    padding: 0px;
+    border: 0;
+    border-color: #ddd;
+    border-right: #d2d2d2 1px solid;
+    border-bottom: #d2d2d2 1px solid;
+    cursor: default;
+    text-align: left;
+    overflow: hidden;
+    _text-overflow: ellipsis;
+    padding-left: 4px;
+    padding-right: 4px;
 }
 .time {
     POSITION: absolute;
@@ -138,17 +188,16 @@ body {
 .button{
     display: block;
     width: 100%;
-    padding: 10px 16px;
-    font-size: 18px;
+    padding: 6px 6px;
+    font-size: 16px;
     line-height: 1.3333333;
-    border-radius: 6px;
+    border-radius: 3px;
     color: #fff;
     background-color: #0071BC;
     text-align: center;
     white-space: nowrap;
     vertical-align: middle;
     border: 1px solid transparent;
-    font-family: "Microsoft YaHei UI", Arial;
 }
 
 

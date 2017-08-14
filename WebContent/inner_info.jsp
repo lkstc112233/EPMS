@@ -14,7 +14,7 @@
 		<jsp:include page="common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 
 <div class="bag">
-		<s:form action="inner_info" method="post">
+		<s:form action="inner_info" method="post" cssClass="myform">
 			<s:textfield label="id" name="inner.id" value="%{#session.inner.id}" />
 
 			<s:textfield label="name" name="inner.name"
@@ -45,10 +45,10 @@
 				value="%{#session.inner.email}" />
 		
 			<s:hidden name="executive" value="true" />
-			<s:submit value="提交修改" />
+			<s:submit value="提交修改" cssClass="button"/>
 		</s:form>
-		<s:form action="login" method="post">
-			<s:submit value="返回" />
+		<s:form action="login" method="post" cssClass="myform">
+			<s:submit value="返回" cssClass="button"/>
 		</s:form>
 </div>
 
