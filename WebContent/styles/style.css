@@ -82,13 +82,13 @@ body {
     margin-right: 0px;
     margin-bottom: 3px;
     margin-left: 0px;
-    background-color: #FFFFFF;
-    color: #EDEDED;
-    border-bottom-width: 1px;
+   /* border-bottom-width: 1px;
     border-bottom-style: dashed;
-    border-bottom-color: #999999;
+    border-bottom-color: #999999;*/
 }
 .listContent li {
+    background-color: #FFFFFF;
+    color: #EDEDED;
     background-position: left 5px;
     text-align: left;
     padding-left: 16px;
@@ -99,6 +99,26 @@ body {
     position: relative;
     background-image: url(dot.jpg);
     background-repeat: no-repeat;
+    height: 30px;
+}
+.tableContent tbody{/*表格内容，每一行*/
+    padding: 3px;
+    margin-top: 3px;
+    margin-right: 0px;
+    margin-bottom: 3px;
+    margin-left: 0px;
+   /* border-bottom-width: 1px;
+    border-bottom-style: dashed;
+    border-bottom-color: #999999;*/
+}
+.tableContent td {
+    text-align: left;
+    padding-left: 16px;
+    border-bottom-color: #999999;
+    border-bottom-width: 1px;
+    border-bottom-style: none;
+    list-style-type: none;
+    position: relative;
     height: 30px;
 }
 .time {
@@ -114,6 +134,21 @@ body {
     margin-right: 10px;
     margin-bottom: 0px;
     margin-left: 0px;
+}
+.button{
+    display: block;
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 18px;
+    line-height: 1.3333333;
+    border-radius: 6px;
+    color: #fff;
+    background-color: #0071BC;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    border: 1px solid transparent;
+    font-family: "Microsoft YaHei UI", Arial;
 }
 
 

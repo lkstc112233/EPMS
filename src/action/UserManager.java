@@ -31,6 +31,19 @@ public class UserManager {
 		ActionContext.getContext().getSession().remove(userToken);
 	}
 	
+	static public final String SQLCheck_Success="OK";
+	static public String SQLCheck(String sql){
+		int cnt=0;
+		for(char c:sql.toCharArray())
+			if(c==';') cnt++;
+		if(cnt>1)
+			return "语句过多";
+		if(sql.contains("DROP"))
+			return "不允许删除数据表";
+		if(sql.contains("CREATE"))
+			return "不允许创建数据表";
+		return SQLCheck_Success;
+	}
 	
 	
 	

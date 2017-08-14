@@ -19,42 +19,37 @@
 		<!--<td width="10%"></td>  左缝 -->
 			<td valign="top">
 				<s:form action="sql_operation_select" method="post">
-					<s:select label="table" name="table"
-						list="{'InnerOffice','Major'}" headerKey="-1" headerValue="请选择数据表名"/>
-					<s:submit value="查询" />
+					<s:textarea name="sql" value="%{sql}" style="width:960px;height:60px;"/>
+					<s:submit value="执行SQL语句" />
 				</s:form>
 			</td>
 		<!--<td width="10%"></td>  右缝 -->
 		</tr>
 	</tbody></table>
-	<table width="80%" border="5" cellspacing="1" cellpadding="1"><tbody>
+	<table width="80%" border="3" cellspacing="0" cellpadding="1"><tbody>
 		<tr>
-			<td valign="top">
-				<s:if test="table!=null">
-					welcome
+			<td valign="middle" align="center">
+				<s:if test="list!=null && labels!=null">
 					<tr>
+						<td>序号</td>
 						<s:iterator value="labels" var="__label">
-							<td>
+							<td style="word-wrap:break-word;word-break:break-all;">
 								<s:property value="%{#__label}"/>
 							</td>
 						</s:iterator>
 					</tr>
 					<s:iterator value="list" var="__tableRow" status="__status">
 						<tr>
+							<td><s:property value="%{#__status.count}" /></td>
 							<s:iterator value="__tableRow" var="__tableCol">
-								<td>
-									<s:property value="__tableCol" />
-								</td>
+								<td ><s:property value="__tableCol" /></td>
 							</s:iterator>
-							<td width="100px" valign="middle">
-								<s:form action="sql_operation" method="post">
-									<s:hidden name="chooseIndex" value="%{#__status.index}" />
-									<s:submit value="操作" />
-								</s:form>
-							</td>
 						</tr>
 					</s:iterator>
 				</s:if>
+				<s:else>
+				<tr><td>这里会显示结果集...</td></tr>
+				</s:else>
 			</td>
 		</tr>
 	</tbody></table>

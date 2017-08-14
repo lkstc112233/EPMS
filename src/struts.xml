@@ -53,11 +53,6 @@
 			<result> sql_operation_select.jsp</result>
 		</action>
 		
-		<action name="sql_operation" class="action.sqloperation.SQLOperationAction" method="execute">
-			<result> sql_operation.jsp</result>
-			<result name="none" type="chain"> sql_operation_select</result>
-		</action>
-		
 		<!--动作：submit配置-->
 		<action name="submit" class="submit.SubmitAction" method="execute">
 			<result> submit_success.jsp</result>
