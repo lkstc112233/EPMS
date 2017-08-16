@@ -6,9 +6,9 @@ import java.util.*;
 
 import persistence.DB;
 
+@SuppressWarnings("unchecked")
 public abstract class Base {
 	static public final String packageNames[]={"staticSource","staticObject"};
-	@SuppressWarnings("unchecked")
 	static public Class<? extends Base> getClassForName(String name){
 		if(name==null||name.length()<=0)
 			return null;
@@ -73,13 +73,12 @@ public abstract class Base {
 		PreparedStatement sql_update;
 		PreparedStatement sql_delete;
 		PreparedStatement sql_insert;
-		Field[] fs=clazz.getDeclaredFields();
 		StringBuilder load_select=new StringBuilder();
 		StringBuilder update_set=new StringBuilder();
 		StringBuilder sql_where=new StringBuilder();
 		StringBuilder insert=new StringBuilder();
 		StringBuilder insert_values=new StringBuilder();
-		for(Field f:fs){
+		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			f.setAccessible(true);
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
@@ -127,10 +126,19 @@ public abstract class Base {
 		SQL_insert.put(clazz,sql_insert);
 	}
 	
-
+	
+	static public Field getField(Class<? extends Base> clazz,String fieldName) throws NoSuchFieldException{
+		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()){
+			try{
+				return c.getDeclaredField(fieldName);
+			}catch(NoSuchFieldException|SecurityException e){
+			}
+		}
+		throw new NoSuchFieldException(fieldName);
+	}
 	static public Field hasAvailable(Class<? extends Base> clazz){
 		try {
-			return clazz.getDeclaredField("available");
+			return getField(clazz,"available");
 		} catch (NoSuchFieldException | SecurityException e) {
 			return null;
 		}
@@ -141,16 +149,15 @@ public abstract class Base {
 	
 	@Override
 	public String toString(){
-		Class<?> clazz=this.getClass();
-		Field[] fs=clazz.getDeclaredFields();
-		String sql_table=clazz.getAnnotation(SQLTable.class).value();
+		Class<? extends Base> clazz=this.getClass();
+		String sql_table=this.sql_table;
 		StringBuilder sb=new StringBuilder();
 		sb.append('[');
 		sb.append(clazz.getSimpleName());
 		sb.append('(');
 		sb.append(sql_table);
 		sb.append(')');
-		for(Field f:fs){
+		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			f.setAccessible(true);
@@ -171,9 +178,8 @@ public abstract class Base {
 	}
 	
 	public boolean checkKeyNull() throws IllegalArgumentException, IllegalAccessException{
-		Class<?> clazz=this.getClass();
-		Field[] fs=clazz.getDeclaredFields();
-		for(Field f:fs){
+		Class<? extends Base> clazz=this.getClass();
+		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			f.setAccessible(true);
@@ -186,10 +192,9 @@ public abstract class Base {
 	}
 
 	public void load() throws SQLException, IllegalArgumentException, IllegalAccessException{
-		Class<?> clazz=this.getClass();
-		Field[] fs=clazz.getDeclaredFields();
+		Class<? extends Base> clazz=this.getClass();
 		int SQLParameterIndex=1;
-		for(Field f:fs){
+		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			f.setAccessible(true);
@@ -204,7 +209,7 @@ public abstract class Base {
 		if(num!=1)
 			System.err.println("查询到"+num+"重值！("+this.sql_load.toString()+")");
 		rs.first();
-		for(Field f:clazz.getDeclaredFields()){
+		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			f.setAccessible(true);
@@ -213,17 +218,16 @@ public abstract class Base {
 		}
 	}
 	public void update()throws SQLException, IllegalArgumentException, IllegalAccessException{
-		Class<?> clazz=this.getClass();
+		Class<? extends Base> clazz=this.getClass();
 		int SQLParameterIndex=1;
-		Field[] fs=clazz.getDeclaredFields();
-		for(Field f:fs){
+		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			f.setAccessible(true);
 			if(!s.isKey())
 				this.sql_update.setObject(SQLParameterIndex++,f.get(this));
 		}
-		for(Field f:fs){
+		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			f.setAccessible(true);
@@ -235,8 +239,7 @@ public abstract class Base {
 			System.err.println("更新了"+num+"重值！("+this.sql_update.toString()+")");
 	}
 	public void update(Field[] updateFields)throws SQLException, IllegalArgumentException, IllegalAccessException{
-		Class<?> clazz=this.getClass();
-		Field[] fs=clazz.getDeclaredFields();
+		Class<? extends Base> clazz=this.getClass();
 		StringBuilder sql_set=new StringBuilder();
 		StringBuilder sql_where=new StringBuilder();
 		for(Field f:updateFields){
@@ -250,7 +253,7 @@ public abstract class Base {
 			sql_set.append(f.getName());
 			sql_set.append(" = ?");
 		}
-		for(Field f:fs){
+		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			f.setAccessible(true);
@@ -274,7 +277,7 @@ public abstract class Base {
 			f.setAccessible(true);
 			sqlps.setObject(SQLParameterIndex++,f.get(this));
 		}
-		for(Field f:fs){
+		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			f.setAccessible(true);
@@ -290,9 +293,8 @@ public abstract class Base {
 		if(available==null){
 			//delete it
 			Class<? extends Base> clazz=this.getClass();
-			Field[] fs=clazz.getDeclaredFields();
 			int SQLParameterIndex=1;
-			for(Field f:fs){
+			for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 				SQLField s=f.getAnnotation(SQLField.class);
 				if(s==null) continue;
 				f.setAccessible(true);
@@ -311,10 +313,9 @@ public abstract class Base {
 		}
 	}
 	public void create()throws SQLException, IllegalArgumentException, IllegalAccessException{
-		Class<?> clazz=this.getClass();
-		Field[] fs=clazz.getDeclaredFields();
+		Class<? extends Base> clazz=this.getClass();
 		int SQLParameterIndex=1;
-		for(Field f:fs){
+		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			f.setAccessible(true);

@@ -1,6 +1,6 @@
 package token;
 
-import java.util.Map;
+import java.util.*;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -14,7 +14,16 @@ public class ActionInterceptor extends AbstractInterceptor{
 	private static final long serialVersionUID = -6659361640363083885L;
 	
 	public static final String ErrorTipsName="errorTips";
-
+	
+	static public final Map<String,String> map=new TreeMap<String,String>();
+	static{
+		map.put("教务处","jwc");
+		map.put("教务员","jwy");
+		map.put("教学院长","jxyz");
+		map.put("领导","ld");
+		map.put("教师","js");
+	}
+	
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
 		String actionName=invocation.getInvocationContext().getName();
@@ -28,6 +37,13 @@ public class ActionInterceptor extends AbstractInterceptor{
 		if(inner==null){
 			session.put(ErrorTipsName,"登录已超时，请重新登录！");//设置提示信息
 			return "error";
+		}
+		String actionType=actionName.split("_",2)[0];
+		if(map.containsValue(actionType)){
+			if(!actionType.equals(map.get(inner.getOffice()))){
+				session.put(ErrorTipsName,inner.getOffice()+"无权访问"+actionType+"，请重新登录！");
+				return "error";
+			}
 		}
 		return invocation.invoke();
 	}

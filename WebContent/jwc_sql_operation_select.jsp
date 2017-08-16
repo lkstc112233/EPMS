@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>EPMS-教务处-数据库管理</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
@@ -17,7 +17,7 @@
 	<table width="80%"><tbody>
 		<tr>
 			<td valign="top">
-				<s:form action="sql_operation_select" method="post" cssClass="myform">
+				<s:form action="jwc_sql_operation_select" method="post" cssClass="myform">
 					<s:textarea name="sql" value="%{sql}" style="width:360px;height:60px;"/>
 					<s:submit value="执行SQL语句" cssClass="button"/>
 				</s:form>

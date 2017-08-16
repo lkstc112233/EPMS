@@ -48,15 +48,20 @@
 		</action>
 		
 		<!--动作：SQL Operation配置-->
-		<action name="sql_operation_select" class="action.sqloperation.SQLOperationSelectAction" method="execute">
-			<result name="none"> sql_operation_select.jsp</result>
-			<result> sql_operation_select.jsp</result>
+		<action name="jwc_sql_operation_select" class="action.jwc.sqloperation.SQLOperationSelectAction" method="execute">
+			<result name="none"> jwc_sql_operation_select.jsp</result>
+			<result> jwc_sql_operation_select.jsp</result>
 		</action>
 		
-		<!--动作：submit配置-->
-		<action name="submit" class="submit.SubmitAction" method="execute">
-			<result> submit_success.jsp</result>
+		<action name="jwc_timeManager" class="action.jwc.TimeManagerAction" method="execute">
+			<result name="none"> jwc_timeManager.jsp</result>
+			<result> jwc_timeManager.jsp</result>
 		</action>
+		
+		
+		
+		
+		
 	</package>
 	
 	

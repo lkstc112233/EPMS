@@ -6,6 +6,7 @@ import java.util.*;
 
 import persistence.DB;
 
+@SuppressWarnings("unchecked")
 public class SQLCollection<T extends Base> {
 	
 	public final Class<T> clazz;
@@ -41,8 +42,7 @@ public class SQLCollection<T extends Base> {
 	public List<T> selectAll(Field[] checkFields,Object[] checkObjects,int limitNumber) throws SQLException{
 		List<T> res=new ArrayList<T>();
 		StringBuilder sql_select=new StringBuilder();
-		Field[] fs=clazz.getDeclaredFields();
-		for(Field f:fs){
+		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			f.setAccessible(true);
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
@@ -94,14 +94,17 @@ public class SQLCollection<T extends Base> {
 				continue;
 			}
 			boolean ok=true;
-			for(Field f:fs){
+			for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 				f.setAccessible(true);
 				SQLField s=f.getAnnotation(SQLField.class);
 				if(s==null) continue;
 				Object o=rs.getObject(f.getName());
 				try {
-					f.set(t,o);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
+					if(f.getType().equals(Integer.class) && o.getClass().equals(Long.class))
+						f.set(t,((Long)o).intValue());
+					else
+						f.set(t,f.getType().cast(o));
+				} catch (ClassCastException |IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
 					ok=false;
 					break;
@@ -122,9 +125,8 @@ public class SQLCollection<T extends Base> {
 		List<String> res=new ArrayList<String>();
 		if(list==null || list.isEmpty())
 			return res;
-		Field[] fs=list.get(0).getClass().getDeclaredFields();
 		Field out=null;
-		for(Field f:fs){
+		for(Class<? extends Base> c=list.get(0).getClass();c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			f.setAccessible(true);
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
@@ -159,9 +161,8 @@ public class SQLCollection<T extends Base> {
 		List<String[]> res=new ArrayList<String[]>();
 		if(list==null || list.isEmpty())
 			return res;
-		Field[] fs=list.get(0).getClass().getDeclaredFields();
 		List<Field> flist=new ArrayList<Field>();
-		for(Field f:fs){
+		for(Class<? extends Base> c=list.get(0).getClass();c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			f.setAccessible(true);
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
@@ -193,9 +194,8 @@ public class SQLCollection<T extends Base> {
 		String[] res=null;
 		if(t==null)
 			return res;
-		Field[] fs=t.getClass().getDeclaredFields();
 		List<Field> flist=new ArrayList<Field>();
-		for(Field f:fs){
+		for(Class<? extends Base> c=t.getClass();c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			f.setAccessible(true);
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
@@ -222,7 +222,7 @@ public class SQLCollection<T extends Base> {
 	static public <T extends Base> T getIn(Class<T> clazz,String[] obj,String[] labels) throws NoSuchFieldException, SecurityException, InstantiationException, IllegalAccessException{
 		T t=clazz.newInstance();
 		for(int i=0;i<labels.length;i++){
-			Field f=clazz.getDeclaredField(labels[i]);
+			Field f=Base.getField(clazz,labels[i]);
 			f.setAccessible(true);
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;

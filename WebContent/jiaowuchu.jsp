@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>EPMS-教务处</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
@@ -16,7 +16,6 @@
 <div class="bag">
 	<table width="80%" border="0" cellspacing="0" cellpadding="0"><tbody>
 		<tr>
-		<!--<td width="10%"></td>  左缝 -->
 			<td valign="top">
 				<div class="listHeader">
 					<div class="listHeaderLeft">人员管理功能</div>
@@ -24,26 +23,32 @@
 				<ul class="listContent">
 					<li>
 						<span class="time">[All time]</span>
-						<a href='<s:url action="sql_operation_select"/>'>静态数据库表管理</a>
+						<a href='<s:url action="jwc_sql_operation_select"/>'>数据库管理</a>
 					</li>
 				</ul>
 			</td>
-	<!--	<td width="2%"></td> <!-- 中缝 -->
-	<!--	<td valign="top">
-				<div class="zi0">
-					<span class="lanmuzi">实习风采</span>
-					<a class="gd0" href="http://jsjysj.bnu.edu.cn/sxfc/">&gt;&gt;更多&nbsp;&nbsp;&nbsp;</a>
-				</div>
-				<ul class="ul_list">
-					<li>
-						<span class="newtime">[2017-06-01]</span>
-						<a href="sxfc/32069.html" title="我怀念的" target="_blank"> 我怀念的 </a>
-					</li>
-				</ul>
-			</td>
-	-->
-	<!--<td width="10%"></td>  右缝 -->
 		</tr>
+		<tr>
+			<td valign="top">
+				<div class="listHeader">
+					<div class="listHeaderLeft">自然年管理功能</div>
+					<div class="right">
+						当前自然年: 
+						<s:select id="year" cssClass="title_button" style="width:120px;margin-top:4px;"
+						list="{'2017','2018'}" theme="simple"/>
+					</div>
+				</div>
+			</td>
+		</tr>
+		<tr><td valign="top">
+			<ul class="listContent">
+				<li>
+					<span class="time">[All time]</span>
+					<a href='<s:url action="jwc_timeManager"/>' onclick="this.href=this.href+'?year='+document.getElementById('year').value">
+					时间节点管理</a>
+				</li>
+			</ul>
+		</td></tr>
 	</tbody></table>
 </div>
 
