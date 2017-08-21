@@ -49,6 +49,24 @@
 				</li>
 			</ul>
 		</td></tr>
+		<tr><td valign="top">
+			<ul class="listContent">
+				<li>
+					<span class="time">[All time]</span>
+					<a href='<s:url action="jwc_importStudentInfo"/>' onclick="this.href=this.href+'?year='+document.getElementById('year').value">
+					导入学生数据</a>
+				</li>
+			</ul>
+		</td></tr>
+		<tr><td valign="top">
+			<ul class="listContent">
+				<li>
+					<span class="time">[All time]</span>
+					<a href='<s:url action="jwc_importStudentInfo"/>' onclick="this.href=this.href+'?year='+document.getElementById('year').value">
+					《信息统计工作的通知》</a>
+				</li>
+			</ul>
+		</td></tr>
 	</tbody></table>
 </div>
 
