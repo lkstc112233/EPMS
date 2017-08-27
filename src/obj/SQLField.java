@@ -17,5 +17,9 @@ public @interface SQLField {
 	 */
 	boolean isKey() default false;
 	
+	/**
+	 * 是否在SQLCollection.selectAll时排序
+	 */
+	boolean needSorted() default false;
 
 }

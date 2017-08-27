@@ -27,12 +27,7 @@
 		<!--动作：login配置-->
 		<action name="login" class="action.login.LoginAction" method="execute">
 			<result name="login"> login.jsp</result>
-			<result> submit.jsp</result>
-			<result name="教务处">	jiaowuchu.jsp</result>
-			<result name="教务员">	jiaowuyuan.jsp</result>
-			<result name="教学院长">	jiaoxueyuanzhang.jsp</result>
-			<result name="领导">		lingdao.jsp</result>
-			<result name="教师">		jiaoshi.jsp</result>
+			<result name="success" type="redirect"> menu.action</result>
 			<!--该登录动作不受token过滤器影响-->
 			<interceptor-ref name="defaultStack" />
 		</action>
@@ -42,6 +37,17 @@
 			<interceptor-ref name="defaultStack" />
 		</action>
 		
+		<!--动作：menu配置-->
+		<action name="menu" class="action.login.MenuAction" method="execute">
+			<result name="教务处">	jwc.jsp</result>
+			<result name="教务员">	jwy.jsp</result>
+			<result name="教学院长">	jxyz.jsp</result>
+			<result name="领导">		ld.jsp</result>
+			<result name="教师">		js.jsp</result>
+			<result> login.jsp</result>
+		</action>
+		
+		<!--动作：inner_info配置-->
 		<action name="inner_info" class="action.login.InnerInfoAction" method="execute">
 			<result> inner_info.jsp</result>
 			<result name="none"> inner_info.jsp</result>

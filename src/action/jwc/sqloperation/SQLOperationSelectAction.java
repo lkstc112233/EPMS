@@ -6,7 +6,7 @@ import java.util.*;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
-import action.UserManager;
+import action.Manager;
 import persistence.DB;
 
 
@@ -32,8 +32,8 @@ public class SQLOperationSelectAction extends ActionSupport{
 		if(sql==null||sql.isEmpty())
 			return display();
 		Map<String, Object> session=ActionContext.getContext().getSession();
-		String check=UserManager.SQLCheck(sql);
-		if(!UserManager.SQLCheck_Success.equals(check)){
+		String check=Manager.SQLCheck(sql);
+		if(!Manager.SQLCheck_Success.equals(check)){
 			System.out.println(">> SQLOperationSelectAction:execute > sql不合法:"+check);
 			session.put(token.ActionInterceptor.ErrorTipsName,check+"，请重新输入！");
 			return display();

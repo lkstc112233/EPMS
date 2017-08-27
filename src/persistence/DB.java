@@ -4,12 +4,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Properties;
-import java.util.Scanner;
+import java.sql.*;
+import java.util.*;
+
+import obj.annualTable.Time;
+import obj.staticSource.ACCESS;
 
 public final class DB {
 	
@@ -85,9 +84,47 @@ public final class DB {
 		return connection;
 	}
 	
-	static private final String TimeTableYear="__YEAR__";
+//	static private final String TimeTableYear="__YEAR__";
 	static synchronized public void setupTimeTable(int year) throws SQLException{
 		System.out.println("++ DB:setupTimeTable > year="+year);
+		List<ACCESS> accessList=ACCESS.list(ACCESS.class);
+		System.out.println("++ DB:setupTimeTable > list:[");
+		for(ACCESS a:accessList)
+			System.out.println(a.toString());
+		System.out.println("++ DB:setupTimeTable > list:]");
+		List<Time> timeList=new ArrayList<Time>();
+		for(ACCESS a:accessList){
+			Time t=Time.getFromACCESS(year,a);
+			if(t!=null)
+				timeList.add(t);
+		}
+		int index=0;
+		try{
+			System.out.println("++ DB:setupTimeTable > create(insert) to table(Time):");
+			for(;index<timeList.size();index++){
+				Time t=timeList.get(index);
+				System.out.print("++ DB:setupTimeTable > insert["+index+"]"+t.toString());
+				t.create();
+				System.out.println("success");
+			}
+			System.out.println("++ DB:setupTimeTable > create(insert) END");
+		}catch(SQLException | IllegalArgumentException | IllegalAccessException e){
+			System.out.println("fail");
+			e.printStackTrace();
+			for(int i=0;i<index;i++){
+				Time t=timeList.get(i);
+				System.out.print("++ DB:setupTimeTable > delete["+i+"]"+t.toString());
+				try {
+					t.delete();
+					System.out.println("success");
+				} catch (IllegalArgumentException | IllegalAccessException e1) {
+					System.out.println("fail");
+					e1.printStackTrace();
+				}
+			}
+			System.out.println("++ DB:setupTimeTable > delete END");
+		}
+	/*
 		try(FileInputStream fin=new FileInputStream(path+setupTimeTableFileName);
 				Scanner in=new Scanner(fin);
 				Statement st=DB.con().createStatement();
@@ -112,6 +149,7 @@ public final class DB {
 			e.printStackTrace();
 			System.err.println(path+iniFileName+"文件读取失败！");
 		}
+		//*/
 		System.out.println("++ DB:setupTimeTable <");
 	}
 	

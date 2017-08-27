@@ -93,15 +93,17 @@ body {
     background-position: left 5px;
     text-align: left;
     padding-left: 16px;
-    border-bottom-color: #999999;
+/*  border-bottom-color: #999999;
     border-bottom-width: 1px;
-    border-bottom-style: none;
+    border-bottom-style: none;	*/
     list-style-type: none;
     position: relative;
     background-image: url(dot.jpg);
     background-repeat: no-repeat;
     height: 30px;
-    font-size: 20px;
+	line-height: 28px;
+    font-size: 15px;
+    margin-top: 2px;
 }
 .mytable tbody{/*表格内容，每一行*/
 	position: relative;
@@ -159,7 +161,7 @@ body {
 	background: #d3d3d3;
 }
 .mytable td {
-    width: 100%;
+    /*width: 100%;*/
     height: 20px;
     overflow: hidden;
     padding: 0px;
@@ -177,14 +179,14 @@ body {
 }
 .time {
     POSITION: absolute;
-    LINE-HEIGHT: 12px;
+    LINE-HEIGHT: 15px;
     DISPLAY: block;
     COLOR: #666;
-    FONT-SIZE: 11px;
+    FONT-SIZE: 12px;
     RIGHT: 0px;
     TOP: 4px;
     padding: 0px;
-    margin-top: 0px;
+    margin-top: 3px;
     margin-right: 10px;
     margin-bottom: 0px;
     margin-left: 0px;

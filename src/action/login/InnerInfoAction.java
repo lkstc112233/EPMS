@@ -6,7 +6,7 @@ import java.util.*;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
-import action.UserManager;
+import action.Manager;
 import obj.SQLCollection;
 import obj.staticObject.InnerPerson;
 import obj.staticSource.InnerOffice;
@@ -40,7 +40,7 @@ public class InnerInfoAction extends ActionSupport{
 	public InnerInfoAction() throws SQLException, IllegalArgumentException, IllegalAccessException{
 		super();
 		System.out.println(">> InnerInfoAction:constructor >");
-		this.inner=UserManager.getUser();
+		this.inner=Manager.getUser();
 		if(inner==null)
 			inner=new InnerPerson();
 		list_office=SQLCollection.getOutOne(InnerOffice.list(InnerOffice.class));
@@ -92,7 +92,7 @@ public class InnerInfoAction extends ActionSupport{
 		System.out.println(">> InnerInfoAction:execute > :"+inner.toString());
 		try {
 			inner.update();
-			UserManager.setUser(inner);
+			Manager.setUser(inner);
 		} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
 			e.printStackTrace();
 			System.out.println(">> InnerInfoAction:execute > 上传个人信息失败");

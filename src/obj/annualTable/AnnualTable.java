@@ -58,6 +58,15 @@ public abstract class AnnualTable extends Base{
 		}
 		return res;
 	}
+	static public List<Time> listTime(int year,boolean setupIfEmpty) throws NoSuchFieldException, SecurityException, SQLException{
+		List<Time> res=list(Time.class,year);
+		if(res.isEmpty() && setupIfEmpty){
+			persistence.DB.setupTimeTable(year);
+			initialize(Time.class,year);
+			return listTime(year,false);
+		}
+		return res;
+	}
 	static private <T extends AnnualTable> void initialize(Class<T> clazz,int year) throws SQLException, NoSuchFieldException, SecurityException{
 		List<AnnualTable> res=new ArrayList<AnnualTable>();
 		SQLCollection<T> sqlCollection=new SQLCollection<T>(clazz);
@@ -65,11 +74,6 @@ public abstract class AnnualTable extends Base{
 		tmp=sqlCollection.selectAll(new Field[]{
 				Base.getField(clazz,"year")},
 				new Object[]{year});//主要代码，从数据库读取数据，这里不会调用Base.load()
-		if(tmp.isEmpty()){
-			persistence.DB.setupTimeTable(year);
-			initialize(clazz,year);
-			return;
-		}
 		res.addAll(tmp);
 		AnnualTable.AnnualList.put(new Pair(clazz,year),res);
 	}

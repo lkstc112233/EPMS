@@ -319,7 +319,7 @@ public abstract class Base {
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			f.setAccessible(true);
-			this.sql_insert.setObject(SQLParameterIndex,f.get(this));
+			this.sql_insert.setObject(SQLParameterIndex++,f.get(this));
 		}
 		int num=this.sql_insert.executeUpdate();
 		if(num!=1)

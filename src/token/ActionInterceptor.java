@@ -7,7 +7,7 @@ import org.apache.struts2.ServletActionContext;
 import com.opensymphony.xwork2.*;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 
-import action.UserManager;
+import action.Manager;
 import obj.staticObject.InnerPerson;
 
 public class ActionInterceptor extends AbstractInterceptor{
@@ -29,7 +29,7 @@ public class ActionInterceptor extends AbstractInterceptor{
 		String actionName=invocation.getInvocationContext().getName();
 		System.out.println(">? ActionInterceptor > (actionName="+actionName+")");
 		Map<String,Object> session=ActionContext.getContext().getSession();
-		InnerPerson inner=UserManager.getUser();
+		InnerPerson inner=Manager.getUser();
 		System.out.println(">? ActionInterceptor > ("
 				+((System.currentTimeMillis()-ServletActionContext.getRequest().getSession().getLastAccessedTime())/1000)
 				+"/"+ServletActionContext.getRequest().getSession().getMaxInactiveInterval()

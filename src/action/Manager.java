@@ -1,12 +1,13 @@
 package action;
 
+import java.sql.Timestamp;
 import java.util.Map;
 
 import com.opensymphony.xwork2.ActionContext;
 
 import obj.staticObject.InnerPerson;
 
-public class UserManager {
+public class Manager {
 	
 	static final public String userToken="inner";
 	
@@ -45,6 +46,16 @@ public class UserManager {
 		return SQLCheck_Success;
 	}
 	
-	
+	public static boolean RegularPeriod(Timestamp t1,Timestamp t2){
+		if(t2==null) return false;
+		if(t1==null){
+			t1=t2;t2=null;return true;
+		}
+		if(t1.after(t2)){
+			Timestamp tmp=t1;t1=t2;t2=tmp;
+			return true;
+		}
+		return false;
+	}
 	
 }

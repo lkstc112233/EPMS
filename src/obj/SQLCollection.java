@@ -42,6 +42,7 @@ public class SQLCollection<T extends Base> {
 	public List<T> selectAll(Field[] checkFields,Object[] checkObjects,int limitNumber) throws SQLException{
 		List<T> res=new ArrayList<T>();
 		StringBuilder sql_select=new StringBuilder();
+		StringBuilder sql_sorted=new StringBuilder();
 		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			f.setAccessible(true);
 			SQLField s=f.getAnnotation(SQLField.class);
@@ -49,6 +50,11 @@ public class SQLCollection<T extends Base> {
 			if(sql_select.length()>0)
 				sql_select.append(',');
 			sql_select.append(f.getName());
+			if(s.needSorted()){
+				if(sql_sorted.length()>0)
+					sql_sorted.append(',');
+				sql_sorted.append(f.getName());
+			}
 		}
 		StringBuilder sql_where=new StringBuilder();
 		int cnt=0;
@@ -71,7 +77,9 @@ public class SQLCollection<T extends Base> {
 				"SELECT "+sql_select.toString()
 				+" FROM "+tableName
 				+(sql_where.length()<=0?"":(" WHERE "+sql_where.toString()))
-				+(limitNumber<0?"":("LIMIT "+limitNumber)));
+				+(limitNumber<0?"":("LIMIT "+limitNumber))
+				+(sql_sorted.length()<=0?"":(" ORDER BY "+sql_sorted.toString()))
+				);
 		if(checkFields!=null && checkFields.length>0){
 			int SQLParameterIndex=1;
 			for(Field f:checkFields){
@@ -100,10 +108,11 @@ public class SQLCollection<T extends Base> {
 				if(s==null) continue;
 				Object o=rs.getObject(f.getName());
 				try {
-					if(f.getType().equals(Integer.class) && o.getClass().equals(Long.class))
-						f.set(t,((Long)o).intValue());
-					else
+					try{
 						f.set(t,f.getType().cast(o));
+					}catch(ClassCastException e){
+						f.set(t,o);
+					}
 				} catch (ClassCastException |IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
 					ok=false;

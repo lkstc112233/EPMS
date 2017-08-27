@@ -17,34 +17,44 @@
 	<s:form action="jwc_timeManager" method="post" cssClass="myform">
 			<tr class="mytableTitle">
 				<td class="tdLabel">序号</td>
-				<td class="tdLabel">project</td>
-				<td class="tdLabel">time(<s:property value="year" />)</td>
+				<td class="tdLabel">project(<s:property value="year" />)</td>
+				<td class="tdLabel">time start</td>
+				<td class="tdLabel">time end</td>
 			</tr>
-			<s:iterator value="projects" var="__tableRow" status="__status">
+			<s:iterator value="times" var="__tableRow" status="__status">
 				<tr>
-					<td class="tdLabel"><s:property value="%{#__status.count}" /></td>
-					<s:iterator value="__tableRow" var="__tableCol">
-						<td class="tdInput" style="width:400px;">
-							<s:property value="%{#__tableCol.project}" />
-							<s:hidden name="projects[%{#__status.index}].year"
-							value="%{year}" theme="simple"/>
-							<s:hidden name="projects[%{#__status.index}].project"
-							value="%{#__tableCol.project}"  theme="simple"/>
-						</td>
-						<td class="tdInput" style="width:230px;">
-							<s:textfield name="projects[%{#__status.index}].time" theme="simple">
-								<s:param name="value">
-									<s:date name="%{#__tableCol.time}" format="yyyy-MM-dd hh:mm:ss"/>
-								</s:param>
-							</s:textfield>  
-						</td>
-					</s:iterator>
+					<td class="tdLabel">
+						<s:property value="%{#__tableRow.id}" />
+						<s:hidden name="times[%{#__status.index}].id"
+						value="%{id}" theme="simple"/>
+					</td>
+					<td class="tdInput" style="width:380px;">
+						<s:property value="%{#__tableRow.project}" />
+						<s:hidden name="times[%{#__status.index}].year"
+						value="%{year}" theme="simple"/>
+						<s:hidden name="times[%{#__status.index}].project"
+						value="%{#__tableRow.project}"  theme="simple"/>
+					</td>
+					<td class="tdInput" style="width:180px;">
+						<s:textfield name="times[%{#__status.index}].time1" theme="simple">
+							<s:param name="value">
+								<s:date name="%{#__tableRow.time1}" format="yyyy-MM-dd hh:mm:ss"/>
+							</s:param>
+						</s:textfield>  
+					</td>
+					<td class="tdInput" style="width:180px;">
+						<s:textfield name="times[%{#__status.index}].time2" theme="simple">
+							<s:param name="value">
+								<s:date name="%{#__tableRow.time2}" format="yyyy-MM-dd hh:mm:ss"/>
+							</s:param>
+						</s:textfield>  
+					</td>
 				</tr>
 			</s:iterator>
 			<s:hidden name="year" value="%{year}" />
 			<s:hidden name="executive" value="true" />
 			<tr>
-				<td colspan="3">
+				<td colspan="4">
 					<s:submit value="提交修改" cssClass="button" theme="simple" />
 				</td>
 			</tr>

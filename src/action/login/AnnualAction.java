@@ -1,4 +1,4 @@
-package action.jwc;
+package action.login;
 
 import com.opensymphony.xwork2.ActionSupport;
 

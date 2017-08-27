@@ -18,7 +18,9 @@ public abstract class StaticSource extends Base{
 		List<StaticSource> tmp=StaticSource.StaticList.get(clazz);
 		if(tmp==null){
 			StaticSource.initialize(clazz);
-			return list(clazz);
+			tmp=StaticSource.StaticList.get(clazz);
+			if(tmp==null) throw new SQLException(
+					"StaticSource.list CANNOT initialize the class("+clazz.getName()+")");
 		}
 		List<T> res=new ArrayList<T>();
 		for(StaticSource t:tmp){

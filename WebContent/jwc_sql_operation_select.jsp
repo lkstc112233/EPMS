@@ -28,7 +28,7 @@
 	<table width="80%" class="mytable"><tbody>
 		<s:if test="list!=null && labels!=null">
 			<tr class="mytableTitle">
-				<td>序号</td>
+				<td style="width:13px">序号</td>
 				<s:iterator value="labels" var="__label">
 					<td style="word-wrap:break-word;word-break:break-all;">
 						<s:property value="%{#__label}"/>
@@ -37,7 +37,7 @@
 			</tr>
 			<s:iterator value="list" var="__tableRow" status="__status">
 				<tr>
-					<td class="listContent"><s:property value="%{#__status.count}" /></td>
+					<td class="listContent" style="width:13px"><s:property value="%{#__status.count}" /></td>
 					<s:iterator value="__tableRow" var="__tableCol">
 						<td>
 							<s:property value="__tableCol" />
