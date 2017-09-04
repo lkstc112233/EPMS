@@ -47,9 +47,9 @@ public class Manager {
 			if(c==';') cnt++;
 		if(cnt>1)
 			return "语句过多";
-		if(sql.contains("DROP"))
+		if(sql.toUpperCase().contains("DROP"))
 			return "不允许删除数据表";
-		if(sql.contains("CREATE"))
+		if(sql.toUpperCase().contains("CREATE"))
 			return "不允许创建数据表";
 		return SQLCheck_Success;
 	}
