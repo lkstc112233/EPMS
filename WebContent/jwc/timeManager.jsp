@@ -11,7 +11,7 @@
 
 <body>
 	<center>
-		<jsp:include page="common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
+		<jsp:include page="../common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 
 <div class="bag">
 	<s:form action="jwc_timeManager" method="post" cssClass="myform">
@@ -38,16 +38,16 @@
 					<td class="tdInput" style="width:180px;">
 						<s:textfield name="times[%{#__status.index}].time1" theme="simple">
 							<s:param name="value">
-								<s:date name="%{#__tableRow.time1}" format="yyyy-MM-dd hh:mm:ss"/>
+								<s:date name="%{#__tableRow.time1}" format="yyyy-MM-dd HH:mm:ss"/>
 							</s:param>
-						</s:textfield>  
+						</s:textfield>
 					</td>
 					<td class="tdInput" style="width:180px;">
 						<s:textfield name="times[%{#__status.index}].time2" theme="simple">
 							<s:param name="value">
-								<s:date name="%{#__tableRow.time2}" format="yyyy-MM-dd hh:mm:ss"/>
+								<s:date name="%{#__tableRow.time2}" format="yyyy-MM-dd HH:mm:ss"/>
 							</s:param>
-						</s:textfield>  
+						</s:textfield>
 					</td>
 				</tr>
 			</s:iterator>
@@ -64,7 +64,7 @@
 	</s:form>
 </div>
 
-		<jsp:include page="common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>
+		<jsp:include page="../common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 	</center>
 </body>
 </html>

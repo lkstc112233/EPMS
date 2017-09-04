@@ -19,10 +19,15 @@ public class Time extends AnnualTable{
 	@SQLField
 	private Timestamp time2;
 	
+	private String project_pinyin;
+	
 	public int getId(){return id;}
 	public void setId(int id){this.id=id;}
 	public String getProject() {return project;}
-	public void setProject(String project) {this.project = project;}
+	public void setProject(String project) {
+		this.project = project;
+		this.project_pinyin=ACCESS.map.get(this.project);
+	}
 	public Timestamp getTime1() {return time1;}
 	public void setTime1(Timestamp time) {this.time1 = time;
 	Manager.RegularPeriod(time1,time2);}
@@ -36,6 +41,11 @@ public class Time extends AnnualTable{
 	public void setTime2(String s){
 		this.time2=Timestamp.valueOf(s);
 		Manager.RegularPeriod(time1,time2);
+	}
+	public String getProject_pinyin(){
+		if(this.project_pinyin==null)
+			this.setProject(this.getProject());
+		return this.project_pinyin;
 	}
 	
 	public Time() throws SQLException {
@@ -51,13 +61,13 @@ public class Time extends AnnualTable{
 		t.setYear(year);
 		if(a.getTime1()!=null){
 			Timestamp at=new Timestamp(a.getTime1().getTime());
-			at.setYear(year);
+			at.setYear(year-1900);
 			t.setTime1(at);
 		}else
 			t.setTime1((Timestamp)null);
 		if(a.getTime2()!=null){
 			Timestamp at=new Timestamp(a.getTime2().getTime());
-			at.setYear(year);
+			at.setYear(year-1900);
 			t.setTime2(at);
 		}else
 			t.setTime2((Timestamp)null);

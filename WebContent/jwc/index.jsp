@@ -11,7 +11,7 @@
 
 
 <body><center>
-	<jsp:include page="common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
+	<jsp:include page="../common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 		
 <div class="bag">
 	<table width="80%" border="0" cellspacing="0" cellpadding="0"><tbody>
@@ -71,17 +71,17 @@
 							[
 							<s:if test="#__tableRow.time1!=null">
 								<b><s:date name="%{#__tableRow.time1}" format="yyyy-MM-dd"/></b>&nbsp;
-								<s:date name="%{#__tableRow.time1}" format="hh:mm:ss"/>&nbsp;
+								<s:date name="%{#__tableRow.time1}" format="HH:mm:ss"/>&nbsp;
 								->
 								&nbsp;<b><s:date name="%{#__tableRow.time2}" format="yyyy-MM-dd"/></b>
-								&nbsp;<s:date name="%{#__tableRow.time2}" format="hh:mm:ss"/>
+								&nbsp;<s:date name="%{#__tableRow.time2}" format="HH:mm:ss"/>
 							</s:if>
 							<s:else>
 								null
 							</s:else>
 							]
 						</span>
-						<a href='<s:url action="%{#__tableRow.project}"/>' onclick="this.href=this.href+'?year='+document.getElementById('year').value">
+						<a href='<s:url action="%{actionPrefix}_function_%{#__tableRow.project_pinyin}_display"/>' onclick="this.href=this.href+'?year='+document.getElementById('year').value">
 							<s:property value="%{#__tableRow.project}" />
 						</a>
 					</li>  
@@ -92,6 +92,6 @@
 	</tbody></table>
 </div>
 
-	<jsp:include page="common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>
+	<jsp:include page="../common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 </center></body>
 </html>

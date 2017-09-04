@@ -12,35 +12,38 @@ public class MenuAction extends AnnualAction{
 	private static final long serialVersionUID = 5246911694929172909L;
 	
 	private List<Time> times=new ArrayList<Time>();
+	private String actionPrefix;
 	
 	public List<Time> getTimes(){return times;}
 	public void setTimes(List<Time> times){this.times=times;}
-	
+	public String getActionPrefix(){return actionPrefix;}
+	public void setActionPrefix(String actionPrefix){
+		this.actionPrefix=actionPrefix;
+		if(this.actionPrefix==null) this.actionPrefix="null";
+	}
 
 	public MenuAction(){
 		super();
+		this.setActionPrefix(Manager.getActionPrefix());
 	}
 	
-	private void init(){
-		if(year<1900)
-			this.year=Calendar.getInstance().get(Calendar.YEAR);
-	}
 	
 	@Override
 	public String execute(){
-		this.init();
-		System.out.println(">> MenuAction:execute > year="+year);
+		super.setupYear();
+		System.out.println(">> MenuAction:execute > year="+this.getYear());
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		try {
-			this.times=Time.listTime(year,false);
+			this.times=Time.listTime(this.getYear(),false);
 		} catch (NoSuchFieldException | SecurityException | SQLException e) {
 			e.printStackTrace();
 			this.times=new ArrayList<Time>();
 			session.put(token.ActionInterceptor.ErrorTipsName,
-					"服务器开了一些小差，尚未搜索到["+year+"年]的时间表！");//设置提示信息
+					"服务器开了一些小差，尚未搜索到["+this.getYear()+"年]的时间表！");//设置提示信息
 		}
-		System.out.println(">> MenuAction:execute <SUCCESS");
-		return Manager.getUser().getOffice();
+		String res=Manager.getActionPrefix();
+		System.out.println(">> MenuAction:execute <"+res);
+		return res;
 	}
 	
 }

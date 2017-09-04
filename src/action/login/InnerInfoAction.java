@@ -100,6 +100,8 @@ public class InnerInfoAction extends ActionSupport{
 					"修改个人信息失败，请重试！");
 			return display();
 		}
+		session.put(token.ActionInterceptor.ErrorTipsName,
+				"修改个人信息成功！");
 		System.out.println(">> InnerInfoAction:display <SUCCESS");
 		return SUCCESS;
 	}

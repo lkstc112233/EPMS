@@ -39,11 +39,11 @@
 		
 		<!--动作：menu配置-->
 		<action name="menu" class="action.login.MenuAction" method="execute">
-			<result name="教务处">	jwc.jsp</result>
-			<result name="教务员">	jwy.jsp</result>
-			<result name="教学院长">	jxyz.jsp</result>
-			<result name="领导">		ld.jsp</result>
-			<result name="教师">		js.jsp</result>
+			<result name="jwc">		jwc/index.jsp</result>
+			<result name="jwy">		jwy/index.jsp</result>
+			<result name="jxyz">	jxyz/index.jsp</result>
+			<result name="ld">		ld/index.jsp</result>
+			<result name="js">		js/index.jsp</result>
 			<result> login.jsp</result>
 		</action>
 		
@@ -55,16 +55,26 @@
 		
 		<!--动作：SQL Operation配置-->
 		<action name="jwc_sql_operation_select" class="action.jwc.sqloperation.SQLOperationSelectAction" method="execute">
-			<result name="none"> jwc_sql_operation_select.jsp</result>
-			<result> jwc_sql_operation_select.jsp</result>
+			<result name="none"> jwc/sql_operation_select.jsp</result>
+			<result> jwc/sql_operation_select.jsp</result>
 		</action>
 		
+		<!--动作：jwc的time设置 配置-->
 		<action name="jwc_timeManager" class="action.jwc.TimeManagerAction" method="execute">
-			<result name="none"> jwc_timeManager.jsp</result>
-			<result> jwc_timeManager.jsp</result>
+			<result name="none"> jwc/timeManager.jsp</result>	<!--用于display -->
+			<result> jwc/timeManager.jsp</result>
 		</action>
 		
 		
+		<!--动作：jwc的function 配置-->
+		
+		<!--动作：jwc的time设置 配置-->
+		<action name="*_function_*_*" class="action.{1}.{2}Action" method="{3}">
+			<result name="back"> {1}/index.jsp</result>	<!--用于timeout和back -->
+			<result name="none"> {1}/{2}.jsp</result>	<!--用于display和timeout -->
+			<result> {1}/index.jsp</result>
+			<allowed-methods> display,execute </allowed-methods>
+		</action>
 		
 		
 		

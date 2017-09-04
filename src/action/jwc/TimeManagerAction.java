@@ -26,7 +26,7 @@ public class TimeManagerAction extends AnnualAction{
 	public String execute(){
 		if(!executive)
 			return display();
-		System.out.println(">> TimeManagerAction:execute > year="+year);
+		System.out.println(">> TimeManagerAction:execute > year="+this.getYear());
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		System.out.println(">> TimeManagerAction:execute > 开始上传修改数据到数据库Time表");
 		for(int i=0;i<times.size();i++){
