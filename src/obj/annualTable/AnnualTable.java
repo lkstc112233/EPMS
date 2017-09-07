@@ -12,7 +12,7 @@ public abstract class AnnualTable extends Base{
 		super();
 	}
 	
-	@SQLField(isKey=true)
+	@SQLField(isKey=true,needImport=false)
 	public Integer year;
 		public int getYear(){return year;}
 		public void setYear(int year){this.year=year;}
@@ -69,9 +69,8 @@ public abstract class AnnualTable extends Base{
 	}
 	static private <T extends AnnualTable> void initialize(Class<T> clazz,int year) throws SQLException, NoSuchFieldException, SecurityException{
 		List<AnnualTable> res=new ArrayList<AnnualTable>();
-		SQLCollection<T> sqlCollection=new SQLCollection<T>(clazz);
 		List<T> tmp=null;
-		tmp=sqlCollection.selectAll(new Field[]{
+		tmp=SQLCollection.selectAll(clazz,new Field[]{
 				Base.getField(clazz,"year")},
 				new Object[]{year});//主要代码，从数据库读取数据，这里不会调用Base.load()
 		res.addAll(tmp);

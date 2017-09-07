@@ -15,14 +15,20 @@
 
 <div class="bag">
 	<table width="80%"><tbody>
-		<tr>
-			<td valign="top">
-				<s:form action="jwc_sql_operation_select" method="post" cssClass="myform">
-					<s:textarea name="sql" value="%{sql}" style="width:360px;height:60px;"/>
-					<s:submit value="执行SQL语句" cssClass="button"/>
-				</s:form>
-			</td>
-		</tr>
+		<s:form action="jwc_sql_operation_select" method="post" cssClass="myform" theme="simple">
+			<tr><td>
+				<s:textarea name="sql" value="%{sql}" style="width:360px;height:60px;"/>
+			</td></tr>
+			<tr><td>
+				<s:submit value="执行SQL语句" cssClass="button"/>
+			</td></tr>
+		</s:form>
+		<tr><td height="30px"></td></tr>
+		<s:form action="login" method="post" cssClass="myform">
+			<tr><td>
+				<s:submit value="返回" cssClass="button"/>
+			</td></tr>
+		</s:form>
 		<tr><td height="30px"></td></tr>
 	</tbody></table>
 	<table width="80%" class="mytable"><tbody>

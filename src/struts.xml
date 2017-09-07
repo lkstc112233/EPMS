@@ -7,6 +7,16 @@
 	<constant name="struts.devMode" value="true"/>
 	<constant name="struts.i18n.encoding" value="UTF-8"/>
 	
+    <!-- 设置浏览器是否缓存静态内容,默认值为true(生产环境下使用),开发阶段最好关闭 -->
+    <constant name="struts.serve.static.browserCache" value="false" />
+    <!-- 当struts的配置文件修改后,系统是否自动重新加载该文件,默认值为false(生产环境下使用),开发阶段最好打开 -->
+    <constant name="struts.configuration.xml.reload" value="true" />
+    <!-- 开发模式下使用,这样可以打印出更详细的错误信息 -->
+    <constant name="struts.devMode" value="true" />
+    <!-- 指定允许上传的文件最大字节数。默认值是2097152(2M)，这里设置为10M。-->
+    <constant name="struts.multipart.maxSize" value="10485760"/>
+    
+	
 	<package name="Login" extends="struts-default">
 		<interceptors>
 			<interceptor name="interceptor_action" class="token.ActionInterceptor" />
@@ -27,7 +37,7 @@
 		<!--动作：login配置-->
 		<action name="login" class="action.login.LoginAction" method="execute">
 			<result name="login"> login.jsp</result>
-			<result name="success" type="redirect"> menu.action</result>
+			<result type="redirect"> menu.action</result>
 			<!--该登录动作不受token过滤器影响-->
 			<interceptor-ref name="defaultStack" />
 		</action>
@@ -70,10 +80,20 @@
 		
 		<!--动作：jwc的time设置 配置-->
 		<action name="*_function_*_*" class="action.{1}.{2}Action" method="{3}">
-			<result name="back"> {1}/index.jsp</result>	<!--用于timeout和back -->
+			<result name="back" type="redirect"> menu.action</result>	<!--用于timeout和back -->
 			<result name="none"> {1}/{2}.jsp</result>	<!--用于display和timeout -->
-			<result> {1}/index.jsp</result>
-			<allowed-methods> display,execute </allowed-methods>
+			<result> {1}/{2}.jsp</result>
+			<result name="downloadAttachment" type="stream">
+				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
+				<param name="inputName">downloadAttachment </param> <!-- 调用的getter名称，返回InputStream -->
+				<param name="contentDisposition">attachment;filename="${downloadFileName}" </param> <!-- 附件方式下载，文件名使用EL获取 --> 
+			</result>
+			<result name="downloadInline" type="stream">
+				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
+				<param name="inputName">downloadInline </param> <!-- 调用的getter名称，返回InputStream -->
+				<param name="contentDisposition">inline;filename="${downloadFileName}" </param> <!-- 内联方式下载，文件名使用EL获取 --> 
+			</result>
+			<allowed-methods> display,execute,download,upload </allowed-methods>
 		</action>
 		
 		

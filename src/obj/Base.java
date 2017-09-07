@@ -8,7 +8,7 @@ import persistence.DB;
 
 @SuppressWarnings("unchecked")
 public abstract class Base {
-	static public final String packageNames[]={"staticSource","staticObject"};
+	static public final String packageNames[]={"staticSource","staticObject","annualTable"};
 	static public Class<? extends Base> getClassForName(String name){
 		if(name==null||name.length()<=0)
 			return null;
@@ -68,7 +68,7 @@ public abstract class Base {
 				SQL_delete.containsKey(clazz) &&
 				SQL_insert.containsKey(clazz))
 			return;
-		String sql_table=clazz.getAnnotation(SQLTable.class).value();
+		String sql_table=Base.getSQLTableName(clazz);
 		PreparedStatement sql_load;
 		PreparedStatement sql_update;
 		PreparedStatement sql_delete;
@@ -126,7 +126,9 @@ public abstract class Base {
 		SQL_insert.put(clazz,sql_insert);
 	}
 	
-	
+	static public String getSQLTableName(Class<? extends Base> clazz){
+		return clazz.getAnnotation(SQLTable.class).value();
+	}
 	static public Field getField(Class<? extends Base> clazz,String fieldName) throws NoSuchFieldException{
 		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()){
 			try{
@@ -145,6 +147,13 @@ public abstract class Base {
 	}
 	public Field hasAvailable(){
 		return Base.hasAvailable(this.getClass());
+	}
+	static public String getSQLFieldName(Field f){
+		if(f==null) return null;
+		SQLField s=f.getAnnotation(SQLField.class);
+		if(s==null) return null;
+		if(s.value().isEmpty()) return f.getName();
+		return s.value();
 	}
 	
 	@Override

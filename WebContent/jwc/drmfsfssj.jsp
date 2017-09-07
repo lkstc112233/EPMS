@@ -17,18 +17,36 @@
 	<table width="80%"><tbody>
 		<tr>
 			<td valign="top">
-				功能还未上线……
+				<div class="listHeader">
+					Student
+				</div>
 			</td>
 		</tr>
-		<tr><td height="30px"></td></tr>
+		<tr><td valign="middle">
+			<ul class="listContent">
+				<li>
+					<a href="<s:url action='jwc_function_drmfsfssj_download'/>?tableName=Student">下载模板</a>
+				</li>
+				<li>
+					<s:form action="jwc_function_drmfsfssj_download" method="post" theme="simple">
+						<s:hidden name="tableName" value="Student" />
+						<s:submit value="下载模板" cssClass="title_button" style="width:auto;"/>
+					</s:form>
+				</li>
+				<li>
+					<s:form action="jwc_function_drmfsfssj_upload" method="post" theme="simple" enctype="multipart/form-data">
+						<s:hidden name="tableName" value="Student" />
+						<s:file label="上传数据" theme="simple" name="file" />
+						<!-- cssClass="button" style="background-color:rgba(0,0,0,0);color:#000" -->
+					</s:form>
+				</li>
+			</ul>
+		</td></tr>
 	</tbody></table>
-	<table width="80%" class="mytable"><tbody>
-		<tr>
-			<td>
-				这里会显示结果集...
-			</td>
-		</tr>
-	</tbody></table>
+	
+	<s:form action="login" method="post" cssClass="myform">
+		<s:submit value="返回" cssClass="button"/>
+	</s:form>
 </div>
 
 	<jsp:include page="../common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>

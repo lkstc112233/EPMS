@@ -7,26 +7,21 @@ import java.util.*;
 import persistence.DB;
 
 @SuppressWarnings("unchecked")
-public class SQLCollection<T extends Base> {
+public class SQLCollection {
+	static public final SQLIO io=new POI();
 	
-	public final Class<T> clazz;
-	public final String tableName;
 	
-	public SQLCollection(Class<T> clazz){
-		this.clazz=clazz;
-		tableName=clazz.getAnnotation(SQLTable.class).value();
-	}
-	
-	public T cast(Object obj) throws ClassCastException{
+	static public <T extends Base> T cast(Class<T> clazz,Object obj) throws ClassCastException{
 		if(obj==null) return null;
 		return clazz.cast(obj);
 	}
 	
-	public List<T> selectAllWithAvailableCheck(Field[] checkFields,Object[] checkObjects) throws SQLException{
+	static public <T extends Base>
+	List<T> selectAllWithAvailableCheck(Class<T> clazz,Field[] checkFields,Object[] checkObjects) throws SQLException{
 		Field[] a=new Field[checkFields.length+1];
 		a[0]=Base.hasAvailable(clazz);
 		if(a[0]==null)
-			throw new SQLException("the Table\""+this.tableName+"\" do NOT have \"available\".");
+			throw new SQLException("the Table\""+Base.getSQLTableName(clazz)+"\" do NOT have \"available\".");
 		Object[] b=new Object[checkObjects.length+1];
 		for(int i=1;i<a.length;i++)
 			a[i]=checkFields[i-1];
@@ -34,12 +29,14 @@ public class SQLCollection<T extends Base> {
 			if(i==0) b[i]=Boolean.TRUE;
 			else b[i]=checkObjects[i-1];
 		}
-		return this.selectAll(a,b);
+		return SQLCollection.selectAll(clazz,a,b);
 	}
-	public List<T> selectAll(Field[] checkFields,Object[] checkObjects) throws SQLException{
-		return selectAll(checkFields,checkObjects,-1);
+	static public <T extends Base>
+	List<T> selectAll(Class<T> clazz,Field[] checkFields,Object[] checkObjects) throws SQLException{
+		return selectAll(clazz,checkFields,checkObjects,-1);
 	}
-	public List<T> selectAll(Field[] checkFields,Object[] checkObjects,int limitNumber) throws SQLException{
+	static public <T extends Base>
+	List<T> selectAll(Class<T> clazz,Field[] checkFields,Object[] checkObjects,int limitNumber) throws SQLException{
 		List<T> res=new ArrayList<T>();
 		StringBuilder sql_select=new StringBuilder();
 		StringBuilder sql_sorted=new StringBuilder();
@@ -75,7 +72,7 @@ public class SQLCollection<T extends Base> {
 		}
 		PreparedStatement sql_ps=DB.con().prepareStatement(
 				"SELECT "+sql_select.toString()
-				+" FROM "+tableName
+				+" FROM "+Base.getSQLTableName(clazz)
 				+(sql_where.length()<=0?"":(" WHERE "+sql_where.toString()))
 				+(limitNumber<0?"":("LIMIT "+limitNumber))
 				+(sql_sorted.length()<=0?"":(" ORDER BY "+sql_sorted.toString()))
@@ -126,11 +123,14 @@ public class SQLCollection<T extends Base> {
 		return res;
 	}
 	
-	
+	/*
+	 * 关于壳的操作，壳是Base包装，内容是String[]
+	 */
 	/**
 	 * 脱壳操作，对单一String类型的key值(isKey==true)
 	 */
-	static public <T extends Base> List<String> getOutOne(List<T> list){
+	static public <T extends Base>
+	List<String> getOutOne(List<T> list){
 		List<String> res=new ArrayList<String>();
 		if(list==null || list.isEmpty())
 			return res;
@@ -166,7 +166,8 @@ public class SQLCollection<T extends Base> {
 	/**
 	 * 脱壳操作，对所有SQLFeild值
 	 */
-	static public <T extends Base> List<String[]> getOutAll(List<T> list,String[] labels){
+	static public <T extends Base>
+	List<String[]> getOutAll(List<T> list,String[] labels){
 		List<String[]> res=new ArrayList<String[]>();
 		if(list==null || list.isEmpty())
 			return res;
@@ -199,7 +200,8 @@ public class SQLCollection<T extends Base> {
 	/**
 	 * 脱壳操作，对一个对象所有SQLFeild值
 	 */
-	static public <T extends Base> String[] getOutAll(T t,String[] labels){
+	static public <T extends Base>
+	String[] getOutAll(T t,String[] labels){
 		String[] res=null;
 		if(t==null)
 			return res;
@@ -228,7 +230,8 @@ public class SQLCollection<T extends Base> {
 	/**
 	 * 加壳操作，把一个String[]和clazz对应起来
 	 */
-	static public <T extends Base> T getIn(Class<T> clazz,String[] obj,String[] labels) throws NoSuchFieldException, SecurityException, InstantiationException, IllegalAccessException{
+	static public <T extends Base>
+	T getIn(Class<T> clazz,String[] obj,String[] labels) throws NoSuchFieldException, SecurityException, InstantiationException, IllegalAccessException{
 		T t=clazz.newInstance();
 		for(int i=0;i<labels.length;i++){
 			Field f=Base.getField(clazz,labels[i]);
@@ -243,6 +246,33 @@ public class SQLCollection<T extends Base> {
 		}
 		return t;
 	}
+	/**
+	 * 加壳操作，把多个String[]和clazz对应起来
+	 */
+	static public <T extends Base>
+	List<T> getIn(Class<T> clazz,List<String[]> objs,String[] labels) throws NoSuchFieldException, SecurityException, InstantiationException, IllegalAccessException{
+		List<T> res=new ArrayList<T>();
+		Field[] fs=new Field[labels.length];
+		for(int i=0;i<labels.length;i++){
+			fs[i]=Base.getField(clazz,labels[i]);
+			fs[i].setAccessible(true);
+		}
+		for(String[] obj:objs){
+			T t=clazz.newInstance();
+			for(int i=0;i<fs.length;i++){
+				SQLField s=fs[i].getAnnotation(SQLField.class);
+				if(s==null) continue;
+				try {
+					fs[i].set(t,obj[i]);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+			res.add(t);
+		}
+		return res;
+	}
+	
 	
 	
 }

@@ -31,10 +31,9 @@ public abstract class StaticSource extends Base{
 	}
 	static private <T extends StaticSource> void initialize(Class<T> clazz){
 		List<StaticSource> res=new ArrayList<StaticSource>();
-		SQLCollection<T> sqlCollection=new SQLCollection<T>(clazz);
 		List<T> tmp=null;
 		try {
-			tmp=sqlCollection.selectAll(null,null);//主要代码，从数据库读取数据，这里不会调用Base.load()
+			tmp=SQLCollection.selectAll(clazz,null,null);//主要代码，从数据库读取数据，这里不会调用Base.load()
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return;

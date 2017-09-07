@@ -22,4 +22,21 @@ public @interface SQLField {
 	 */
 	boolean needSorted() default false;
 
+	/**
+	 * 名称
+	 * 默认为空字符串
+	 */
+	String value() default "";
+
+	/**
+	 * 描述信息
+	 * 默认为空字符串
+	 */
+	String description() default "";
+	
+	/**
+	 * 是否由外部POI导入
+	 * 默认为false
+	 */
+	boolean needImport() default false;
 }
