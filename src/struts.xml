@@ -22,7 +22,6 @@
 			<interceptor name="interceptor_action" class="token.ActionInterceptor" />
 			<interceptor-stack name="interceptor_stack_action">
 				<interceptor-ref name="interceptor_action" />
-				<interceptor-ref name="token" />
 				<interceptor-ref name="defaultStack" />
 			</interceptor-stack>
 		</interceptors>
@@ -33,6 +32,7 @@
 		<!--设置全局result页面-->
 		<global-results>
 			<result name="error"> error.jsp</result>
+			<result name="invalid.token"> invalidToken.jsp</result>
 		</global-results>
 		
 		<!--动作：login配置-->
@@ -40,13 +40,11 @@
 			<result name="login"> login.jsp</result>
 			<result type="redirect"> menu.action</result>
 			<!--该登录动作不受token过滤器影响-->
-			<interceptor-ref name="token" />
 			<interceptor-ref name="defaultStack" />
 		</action>
 		<action name="logout" class="action.login.LoginAction" method="logout">
 			<result> login.jsp</result>
 			<!--该登录动作不受token过滤器影响-->
-			<interceptor-ref name="token" />
 			<interceptor-ref name="defaultStack" />
 		</action>
 		

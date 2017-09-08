@@ -22,12 +22,14 @@
 			<tr><td>
 				<s:submit value="执行SQL语句" cssClass="button"/>
 			</td></tr>
+			<s:token />
 		</s:form>
 		<tr><td height="30px"></td></tr>
 		<s:form action="login" method="post" cssClass="myform">
 			<tr><td>
 				<s:submit value="返回" cssClass="button"/>
 			</td></tr>
+			<s:token />
 		</s:form>
 		<tr><td height="30px"></td></tr>
 	</tbody></table>
@@ -53,7 +55,7 @@
 			</s:iterator>
 		</s:if>
 		<s:else>
-		<tr><td>这里会显示结果集...</td></tr>
+			<tr><td>这里会显示结果集...</td></tr>
 		</s:else>
 	</tbody></table>
 </div>

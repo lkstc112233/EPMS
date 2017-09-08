@@ -15,52 +15,55 @@
 
 <div class="bag">
 	<s:form action="jwc_timeManager" method="post" cssClass="myform">
-			<tr class="mytableTitle">
-				<td class="tdLabel">序号</td>
-				<td class="tdLabel">project(<s:property value="year" />)</td>
-				<td class="tdLabel">time start</td>
-				<td class="tdLabel">time end</td>
-			</tr>
-			<s:iterator value="times" var="__tableRow" status="__status">
-				<tr>
-					<td class="tdLabel">
-						<s:property value="%{#__tableRow.id}" />
-						<s:hidden name="times[%{#__status.index}].id"
-						value="%{id}" theme="simple"/>
-					</td>
-					<td class="tdInput" style="width:380px;">
-						<s:property value="%{#__tableRow.project}" />
-						<s:hidden name="times[%{#__status.index}].year"
-						value="%{year}" theme="simple"/>
-						<s:hidden name="times[%{#__status.index}].project"
-						value="%{#__tableRow.project}"  theme="simple"/>
-					</td>
-					<td class="tdInput" style="width:180px;">
-						<s:textfield name="times[%{#__status.index}].time1" theme="simple">
-							<s:param name="value">
-								<s:date name="%{#__tableRow.time1}" format="yyyy-MM-dd HH:mm:ss"/>
-							</s:param>
-						</s:textfield>
-					</td>
-					<td class="tdInput" style="width:180px;">
-						<s:textfield name="times[%{#__status.index}].time2" theme="simple">
-							<s:param name="value">
-								<s:date name="%{#__tableRow.time2}" format="yyyy-MM-dd HH:mm:ss"/>
-							</s:param>
-						</s:textfield>
-					</td>
-				</tr>
-			</s:iterator>
-			<s:hidden name="year" value="%{year}" />
-			<s:hidden name="executive" value="true" />
+		<tr class="mytableTitle">
+			<td class="tdLabel">序号</td>
+			<td class="tdLabel">project(<s:property value="year" />)</td>
+			<td class="tdLabel">time start</td>
+			<td class="tdLabel">time end</td>
+		</tr>
+		<s:iterator value="times" var="__tableRow" status="__status">
 			<tr>
-				<td colspan="4">
-					<s:submit value="提交修改" cssClass="button" theme="simple" />
+				<td class="tdLabel">
+					<s:property value="%{#__tableRow.id}" />
+					<s:hidden name="times[%{#__status.index}].id"
+					value="%{id}" theme="simple"/>
+				</td>
+				<td class="tdInput" style="width:380px;">
+					<s:property value="%{#__tableRow.project}" />
+					<s:hidden name="times[%{#__status.index}].year"
+					value="%{year}" theme="simple"/>
+					<s:hidden name="times[%{#__status.index}].project"
+					value="%{#__tableRow.project}"  theme="simple"/>
+				</td>
+				<td class="tdInput" style="width:180px;">
+					<s:textfield name="times[%{#__status.index}].time1" theme="simple">
+						<s:param name="value">
+							<s:date name="%{#__tableRow.time1}" format="yyyy-MM-dd HH:mm:ss"/>
+						</s:param>
+					</s:textfield>
+				</td>
+				<td class="tdInput" style="width:180px;">
+					<s:textfield name="times[%{#__status.index}].time2" theme="simple">
+						<s:param name="value">
+							<s:date name="%{#__tableRow.time2}" format="yyyy-MM-dd HH:mm:ss"/>
+						</s:param>
+					</s:textfield>
 				</td>
 			</tr>
+		</s:iterator>
+		<s:hidden name="year" value="%{year}" />
+		<s:hidden name="executive" value="true" />
+		<tr>
+			<td colspan="4">
+				<s:submit value="提交修改" cssClass="button" theme="simple" />
+			</td>
+		</tr>
+		<s:token />
 	</s:form>
+	
 	<s:form action="login" method="post" cssClass="myform">
 		<s:submit value="返回" cssClass="button"/>
+		<s:token />
 	</s:form>
 </div>
 

@@ -15,16 +15,10 @@
 	
 <div class="bag">
 	<div>
-		<s:if test="null==#session.errorTips">
-			出错了！
-		</s:if>
-		<s:else>
-			<s:property value="#session.errorTips"/>
-		</s:else>
+		请不要重新提交表单！
 	</div>
 	<s:form action="login">
 		<s:submit value="登录系统" cssClass="button" />
-		<s:token />
 	</s:form>
 </div>
 	

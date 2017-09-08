@@ -46,6 +46,8 @@
 		
 			<s:hidden name="executive" value="true" />
 			<s:submit value="提交修改" cssClass="button"/>
+			
+			<s:token />
 		</s:form>
 		<s:form action="login" method="post" cssClass="myform">
 			<s:submit value="返回" cssClass="button"/>

@@ -25,24 +25,16 @@
 		<tr><td>
 			<ul class="listContent">
 				<li>
-					<a href="<s:url action='jwc_function_drmfsfssj_download'/>?tableName=Student">下载模板</a>
-				</li>
-	<!--		<li>
-					<s:form action="jwc_function_drmfsfssj_download" method="post" theme="simple">
-						<s:hidden name="tableName" value="Student" />
-						<s:submit value="下载模板" cssClass="title_button" style="width:auto;"/>
-					</s:form>
-				</li> -->
-				<li>
-					<span class="time">
-						[<a href="<s:url action='jwc_function_drmfsfssj_download'/>?tableName=Student">下载模板</a>
-						]
+					<span class="time">	<!-- 模板下载 -->
+						[<a href="<s:url action='jwc_function_drmfsfssj_download'/>?tableName=Student">
+						下载模板</a>]
 					</span>
 					<s:form action="jwc_function_drmfsfssj_upload" method="post" theme="simple" enctype="multipart/form-data">
 						<s:hidden name="tableName" value="Student" />
 						<s:file label="上传数据" theme="simple" name="uploadFile" class="buttonInline"/>
 						<!-- cssClass="button" style="background-color:rgba(0,0,0,0);color:#000" -->
 						<s:submit value="上传" cssClass="buttonInline"/>
+						<s:token />
 					</s:form>
 				</li>
 			</ul>
