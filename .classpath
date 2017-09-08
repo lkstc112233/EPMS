@@ -27,5 +27,10 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/poi-3.16.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/poi-ooxml-3.16.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/poi-ooxml-schemas-3.16.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/curvesapi-1.04.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xmlbeans-2.6.0.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-codec-1.10.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-collections4-4.1.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-logging-1.2.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

@@ -15,16 +15,22 @@ public interface SQLIO{
 	public void getModelExcel(Class<? extends Base> clazz,OutputStream out) throws IOException ;
 	
 	/**
-	 * 在输入流中按照标签读取excel表格内容，形成String[]的列表
+	 * 在输入流中按照标签读取excel表格内容，形成T的列表
+	 * T extends Base
+	 * @param clazz
 	 * @param in
-	 * @param labels
-	 * @return List<String[]>
+	 * @param error
+	 * @param year
+	 * @return List<T>
 	 * @throws IOException
 	 * @throws EncryptedDocumentException
 	 * @throws InvalidFormatException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
 	 */
-	public List<String[]> readExcel(InputStream in,String[] labels)
-			throws IOException, EncryptedDocumentException, InvalidFormatException;
+	public <T extends Base>
+	List<T> readExcel(Class<T> clazz, InputStream in,List<Integer> error,int year)
+			throws IOException, EncryptedDocumentException, InvalidFormatException, InstantiationException, IllegalAccessException;
 	
 	
 	

@@ -4,6 +4,9 @@ import java.io.*;
 import java.sql.*;
 import java.util.*;
 
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+
 import com.opensymphony.xwork2.ActionContext;
 
 import obj.Base;
@@ -54,7 +57,93 @@ public class drmfsfssjAction extends action.login.AnnualAction{
 	private String uploadFileContentType;	public String getUploadFileContentType(){return this.uploadFileContentType;}public void setUploadFileContentType(String a){this.uploadFileContentType=a;}
 	private String uploadFileFileName;	public String getUploadFileFileName(){return this.uploadFileFileName;}public void setUploadFileFileName(String a){this.uploadFileFileName=a;}
 	public String upload(){//上传文件
-		return NONE;
+		System.out.println(">> 导入免费师范生数据Action:upload > year="+this.getYear());
+		System.out.println(">> 导入免费师范生数据Action:upload > uploadFileContentType="+this.getUploadFileContentType());
+		System.out.println(">> 导入免费师范生数据Action:upload > uploadFileFileName="+this.getUploadFileFileName());
+		Map<String, Object> session=ActionContext.getContext().getSession();
+		Class<? extends Base> clazz=Base.getClassForName(this.getTableName());
+		if(this.getUploadFile()==null){
+			session.put(token.ActionInterceptor.ErrorTipsName,
+					"上传了空文件！");
+			System.out.println(">> 导入免费师范生数据Action:upload > 上传了空文件！");
+			System.out.println(">> 导入免费师范生数据Action:upload <NONE");
+			return NONE;
+		}
+		List<? extends Base> content=null;
+		List<Integer> errorIndex=new ArrayList<Integer>();
+		try(FileInputStream in=new FileInputStream(this.getUploadFile());){
+			content=SQLCollection.io.readExcel(clazz,in,errorIndex,this.getYear());
+		}
+		catch(IOException e){
+			e.printStackTrace();
+			System.out.println(">> 导入免费师范生数据Action:upload > 文件错误！");
+			session.put(token.ActionInterceptor.ErrorTipsName,
+					"文件错误！");
+			System.out.println(">> 导入免费师范生数据Action:upload <NONE");
+			return NONE;
+		}
+		catch (EncryptedDocumentException e) {
+			e.printStackTrace();
+			System.out.println(">> 导入免费师范生数据Action:upload > 解码错误！");
+			session.put(token.ActionInterceptor.ErrorTipsName,
+					"解码错误！");
+			System.out.println(">> 导入免费师范生数据Action:upload <NONE");
+			return NONE;
+		}
+		catch (InvalidFormatException e) {
+			e.printStackTrace();
+			System.out.println(">> 导入免费师范生数据Action:upload > 格式错误！");
+			session.put(token.ActionInterceptor.ErrorTipsName,
+					"格式错误！");
+			System.out.println(">> 导入免费师范生数据Action:upload <NONE");
+			return NONE;
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+			System.out.println(">> 导入免费师范生数据Action:upload > 初始化实例错误！");
+			session.put(token.ActionInterceptor.ErrorTipsName,
+					"初始化实例错误！");
+			System.out.println(">> 导入免费师范生数据Action:upload <NONE");
+			return NONE;
+		}
+		if(content==null){
+			System.out.println(">> 导入免费师范生数据Action:upload > 文件读取失败！");
+			session.put(token.ActionInterceptor.ErrorTipsName,
+					"文件读取失败！");
+			System.out.println(">> 导入免费师范生数据Action:upload <NONE");
+			return NONE;
+		}
+		if(content.isEmpty()){
+			System.out.println(">> 导入免费师范生数据Action:upload > 文件为空！");
+			session.put(token.ActionInterceptor.ErrorTipsName,
+					"文件为空！");
+			System.out.println(">> 导入免费师范生数据Action:upload <NONE");
+			return NONE;
+		}
+		for(int i=0;i<content.size();i++){
+			try{
+				content.get(i).create();
+			}catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
+				e.printStackTrace();
+				errorIndex.add(i);
+			}
+		}
+		if(!errorIndex.isEmpty()){
+			StringBuilder error=new StringBuilder("上传失败序号：");
+			for(int i:errorIndex){
+				error.append(i);
+				error.append(';');
+			}
+			System.out.println(">> 导入免费师范生数据Action:upload > "+error);
+			session.put(token.ActionInterceptor.ErrorTipsName,
+					error);
+			System.out.println(">> 导入免费师范生数据Action:upload <SUCCESS");
+			return SUCCESS;
+		}
+		System.out.println(">> 导入免费师范生数据Action:upload > 上传成功！");
+		session.put(token.ActionInterceptor.ErrorTipsName,
+				"上传成功！");
+		System.out.println(">> 导入免费师范生数据Action:upload <SUCCESS");
+		return SUCCESS;
 	}
 
 	/*
@@ -92,7 +181,7 @@ public class drmfsfssjAction extends action.login.AnnualAction{
 		System.out.println(">> 导入免费师范生数据Action:download <downloadAttachment");
 		return "downloadAttachment";
 	}
-	public InputStream getDownloadAttachment(){
+	public InputStream getDownloadAttachment(){//实际上获取的输出流，使用getter获取的downloadAttachment
 		if(downloadOutputStream==null) return null;
 		System.out.println(">> 导入免费师范生数据Action:downloadAttachment > ");
 		byte[] data=((ByteArrayOutputStream)downloadOutputStream).toByteArray();

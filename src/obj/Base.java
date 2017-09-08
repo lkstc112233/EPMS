@@ -138,6 +138,27 @@ public abstract class Base {
 		}
 		throw new NoSuchFieldException(fieldName);
 	}
+/*	static public Field getFieldBySQLFieldValue(Class<? extends Base> clazz,String SQLFieldValue) throws NoSuchFieldException{
+		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()){
+			try{
+				for(Field f:c.getDeclaredFields()){
+					SQLField s=f.getAnnotation(SQLField.class);
+					if(s!=null && s.value().equals(SQLFieldValue))
+						return f;
+				}
+			}catch(SecurityException e){
+			}
+		}
+		throw new NoSuchFieldException(SQLFieldValue);
+	}	//*/
+	public final void setFieldValueBySetter(Field f,Object o) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
+		String tmp=f.getName();
+		tmp="set"+tmp.substring(0,1).toUpperCase()+tmp.substring(1);
+		Method m=this.getClass().getMethod(tmp,o.getClass());
+		m.setAccessible(true);
+		m.invoke(this,o);
+	}
+	
 	static public Field hasAvailable(Class<? extends Base> clazz){
 		try {
 			return getField(clazz,"available");

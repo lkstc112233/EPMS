@@ -37,7 +37,7 @@ public class Student extends AnnualTable{
 	@SQLField(isKey=false,needImport=false,value="优秀实习生材料",description="二进制储存")
 	private byte[] outstandingMaterial;
 	@SQLField(isKey=false,needImport=false,value="是否启用",description="默认为true")
-	private Boolean available;
+	private Boolean available=true;
 	
 	public String getId() {return id;}
 	public void setId(String id) {this.id = id;}
@@ -60,7 +60,7 @@ public class Student extends AnnualTable{
 	public String getNation() {return nation;}
 	public void setNation(String nation) {this.nation = nation;}
 	public Boolean getHxyx() {return hxyx;}
-	public void setHxyx(Boolean hxyx) {this.hxyx = hxyx;}
+	public void setHxyx(Boolean hxyx) {this.hxyx = hxyx;}	public void setHxyx(String hxyx){this.hxyx=Boolean.valueOf(hxyx);}
 	public String getTeacherId() {return teacherId;}
 	public void setTeacherId(String teacherId) {this.teacherId = teacherId;}
 	public String getOutstandingType() {return outstandingType;}
