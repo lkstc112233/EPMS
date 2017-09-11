@@ -65,10 +65,33 @@
 		</action>
 		
 		<!--动作：SQL Operation配置-->
-		<action name="jwc_sql_operation_select" class="action.jwc.sqloperation.SQLOperationSelectAction" method="execute">
+		<action name="jwc_sql_operation_select" class="action.jwc.sqlOperation.SQLOperationSelectAction" method="execute">
 			<result name="none"> jwc/sql_operation_select.jsp</result>
 			<result> jwc/sql_operation_select.jsp</result>
 		</action>
+		
+		<!--动作：Table Operation配置-->
+		<action name="*_TableImportOperation_*" class="action.{1}.sqlOperation.TableImportOperationAction" method="{2}">
+			<result name="none"> {1}/TableOperation.jsp</result>
+			<result> {1}/TableOperation.jsp</result>
+			<result name="downloadAttachment" type="stream">
+				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
+				<param name="inputName">downloadAttachment </param> <!-- 调用的getter名称，返回InputStream -->
+				<param name="contentDisposition">attachment;filename="${downloadFileName}" </param> <!-- 附件方式下载，文件名使用EL获取 --> 
+			</result>
+			<result name="downloadInline" type="stream">
+				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
+				<param name="inputName">downloadInline </param> <!-- 调用的getter名称，返回InputStream -->
+				<param name="contentDisposition">inline;filename="${downloadFileName}" </param> <!-- 内联方式下载，文件名使用EL获取 --> 
+			</result>
+			<allowed-methods> display,execute,download,upload</allowed-methods>
+		</action>
+		<action name="*_TableOperation_*" class="action.{1}.sqlOperation.TableOperationAction" method="{2}">
+			<result name="none"> {1}/TableOperation.jsp</result>
+			<result> {1}/TableOperation.jsp</result>
+			<allowed-methods> display,execute,update,delete </allowed-methods>
+		</action>
+		
 		
 		<!--动作：jwc的time设置 配置-->
 		<action name="jwc_timeManager" class="action.jwc.TimeManagerAction" method="execute">
@@ -77,9 +100,8 @@
 		</action>
 		
 		
-		<!--动作：jwc的function 配置-->
 		
-		<!--动作：jwc的time设置 配置-->
+		<!--动作：Role的设置 配置-->
 		<action name="*_function_*_*" class="action.{1}.{2}Action" method="{3}">
 			<result name="back" type="redirect"> menu.action</result>	<!--用于timeout和back -->
 			<result name="none"> {1}/{2}.jsp</result>	<!--用于display和timeout -->
@@ -94,28 +116,10 @@
 				<param name="inputName">downloadInline </param> <!-- 调用的getter名称，返回InputStream -->
 				<param name="contentDisposition">inline;filename="${downloadFileName}" </param> <!-- 内联方式下载，文件名使用EL获取 --> 
 			</result>
-			<allowed-methods> display,execute,download,upload </allowed-methods>
+			<allowed-methods> display,execute,download,upload,update,delete </allowed-methods>
 		</action>
 		
-		<!--动作：数据表文件操作 配置-->
-		<action name="*_TableImportOperation_*" class="action.{1}.TableImportOperationAction" method="{2}">
-			<result name="back" type="redirect"> menu.action</result>	<!--用于timeout和back -->
-			<result name="none"> {1}/TableOperation.jsp</result>	<!--用于display和timeout -->
-			<result> {1}/TableOperation.jsp</result>
-			<result name="downloadAttachment" type="stream">
-				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
-				<param name="inputName">downloadAttachment </param> <!-- 调用的getter名称，返回InputStream -->
-				<param name="contentDisposition">attachment;filename="${downloadFileName}" </param> <!-- 附件方式下载，文件名使用EL获取 --> 
-			</result>
-			<result name="downloadInline" type="stream">
-				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
-				<param name="inputName">downloadInline </param> <!-- 调用的getter名称，返回InputStream -->
-				<param name="contentDisposition">inline;filename="${downloadFileName}" </param> <!-- 内联方式下载，文件名使用EL获取 --> 
-			</result>
-			<allowed-methods> display,execute,download,upload </allowed-methods>
-		</action>
-		
-		
+
 		
 	</package>
 	

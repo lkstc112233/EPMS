@@ -15,14 +15,6 @@ public class ActionInterceptor extends AbstractInterceptor{
 	
 	public static final String ErrorTipsName="errorTips";
 	
-	static public final Map<String,String> map=new TreeMap<String,String>();
-	static{
-		map.put("教务处","jwc");
-		map.put("教务员","jwy");
-		map.put("教学院长","jxyz");
-		map.put("领导","ld");
-		map.put("教师","js");
-	}
 	
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
@@ -39,8 +31,8 @@ public class ActionInterceptor extends AbstractInterceptor{
 			return "error";
 		}
 		String actionType=actionName.split("_",2)[0];
-		if(map.containsValue(actionType)){
-			if(!actionType.equals(map.get(inner.getOffice()))){
+		if(Role.containActionPrefix(actionType)){
+			if(!actionType.equals(Role.getActionPrefix(Role.getRoleByOffice(inner)))){
 				session.put(ErrorTipsName,inner.getOffice()+"无权访问"+actionType+"，请重新登录！");
 				return "error";
 			}

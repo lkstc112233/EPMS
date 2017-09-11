@@ -6,7 +6,6 @@ import java.util.Map;
 import com.opensymphony.xwork2.ActionContext;
 
 import obj.staticObject.InnerPerson;
-import token.ActionInterceptor;
 
 public class Manager {
 	
@@ -31,13 +30,6 @@ public class Manager {
 	}
 	static public void removeUser(){
 		ActionContext.getContext().getSession().remove(userToken);
-	}
-	
-	static public String getActionPrefix(){
-		InnerPerson user=Manager.getUser();
-		if(user==null)
-			return null;
-		return ActionInterceptor.map.get(user.getOffice());
 	}
 	
 	static public final String SQLCheck_Success="OK";

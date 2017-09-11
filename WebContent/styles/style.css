@@ -89,7 +89,7 @@ body {
 }
 .listContent li {
     background-color: #FFFFFF;
-    color: #EDEDED;
+    color: #000;
     background-position: left 5px;
     text-align: left;
     padding-left: 16px;

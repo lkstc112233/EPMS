@@ -51,9 +51,6 @@
 			
 			<s:token />
 		</s:form>
-		<s:form action="login" method="post" cssClass="myform">
-			<s:submit value="返回" cssClass="button"/>
-		</s:form>
 </div>
 
 		<jsp:include page="common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>

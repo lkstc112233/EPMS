@@ -7,6 +7,7 @@ import com.opensymphony.xwork2.ActionContext;
 
 import action.Manager;
 import obj.annualTable.Time;
+import token.Role;
 
 public class MenuAction extends AnnualAction{
 	private static final long serialVersionUID = 5246911694929172909L;
@@ -24,7 +25,7 @@ public class MenuAction extends AnnualAction{
 
 	public MenuAction(){
 		super();
-		this.setActionPrefix(Manager.getActionPrefix());
+		this.setActionPrefix(Role.getActionPrefix(Role.getRoleByOffice(Manager.getUser())));
 	}
 	
 	
@@ -41,7 +42,7 @@ public class MenuAction extends AnnualAction{
 			session.put(token.ActionInterceptor.ErrorTipsName,
 					"服务器开了一些小差，尚未搜索到["+this.getYear()+"年]的时间表！");//设置提示信息
 		}
-		String res=Manager.getActionPrefix();
+		String res=Role.getActionPrefix(Role.getRoleByOffice(Manager.getUser()));
 		System.out.println(">> MenuAction:execute <"+res);
 		return res;
 	}

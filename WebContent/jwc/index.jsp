@@ -15,39 +15,36 @@
 		
 <div class="bag">
 	<table width="80%" border="0" cellspacing="0" cellpadding="0"><tbody>
-		<tr>
-			<td valign="top">
-				<div class="listHeader">
-					<div class="listHeaderLeft">人员管理功能</div>
-				</div>
-				<ul class="listContent">
-					<li>
-						<span class="time">[All time]</span>
-						<a href='<s:url action="jwc_sql_operation_select"/>'>
-							数据库管理
-						</a>
-					</li>
-				</ul>
-			</td>
-		</tr>
+		<tr><td valign="top">
+			<div class="listHeader">
+				<div class="listHeaderLeft">管理功能</div>
+			</div>
+			<ul class="listContent">
+				<li>
+					<span class="time">[All time]</span>
+					<a href='<s:url action="jwc_sql_operation_select"/>'>
+						数据库管理
+					</a>
+				</li>
+				<li>
+					<span class="time">[All time]</span>
+					<a href='<s:url action="jwc_TableOperation_execute"/>?tableName=Student'>
+						数据表管理
+					</a>
+				</li>
+			</ul>
+		</td></tr>
 		<tr>
 			<td valign="top">
 				<div class="listHeader">
 					<div class="listHeaderLeft">自然年管理功能</div>
 					<div class="right">
 						当前自然年: 
-			<!--		<select id="year" class="title_button" style="width:120px;margin-top:3px;">
-							<option value="1"><a href="http://www.baidu.com">百度</a></option>
-							<option value="2017">2017</option>
-							<option value="2018">2018</option>
-							<option value="2019">2019</option>
-							<option value="2020">2020</option>
-						</select>	-->
-						<s:select id="year" name="year" cssClass="title_button" style="width:120px;margin-top:2px;"
+						<s:select id="year" name="year" cssClass="title_button" style="width:120px;margin-bottom:2px;"
 						list="{'2016','2017','2018','2019','2020','2021'}" theme="simple"
 						onchange="window.location.href=window.location.href.substring(0,(
 						window.location.href.indexOf('?')<0?window.location.length:window.location.href.indexOf('?'))
-						)+'?year='+this.value"/>	<!-- -->
+						)+'?year='+this.value"/>
 					</div>
 				</div>
 			</td>
@@ -58,16 +55,6 @@
 					<span class="time">[All time]</span>
 					<a href='<s:url action="jwc_timeManager"/>' onclick="this.href=this.href+'?year='+document.getElementById('year').value">
 						时间节点管理
-					</a>
-				</li>
-			</ul>
-		</td></tr>
-		<tr><td valign="top">
-			<ul class="listContent">
-				<li>
-					<span class="time">[All time]</span>
-					<a href='<s:url action="jwc_function_TableOperation_execute"/>' onclick="this.href=this.href+'?tableName=Student&year='+document.getElementById('year').value">
-						数据表管理
 					</a>
 				</li>
 			</ul>

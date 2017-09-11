@@ -1,4 +1,4 @@
-package action.jwc.sqloperation;
+package action.jwc.sqlOperation;
 
 import java.sql.*;
 import java.util.*;

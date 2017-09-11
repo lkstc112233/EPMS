@@ -56,11 +56,16 @@ public final class Search<T extends Base>{
 		public String getTableName(){return this.clazz.getSimpleName();}
 	
 	public Search(Class<T> clazz) throws InstantiationException, IllegalAccessException{
+		this(clazz,null);
+	}
+	private Search(Class<T> clazz,Set<Field> refusedFields) throws InstantiationException, IllegalAccessException{
 		this.clazz=clazz;
 		List<Field> fields=Base.getFields(clazz);
-		this.restraint=new Triple[fields.size()];
-		for(int i=0;i<this.restraint.length;i++)
-			this.restraint[i]=new Triple(fields.get(i),null,null);
+		List<Triple> tmp=new ArrayList<Triple>();
+		for(Field f:fields)
+			if(refusedFields==null || !refusedFields.contains(f))
+				tmp.add(new Triple(f,null,null));
+		this.restraint=tmp.toArray(this.restraint=new Triple[tmp.size()]);
 	} 
 		
 	/**

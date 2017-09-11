@@ -25,13 +25,6 @@
 			<s:token />
 		</s:form>
 		<tr><td height="30px"></td></tr>
-		<s:form action="login" method="post" cssClass="myform">
-			<tr><td>
-				<s:submit value="返回" cssClass="button"/>
-			</td></tr>
-			<s:token />
-		</s:form>
-		<tr><td height="30px"></td></tr>
 	</tbody></table>
 	<table width="80%" class="mytable"><tbody>
 		<s:if test="list!=null && labels!=null">

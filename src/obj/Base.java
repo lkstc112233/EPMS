@@ -91,11 +91,11 @@ public abstract class Base {
 				if(load_select.length()>0)
 					load_select.append(',');
 				load_select.append(f.getName());
-				if(update_set.length()>0)
-					update_set.append(',');
-				update_set.append(f.getName());
-				update_set.append(" = ? ");
 			}
+			if(update_set.length()>0)
+				update_set.append(',');
+			update_set.append(f.getName());
+			update_set.append(" = ? ");
 			if(insert.length()>0)
 				insert.append(',');
 			insert.append(f.getName());
@@ -249,9 +249,9 @@ public abstract class Base {
 			try {
 				o=f.get(this);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();//o=null;
+				e.printStackTrace();
 			}
-			res.add(String.valueOf(o));
+			res.add(o==null?"":o.toString());
 		}
 		return res;
 	}
@@ -277,10 +277,8 @@ public abstract class Base {
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			f.setAccessible(true);
-			if(s.isKey()){
-				//if(f.getType().isAssignableFrom(Number.class))
-					this.sql_load.setObject(SQLParameterIndex++,f.get(this));
-			}
+			if(s.isKey())
+				this.sql_load.setObject(SQLParameterIndex++,f.get(this));
 		}
 		ResultSet rs=sql_load.executeQuery();
 		rs.last();
@@ -299,10 +297,10 @@ public abstract class Base {
 	public void update()throws SQLException, IllegalArgumentException, IllegalAccessException{
 		int SQLParameterIndex=1;
 		for(Field f:this.getFields()){
-			SQLField s=f.getAnnotation(SQLField.class);
 			f.setAccessible(true);
-			if(!s.isKey())
-				this.sql_update.setObject(SQLParameterIndex++,f.get(this));
+			Object o=f.get(this);
+			o=(o==null||o.toString().isEmpty())?null:o;
+			this.sql_update.setObject(SQLParameterIndex++,o);
 		}
 		for(Field f:this.getFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
@@ -353,7 +351,9 @@ public abstract class Base {
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			f.setAccessible(true);
-			sqlps.setObject(SQLParameterIndex++,f.get(this));
+			Object o=f.get(this);
+			o=(o==null||o.toString().isEmpty())?null:o;
+			sqlps.setObject(SQLParameterIndex++,o);
 		}
 		for(Field f:this.getFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
@@ -372,7 +372,7 @@ public abstract class Base {
 			SQLField s=f.getAnnotation(SQLField.class);
 			f.setAccessible(true);
 			if(s.isKey())
-				this.sql_load.setObject(SQLParameterIndex++,f.get(this));
+				this.sql_delete.setObject(SQLParameterIndex++,f.get(this));
 		}
 		int num=sql_delete.executeUpdate();
 		if(num!=1)
@@ -381,8 +381,10 @@ public abstract class Base {
 	public void create()throws SQLException, IllegalArgumentException, IllegalAccessException{
 		int SQLParameterIndex=1;
 		for(Field f:this.getFields()){
-			f.setAccessible(true);
-			this.sql_insert.setObject(SQLParameterIndex++,f.get(this));
+			f.setAccessible(true);;
+			Object o=f.get(this);
+			o=(o==null||o.toString().isEmpty())?null:o;
+			this.sql_insert.setObject(SQLParameterIndex++,o);
 		}
 		int num=this.sql_insert.executeUpdate();
 		if(num!=1)

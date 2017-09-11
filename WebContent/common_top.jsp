@@ -45,15 +45,21 @@ session.removeAttribute("errorTips");
 						</td>
 						-->
 					</s:if>
-					<td>
 					<s:if test="#session.inner==null">
-		            	<a href="login.jsp" class="title_label">登录</a>
+						<td colspan="2">
+		            		<a href="login.jsp" class="title_label">登录</a>
+		            	</td>
 					</s:if><s:else>
-						<s:form action="logout"  method="get">
-							<s:submit value="注销" cssClass="title_button" />
-						</s:form>
+						<td>
+							<s:form action="login" method="post" cssClass="myform">
+								<s:submit value="返回" cssClass="title_button"/>
+							</s:form>
+						</td><td>
+							<s:form action="logout"  method="get">
+								<s:submit value="注销" cssClass="title_button" />
+							</s:form>
+						</td>
 					</s:else>
-					</td>
 					
 					<td width="160px"></td>
 	           </tr>
