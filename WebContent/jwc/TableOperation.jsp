@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>EPMS-教务处-<s:property value="tableName" />数据处理（<s:property value="year" />年）</title>
+<title>EPMS-教务处-<s:property value="tableName" />数据处理</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
@@ -19,7 +19,7 @@
 		<tr><td>
 			<div class="listHeader">
 				<div class="listHeaderLeft">
-					<s:property value="tableName"/>（<s:property value="year"/>年）
+					<s:property value="tableName"/>
 				</div>
 				<div class="right">
 					修改操作表: 
@@ -35,8 +35,6 @@
 				</div>
 			</div>
 		</td></tr>
-	</tbody></table>
-	<table width="80%"><tbody>
 		<tr><td>
 			<ul class="listContent">
 				<li>
@@ -54,36 +52,46 @@
 				</li>
 			</ul>
 		</td></tr>
+		<tr><td height="30px"></td></tr>
 		<!-- ################# -->
 		<tr><td>
 			<table width="100%"><tbody><s:form action="jwc_TableOperation_execute" method="get" theme="simple">
 				<s:hidden name="choose" value="-1" theme="simple"/>
-				<s:iterator value="search.restraint" var="__restraintRow" status="__restraintStatus">
-					<tr>
-						<td><s:property value="%{#__restraintStatus.count}" /></td>
-						<td><s:property value="%{#__restraintRow.fieldName}" /></td>
-						<td><s:select list="search.restraintTypeList" headerKey="" headerValue="请选择约束方式"
-						listKey="key" listValue="value" value="%{#__restraintRow.type}"
-						name="search.restraint[%{#__restraintStatus.index}].type"/></td>
-						<td><s:textfield value="%{#__restraintRow.value}"
-						name="search.restraint[%{#__restraintStatus.index}].value"/></td>
-					</tr>
-				</s:iterator>
-				<tr><td></td><td colspan="2" style="width:20%;">
+				<tr><td style="border:2px solid #0071BC;">
+					<s:iterator value="search.restraint" var="__restraintRow" status="__restraintStatus">
+						<div style="line-height:32px;float:left">
+							<div style="float:left;width:120px;text-align:center">
+								<s:property value="%{#__restraintRow.fieldName}" />
+							</div>
+							<div style="float:left;text-align:center">
+								<s:select list="search.restraintTypeList" headerKey="" headerValue="-约束-"
+								listKey="key" listValue="value" value="%{#__restraintRow.type}"
+								name="search.restraint[%{#__restraintStatus.index}].type"/>
+								<s:textfield value="%{#__restraintRow.value}"
+								name="search.restraint[%{#__restraintStatus.index}].value"/>
+							</div>
+							<div style="float:left;width:18px;">
+								&nbsp;
+							</div>
+						</div>
+						<!--<s:property value="%{#__restraintStatus.count}" /> -->
+					</s:iterator>
+				</td></tr>
+				<tr><td colspan="1" style="width:20%;">
 					<s:submit value="查询" cssClass="button" />
 				</td></tr>
 			</s:form></tbody></table>
 		</td></tr>
 	</tbody></table>
 	<!-- ################# -->
-	<div style="overflow-x:scroll;width=80%;">
+	<div style="overflow-x:scroll;">
 	<table width="80%"><tbody>
 		<s:if test="search.resultSet!=null && !search.resultSet.isEmpty()">
 			<tr class="mytableTitle">
-				<td style="width:13px">序号</td>
-				<td style="width:13px" colspan="2">操作</td>
+				<td style="width:13px;text-align:center;">序号</td>
+				<td style="text-align:center;" colspan="2">操作</td>
 				<s:iterator value="search.restraint" var="__label">
-					<td style="word-wrap:break-word;word-break:break-all;">
+					<td style="word-wrap:break-word;word-break:break-all;text-align:center;">
 						<s:property value="%{#__label.fieldName}"/>
 					</td>
 				</s:iterator>
@@ -91,11 +99,11 @@
 			<s:iterator value="search.resultSet" var="__tableRow" status="__status">
 				<tr>
 					<!-- 序号 -->
-					<td class="listContent" style="width:13px">
+					<td class="listContent" style="width:13px;text-align:center;">
 						<s:property value="%{#__status.count}" />
 					</td>
 					<!-- 操作 -->
-					<td>
+					<td class="listContent" style="width:27px;text-align:center;padding:0px;">
 						<s:form action="jwc_TableOperation_delete" method="get" theme="simple">
 							<s:hidden name="choose" value="%{#__status.index}" theme="simple"/>
 							<s:submit value="X" cssClass="inlineButton"
@@ -104,7 +112,7 @@
 					</td>
 					<!-- 内容 -->
 					<s:if test="choose != #__status.index">
-						<td>
+						<td class="listContent" style="width:40px;text-align:center;padding:0px;">
 							<s:form action="jwc_TableOperation_display" method="get" theme="simple">
 								<s:hidden name="choose" value="%{#__status.index}" theme="simple"/>
 								<s:submit value="修改" cssClass="inlineButton" theme="simple"/>
@@ -118,19 +126,21 @@
 					</s:if>
 					<s:else>
 						<s:form action="jwc_TableOperation_update" method="get" theme="simple">
-							<td>
+							<td class="listContent" style="width:40px;text-align:center;">
 								<s:hidden name="choose" value="%{#__status.index}" theme="simple"/>
 								<s:submit value="保存" cssClass="inlineButton"
 								style="color:#ffffff;background-color:#0071bc" theme="simple"/>
 							</td>
 							<s:iterator value="#__tableRow.iteratorFieldsValue" var="__tableCol" status="__colStatus">
-								<td>
-									<s:if test="%{#__tableCol}==null">
+								<td style="text-align:center;">
+									<s:if test='#__tableCol==null || #__tableCol==""'>
 										<s:textfield value="" theme="simple"
+										style="padding:0px;width:95%;min-width:30px;"
 										name="search.resultSet[%{#__status.index}].%{#__tableRow.iteratorFieldsName[#__colStatus.index]}" />
 									</s:if>
 									<s:else>
 										<s:textfield value="%{#__tableCol}" theme="simple"
+										style="padding:0px;width:auto;"
 										name="search.resultSet[%{#__status.index}].%{#__tableRow.iteratorFieldsName[#__colStatus.index]}" />
 									</s:else>
 								</td>

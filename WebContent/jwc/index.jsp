@@ -28,7 +28,7 @@
 				</li>
 				<li>
 					<span class="time">[All time]</span>
-					<a href='<s:url action="jwc_TableOperation_execute"/>?tableName=Student'>
+					<a href='<s:url action="jwc_TableOperation_display"/>?tableName=Student'>
 						数据表管理
 					</a>
 				</li>

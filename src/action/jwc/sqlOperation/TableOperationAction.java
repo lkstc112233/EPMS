@@ -47,13 +47,43 @@ public class TableOperationAction extends ActionSupport{
 	public Base getUpdateBase(){return this.updateBase;}	public void setUpdateBase(Base b){this.updateBase=b;}
 	
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	/**
+	 * 设置好Search的值（从session中读取并和当前tableName比对）
+	 * 返回是否更新过（若和当前tableName不符，则会更新，更新后执行display而不是execute）
+	 * @return
+	 */
+	private boolean setupSearch(){
+		boolean res=false;
+		Map<String, Object> session=ActionContext.getContext().getSession();
+		Class<? extends Base> clazz=Base.getClassForName(this.getTableName());
+		if(clazz!=null &&
+				(this.search==null|| !this.search.clazz.equals(clazz))){
+			System.out.println(">> TableOperationAction:display > session.TableNameKey="+this.getTableName());
+			try {
+				this.search=new Search(clazz);
+				session.put(SessionSearchKey,this.search);
+				res=true;
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+				this.search=null;
+				return false;
+			}
+		}
+		if(this.search!=null)
+			this.setTableName(this.search.getTableName());
+		return res;
+	}
+	
+	
 	@Override
 	public String execute(){//执行查询
 		System.out.println(">> TableOperationAction:execute > tableName="+this.getTableName());
 		if(Base.getClassForName(tableName)==null)
 			return display();
-		System.out.println(">> TableOperationAction:execute > tableName="+this.getTableName());
 		Map<String, Object> session=ActionContext.getContext().getSession();
+		if(this.setupSearch())
+			return display();
 		if(this.search==null){
 			session.put(token.ActionInterceptor.ErrorTipsName,
 					"搜索引擎初始化失败！");
@@ -78,22 +108,9 @@ public class TableOperationAction extends ActionSupport{
 		return SUCCESS;
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public String display(){
 		System.out.println(">> TableOperationAction:display > tableName="+this.getTableName());
-		Map<String, Object> session=ActionContext.getContext().getSession();
-		Class<? extends Base> clazz=Base.getClassForName(this.getTableName());
-		if(clazz!=null &&
-				(this.search==null|| !this.search.clazz.equals(clazz))){
-			System.out.println(">> TableOperationAction:display > session.TableNameKey="+this.getTableName());
-			try {
-				this.search=new Search(Base.getClassForName(this.getTableName()));
-				session.put(SessionSearchKey,this.search);
-				this.setTableName(this.search.getTableName());
-			} catch (InstantiationException | IllegalAccessException e) {
-				e.printStackTrace();
-			}
-		}
+		this.setupSearch();
 		System.out.println(">> TableOperationAction:display <NONE");
 		return NONE;
 	}
