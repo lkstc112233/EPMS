@@ -9,7 +9,7 @@ public class Major extends StaticSource{
 	
 	@SQLField(isKey=true)
 	private String name;
-	@SQLField
+	@SQLField(source="School")
 	private String school;
 
 	public String getName(){return this.name;}

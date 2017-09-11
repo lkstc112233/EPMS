@@ -23,7 +23,8 @@
 		</s:else>
 	</div>
 	<s:form action="login">
-		<s:submit value="登录系统"></s:submit>
+		<s:submit value="登录系统" cssClass="button" />
+		<s:token />
 	</s:form>
 </div>
 	

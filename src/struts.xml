@@ -7,6 +7,16 @@
 	<constant name="struts.devMode" value="true"/>
 	<constant name="struts.i18n.encoding" value="UTF-8"/>
 	
+    <!-- 设置浏览器是否缓存静态内容,默认值为true(生产环境下使用),开发阶段最好关闭 -->
+    <constant name="struts.serve.static.browserCache" value="false" />
+    <!-- 当struts的配置文件修改后,系统是否自动重新加载该文件,默认值为false(生产环境下使用),开发阶段最好打开 -->
+    <constant name="struts.configuration.xml.reload" value="true" />
+    <!-- 开发模式下使用,这样可以打印出更详细的错误信息 -->
+    <constant name="struts.devMode" value="true" />
+    <!-- 指定允许上传的文件最大字节数。默认值是2097152(2M)，这里设置为10M。-->
+    <constant name="struts.multipart.maxSize" value="10485760"/>
+    
+	
 	<package name="Login" extends="struts-default">
 		<interceptors>
 			<interceptor name="interceptor_action" class="token.ActionInterceptor" />
@@ -22,17 +32,13 @@
 		<!--设置全局result页面-->
 		<global-results>
 			<result name="error"> error.jsp</result>
+			<result name="invalid.token"> invalidToken.jsp</result>
 		</global-results>
 		
 		<!--动作：login配置-->
 		<action name="login" class="action.login.LoginAction" method="execute">
 			<result name="login"> login.jsp</result>
-			<result> submit.jsp</result>
-			<result name="教务处">	jiaowuchu.jsp</result>
-			<result name="教务员">	jiaowuyuan.jsp</result>
-			<result name="教学院长">	jiaoxueyuanzhang.jsp</result>
-			<result name="领导">		lingdao.jsp</result>
-			<result name="教师">		jiaoshi.jsp</result>
+			<result type="redirect"> menu.action</result>
 			<!--该登录动作不受token过滤器影响-->
 			<interceptor-ref name="defaultStack" />
 		</action>
@@ -42,26 +48,79 @@
 			<interceptor-ref name="defaultStack" />
 		</action>
 		
+		<!--动作：menu配置-->
+		<action name="menu" class="action.login.MenuAction" method="execute">
+			<result name="jwc">		jwc/index.jsp</result>
+			<result name="jwy">		jwy/index.jsp</result>
+			<result name="jxyz">	jxyz/index.jsp</result>
+			<result name="ld">		ld/index.jsp</result>
+			<result name="js">		js/index.jsp</result>
+			<result> login.jsp</result>
+		</action>
+		
+		<!--动作：inner_info配置-->
 		<action name="inner_info" class="action.login.InnerInfoAction" method="execute">
 			<result> inner_info.jsp</result>
 			<result name="none"> inner_info.jsp</result>
 		</action>
 		
 		<!--动作：SQL Operation配置-->
-		<action name="sql_operation_select" class="action.sqloperation.SQLOperationSelectAction" method="execute">
-			<result name="none"> sql_operation_select.jsp</result>
-			<result> sql_operation_select.jsp</result>
+		<action name="jwc_sql_operation_select" class="action.jwc.sqlOperation.SQLOperationSelectAction" method="execute">
+			<result name="none"> jwc/sql_operation_select.jsp</result>
+			<result> jwc/sql_operation_select.jsp</result>
 		</action>
 		
-		<action name="sql_operation" class="action.sqloperation.SQLOperationAction" method="execute">
-			<result> sql_operation.jsp</result>
-			<result name="none" type="chain"> sql_operation_select</result>
+		<!--动作：Table Operation配置-->
+		<action name="*_TableImportOperation_*" class="action.{1}.sqlOperation.TableImportOperationAction" method="{2}">
+			<result name="none"> {1}/TableOperation.jsp</result>
+			<result> {1}/TableOperation.jsp</result>
+			<result name="downloadAttachment" type="stream">
+				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
+				<param name="inputName">downloadAttachment </param> <!-- 调用的getter名称，返回InputStream -->
+				<param name="contentDisposition">attachment;filename="${downloadFileName}" </param> <!-- 附件方式下载，文件名使用EL获取 --> 
+			</result>
+			<result name="downloadInline" type="stream">
+				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
+				<param name="inputName">downloadInline </param> <!-- 调用的getter名称，返回InputStream -->
+				<param name="contentDisposition">inline;filename="${downloadFileName}" </param> <!-- 内联方式下载，文件名使用EL获取 --> 
+			</result>
+			<allowed-methods> display,execute,download,upload</allowed-methods>
+		</action>
+		<action name="*_TableOperation_*" class="action.{1}.sqlOperation.TableOperationAction" method="{2}">
+			<result name="none"> {1}/TableOperation.jsp</result>
+			<result> {1}/TableOperation.jsp</result>
+			<allowed-methods> display,execute,update,delete </allowed-methods>
 		</action>
 		
-		<!--动作：submit配置-->
-		<action name="submit" class="submit.SubmitAction" method="execute">
-			<result> submit_success.jsp</result>
+		
+		<!--动作：jwc的time设置 配置-->
+		<action name="jwc_timeManager" class="action.jwc.TimeManagerAction" method="execute">
+			<result name="none"> jwc/timeManager.jsp</result>	<!--用于display -->
+			<result> jwc/timeManager.jsp</result>
 		</action>
+		
+		
+		
+		<!--动作：Role的设置 配置-->
+		<action name="*_function_*_*" class="action.{1}.{2}Action" method="{3}">
+			<result name="back" type="redirect"> menu.action</result>	<!--用于timeout和back -->
+			<result name="none"> {1}/{2}.jsp</result>	<!--用于display和timeout -->
+			<result> {1}/{2}.jsp</result>
+			<result name="downloadAttachment" type="stream">
+				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
+				<param name="inputName">downloadAttachment </param> <!-- 调用的getter名称，返回InputStream -->
+				<param name="contentDisposition">attachment;filename="${downloadFileName}" </param> <!-- 附件方式下载，文件名使用EL获取 --> 
+			</result>
+			<result name="downloadInline" type="stream">
+				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
+				<param name="inputName">downloadInline </param> <!-- 调用的getter名称，返回InputStream -->
+				<param name="contentDisposition">inline;filename="${downloadFileName}" </param> <!-- 内联方式下载，文件名使用EL获取 --> 
+			</result>
+			<allowed-methods> display,execute,download,upload,update,delete </allowed-methods>
+		</action>
+		
+
+		
 	</package>
 	
 	

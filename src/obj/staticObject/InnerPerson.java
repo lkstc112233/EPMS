@@ -15,9 +15,9 @@ public class InnerPerson extends Base{
 	private String password;	public String getPassword(){return password;}	public void setPassword(String a){this.password=a;}
 	@SQLField
 	private String name;		public String getName(){return name;}			public void setName(String a){this.name=a;}
-	@SQLField
+	@SQLField(source="InnerOffice")
 	private String office;		public String getOffice(){return office;}		public void setOffice(String a){this.office=a;}
-	@SQLField
+	@SQLField(source="School")
 	private String school;		public String getSchool(){return school;}		public void setSchool(String a){this.school=a;}
 	@SQLField
 	private boolean retire;		public boolean getRetire(){return retire;}		public void setRetire(boolean a){this.retire=a;}

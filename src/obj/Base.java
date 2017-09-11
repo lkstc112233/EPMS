@@ -6,9 +6,9 @@ import java.util.*;
 
 import persistence.DB;
 
+@SuppressWarnings("unchecked")
 public abstract class Base {
-	static public final String packageNames[]={"staticSource","staticObject"};
-	@SuppressWarnings("unchecked")
+	static public final String packageNames[]={"staticSource","staticObject","annualTable"};
 	static public Class<? extends Base> getClassForName(String name){
 		if(name==null||name.length()<=0)
 			return null;
@@ -61,6 +61,7 @@ public abstract class Base {
 		this.sql_insert=_sql_insert;
 	}
 	
+	//初始化相关SQL语句，包括增删改查，以及SQL表名
 	static private void initialize(Class<? extends Base> clazz) throws SQLException{
 		if(SQL_table.containsKey(clazz) &&
 				SQL_load.containsKey(clazz) &&
@@ -68,21 +69,19 @@ public abstract class Base {
 				SQL_delete.containsKey(clazz) &&
 				SQL_insert.containsKey(clazz))
 			return;
-		String sql_table=clazz.getAnnotation(SQLTable.class).value();
+		String sql_table=Base.getSQLTableName(clazz);
 		PreparedStatement sql_load;
 		PreparedStatement sql_update;
 		PreparedStatement sql_delete;
 		PreparedStatement sql_insert;
-		Field[] fs=clazz.getDeclaredFields();
 		StringBuilder load_select=new StringBuilder();
 		StringBuilder update_set=new StringBuilder();
 		StringBuilder sql_where=new StringBuilder();
 		StringBuilder insert=new StringBuilder();
 		StringBuilder insert_values=new StringBuilder();
-		for(Field f:fs){
+		for(Field f:Base.getFields(clazz)){
 			f.setAccessible(true);
 			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null) continue;
 			if(s.isKey()){
 				if(sql_where.length()>0)
 					sql_where.append(" AND ");
@@ -92,11 +91,11 @@ public abstract class Base {
 				if(load_select.length()>0)
 					load_select.append(',');
 				load_select.append(f.getName());
-				if(update_set.length()>0)
-					update_set.append(',');
-				update_set.append(f.getName());
-				update_set.append(" = ? ");
 			}
+			if(update_set.length()>0)
+				update_set.append(',');
+			update_set.append(f.getName());
+			update_set.append(" = ? ");
 			if(insert.length()>0)
 				insert.append(',');
 			insert.append(f.getName());
@@ -128,31 +127,69 @@ public abstract class Base {
 	}
 	
 
-	static public Field hasAvailable(Class<? extends Base> clazz){
-		try {
-			return clazz.getDeclaredField("available");
-		} catch (NoSuchFieldException | SecurityException e) {
-			return null;
-		}
+	//=============================================================
+	//SQL表名
+	static public String getSQLTableName(Class<? extends Base> clazz){
+		return clazz.getAnnotation(SQLTable.class).value();
 	}
-	public Field hasAvailable(){
-		return Base.hasAvailable(this.getClass());
+	public final String getSQLTableName(){
+		return Base.getSQLTableName(this.getClass());
+	}
+
+	//=============================================================
+	//关于Field
+	static public List<Field> getFields(Class<? extends Base> clazz){
+		List<Field> res=new ArrayList<Field>();
+		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
+			SQLField s=f.getAnnotation(SQLField.class);
+			if(s==null) continue;
+			res.add(f);
+		}
+		return res;
+	}
+	public List<Field> getFields(){
+		return Base.getFields(this.getClass());
+	}
+	static public Field getField(Class<? extends Base> clazz,String fieldName) throws NoSuchFieldException{
+		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()){
+			try{
+				return c.getDeclaredField(fieldName);
+			}catch(NoSuchFieldException|SecurityException e){
+			}
+		}
+		throw new NoSuchFieldException(fieldName);
+	}
+	public final Field getField(String fieldName) throws NoSuchFieldException{
+		return Base.getField(this.getClass(),fieldName);
+	}
+	public final void setFieldValueBySetter(Field f,Object o) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
+		String tmp=f.getName();
+		tmp="set"+tmp.substring(0,1).toUpperCase()+tmp.substring(1);
+		Method m=this.getClass().getMethod(tmp,o.getClass());
+		m.setAccessible(true);
+		m.invoke(this,o);
+	}
+	
+	static public String getSQLFieldName(Field f){
+		if(f==null) return null;
+		SQLField s=f.getAnnotation(SQLField.class);
+		if(s==null) return null;
+		if(s.value().isEmpty()) return f.getName();
+		return s.value();
 	}
 	
 	@Override
 	public String toString(){
-		Class<?> clazz=this.getClass();
-		Field[] fs=clazz.getDeclaredFields();
-		String sql_table=clazz.getAnnotation(SQLTable.class).value();
+		Class<? extends Base> clazz=this.getClass();
+		String sql_table=this.sql_table;
 		StringBuilder sb=new StringBuilder();
 		sb.append('[');
 		sb.append(clazz.getSimpleName());
 		sb.append('(');
 		sb.append(sql_table);
 		sb.append(')');
-		for(Field f:fs){
+		for(Field f:Base.getFields(clazz)){
 			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null) continue;
 			f.setAccessible(true);
 			sb.append(',');
 			if(s.isKey()) sb.append('*');
@@ -169,13 +206,59 @@ public abstract class Base {
 		sb.append(']');
 		return sb.toString();
 	}
+	@Override
+	public boolean equals(Object o){
+		if(o==null) return false;
+		if(o instanceof Base){
+			Base b=(Base)o;
+			if(!this.getClass().equals(b.getClass()))
+				return false;
+			for(Field f:Base.getFields(b.getClass())){
+				f.setAccessible(true);
+				Object ff=null,bb=null;;
+				try{
+					ff=f.get(this);
+					bb=f.get(b);
+				}catch (IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+					return false;
+				}
+				if((ff==null&&bb!=null)
+						||(ff!=null&&!ff.equals(bb)))
+				return false;
+			}
+		}
+		return false;
+	}
+	
+	static private List<String> getIteratorFieldsName(Class<? extends Base> clazz){
+		List<String> res=new ArrayList<String>();
+		for(Field f:Base.getFields(clazz))
+			res.add(f.getName());
+		return res;
+	}
+	public final List<String> getIteratorFieldsName(){
+		return Base.getIteratorFieldsName(this.getClass());
+	}
+	public final List<String> getIteratorFieldsValue(){
+		List<String> res=new ArrayList<String>();
+		Class<? extends Base> clazz=this.getClass();
+		for(Field f:Base.getFields(clazz)){
+			f.setAccessible(true);
+			Object o=null;
+			try {
+				o=f.get(this);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			res.add(o==null?"":o.toString());
+		}
+		return res;
+	}
 	
 	public boolean checkKeyNull() throws IllegalArgumentException, IllegalAccessException{
-		Class<?> clazz=this.getClass();
-		Field[] fs=clazz.getDeclaredFields();
-		for(Field f:fs){
+		for(Field f:this.getFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null) continue;
 			f.setAccessible(true);
 			if(s.isKey()){
 				if(f.get(this)==null)
@@ -184,19 +267,18 @@ public abstract class Base {
 		}
 		return false;
 	}
-
+	
+	//=============================================================
+	//增删改查
+	//=============================================================
 	public void load() throws SQLException, IllegalArgumentException, IllegalAccessException{
-		Class<?> clazz=this.getClass();
-		Field[] fs=clazz.getDeclaredFields();
 		int SQLParameterIndex=1;
-		for(Field f:fs){
+		for(Field f:this.getFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			f.setAccessible(true);
-			if(s.isKey()){
-				//if(f.getType().isAssignableFrom(Number.class))
-					this.sql_load.setObject(SQLParameterIndex++,f.get(this));
-			}
+			if(s.isKey())
+				this.sql_load.setObject(SQLParameterIndex++,f.get(this));
 		}
 		ResultSet rs=sql_load.executeQuery();
 		rs.last();
@@ -204,7 +286,7 @@ public abstract class Base {
 		if(num!=1)
 			System.err.println("查询到"+num+"重值！("+this.sql_load.toString()+")");
 		rs.first();
-		for(Field f:clazz.getDeclaredFields()){
+		for(Field f:this.getFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			f.setAccessible(true);
@@ -213,19 +295,15 @@ public abstract class Base {
 		}
 	}
 	public void update()throws SQLException, IllegalArgumentException, IllegalAccessException{
-		Class<?> clazz=this.getClass();
 		int SQLParameterIndex=1;
-		Field[] fs=clazz.getDeclaredFields();
-		for(Field f:fs){
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null) continue;
+		for(Field f:this.getFields()){
 			f.setAccessible(true);
-			if(!s.isKey())
-				this.sql_update.setObject(SQLParameterIndex++,f.get(this));
+			Object o=f.get(this);
+			o=(o==null||o.toString().isEmpty())?null:o;
+			this.sql_update.setObject(SQLParameterIndex++,o);
 		}
-		for(Field f:fs){
+		for(Field f:this.getFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null) continue;
 			f.setAccessible(true);
 			if(s.isKey())
 				this.sql_update.setObject(SQLParameterIndex++,f.get(this));
@@ -235,22 +313,23 @@ public abstract class Base {
 			System.err.println("更新了"+num+"重值！("+this.sql_update.toString()+")");
 	}
 	public void update(Field[] updateFields)throws SQLException, IllegalArgumentException, IllegalAccessException{
-		Class<?> clazz=this.getClass();
-		Field[] fs=clazz.getDeclaredFields();
+		Class<? extends Base> clazz=this.getClass();
 		StringBuilder sql_set=new StringBuilder();
 		StringBuilder sql_where=new StringBuilder();
 		for(Field f:updateFields){
-			if(f==null || f.getDeclaringClass()!=clazz)
+			try {
+				if(f==null || this.getField(f.getName())==null)
+					continue;
+			} catch (NoSuchFieldException e) {
 				continue;
+			}
 			f.setAccessible(true);
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null) continue;
 			if(sql_set.length()>0)
 				sql_set.append(',');
 			sql_set.append(f.getName());
 			sql_set.append(" = ?");
 		}
-		for(Field f:fs){
+		for(Field f:this.getFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			f.setAccessible(true);
@@ -272,11 +351,12 @@ public abstract class Base {
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			f.setAccessible(true);
-			sqlps.setObject(SQLParameterIndex++,f.get(this));
+			Object o=f.get(this);
+			o=(o==null||o.toString().isEmpty())?null:o;
+			sqlps.setObject(SQLParameterIndex++,o);
 		}
-		for(Field f:fs){
+		for(Field f:this.getFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null) continue;
 			f.setAccessible(true);
 			if(s.isKey())
 				sqlps.setObject(SQLParameterIndex++,f.get(this));
@@ -286,42 +366,29 @@ public abstract class Base {
 			System.err.println("更新了"+num+"重值！("+sqlps.toString()+")");
 	}
 	public void delete() throws IllegalArgumentException, IllegalAccessException, SQLException{
-		Field available=this.hasAvailable();
-		if(available==null){
-			//delete it
-			Class<? extends Base> clazz=this.getClass();
-			Field[] fs=clazz.getDeclaredFields();
-			int SQLParameterIndex=1;
-			for(Field f:fs){
-				SQLField s=f.getAnnotation(SQLField.class);
-				if(s==null) continue;
-				f.setAccessible(true);
-				if(s.isKey()){
-					this.sql_load.setObject(SQLParameterIndex++,f.get(this));
-				}
-			}
-			int num=sql_delete.executeUpdate();
-			if(num!=1)
-				System.err.println("删除了"+num+"重值！("+sql_delete.toString()+")");
-		}else{
-			//UPDATE available = false
-			available.setAccessible(true);
-			available.set(this,false);
-			this.update(new Field[]{available});
+		//delete it
+		int SQLParameterIndex=1;
+		for(Field f:this.getFields()){
+			SQLField s=f.getAnnotation(SQLField.class);
+			f.setAccessible(true);
+			if(s.isKey())
+				this.sql_delete.setObject(SQLParameterIndex++,f.get(this));
 		}
+		int num=sql_delete.executeUpdate();
+		if(num!=1)
+			System.err.println("删除了"+num+"重值！("+sql_delete.toString()+")");
 	}
 	public void create()throws SQLException, IllegalArgumentException, IllegalAccessException{
-		Class<?> clazz=this.getClass();
-		Field[] fs=clazz.getDeclaredFields();
 		int SQLParameterIndex=1;
-		for(Field f:fs){
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null) continue;
-			f.setAccessible(true);
-			this.sql_insert.setObject(SQLParameterIndex,f.get(this));
+		for(Field f:this.getFields()){
+			f.setAccessible(true);;
+			Object o=f.get(this);
+			o=(o==null||o.toString().isEmpty())?null:o;
+			this.sql_insert.setObject(SQLParameterIndex++,o);
 		}
 		int num=this.sql_insert.executeUpdate();
 		if(num!=1)
 			System.err.println("更新了"+num+"重值！("+this.sql_insert.toString()+")");
 	}
+
 }

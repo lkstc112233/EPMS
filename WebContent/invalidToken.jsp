@@ -5,18 +5,22 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>EPMS-错误页面</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
 <body>
 <center>
 	<jsp:include page="common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
-
-	<h2>欢迎<s:property value="#session.id"></s:property>来到免费师范生教育实习管理系统!</h2>
-	<s:form name="submit">
-		<s:property value="command"></s:property>
+	
+<div class="bag">
+	<div>
+		请不要重新提交表单！
+	</div>
+	<s:form action="login">
+		<s:submit value="登录系统" cssClass="button" />
 	</s:form>
+</div>
 	
 	<jsp:include page="common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 </center>

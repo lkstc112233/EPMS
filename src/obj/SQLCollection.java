@@ -6,49 +6,37 @@ import java.util.*;
 
 import persistence.DB;
 
-public class SQLCollection<T extends Base> {
+@SuppressWarnings("unchecked")
+public class SQLCollection {
+	static public final SQLIO io=new POI();
 	
-	public final Class<T> clazz;
-	public final String tableName;
 	
-	public SQLCollection(Class<T> clazz){
-		this.clazz=clazz;
-		tableName=clazz.getAnnotation(SQLTable.class).value();
-	}
-	
-	public T cast(Object obj) throws ClassCastException{
+	static public <T extends Base> T cast(Class<T> clazz,Object obj) throws ClassCastException{
 		if(obj==null) return null;
 		return clazz.cast(obj);
 	}
 	
-	public List<T> selectAllWithAvailableCheck(Field[] checkFields,Object[] checkObjects) throws SQLException{
-		Field[] a=new Field[checkFields.length+1];
-		a[0]=Base.hasAvailable(clazz);
-		if(a[0]==null)
-			throw new SQLException("the Table\""+this.tableName+"\" do NOT have \"available\".");
-		Object[] b=new Object[checkObjects.length+1];
-		for(int i=1;i<a.length;i++)
-			a[i]=checkFields[i-1];
-		for(int i=0;i<b.length;i++){
-			if(i==0) b[i]=Boolean.TRUE;
-			else b[i]=checkObjects[i-1];
-		}
-		return this.selectAll(a,b);
+	static public <T extends Base>
+	List<T> selectAll(Class<T> clazz,Field[] checkFields,Object[] checkObjects) throws SQLException{
+		return selectAll(clazz,checkFields,checkObjects,-1);
 	}
-	public List<T> selectAll(Field[] checkFields,Object[] checkObjects) throws SQLException{
-		return selectAll(checkFields,checkObjects,-1);
-	}
-	public List<T> selectAll(Field[] checkFields,Object[] checkObjects,int limitNumber) throws SQLException{
+	static public <T extends Base>
+	List<T> selectAll(Class<T> clazz,Field[] checkFields,Object[] checkObjects,int limitNumber) throws SQLException{
 		List<T> res=new ArrayList<T>();
 		StringBuilder sql_select=new StringBuilder();
-		Field[] fs=clazz.getDeclaredFields();
-		for(Field f:fs){
+		StringBuilder sql_sorted=new StringBuilder();
+		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			f.setAccessible(true);
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			if(sql_select.length()>0)
 				sql_select.append(',');
 			sql_select.append(f.getName());
+			if(s.needSorted()){
+				if(sql_sorted.length()>0)
+					sql_sorted.append(',');
+				sql_sorted.append(f.getName());
+			}
 		}
 		StringBuilder sql_where=new StringBuilder();
 		int cnt=0;
@@ -69,9 +57,11 @@ public class SQLCollection<T extends Base> {
 		}
 		PreparedStatement sql_ps=DB.con().prepareStatement(
 				"SELECT "+sql_select.toString()
-				+" FROM "+tableName
+				+" FROM "+Base.getSQLTableName(clazz)
 				+(sql_where.length()<=0?"":(" WHERE "+sql_where.toString()))
-				+(limitNumber<0?"":("LIMIT "+limitNumber)));
+				+(limitNumber<0?"":("LIMIT "+limitNumber))
+				+(sql_sorted.length()<=0?"":(" ORDER BY "+sql_sorted.toString()))
+				);
 		if(checkFields!=null && checkFields.length>0){
 			int SQLParameterIndex=1;
 			for(Field f:checkFields){
@@ -94,14 +84,18 @@ public class SQLCollection<T extends Base> {
 				continue;
 			}
 			boolean ok=true;
-			for(Field f:fs){
+			for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 				f.setAccessible(true);
 				SQLField s=f.getAnnotation(SQLField.class);
 				if(s==null) continue;
 				Object o=rs.getObject(f.getName());
 				try {
-					f.set(t,o);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
+					try{
+						f.set(t,f.getType().cast(o));
+					}catch(ClassCastException e){
+						f.set(t,o);
+					}
+				} catch (ClassCastException |IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
 					ok=false;
 					break;
@@ -114,17 +108,19 @@ public class SQLCollection<T extends Base> {
 		return res;
 	}
 	
-	
+	/*
+	 * 关于壳的操作，壳是Base包装，内容是String[]
+	 *
 	/**
 	 * 脱壳操作，对单一String类型的key值(isKey==true)
-	 */
-	static public <T extends Base> List<String> getOutOne(List<T> list){
+	 *
+	static public <T extends Base>
+	List<String> getOutOne(List<T> list){
 		List<String> res=new ArrayList<String>();
 		if(list==null || list.isEmpty())
 			return res;
-		Field[] fs=list.get(0).getClass().getDeclaredFields();
 		Field out=null;
-		for(Field f:fs){
+		for(Class<? extends Base> c=list.get(0).getClass();c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			f.setAccessible(true);
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
@@ -154,14 +150,14 @@ public class SQLCollection<T extends Base> {
 	}
 	/**
 	 * 脱壳操作，对所有SQLFeild值
-	 */
-	static public <T extends Base> List<String[]> getOutAll(List<T> list,String[] labels){
+	 *
+	static public <T extends Base>
+	List<String[]> getOutAll(List<T> list,String[] labels){
 		List<String[]> res=new ArrayList<String[]>();
 		if(list==null || list.isEmpty())
 			return res;
-		Field[] fs=list.get(0).getClass().getDeclaredFields();
 		List<Field> flist=new ArrayList<Field>();
-		for(Field f:fs){
+		for(Class<? extends Base> c=list.get(0).getClass();c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			f.setAccessible(true);
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
@@ -188,14 +184,14 @@ public class SQLCollection<T extends Base> {
 
 	/**
 	 * 脱壳操作，对一个对象所有SQLFeild值
-	 */
-	static public <T extends Base> String[] getOutAll(T t,String[] labels){
+	 *
+	static public <T extends Base>
+	String[] getOutAll(T t,String[] labels){
 		String[] res=null;
 		if(t==null)
 			return res;
-		Field[] fs=t.getClass().getDeclaredFields();
 		List<Field> flist=new ArrayList<Field>();
-		for(Field f:fs){
+		for(Class<? extends Base> c=t.getClass();c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
 			f.setAccessible(true);
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
@@ -218,11 +214,12 @@ public class SQLCollection<T extends Base> {
 	}
 	/**
 	 * 加壳操作，把一个String[]和clazz对应起来
-	 */
-	static public <T extends Base> T getIn(Class<T> clazz,String[] obj,String[] labels) throws NoSuchFieldException, SecurityException, InstantiationException, IllegalAccessException{
+	 *
+	static public <T extends Base>
+	T getIn(Class<T> clazz,String[] obj,String[] labels) throws NoSuchFieldException, SecurityException, InstantiationException, IllegalAccessException{
 		T t=clazz.newInstance();
 		for(int i=0;i<labels.length;i++){
-			Field f=clazz.getDeclaredField(labels[i]);
+			Field f=Base.getField(clazz,labels[i]);
 			f.setAccessible(true);
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
@@ -234,6 +231,33 @@ public class SQLCollection<T extends Base> {
 		}
 		return t;
 	}
+	/**
+	 * 加壳操作，把多个String[]和clazz对应起来
+	 *
+	static public <T extends Base>
+	List<T> getIn(Class<T> clazz,List<String[]> objs,String[] labels) throws NoSuchFieldException, SecurityException, InstantiationException, IllegalAccessException{
+		List<T> res=new ArrayList<T>();
+		Field[] fs=new Field[labels.length];
+		for(int i=0;i<labels.length;i++){
+			fs[i]=Base.getField(clazz,labels[i]);
+			fs[i].setAccessible(true);
+		}
+		for(String[] obj:objs){
+			T t=clazz.newInstance();
+			for(int i=0;i<fs.length;i++){
+				SQLField s=fs[i].getAnnotation(SQLField.class);
+				if(s==null) continue;
+				try {
+					fs[i].set(t,obj[i]);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+			res.add(t);
+		}
+		return res;
+	}
+	//*/
 	
 	
 }

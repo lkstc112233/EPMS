@@ -14,7 +14,7 @@
 		<jsp:include page="common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 
 <div class="bag">
-		<s:form action="inner_info" method="post">
+		<s:form action="inner_info" method="post" cssClass="myform">
 			<s:textfield label="id" name="inner.id" value="%{#session.inner.id}" />
 
 			<s:textfield label="name" name="inner.name"
@@ -27,10 +27,12 @@
 				name="newpassword" value="" />
 
 			<s:select label="office" disabled="true" 
-				list="list_office" value="%{#session.inner.office}" /> <!-- name="inner.office"-->
+				list="list_office" value="%{#session.inner.office}" listKey="name" listValue="name"
+				/> <!-- name="inner.office"-->
 
 			<s:select label="school" disabled="true"
-				list="list_school" value="%{#session.inner.school}" /> <!-- name="inner.school"-->
+				list="list_school" value="%{#session.inner.school}" listKey="name" listValue="name"
+				/> <!-- name="inner.school"-->
 
 			<s:select label="retire" name="select_retire" list="{'true','false'}"
 				headerValue="%{select_retire}" />
@@ -45,10 +47,9 @@
 				value="%{#session.inner.email}" />
 		
 			<s:hidden name="executive" value="true" />
-			<s:submit value="提交修改" />
-		</s:form>
-		<s:form action="login" method="post">
-			<s:submit value="返回" />
+			<s:submit value="提交修改" cssClass="button"/>
+			
+			<s:token />
 		</s:form>
 </div>
 

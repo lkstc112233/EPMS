@@ -28,11 +28,11 @@
    		</init-param>
    		<init-param> <!--过滤重定向的地址-->
     		<param-name>redirectURL</param-name>
-    		<param-value>/index.jsp</param-value>
+    		<param-value>/login.jsp</param-value>
    		</init-param>
    		<init-param> <!--不需要过滤的页面-->
     		<param-name>noCheckURLList</param-name>
-    		<param-value>login.action,overtime.jsp,index.jsp,error.jsp</param-value>
+    		<param-value>login.jsp,login.action,overtime.jsp,index.jsp,error.jsp</param-value>
    		</init-param>
 	</filter>
 	<filter-mapping>

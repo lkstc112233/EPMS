@@ -14,10 +14,10 @@
 <center>
 	<jsp:include page="common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 <div class="bag">
-	<s:form action="login"  method="post">
+	<s:form action="login"  method="post" cssClass="myform">
 		<s:textfield name="inner.id" label="学工号"></s:textfield>
 		<s:password name="inner.password" label="密码"></s:password>
-		<s:submit value="登录"></s:submit>
+		<s:submit value="登录" cssClass="button" />
 	</s:form>
 </div>
 	
