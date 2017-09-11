@@ -17,21 +17,6 @@ public class SQLCollection {
 	}
 	
 	static public <T extends Base>
-	List<T> selectAllWithAvailableCheck(Class<T> clazz,Field[] checkFields,Object[] checkObjects) throws SQLException{
-		Field[] a=new Field[checkFields.length+1];
-		a[0]=Base.hasAvailable(clazz);
-		if(a[0]==null)
-			throw new SQLException("the Table\""+Base.getSQLTableName(clazz)+"\" do NOT have \"available\".");
-		Object[] b=new Object[checkObjects.length+1];
-		for(int i=1;i<a.length;i++)
-			a[i]=checkFields[i-1];
-		for(int i=0;i<b.length;i++){
-			if(i==0) b[i]=Boolean.TRUE;
-			else b[i]=checkObjects[i-1];
-		}
-		return SQLCollection.selectAll(clazz,a,b);
-	}
-	static public <T extends Base>
 	List<T> selectAll(Class<T> clazz,Field[] checkFields,Object[] checkObjects) throws SQLException{
 		return selectAll(clazz,checkFields,checkObjects,-1);
 	}
@@ -125,10 +110,10 @@ public class SQLCollection {
 	
 	/*
 	 * 关于壳的操作，壳是Base包装，内容是String[]
-	 */
+	 *
 	/**
 	 * 脱壳操作，对单一String类型的key值(isKey==true)
-	 */
+	 *
 	static public <T extends Base>
 	List<String> getOutOne(List<T> list){
 		List<String> res=new ArrayList<String>();
@@ -165,7 +150,7 @@ public class SQLCollection {
 	}
 	/**
 	 * 脱壳操作，对所有SQLFeild值
-	 */
+	 *
 	static public <T extends Base>
 	List<String[]> getOutAll(List<T> list,String[] labels){
 		List<String[]> res=new ArrayList<String[]>();
@@ -199,7 +184,7 @@ public class SQLCollection {
 
 	/**
 	 * 脱壳操作，对一个对象所有SQLFeild值
-	 */
+	 *
 	static public <T extends Base>
 	String[] getOutAll(T t,String[] labels){
 		String[] res=null;
@@ -229,7 +214,7 @@ public class SQLCollection {
 	}
 	/**
 	 * 加壳操作，把一个String[]和clazz对应起来
-	 */
+	 *
 	static public <T extends Base>
 	T getIn(Class<T> clazz,String[] obj,String[] labels) throws NoSuchFieldException, SecurityException, InstantiationException, IllegalAccessException{
 		T t=clazz.newInstance();
@@ -248,7 +233,7 @@ public class SQLCollection {
 	}
 	/**
 	 * 加壳操作，把多个String[]和clazz对应起来
-	 */
+	 *
 	static public <T extends Base>
 	List<T> getIn(Class<T> clazz,List<String[]> objs,String[] labels) throws NoSuchFieldException, SecurityException, InstantiationException, IllegalAccessException{
 		List<T> res=new ArrayList<T>();
@@ -272,7 +257,7 @@ public class SQLCollection {
 		}
 		return res;
 	}
-	
+	//*/
 	
 	
 }

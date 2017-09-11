@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>EPMS-教务处-导入免费师范生数据</title>
+<title>EPMS-教务处-导入免费师范生数据（<s:property value="year" />年）</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
@@ -15,13 +15,12 @@
 		
 <div class="bag">
 	<table width="80%"><tbody>
-		<tr>
-			<td valign="top">
-				<div class="listHeader">
-					Student
-				</div>
-			</td>
-		</tr>
+		<!-- ################# -->
+		<tr><td>
+			<div class="listHeader">
+				免费师范生
+			</div>
+		</td></tr>
 		<tr><td>
 			<ul class="listContent">
 				<li>
@@ -39,6 +38,20 @@
 				</li>
 			</ul>
 		</td></tr>
+		<!-- ################# -->
+		<tr><td>
+			<div class="listHeader">查询信息（<s:property value="year" />年）</div>
+		</td></tr>
+		<s:form action="jwc_function_drmfssfsj_execute" method="get">
+			<s:hidden name="year" value="Student" />
+			<tr><td><s:textfield label="id" name="student.id"/></td></tr>
+			<tr><td><s:textfield label="name" name="student.name"/></td></tr>
+			
+			<tr><td>
+				<s:submit value="查询" cssClass="buttonInline" />
+			</td></tr>
+		</s:form>
+		<!-- ################# -->
 	</tbody></table>
 	
 	<s:form action="login" method="post" cssClass="myform">

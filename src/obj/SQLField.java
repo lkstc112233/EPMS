@@ -39,4 +39,9 @@ public @interface SQLField {
 	 * 默认为false
 	 */
 	boolean needImport() default false;
+	
+	/**
+	 * Static Source的类名
+	 */
+	String source() default "";
 }

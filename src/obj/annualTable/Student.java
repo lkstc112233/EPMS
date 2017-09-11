@@ -10,34 +10,32 @@ public class Student extends AnnualTable{
 
 	@SQLField(isKey=true,needImport=true,value="学号",description="学号不能重复")
 	private String id;
-	@SQLField(isKey=false,needImport=true,value="姓名",description="")
+	@SQLField(needImport=true,value="姓名",description="")
 	private String name;
-	@SQLField(isKey=false,needImport=true,value="手机",description="")
+	@SQLField(needImport=true,value="手机",description="")
 	private String mobile;
-	@SQLField(isKey=false,needImport=true,value="邮箱",description="")
+	@SQLField(needImport=true,value="邮箱",description="")
 	private String email;
-	@SQLField(isKey=false,needImport=true,value="专业",description="")
+	@SQLField(source="Major",needImport=true,value="专业",description="")
 	private String major;
-	@SQLField(isKey=false,needImport=false,value="实习基地",description="")
+	@SQLField(value="实习基地",description="")
 	private String practiceBase;
-	@SQLField(isKey=false,needImport=true,value="身份证号",description="")
+	@SQLField(needImport=true,value="身份证号",description="")
 	private String sfzh;
-	@SQLField(isKey=false,needImport=true,value="政治面貌",description="")
+	@SQLField(source="ZZMM",needImport=true,value="政治面貌",description="")
 	private String zzmm;
-	@SQLField(isKey=false,needImport=true,value="省份",description="")
+	@SQLField(source="Province",needImport=true,value="省份",description="")
 	private String province;
-	@SQLField(isKey=false,needImport=true,value="民族",description="")
+	@SQLField(source="Nation",needImport=true,value="民族",description="")
 	private String nation;
-	@SQLField(isKey=false,needImport=true,value="回生源地",description="是否希望回生源地进行教育实习")
+	@SQLField(needImport=true,value="回生源地",description="是否希望回生源地进行教育实习")
 	private Boolean hxyx;
-	@SQLField(isKey=false,needImport=false,value="指导老师工号",description="指导老师需要属于校内人员列表")
+	@SQLField(needImport=false,value="指导老师工号",description="指导老师需要属于校内人员列表")
 	private String teacherId;
-	@SQLField(isKey=false,needImport=false,value="优秀实习生类别",description="")
+	@SQLField(source="Outstanding",needImport=false,value="优秀实习生类别",description="")
 	private String outstandingType;
-	@SQLField(isKey=false,needImport=false,value="优秀实习生材料",description="二进制储存")
+	@SQLField(needImport=false,value="优秀实习生材料",description="二进制储存")
 	private byte[] outstandingMaterial;
-	@SQLField(isKey=false,needImport=false,value="是否启用",description="默认为true")
-	private Boolean available=true;
 	
 	public String getId() {return id;}
 	public void setId(String id) {this.id = id;}
@@ -67,8 +65,6 @@ public class Student extends AnnualTable{
 	public void setOutstandingType(String outstandingType) {this.outstandingType = outstandingType;}
 	public byte[] getOutstandingMaterial() {return outstandingMaterial;}
 	public void setOutstandingMaterial(byte[] outstandingMaterial) {this.outstandingMaterial = outstandingMaterial;}
-	public Boolean getAvailable() {return available;}
-	public void setAvailable(Boolean available) {this.available = available;}
 
 
 	public Student() throws SQLException {

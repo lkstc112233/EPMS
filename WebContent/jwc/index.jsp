@@ -62,6 +62,16 @@
 				</li>
 			</ul>
 		</td></tr>
+		<tr><td valign="top">
+			<ul class="listContent">
+				<li>
+					<span class="time">[All time]</span>
+					<a href='<s:url action="jwc_function_TableOperation_execute"/>' onclick="this.href=this.href+'?tableName=Student&year='+document.getElementById('year').value">
+						数据表管理
+					</a>
+				</li>
+			</ul>
+		</td></tr>
 		<s:iterator value="times" var="__tableRow" status="__status">
 			<tr><td valign="middle">
 		<!--	<td class="tdLabel"><s:property value="%{#__status.count}" /></td>	-->

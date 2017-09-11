@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>EPMS-教务处-时间节点管理</title>
+<title>EPMS-教务处-时间节点管理（<s:property value="year" />年）</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 

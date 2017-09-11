@@ -97,6 +97,24 @@
 			<allowed-methods> display,execute,download,upload </allowed-methods>
 		</action>
 		
+		<!--动作：数据表文件操作 配置-->
+		<action name="*_TableImportOperation_*" class="action.{1}.TableImportOperationAction" method="{2}">
+			<result name="back" type="redirect"> menu.action</result>	<!--用于timeout和back -->
+			<result name="none"> {1}/TableOperation.jsp</result>	<!--用于display和timeout -->
+			<result> {1}/TableOperation.jsp</result>
+			<result name="downloadAttachment" type="stream">
+				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
+				<param name="inputName">downloadAttachment </param> <!-- 调用的getter名称，返回InputStream -->
+				<param name="contentDisposition">attachment;filename="${downloadFileName}" </param> <!-- 附件方式下载，文件名使用EL获取 --> 
+			</result>
+			<result name="downloadInline" type="stream">
+				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
+				<param name="inputName">downloadInline </param> <!-- 调用的getter名称，返回InputStream -->
+				<param name="contentDisposition">inline;filename="${downloadFileName}" </param> <!-- 内联方式下载，文件名使用EL获取 --> 
+			</result>
+			<allowed-methods> display,execute,download,upload </allowed-methods>
+		</action>
+		
 		
 		
 	</package>

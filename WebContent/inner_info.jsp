@@ -27,10 +27,12 @@
 				name="newpassword" value="" />
 
 			<s:select label="office" disabled="true" 
-				list="list_office" value="%{#session.inner.office}" /> <!-- name="inner.office"-->
+				list="list_office" value="%{#session.inner.office}" listKey="name" listValue="name"
+				/> <!-- name="inner.office"-->
 
 			<s:select label="school" disabled="true"
-				list="list_school" value="%{#session.inner.school}" /> <!-- name="inner.school"-->
+				list="list_school" value="%{#session.inner.school}" listKey="name" listValue="name"
+				/> <!-- name="inner.school"-->
 
 			<s:select label="retire" name="select_retire" list="{'true','false'}"
 				headerValue="%{select_retire}" />
