@@ -10,7 +10,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 
-import obj.annualTable.AnnualTable;
+import obj.annualTable.AnnualBase;
 
 @SuppressWarnings("unchecked")
 public class POI implements SQLIO{
@@ -131,8 +131,8 @@ public class POI implements SQLIO{
 							break;
 						}
 					}
-					if(t instanceof AnnualTable)
-						((AnnualTable)t).setYear(year);
+					if(t instanceof AnnualBase)
+						((AnnualBase)t).setYear(year);
 					if(t==null || t.checkKeyNull()){
 						 if(error!=null)
 							 error.add(row.getRowNum());

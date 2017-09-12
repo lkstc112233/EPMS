@@ -8,27 +8,23 @@ import obj.*;
 import persistence.DB;
 
 @SQLTable("InnerPerson")
-public class InnerPerson extends Base{
-	@SQLField(isKey=true)
+public class InnerPerson extends ListableBase implements ListableBase.ListableBaseWithNoSave{
+	@SQLField(value="工号",isKey=true,needImport=true)
 	private String id;			public String getId(){return id;}				public void setId(String a){this.id=a;}
-	@SQLField(isKey=true)
+	@SQLField(value="密码",isKey=true,needImport=true)
 	private String password;	public String getPassword(){return password;}	public void setPassword(String a){this.password=a;}
-	@SQLField
+	@SQLField(value="姓名",needImport=true)
 	private String name;		public String getName(){return name;}			public void setName(String a){this.name=a;}
-	@SQLField(source="InnerOffice")
+	@SQLField(value="校内人员类别",source="InnerOffice.name",needImport=true)
 	private String office;		public String getOffice(){return office;}		public void setOffice(String a){this.office=a;}
-	@SQLField(source="School")
+	@SQLField(value="学院",source="School.name",needImport=true)
 	private String school;		public String getSchool(){return school;}		public void setSchool(String a){this.school=a;}
-	@SQLField
-	private boolean retire;		public boolean getRetire(){return retire;}		public void setRetire(boolean a){this.retire=a;}
-	@SQLField
+	@SQLField(value="座机",needImport=true)
 	private String phone;		public String getPhone(){return phone;}			public void setPhone(String a){this.phone=a;}
-	@SQLField
+	@SQLField(value="手机",needImport=true)
 	private String mobile;		public String getMobile(){return mobile;}		public void setMobile(String a){this.mobile=a;}
-	@SQLField
+	@SQLField(value="邮箱",needImport=true)
 	private String email;		public String getEmail(){return email;}			public void setEmail(String a){this.email=a;}
-	@SQLField
-	private boolean available;	public boolean getAvailable(){return available;}public void setAvailable(boolean a){this.available=a;}
 
 	private final PreparedStatement sql_checkPassword;
 	private final PreparedStatement sql_updatePassword;

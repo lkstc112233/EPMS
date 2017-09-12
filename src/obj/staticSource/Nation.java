@@ -4,15 +4,15 @@ import java.sql.SQLException;
 
 import obj.*;
 
-@SQLTable("ZZMM")
-public class ZZMM extends ListableBase{
+@SQLTable("Nation")
+public class Nation extends ListableBase{
 	
 	@SQLField(isKey=true)
 	private String name;
 	public String getName(){return this.name;}
 	public void setName(String name){this.name=name;}
 	
-	public ZZMM() throws SQLException {
+	public Nation() throws SQLException {
 		super();
 	}
 }

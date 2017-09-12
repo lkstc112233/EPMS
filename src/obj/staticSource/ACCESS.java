@@ -9,7 +9,7 @@ import obj.*;
 import obj.annualTable.Time;
 
 @SQLTable("ACCESS")
-public class ACCESS extends StaticSource{
+public class ACCESS extends ListableBase{
 	
 	@SQLField(needSorted=true)
 	private int id;

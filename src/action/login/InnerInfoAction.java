@@ -18,7 +18,6 @@ public class InnerInfoAction extends ActionSupport{
 	private String newPassword=null;
 	private List<InnerOffice> list_office;
 	private List<School> list_school;
-	private String select_retire;
 
 	public InnerPerson getInner(){return inner;}
 	public void setInner(InnerPerson inner){this.inner=inner;}
@@ -28,8 +27,6 @@ public class InnerInfoAction extends ActionSupport{
 	public void setList_office(List<InnerOffice> list_office) {this.list_office = list_office;}
 	public List<School> getList_school() {return list_school;}
 	public void setList_school(List<School> list_school) {this.list_school = list_school;}
-	public String getSelect_retire() {return select_retire;}
-	public void setSelect_retire(String select_retire) {this.select_retire = select_retire;}
 	
 	private boolean executive=false;
 	public boolean isExecutive() {return executive;}
@@ -50,7 +47,6 @@ public class InnerInfoAction extends ActionSupport{
 		System.out.print(">> InnerInfoAction:constructor > list_school:[");
 		for(School s:list_school) System.out.print(s+",");
 		System.out.println("]");
-		this.select_retire=Boolean.toString(inner.getRetire());
 	}
 	
 	@Override
@@ -73,7 +69,6 @@ public class InnerInfoAction extends ActionSupport{
 					"服务器开了一些小差！");
 			return display();
 		}
-		inner.setRetire(Boolean.parseBoolean(this.select_retire));
 		if(this.newPassword!=null && this.newPassword.length()>0){
 			System.out.println(">> InnerInfoAction:execute > 开始修改密码");
 			try {

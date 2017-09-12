@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import obj.*;
 
 @SQLTable("OuterOffice")
-public class OuterOffice extends StaticSource{
+public class OuterOffice extends ListableBase{
 	
 	@SQLField(isKey=true)
 	private String name;

@@ -8,11 +8,11 @@ import obj.*;
 import obj.staticSource.ACCESS;
 
 @SQLTable("Time")
-public class Time extends AnnualTable{
+public class Time extends AnnualBase{
 
 	@SQLField(needSorted=true)
 	private int id;
-	@SQLField(isKey=true)
+	@SQLField(isKey=true,source="ACCESS.project")
 	private String project;
 	@SQLField
 	private Timestamp time1;
