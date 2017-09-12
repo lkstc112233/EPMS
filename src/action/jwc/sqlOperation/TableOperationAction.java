@@ -28,10 +28,19 @@ public class TableOperationAction extends ActionSupport{
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		Object o=session.get(SessionSearchKey);
 		System.out.println(">> TableOperationAction:constructor > tableNameKey="+String.valueOf(o));
-		if(o==null) return;
-		this.search=(Search)o;
-		this.setTableName(this.search.getTableName());
-		this.updateBase=this.search.clazz.newInstance();
+		if(o!=null){
+			this.search=(Search)o;
+			this.setTableName(this.search.getTableName());
+		}
+		Class<? extends Base> clazz=Base.getClassForName(this.getTableName());
+		if(clazz!=null){
+			try {
+				this.updateBase=clazz.newInstance();
+				this.createNewBase=clazz.newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	
@@ -39,12 +48,15 @@ public class TableOperationAction extends ActionSupport{
 	private boolean modify=false;//是否可修改内容并提交
 	private int choose=0;//操作项
 	private Base updateBase;
+	//TODO private List<Base>[] updateBaseFieldsSourceList;
+	private Base createNewBase;
 	
 	public Search<? extends Base> getSearch(){return this.search;} public void setSearch(Search<? extends Base> o){this.search=o;}
 	public List<String> getTypes(){return Search.RestraintType.list();}
 	public Boolean getModify(){return this.modify;} public void setModify(Boolean x){this.modify=x;} public void setModify(String x){this.modify=Boolean.valueOf(x);}
 	public Integer getChoose(){return this.choose;} public void setChoose(Integer x){this.choose=x;} public void setChoose(String x){this.choose=Integer.valueOf(x);}
 	public Base getUpdateBase(){return this.updateBase;}	public void setUpdateBase(Base b){this.updateBase=b;}
+	public Base getCreateNewBase(){return this.createNewBase;}	public void setCreateNewBase(Base b){this.createNewBase=b;}
 	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -64,14 +76,20 @@ public class TableOperationAction extends ActionSupport{
 				this.search=new Search(clazz);
 				session.put(SessionSearchKey,this.search);
 				res=true;
+				this.setTableName(this.search.getTableName());
+				try {
+					this.updateBase=this.search.clazz.newInstance();
+					this.createNewBase=this.search.clazz.newInstance();
+				} catch (InstantiationException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
 			} catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
 				this.search=null;
 				return false;
 			}
 		}
-		if(this.search!=null)
-			this.setTableName(this.search.getTableName());
+		session.put(SessionSearchKey,this.search);
 		return res;
 	}
 	
@@ -79,11 +97,10 @@ public class TableOperationAction extends ActionSupport{
 	@Override
 	public String execute(){//执行查询
 		System.out.println(">> TableOperationAction:execute > tableName="+this.getTableName());
-		if(Base.getClassForName(tableName)==null)
+		if(Base.getClassForName(tableName)==null||
+				this.setupSearch())
 			return display();
 		Map<String, Object> session=ActionContext.getContext().getSession();
-		if(this.setupSearch())
-			return display();
 		if(this.search==null){
 			session.put(token.ActionInterceptor.ErrorTipsName,
 					"搜索引擎初始化失败！");
@@ -115,9 +132,15 @@ public class TableOperationAction extends ActionSupport{
 		return NONE;
 	}
 	
-	
+
+	/**
+	 * 更新选中条（根据choose值）
+	 */
 	public String update(){
 		System.out.println(">> TableOperationAction:update > tableName="+this.getTableName());
+		if(Base.getClassForName(tableName)==null||
+				this.setupSearch())
+			return display();
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		Base b=this.getChooseBase();
 		if(b==null) return NONE;
@@ -143,8 +166,14 @@ public class TableOperationAction extends ActionSupport{
 				"修改成功！");
 		return SUCCESS;
 	}
+	/**
+	 * 删除选中条（根据choose值）
+	 */
 	public String delete(){
 		System.out.println(">> TableOperationAction:delete > tableName="+this.getTableName());
+		if(Base.getClassForName(tableName)==null||
+				this.setupSearch())
+			return display();
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		Base b=this.getChooseBase();
 		this.choose=0;
@@ -173,6 +202,49 @@ public class TableOperationAction extends ActionSupport{
 				"删除成功！");
 		return SUCCESS;
 	}
+	/**
+	 * 新建条（新建createBase）
+	 */
+	public String create(){
+		System.out.println(">> TableOperationAction:create > tableName="+this.getTableName());
+		if(Base.getClassForName(tableName)==null||
+				this.setupSearch())
+			return display();
+		Map<String, Object> session=ActionContext.getContext().getSession();
+		try{if(this.createNewBase.checkKeyNull()){
+			session.put(token.ActionInterceptor.ErrorTipsName,
+					"新建条目内容不充分，请补全！");
+			return NONE;
+		}}catch(IllegalArgumentException | IllegalAccessException e){
+			e.printStackTrace();
+			session.put(token.ActionInterceptor.ErrorTipsName,
+					"服务器开小差去了，暂时无法创建！("+e.getMessage()+")");
+			return NONE;
+		}
+		try {
+			this.createNewBase.create();
+		}catch(IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+			session.put(token.ActionInterceptor.ErrorTipsName,
+					"服务器开小差去了，暂时无法创建！("+e.getMessage()+")");
+			return NONE;
+		}catch(SQLException e){
+			e.printStackTrace();
+			session.put(token.ActionInterceptor.ErrorTipsName,
+					"数据库发现问题，无法创建该条目！("+e.getMessage()+")");
+			return NONE;
+		}
+		try {
+			this.createNewBase=this.search.clazz.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		session.put(token.ActionInterceptor.ErrorTipsName,
+				"创建成功！");
+		return SUCCESS;
+	}
+	
+	
 	private Base getChooseBase(){
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		if(this.search==null){

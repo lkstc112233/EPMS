@@ -89,7 +89,7 @@
 		<action name="*_TableOperation_*" class="action.{1}.sqlOperation.TableOperationAction" method="{2}">
 			<result name="none"> {1}/TableOperation.jsp</result>
 			<result> {1}/TableOperation.jsp</result>
-			<allowed-methods> display,execute,update,delete </allowed-methods>
+			<allowed-methods> display,execute,update,delete,create </allowed-methods>
 		</action>
 		
 		
