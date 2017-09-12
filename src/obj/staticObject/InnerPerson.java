@@ -33,9 +33,9 @@ public class InnerPerson extends ListableBase implements ListableBase.ListableBa
 	public InnerPerson() throws SQLException{
 		super();
 		sql_checkPassword=DB.con().prepareStatement(
-				"SELECT password FROM "+this.getSQLTabelName()+" WHERE id = ? AND available = true");
+				"SELECT password FROM "+this.getSQLTabelName()+" WHERE id = ?");
 		sql_updatePassword=DB.con().prepareStatement(
-				"UPDATE "+this.getSQLTabelName()+" SET password = ? WHERE id = ? AND password = ? AND available = true");
+				"UPDATE "+this.getSQLTabelName()+" SET password = ? WHERE id = ? AND password = ?");
 	}
 	
 	public boolean checkPassword(){
