@@ -206,6 +206,24 @@ public abstract class Base {
 		sb.append(']');
 		return sb.toString();
 	}
+	public String toSimpleString(){
+		Class<? extends Base> clazz=this.getClass();
+		StringBuilder sb=new StringBuilder();
+		for(Field f:Base.getFields(clazz)){
+			SQLField s=f.getAnnotation(SQLField.class);
+			if(!s.isKey()) continue;
+			f.setAccessible(true);
+			if(sb.length()>0)
+				sb.append(',');
+			try {
+				sb.append(f.get(this));
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+				sb.append("?");
+			}
+		}
+		return sb.toString();
+	}
 	@Override
 	public boolean equals(Object o){
 		if(o==null) return false;

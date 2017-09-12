@@ -1,5 +1,8 @@
 package action.jwc.sqlOperation;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.*;
 
@@ -7,6 +10,8 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import obj.Base;
+import obj.ListableBase;
+import obj.SQLField;
 import obj.Search;
 
 /**
@@ -32,14 +37,8 @@ public class TableOperationAction extends ActionSupport{
 		if(search!=null)
 			this.setTableName(this.search.getTableName());
 		Class<? extends Base> clazz=Base.getClassForName(this.getTableName());
-		if(clazz!=null){
-			try {
-				this.updateBase=clazz.newInstance();
-				this.createNewBase=clazz.newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
-				e.printStackTrace();
-			}
-		}
+		//这里的初始化过程是为了在create和delete和update下保存回传的参数的
+		this.setupOther(clazz);
 	}
 	
 	
@@ -47,7 +46,20 @@ public class TableOperationAction extends ActionSupport{
 	private boolean modify=false;//是否可修改内容并提交
 	private int choose=0;//操作项
 	private Base updateBase;
-	//TODO private List<Base>[] updateBaseFieldsSourceList;
+	private Pair[] updateBaseFieldsSourceList;		public Pair[] getUpdateBaseFieldsSourceList(){return this.updateBaseFieldsSourceList;}
+		static public class Pair{
+			private Map<String,String> list;
+			public Pair(Map<String,String> list){this.list=list;}
+			public Map<String,String> getList(){return list;}
+			/*
+			private List<? extends Base> list;
+			private Field field=null;
+			Pair(List<? extends Base> list,Field field){this.list=list;this.field=field;}
+			public List<? extends Base> getList(){return list;}
+			public Field getField(){return field;}
+			public String getFieldName(){return field.getName();}
+			*/
+		}
 	private Base createNewBase;
 	
 	public Search<? extends Base> getSearch(){return this.search;} public void setSearch(Search<? extends Base> o){this.search=o;}
@@ -57,6 +69,49 @@ public class TableOperationAction extends ActionSupport{
 	public Base getUpdateBase(){return this.updateBase;}	public void setUpdateBase(Base b){this.updateBase=b;}
 	public Base getCreateNewBase(){return this.createNewBase;}	public void setCreateNewBase(Base b){this.createNewBase=b;}
 	
+	/**
+	 * 设置除了search之外的东西
+	 */
+	@SuppressWarnings("unchecked")
+	private void setupOther(Class<? extends Base> clazz){
+		if(clazz==null) return;
+		try {
+			this.updateBase=clazz.newInstance();
+			this.createNewBase=clazz.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		List<Field> fs=Base.getFields(clazz);
+		this.updateBaseFieldsSourceList=new Pair[fs.size()];
+		for(int i=0;i<this.updateBaseFieldsSourceList.length;i++){
+			this.updateBaseFieldsSourceList[i]=null;
+			Field f=fs.get(i);
+			SQLField s=f.getAnnotation(SQLField.class);
+			String[] ss=s.source().split("\\.",2);
+			Class<? extends Base> sourceClass=Base.getClassForName(ss[0]);
+			if(sourceClass==null) continue;
+			if(!ListableBase.class.isAssignableFrom(sourceClass)) continue;
+			try {
+				Method m=sourceClass.getMethod("list",sourceClass.getClass());
+				Field field = Base.getField(sourceClass,ss[1]);
+				List<? extends Base> list=(List<? extends Base>) m.invoke(null,sourceClass);
+				Map<String,String> map=new TreeMap<String,String>();
+				field.setAccessible(true);
+				for(Base b:list){
+					Object o=field.get(b);
+					String key=o==null?null:o.toString();
+					String value=b.toSimpleString()+"("+key+")";
+					value=key; //TODO 未设置下拉框描述信息
+					map.put(key,value);
+				}
+				this.updateBaseFieldsSourceList[i]=//new Pair(list,field);
+						new Pair(map);
+			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e) {
+				e.printStackTrace();
+				continue;
+			}
+		}
+	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	/**
@@ -65,6 +120,8 @@ public class TableOperationAction extends ActionSupport{
 	 * 主要工作是比对当前search（或为null或在construction中从session中提取的）和tableName的匹配性
 	 * 如果不匹配，则利用tableName新建Search并赋值给search
 	 * 最后将search放入session
+	 * 
+	 * 注：在setup中规整search，使之符合tableName（实际的tableName会在construction之后被赋值）
 	 * @return 是否更新过（若和当前tableName不符，则会更新，更新后执行display而不是execute）
 	 */
 	private boolean setupSearch(){
@@ -80,12 +137,8 @@ public class TableOperationAction extends ActionSupport{
 					session.put(SessionSearchKey,this.search);
 					res=true;
 					this.setTableName(this.search.getTableName());
-					try {
-						this.updateBase=this.search.clazz.newInstance();
-						this.createNewBase=this.search.clazz.newInstance();
-					} catch (InstantiationException | IllegalAccessException e) {
-						e.printStackTrace();
-					}
+					//只有在发生search修正的时候才会重新生成该两项
+					this.setupOther(clazz);
 				} catch (InstantiationException | IllegalAccessException e) {
 					e.printStackTrace();
 					this.search=null;

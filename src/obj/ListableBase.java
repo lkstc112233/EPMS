@@ -15,7 +15,7 @@ public abstract class ListableBase extends Base{
 	 * 是否是即用即查的
 	 */
 	static public boolean isListableBaseWithNoSave(Class<? extends ListableBase> clazz){
-		return clazz.isAssignableFrom(ListableBaseWithNoSave.class);
+		return ListableBaseWithNoSave.class.isAssignableFrom(clazz);
 	}
 
 	public ListableBase() throws SQLException {
