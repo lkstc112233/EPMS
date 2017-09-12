@@ -28,10 +28,9 @@ public class TableOperationAction extends ActionSupport{
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		Object o=session.get(SessionSearchKey);
 		System.out.println(">> TableOperationAction:constructor > tableNameKey="+String.valueOf(o));
-		if(o!=null){
-			this.search=(Search)o;
+		this.search=o==null?null:((Search)o);
+		if(search!=null)
 			this.setTableName(this.search.getTableName());
-		}
 		Class<? extends Base> clazz=Base.getClassForName(this.getTableName());
 		if(clazz!=null){
 			try {
@@ -61,32 +60,37 @@ public class TableOperationAction extends ActionSupport{
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	/**
-	 * 设置好Search的值（从session中读取并和当前tableName比对）
-	 * 返回是否更新过（若和当前tableName不符，则会更新，更新后执行display而不是execute）
-	 * @return
+	 * 在Action的construction中只读取session和初始化其他值（除searcher之外的，updateBase、createNewBase等）
+	 * 在Action调用method中会预先调用setupSearch来初始化search
+	 * 主要工作是比对当前search（或为null或在construction中从session中提取的）和tableName的匹配性
+	 * 如果不匹配，则利用tableName新建Search并赋值给search
+	 * 最后将search放入session
+	 * @return 是否更新过（若和当前tableName不符，则会更新，更新后执行display而不是execute）
 	 */
 	private boolean setupSearch(){
 		boolean res=false;
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		Class<? extends Base> clazz=Base.getClassForName(this.getTableName());
-		if(clazz!=null &&
-				(this.search==null|| !this.search.clazz.equals(clazz))){
-			System.out.println(">> TableOperationAction:display > session.TableNameKey="+this.getTableName());
-			try {
-				this.search=new Search(clazz);
-				session.put(SessionSearchKey,this.search);
-				res=true;
-				this.setTableName(this.search.getTableName());
+		if(clazz==null) this.search=null;
+		else{
+			if(this.search==null|| !this.search.clazz.equals(clazz)){
+				System.out.println(">> TableOperationAction:display > session.TableNameKey="+this.getTableName());
 				try {
-					this.updateBase=this.search.clazz.newInstance();
-					this.createNewBase=this.search.clazz.newInstance();
+					this.search=new Search(clazz);
+					session.put(SessionSearchKey,this.search);
+					res=true;
+					this.setTableName(this.search.getTableName());
+					try {
+						this.updateBase=this.search.clazz.newInstance();
+						this.createNewBase=this.search.clazz.newInstance();
+					} catch (InstantiationException | IllegalAccessException e) {
+						e.printStackTrace();
+					}
 				} catch (InstantiationException | IllegalAccessException e) {
 					e.printStackTrace();
+					this.search=null;
+					return false;
 				}
-			} catch (InstantiationException | IllegalAccessException e) {
-				e.printStackTrace();
-				this.search=null;
-				return false;
 			}
 		}
 		session.put(SessionSearchKey,this.search);
