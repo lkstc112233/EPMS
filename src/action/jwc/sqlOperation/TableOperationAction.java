@@ -200,6 +200,7 @@ public class TableOperationAction extends ActionSupport{
 			return display();
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		Base b=this.getChooseBase();
+		this.choose=0;
 		if(b==null) return NONE;
 		try{
 			b.update();
@@ -219,6 +220,8 @@ public class TableOperationAction extends ActionSupport{
 					"数据库错误！("+e.getMessage()+")");
 			return NONE;
 		}
+		System.out.println(">> TableOperationAction:delete > 修改成功");
+		this.execute();
 		session.put(token.ActionInterceptor.ErrorTipsName,
 				"修改成功！");
 		return SUCCESS;
@@ -264,6 +267,7 @@ public class TableOperationAction extends ActionSupport{
 	 */
 	public String create(){
 		System.out.println(">> TableOperationAction:create > tableName="+this.getTableName());
+		System.out.println(">> TableOperationAction:create > tableName="+this.createNewBase.toString());
 		if(Base.getClassForName(tableName)==null||
 				this.setupSearch())
 			return display();

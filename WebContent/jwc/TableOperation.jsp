@@ -112,35 +112,17 @@
 					<!-- 内容 -->
 					<s:iterator value="createNewBase.iteratorFieldsValue" var="__tableCol" status="__colStatus_create">
 						<td style="text-align:center;">
-						<!--<s:if test='#__tableCol==null || #__tableCol==""'>-->
-								<s:if test="updateBaseFieldsSourceList[#__colStatus_create.index] == null">
-									<s:textfield value="" theme="simple"
-									style="padding:0px;width:95%;min-width:30px;"
-									name="createNewBase.%{createNewBase.iteratorFieldsName[#__colStatus_create.index]}" />
-								</s:if><s:else>
-									<s:select list="updateBaseFieldsSourceList[#__colStatus_create.index].list"
-									headerKey="" hearderValue=""
-									theme="simple"
-									style="padding:0px;"
-									name="createNewBase.%{createNewBase.iteratorFieldsName[#__colStatus_create.index]}" />
-								</s:else>
-						<!--</s:if>
-							<s:else>
-								<s:if test="updateBaseFieldsSourceList[#__colStatus_create.index].field == null">
-									<s:textfield value="%{#__tableCol}" theme="simple"
-									style="padding:0px;width:auto;"
-									name="createNewBase.%{createNewBase.iteratorFieldsName[#__colStatus_create.index]}" />
-								</s:if><s:else>
-									<s:select list="updateBaseFieldsSourceList[%{#__colStatus_create.index}].list"
-									headerKey="" hearderValue=""
-									listKey="updateBaseFieldsSourceList[%{#__colStatus_create.index}].fieldName"
-									listValue="updateBaseFieldsSourceList[%{#__colStatus_create.index}].fieldName"
-									value="%{#__tableCol}" theme="simple"
-									style="padding:0px;width:auto;"
-									name="createNewBase.%{createNewBase.iteratorFieldsName[#__colStatus_create.index]}" />
-								</s:else>
+							<s:if test="updateBaseFieldsSourceList[#__colStatus_create.index] == null">
+								<s:textfield value="" theme="simple"
+								style="padding:0px;width:95%;min-width:30px;"
+								name="createNewBase.%{createNewBase.iteratorFieldsName[#__colStatus_create.index]}" />
+							</s:if><s:else>
+								<s:select list="updateBaseFieldsSourceList[#__colStatus_create.index].list"
+								headerKey="" headerValue="空"
+								theme="simple"
+								style="padding:0px;"
+								name="createNewBase.%{createNewBase.iteratorFieldsName[#__colStatus_create.index]}"/>
 							</s:else>
-							-->
 						</td>
 					</s:iterator>
 				</s:form>
@@ -187,6 +169,18 @@
 							<!-- 内容 -->
 							<s:iterator value="#__tableRow.iteratorFieldsValue" var="__tableCol" status="__colStatus">
 								<td style="text-align:center;">
+									<s:if test="updateBaseFieldsSourceList[#__colStatus.index] == null">
+										<s:textfield value="%{#__tableCol}" theme="simple"
+										style="padding:0px;width:95%;min-width:30px;"
+										name="search.resultSet[%{#__status.index}].%{#__tableRow.iteratorFieldsName[#__colStatus.index]}" />
+									</s:if><s:else>
+										<s:select list="updateBaseFieldsSourceList[#__colStatus.index].list"
+										headerKey="" headerValue="空"
+										theme="simple"
+										style="padding:0px;"
+										name="search.resultSet[%{#__status.index}].%{#__tableRow.iteratorFieldsName[#__colStatus.index]}"/>
+									</s:else>
+								<!-- 
 									<s:if test='#__tableCol==null || #__tableCol==""'>
 										<s:textfield value="" theme="simple"
 										style="padding:0px;width:95%;min-width:30px;"
@@ -197,6 +191,7 @@
 										style="padding:0px;width:auto;"
 										name="search.resultSet[%{#__status.index}].%{#__tableRow.iteratorFieldsName[#__colStatus.index]}" />
 									</s:else>
+								 -->
 								</td>
 							</s:iterator>
 						</s:form>
