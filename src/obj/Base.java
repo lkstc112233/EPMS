@@ -140,7 +140,11 @@ public abstract class Base {
 	//关于Field
 	static public List<Field> getFields(Class<? extends Base> clazz){
 		List<Field> res=new ArrayList<Field>();
+		try{
+			res.add(Base.getField(clazz,"year"));
+		}catch(NoSuchFieldException e){}
 		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
+			if(!res.isEmpty() && f.equals(res.get(0))) continue;
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			res.add(f);
@@ -204,6 +208,24 @@ public abstract class Base {
 			sb.append(')');
 		}
 		sb.append(']');
+		return sb.toString();
+	}
+	public String toSimpleString(){
+		Class<? extends Base> clazz=this.getClass();
+		StringBuilder sb=new StringBuilder();
+		for(Field f:Base.getFields(clazz)){
+			SQLField s=f.getAnnotation(SQLField.class);
+			if(!s.isKey()) continue;
+			f.setAccessible(true);
+			if(sb.length()>0)
+				sb.append(',');
+			try {
+				sb.append(f.get(this));
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+				sb.append("?");
+			}
+		}
 		return sb.toString();
 	}
 	@Override

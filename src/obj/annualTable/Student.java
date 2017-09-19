@@ -5,45 +5,41 @@ import java.sql.SQLException;
 import obj.*;
 
 @SQLTable("Student")
-public class Student extends AnnualTable{
+public class Student extends AnnualBase{
 	
-
-	@SQLField(isKey=true,needImport=true,value="学号",description="学号不能重复")
+	@SQLField(value="学号",isKey=true,needImport=true,description="学号不能重复")
 	private String id;
-	@SQLField(needImport=true,value="姓名",description="")
+	@SQLField(value="姓名",needImport=true)
 	private String name;
-	@SQLField(needImport=true,value="手机",description="")
+	@SQLField(value="手机",needImport=true)
 	private String mobile;
-	@SQLField(needImport=true,value="邮箱",description="")
+	@SQLField(value="邮箱",needImport=true)
 	private String email;
-	@SQLField(source="Major",needImport=true,value="专业",description="")
+	@SQLField(value="专业",source="Major.name",needImport=true)
 	private String major;
-	@SQLField(value="实习基地",description="")
+	@SQLField(value="实习基地",source="PracticeBase.name")
 	private String practiceBase;
-	@SQLField(needImport=true,value="身份证号",description="")
+	@SQLField(value="身份证号",needImport=true)
 	private String sfzh;
-	@SQLField(source="ZZMM",needImport=true,value="政治面貌",description="")
+	@SQLField(value="政治面貌",source="ZZMM.name",needImport=true)
 	private String zzmm;
-	@SQLField(source="Province",needImport=true,value="省份",description="")
+	@SQLField(value="省份",source="Province.name",needImport=true)
 	private String province;
-	@SQLField(source="Nation",needImport=true,value="民族",description="")
+	@SQLField(value="民族",source="Nation.name",needImport=true)
 	private String nation;
-	@SQLField(needImport=true,value="回生源地",description="是否希望回生源地进行教育实习")
+	@SQLField(value="回生源地",needImport=true,description="是否希望回生源地进行教育实习")
 	private Boolean hxyx;
-	@SQLField(needImport=false,value="指导老师工号",description="指导老师需要属于校内人员列表")
+	@SQLField(value="指导老师工号",source="InnerPerson.id",description="指导老师需要属于校内人员列表")
 	private String teacherId;
-	@SQLField(source="Outstanding",needImport=false,value="优秀实习生类别",description="")
+	@SQLField(value="优秀实习生类别",source="Outstanding.type",needImport=false)
 	private String outstandingType;
-	@SQLField(needImport=false,value="优秀实习生材料",description="二进制储存")
+	@SQLField(value="优秀实习生材料",description="二进制储存")
 	private byte[] outstandingMaterial;
 	
 	public String getId() {return id;}
 	public void setId(String id) {this.id = id;}
 	public String getName() {return name;}
-	public void setName(String name) {
-		this.name = name;
-		System.out.println("setname=>"+name);
-	}
+	public void setName(String name) {this.name = name;}
 	public String getMobile() {return mobile;}
 	public void setMobile(String mobile) {this.mobile = mobile;}
 	public String getEmail() {return email;}

@@ -34,9 +34,6 @@
 				list="list_school" value="%{#session.inner.school}" listKey="name" listValue="name"
 				/> <!-- name="inner.school"-->
 
-			<s:select label="retire" name="select_retire" list="{'true','false'}"
-				headerValue="%{select_retire}" />
-
 			<s:textfield label="phone" name="inner.phone"
 				value="%{#session.inner.phone}" />
 

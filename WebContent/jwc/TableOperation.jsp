@@ -86,7 +86,8 @@
 	<!-- ################# -->
 	<div style="overflow-x:scroll;">
 	<table width="80%"><tbody>
-		<s:if test="search.resultSet!=null && !search.resultSet.isEmpty()">
+		<s:if test="search.resultSet!=null">
+			<!-- ###### 表头 ###### -->
 			<tr class="mytableTitle">
 				<td style="width:13px;text-align:center;">序号</td>
 				<td style="text-align:center;" colspan="2">操作</td>
@@ -96,6 +97,37 @@
 					</td>
 				</s:iterator>
 			</tr>
+			<!-- ###### 新增行 ###### -->
+			<tr>
+				<!-- 序号 -->
+				<td class="listContent" style="width:13px;text-align:center;">
+					+
+				</td>
+				<!-- 内容 -->
+				<s:form action="jwc_TableOperation_create" method="post" theme="simple">
+					<!-- 操作 -->
+					<td class="listContent" style="width:27px;text-align:center;padding:0px;" colspan="2">
+						<s:submit value="create" cssClass="inlineButton" theme="simple"/>
+					</td>
+					<!-- 内容 -->
+					<s:iterator value="createNewBase.iteratorFieldsValue" var="__tableCol" status="__colStatus_create">
+						<td style="text-align:center;">
+							<s:if test="updateBaseFieldsSourceList[#__colStatus_create.index] == null">
+								<s:textfield value="" theme="simple"
+								style="padding:0px;width:95%;min-width:30px;"
+								name="createNewBase.%{createNewBase.iteratorFieldsName[#__colStatus_create.index]}" />
+							</s:if><s:else>
+								<s:select list="updateBaseFieldsSourceList[#__colStatus_create.index].list"
+								headerKey="" headerValue="空"
+								theme="simple"
+								style="padding:0px;"
+								name="createNewBase.%{createNewBase.iteratorFieldsName[#__colStatus_create.index]}"/>
+							</s:else>
+						</td>
+					</s:iterator>
+				</s:form>
+			</tr>
+			<!-- ###### resultSet 内容 ###### -->
 			<s:iterator value="search.resultSet" var="__tableRow" status="__status">
 				<tr>
 					<!-- 序号 -->
@@ -112,12 +144,14 @@
 					</td>
 					<!-- 内容 -->
 					<s:if test="choose != #__status.index">
+						<!-- 操作 -->
 						<td class="listContent" style="width:40px;text-align:center;padding:0px;">
 							<s:form action="jwc_TableOperation_display" method="get" theme="simple">
 								<s:hidden name="choose" value="%{#__status.index}" theme="simple"/>
 								<s:submit value="修改" cssClass="inlineButton" theme="simple"/>
 							</s:form>
 						</td>
+						<!-- 内容 -->
 						<s:iterator value="#__tableRow.iteratorFieldsValue" var="__tableCol">
 							<td>
 								<s:property value="#__tableCol" />
@@ -126,13 +160,27 @@
 					</s:if>
 					<s:else>
 						<s:form action="jwc_TableOperation_update" method="get" theme="simple">
+							<!-- 操作 -->
 							<td class="listContent" style="width:40px;text-align:center;">
 								<s:hidden name="choose" value="%{#__status.index}" theme="simple"/>
 								<s:submit value="保存" cssClass="inlineButton"
 								style="color:#ffffff;background-color:#0071bc" theme="simple"/>
 							</td>
+							<!-- 内容 -->
 							<s:iterator value="#__tableRow.iteratorFieldsValue" var="__tableCol" status="__colStatus">
 								<td style="text-align:center;">
+									<s:if test="updateBaseFieldsSourceList[#__colStatus.index] == null">
+										<s:textfield value="%{#__tableCol}" theme="simple"
+										style="padding:0px;width:95%;min-width:30px;"
+										name="search.resultSet[%{#__status.index}].%{#__tableRow.iteratorFieldsName[#__colStatus.index]}" />
+									</s:if><s:else>
+										<s:select list="updateBaseFieldsSourceList[#__colStatus.index].list"
+										headerKey="" headerValue="空"
+										theme="simple"
+										style="padding:0px;"
+										name="search.resultSet[%{#__status.index}].%{#__tableRow.iteratorFieldsName[#__colStatus.index]}"/>
+									</s:else>
+								<!-- 
 									<s:if test='#__tableCol==null || #__tableCol==""'>
 										<s:textfield value="" theme="simple"
 										style="padding:0px;width:95%;min-width:30px;"
@@ -143,6 +191,7 @@
 										style="padding:0px;width:auto;"
 										name="search.resultSet[%{#__status.index}].%{#__tableRow.iteratorFieldsName[#__colStatus.index]}" />
 									</s:else>
+								 -->
 								</td>
 							</s:iterator>
 						</s:form>
