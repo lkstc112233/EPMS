@@ -8,7 +8,7 @@ import obj.*;
 
 public abstract class AnnualBase extends ListableBase implements ListableBase.ListableBaseWithNoSave{
 	
-	@SQLField(isKey=true,needImport=false)
+	@SQLField(isKey=true,needImport=false,needSorted=true)
 	public Integer year;
 		public int getYear(){return year;}
 		public void setYear(int year){this.year=year;}

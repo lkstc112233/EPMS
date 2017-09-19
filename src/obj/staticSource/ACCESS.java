@@ -119,6 +119,12 @@ public class ACCESS extends ListableBase{
 	static{
 		map.put("导入免费师范生数据","drmfsfssj");
 		map.put("《信息统计工作的通知》","xxtjgzdtz");
+		map.put("免费师范生信息收集","mfsfsxxsj");
+		map.put("确认实习基地信息","qrsxjdxx");
+		map.put("确认实习大区信息","qrsxdqxx");
+		map.put("确认布局规划（各实习基地学科接纳人数）","qrbjghgsxjdxkjnrs");
+
+		
 		map.put("信息录入（包括回乡意向）","xxlrbkhxyx");
 		map.put("联系实习基地，确认实习生人数","lxsxjdqrsxsrs");
 		map.put("确定实习人数布局规划","qdsxrsbjgh");

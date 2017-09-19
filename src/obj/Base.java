@@ -140,7 +140,11 @@ public abstract class Base {
 	//关于Field
 	static public List<Field> getFields(Class<? extends Base> clazz){
 		List<Field> res=new ArrayList<Field>();
+		try{
+			res.add(Base.getField(clazz,"year"));
+		}catch(NoSuchFieldException e){}
 		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
+			if(!res.isEmpty() && f.equals(res.get(0))) continue;
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null) continue;
 			res.add(f);

@@ -33,6 +33,7 @@
 		<global-results>
 			<result name="error"> error.jsp</result>
 			<result name="invalid.token"> invalidToken.jsp</result>
+			<result name="jump" type="redirect"> ${jumpURL}</result>
 		</global-results>
 		
 		<!--动作：login配置-->
@@ -93,6 +94,9 @@
 		</action>
 		
 		
+		
+		
+		
 		<!--动作：jwc的time设置 配置-->
 		<action name="jwc_timeManager" class="action.jwc.TimeManagerAction" method="execute">
 			<result name="none"> jwc/timeManager.jsp</result>	<!--用于display -->
@@ -102,7 +106,7 @@
 		
 		
 		<!--动作：Role的设置 配置-->
-		<action name="*_function_*_*" class="action.{1}.{2}Action" method="{3}">
+		<action name="*_function_*_*" class="action.{1}.{2}" method="{3}">
 			<result name="back" type="redirect"> menu.action</result>	<!--用于timeout和back -->
 			<result name="none"> {1}/{2}.jsp</result>	<!--用于display和timeout -->
 			<result> {1}/{2}.jsp</result>
