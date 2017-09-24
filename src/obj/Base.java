@@ -210,21 +210,15 @@ public abstract class Base {
 		sb.append(']');
 		return sb.toString();
 	}
-	public String toSimpleString(){
+	public String toNametring(){
 		Class<? extends Base> clazz=this.getClass();
 		StringBuilder sb=new StringBuilder();
-		for(Field f:Base.getFields(clazz)){
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(!s.isKey()) continue;
-			f.setAccessible(true);
-			if(sb.length()>0)
-				sb.append(',');
-			try {
-				sb.append(f.get(this));
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
-				sb.append("?");
-			}
+		try {
+			Field nameF=Base.getField(clazz,"name");
+			nameF.setAccessible(true);
+			sb.append(nameF.get(this));
+		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+			return null;
 		}
 		return sb.toString();
 	}

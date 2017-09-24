@@ -100,8 +100,11 @@ public class TableOperationAction extends ActionSupport{
 				for(Base b:list){
 					Object o=field.get(b);
 					String key=o==null?null:o.toString();
-					String value=b.toSimpleString()+"("+key+")";
-					value=key; //TODO 未设置下拉框描述信息
+					String value=b.toNametring();
+					if(value==null)
+						value=key;
+					else
+						value+="("+key+")";
 					map.put(key,value);
 				}
 				this.updateBaseFieldsSourceList[i]=//new Pair(list,field);
