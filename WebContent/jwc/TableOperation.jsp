@@ -54,16 +54,17 @@
 		</td></tr>
 		<tr><td height="30px"></td></tr>
 		<!-- ################# -->
+		<!-- 查询限制条件 -->
 		<tr><td>
 			<table width="100%"><tbody><s:form action="jwc_TableOperation_execute" method="get" theme="simple">
 				<s:hidden name="choose" value="-1" theme="simple"/>
 				<tr><td style="border:2px solid #0071BC;">
 					<s:iterator value="search.restraint" var="__restraintRow" status="__restraintStatus">
 						<div style="line-height:32px;float:left">
+						<!-- each 限制 -->
 							<div style="float:left;width:120px;text-align:center">
 								<s:property value="%{#__restraintRow.fieldName}" />
-							</div>
-							<div style="float:left;text-align:center">
+							</div><div style="float:left;text-align:center">
 								<s:select list="search.restraintTypeList" headerKey="" headerValue="-约束-"
 								listKey="key" listValue="value" value="%{#__restraintRow.type}"
 								name="search.restraint[%{#__restraintStatus.index}].type"/>
@@ -76,6 +77,16 @@
 						</div>
 						<!--<s:property value="%{#__restraintStatus.count}" /> -->
 					</s:iterator>
+					<div style="float:left;width:120px;text-align:center">
+						排序
+					</div><div style="float:left;text-align:center">
+						<s:select list="search.restraint" headerKey="" headerValue=""
+						listKey="fieldName" listValue="fieldName"
+						name="search.orderRestraintIndex"/>
+					</div>
+				</td></tr>
+				<tr><td colspan="1" style="width:20%;">
+					
 				</td></tr>
 				<tr><td colspan="1" style="width:20%;">
 					<s:submit value="查询" cssClass="button" />
@@ -84,6 +95,7 @@
 		</td></tr>
 	</tbody></table>
 	<!-- ################# -->
+	<!-- 查询结果集 -->
 	<div style="overflow-x:scroll;">
 	<table width="80%"><tbody>
 		<s:if test="search.resultSet!=null">

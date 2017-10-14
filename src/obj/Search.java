@@ -44,12 +44,28 @@ public final class Search<T extends Base>{
 	
 	private List<T> resultSet=new ArrayList<T>();
 	private Triple[] restraint;
+	private int orderRestraintIndex=-1;
 	
 	//没有resultSet的setter函数
 	public List<T> getResultSet(){return this.resultSet;}
 	public Triple[] getRestraint(){return this.restraint;}
 	//没有types的setter函数
 	public RestraintType[] getRestraintTypeList(){return RestraintType.values();}
+	public String getOrderRestraintIndex(){
+		try{
+			return this.restraint[orderRestraintIndex].getFieldName();
+		}catch(Exception e){return "";}
+	}
+	public void setOrderRestraintIndex(Triple s){
+		this.setOrderRestraintIndex(s==null?null:s.getFieldName());
+	}
+	public void setOrderRestraintIndex(String s){
+		this.orderRestraintIndex=-1;
+		if(s==null) return;
+		for(int i=0;i<restraint.length && this.orderRestraintIndex<0;i++)
+			if(s.equals(restraint[i].getFieldName()))
+				this.orderRestraintIndex=i;
+	}
 	
 	
 	public final Class<T> clazz;
@@ -105,6 +121,10 @@ public final class Search<T extends Base>{
 			restraints.add(t.value);
 			System.out.println(t);
 		}
+		if(orderRestraintIndex>=0 && orderRestraintIndex<restraint.length)
+			try{
+				sql.append(" ORDER BY "+restraint[orderRestraintIndex].getFieldName());
+			}catch(Exception e){}
 		PreparedStatement pst=DB.con().prepareStatement(sql.toString());
 		for(int i=0;i<restraints.size();i++)
 			pst.setObject(i+1,restraints.get(i));
