@@ -78,7 +78,7 @@
 							</s:else>
 							]
 						</span>
-						<a href='<s:url action="%{actionPrefix}_function_%{#__tableRow.project_pinyin}_display"/>' onclick="this.href=this.href+'?year='+document.getElementById('year').value">
+						<a href='<s:url action="%{actionPrefix}_function_%{#__tableRow.actionClass}_display"/>' onclick="this.href=this.href+'?year='+document.getElementById('year').value">
 							<s:property value="%{#__tableRow.project}" />
 						</a>
 					</li>  

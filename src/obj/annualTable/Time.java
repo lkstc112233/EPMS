@@ -19,14 +19,12 @@ public class Time extends AnnualBase{
 	@SQLField
 	private Timestamp time2;
 	
-	private String project_pinyin;
 	
 	public int getId(){return id;}
 	public void setId(int id){this.id=id;}
 	public String getProject() {return project;}
 	public void setProject(String project) {
 		this.project = project;
-		this.project_pinyin=ACCESS.map.get(this.project);
 	}
 	public Timestamp getTime1() {return time1;}
 	public void setTime1(Timestamp time) {this.time1 = time;
@@ -42,10 +40,14 @@ public class Time extends AnnualBase{
 		this.time2=Timestamp.valueOf(s);
 		Manager.RegularPeriod(time1,time2);
 	}
-	public String getProject_pinyin(){
-		if(this.project_pinyin==null)
-			this.setProject(this.getProject());
-		return this.project_pinyin;
+	public String getActionClass(){
+		try{
+			ACCESS a=ACCESS.getFromTime(this);//already load
+			return a.getActionClass();
+		}catch(Exception e){
+			e.printStackTrace();
+			return "ERROR";
+		}
 	}
 	
 	public Time() throws SQLException {

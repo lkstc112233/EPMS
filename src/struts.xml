@@ -71,7 +71,11 @@
 			<result> jwc/sql_operation_select.jsp</result>
 		</action>
 		
+		
+		
 		<!--动作：Table Operation配置-->
+		<!-- 第一个星号：人员类型actionPrefix -->
+		<!-- 第二个星号：调用的方法 -->
 		<action name="*_TableImportOperation_*" class="action.{1}.sqlOperation.TableImportOperationAction" method="{2}">
 			<result name="none"> {1}/TableOperation.jsp</result>
 			<result> {1}/TableOperation.jsp</result>
@@ -106,6 +110,9 @@
 		
 		
 		<!--动作：Role的设置 配置-->
+		<!-- 第一个星号：人员类型actionPrefix -->
+		<!-- 第二个星号：项目名称，对应ACCESS中project的actionClass -->
+		<!-- 第三个星号：调用的方法 -->
 		<action name="*_function_*_*" class="action.{1}.{2}" method="{3}">
 			<result name="back" type="redirect"> menu.action</result>	<!--用于timeout和back -->
 			<result name="none"> {1}/{2}.jsp</result>	<!--用于display和timeout -->
