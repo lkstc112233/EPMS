@@ -5,6 +5,8 @@ import java.sql.*;
 import java.util.*;
 
 import obj.*;
+import obj.staticSource.ACCESS;
+import token.Role;
 
 public abstract class AnnualBase extends ListableBase implements ListableBase.ListableBaseWithNoSave{
 	
@@ -59,12 +61,52 @@ public abstract class AnnualBase extends ListableBase implements ListableBase.Li
 		}
 		return res;
 	}
-	static public List<Time> listTime(int year,boolean setupIfEmpty) throws NoSuchFieldException, SecurityException, SQLException{
+	/**
+	 * 保证不返回null
+	 */
+	static public List<Time> listTime(Role role,int year,boolean setupIfEmpty) throws NoSuchFieldException, SecurityException, SQLException{
+		/*
 		List<Time> res=list(Time.class,year);
 		if(res.isEmpty() && setupIfEmpty){
 			persistence.DB.setupTimeTable(year);
 			initialize(Time.class,year);
 			return listTime(year,false);
+		}
+		return res;
+		*/
+		List<Time> res=new ArrayList<Time>();
+		if(setupIfEmpty){
+			res=list(Time.class,year);
+			if(res.isEmpty()){
+				persistence.DB.setupTimeTable(year);
+				initialize(Time.class,year);
+				return listTime(role,year,false);
+			}
+		}
+		else{
+			//TODO listTime
+			//将Time和ACCESS表联合查询，check筛选出当前权限符合的条目，依次放入res即可
+			ListableBase.JoinParam param=new JoinParam(Time.class);
+			param.append("project",ListableBase.JoinType.InnerJoin,ACCESS.class,"project");
+			List<Base[]> tmp=null;
+			try {
+				tmp=ListableBase.list(param,new String[]{
+						"Time.year","ACCESS."+role.name
+				},new Object[]{
+						Integer.valueOf(year),Boolean.TRUE
+				},new String[]{"ACCESS.id"});
+			} catch (IllegalArgumentException | IllegalAccessException | InstantiationException e) {
+				e.printStackTrace();
+				return res;
+			}
+			if(tmp==null) return res;
+			for(Base[] t:tmp) {
+				if(t!=null && t.length>0 &&
+						t[0] instanceof Time)
+					res.add((Time) t[0]);
+				else
+					throw new RuntimeException("The result of ListableBase.list(Joinparam) is error!");
+			}
 		}
 		return res;
 	}

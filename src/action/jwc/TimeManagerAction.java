@@ -5,9 +5,11 @@ import java.util.*;
 
 import com.opensymphony.xwork2.ActionContext;
 
+import action.Manager;
 import action.login.AnnualAction;
 import obj.annualTable.Time;
 import obj.staticSource.ACCESS;
+import token.Role;
 
 public class TimeManagerAction extends AnnualAction{
 	private static final long serialVersionUID = -2768220819301945257L;
@@ -67,8 +69,9 @@ public class TimeManagerAction extends AnnualAction{
 	
 	public String display(){
 		System.out.println(">> TimeManagerAction:display > year="+this.getYear());
+		Role role=Role.getRoleByOffice(Manager.getUser());
 		try {
-			times=Time.listTime(this.getYear(),/*setupIfEmpty*/true);
+			times=Time.listTime(role,this.getYear(),/*setupIfEmpty*/true);
 		} catch (NoSuchFieldException | SecurityException | SQLException e) {
 			e.printStackTrace();
 			System.out.println(">> TimeManagerAction:display > list Exception("+e.getMessage()+")");

@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.*;
 
+import persistence.DB;
+
 public abstract class ListableBase extends Base{
 	
 	/**
@@ -22,7 +24,7 @@ public abstract class ListableBase extends Base{
 		super();
 	}
 	
-	
+	//只保存非即用即查的Base对应的list内容
 	static private Map<Class<? extends ListableBase>,List<ListableBase>> StaticList=new HashMap<Class<? extends ListableBase>,List<ListableBase>>();
 	static public <T extends ListableBase>  List<T> list(Class<T> clazz) throws SQLException{
 		List<ListableBase> tmp;
@@ -72,6 +74,136 @@ public abstract class ListableBase extends Base{
 		Class<? extends ListableBase> clazz=this.getClass();
 		ListableBase.StaticList.remove(clazz);
 	}
+	
+	
+	/*
+	 * 多表联合查询
+	 */
+	static public enum JoinType{
+		InnerJoin,LeftJoin,RightJoin;
+		@Override
+		public String toString(){
+			return this.name().replaceAll("J"," J").toUpperCase();
+		}
+	}
+	static public class JoinParam{
+		private List<Class<? extends Base>> cs;	//0  1  2  3  4...
+		private List<String> onFieldNames;		//0  12 34 56 78...
+		private List<JoinType> jps;
+		public void clear(){if(cs!=null) cs.clear();}
+		public int size(){return cs==null?0:cs.size();}
+		private Class<? extends Base> getClassByIndex(int index){return cs==null?null:cs.get(index);}
+		private List<Class<? extends Base>> getClassList(){return cs;}
+		public JoinParam(Class<? extends Base> c)throws NullPointerException{
+			if(c==null) throw new NullPointerException("JoinParam cannot accept the first class is NULL!");
+			this.cs=new ArrayList<Class<? extends Base>>();
+			this.onFieldNames=new ArrayList<String>();
+			this.cs.add(c);
+			this.jps=new ArrayList<JoinType>();
+		}
+		public void append(String field1Name,JoinType jp,Class<? extends Base> c,String field2Name) throws NoSuchFieldException{
+			Class<? extends Base> c1=cs.get(cs.size()-1);
+			Class<? extends Base> c2=c;
+			Base.getField(c1,field1Name);
+			Base.getField(c2,field2Name);
+			this.onFieldNames.add(field1Name);
+			this.onFieldNames.add(field2Name);
+			this.jps.add(jp);
+			this.cs.add(c2);
+		}
+		@Override
+		public String toString(){
+			StringBuilder sb=new StringBuilder();
+			sb.append(Base.getSQLTableName(cs.get(0)));
+			for(int i=1;i<cs.size();i++){
+				sb.append(' ');
+				sb.append(jps.get(i-1));
+				sb.append(' ');
+				Class<? extends Base> c1=cs.get(i-1);
+				Class<? extends Base> c2=cs.get(i);
+				String f1=onFieldNames.get((i-1)<<1);
+				String f2=onFieldNames.get((i<<1)-1);
+				sb.append(Base.getSQLTableName(c2));
+				sb.append(" ON ");
+				sb.append(Base.getSQLTableName(c1));sb.append('.');sb.append(f1);
+				sb.append(" = ");
+				sb.append(Base.getSQLTableName(c2));sb.append('.');sb.append(f2);
+			}
+			return sb.toString();
+		}
+		public Class<? extends Base> firstClass(){
+			return cs.get(0);
+		}
+	}
+	static public List<Base[]> list(JoinParam param,String[] checkFields,Object[] checkObjects,String[] orderFields)
+			 throws SQLException, IllegalArgumentException, IllegalAccessException, InstantiationException{
+		StringBuilder sql=new StringBuilder();
+		sql.append("SELECT ");
+		boolean first=true;
+		for(Class<? extends Base> _c:param.getClassList()){
+			String _ct=Base.getSQLTableName(_c);
+			for(Field f:Base.getFields(_c)){
+				f.setAccessible(true);
+				if(first) first=false;
+				else sql.append(',');
+				sql.append(_ct);
+				sql.append('.');
+				sql.append(f.getName());
+				sql.append(" AS ");
+				sql.append(_ct);
+				sql.append('_');
+				sql.append(f.getName());//利用AS对结果集列名取别名为"表名_原列名"
+			}
+		}
+		sql.append(" FROM ");
+	//	sql.append(Base.getSQLTableName(c));	//already have in param.toString()
+	//	sql.append(' ');						//already have in param.toString()
+		sql.append(param.toString());
+		int checkLength=-1;
+		if(checkFields!=null && checkObjects!=null && checkFields.length>0 && checkObjects.length>0
+				&& checkFields[0]!=null && checkFields[0].length()>0 && checkObjects[0]!=null){
+			sql.append(" WHERE ");
+			checkLength=Math.min(checkFields.length,checkObjects.length);
+			for(int i=0;i<checkLength;i++){
+				if(i!=0) sql.append(" AND ");
+				sql.append(checkFields[i]);
+				sql.append(" = ");
+				sql.append('?');
+			}
+		}
+		if(orderFields!=null && orderFields.length>0 && orderFields[0]!=null && orderFields[0].length()>0){
+			sql.append(" ORDER BY ");
+			boolean flag=true;
+			for(String s:orderFields){
+				if(flag) flag=false;
+				else sql.append(",");
+				sql.append(s);
+			}
+		}
+		PreparedStatement pst=DB.con().prepareStatement(sql.toString());
+		for(int i=0;i<checkLength;i++)
+			pst.setObject(i+1,checkObjects[i]);
+		ResultSet rs=pst.executeQuery();
+		List<Base[]> res=new ArrayList<Base[]>();
+		int len=param.size();
+		while(rs.next()){
+			Base[] x=new Base[len];
+			for(int i=0;i<len;i++){
+				Class<? extends Base> c=param.getClassByIndex(i);
+				String ct=Base.getSQLTableName(c);
+				x[i]=c.newInstance();
+				for(Field f:Base.getFields(c)){
+					f.setAccessible(true);
+					String columnName=ct+"_"+f.getName();
+					Object o=rs.getObject(columnName);
+					f.set(x[i],o);
+				}
+			}
+			res.add(x);
+		}
+		return res;
+	}
+	
 	
 	
 	

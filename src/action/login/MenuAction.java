@@ -34,8 +34,9 @@ public class MenuAction extends AnnualAction{
 		super.setupYear();
 		System.out.println(">> MenuAction:execute > year="+this.getYear());
 		Map<String, Object> session=ActionContext.getContext().getSession();
-		try {
-			this.times=Time.listTime(this.getYear(),false);
+		Role role=Role.getRoleByOffice(Manager.getUser());
+		try {//TODO listTime execute from MenuAction
+			this.times=Time.listTime(role,this.getYear(),false);
 		} catch (NoSuchFieldException | SecurityException | SQLException e) {
 			e.printStackTrace();
 			this.times=new ArrayList<Time>();
