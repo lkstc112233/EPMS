@@ -84,7 +84,9 @@ public final class DB {
 		return connection;
 	}
 	
-//	static private final String TimeTableYear="__YEAR__";
+	/**
+	 * 从ACCESS表中读取project信息，套用上当前输入的year来insert到Time表中
+	 */
 	static synchronized public void setupTimeTable(int year) throws SQLException{
 		System.out.println("++ DB:setupTimeTable > year="+year);
 		List<ACCESS> accessList=ACCESS.list(ACCESS.class);
@@ -124,32 +126,6 @@ public final class DB {
 			}
 			System.out.println("++ DB:setupTimeTable > delete END");
 		}
-	/*
-		try(FileInputStream fin=new FileInputStream(path+setupTimeTableFileName);
-				Scanner in=new Scanner(fin);
-				Statement st=DB.con().createStatement();
-				){
-			String sql="";
-			while(in.hasNext()){
-				sql+=in.nextLine()+"\r\n";
-				if(sql.contains(";")){
-					sql=sql.replaceAll(TimeTableYear,String.valueOf(year));
-					System.out.println("++ DB:setupTimeTable > execute: "+sql);
-					st.execute(sql);
-					sql="";
-				}
-			}
-			if(!sql.isEmpty()){
-				sql.replaceAll(TimeTableYear,String.valueOf(year));
-				System.out.println("++ DB:setupTimeTable > execute: "+sql);
-				st.execute(sql);
-			}
-			System.out.println("++ DB:setupTimeTable > execute: SUCCESS!");
-		}catch(IOException e){
-			e.printStackTrace();
-			System.err.println(path+iniFileName+"文件读取失败！");
-		}
-		//*/
 		System.out.println("++ DB:setupTimeTable <");
 	}
 	

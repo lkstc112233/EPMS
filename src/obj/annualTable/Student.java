@@ -7,7 +7,7 @@ import obj.*;
 @SQLTable("Student")
 public class Student extends AnnualBase{
 	
-	@SQLField(value="学号",isKey=true,needImport=true,description="学号不能重复")
+	@SQLField(value="学号",isKey=true,needImport=true,ps="学号不能重复")
 	private String id;
 	@SQLField(value="姓名",needImport=true)
 	private String name;
@@ -27,13 +27,13 @@ public class Student extends AnnualBase{
 	private String province;
 	@SQLField(value="民族",source="Nation.name",needImport=true)
 	private String nation;
-	@SQLField(value="回生源地",needImport=true,description="是否希望回生源地进行教育实习")
+	@SQLField(value="回生源地",needImport=true,ps="是否希望回生源地进行教育实习")
 	private Boolean hxyx;
-	@SQLField(value="指导老师工号",source="InnerPerson.id",description="指导老师需要属于校内人员列表")
+	@SQLField(value="指导老师工号",source="InnerPerson.id",ps="指导老师需要属于校内人员列表")
 	private String teacherId;
 	@SQLField(value="优秀实习生类别",source="Outstanding.type",needImport=false)
 	private String outstandingType;
-	@SQLField(value="优秀实习生材料",description="二进制储存")
+	@SQLField(value="优秀实习生材料",ps="二进制储存")
 	private byte[] outstandingMaterial;
 	
 	public String getId() {return id;}

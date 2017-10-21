@@ -8,7 +8,7 @@ import obj.*;
 @SQLTable("Student")
 public class Region extends AnnualBase{
 	
-	@SQLField(value="大区名称",isKey=true,description="学号不能重复")
+	@SQLField(value="大区名称",isKey=true,ps="学号不能重复")
 	private String name;
 	@SQLField(value="实习基地",source="PracticeBase.name")
 	private String practiceBase;
@@ -18,11 +18,11 @@ public class Region extends AnnualBase{
 	private Timestamp enterPracticeBaseTime;
 	@SQLField(value="入校地点",source="Province.name")
 	private String enterPracticeBasePlace;
-	@SQLField(value="动员会时间",description="是否希望回生源地进行教育实习")
+	@SQLField(value="动员会时间",ps="是否希望回生源地进行教育实习")
 	private Timestamp mobilizationTime;
-	@SQLField(value="动员会地点",source="InnerPerson.id",description="指导老师需要属于校内人员列表")
+	@SQLField(value="动员会地点",source="InnerPerson.id",ps="指导老师需要属于校内人员列表")
 	private String teacherId;
-	@SQLField(value="备注",description="二进制储存")
+	@SQLField(value="备注",ps="二进制储存")
 	private byte[] remark;
 
 

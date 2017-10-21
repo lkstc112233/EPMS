@@ -25,10 +25,10 @@
 					修改操作表: 
 					<s:select id="tableName" name="tableName" cssClass="title_button" style="width:200px;margin-bottom:2px;"
 					list="{
-					'Student',
 					'ACCESS','InnerOffice','Major','OuterOffice','Province','School','ZZMM',
-					'Time'
+					'Time','PracticeBase','Student','Region'
 					}" theme="simple"
+					value="<s:property value='tableName'/>"
 					onchange="window.location.href=window.location.href.substring(0,(
 					window.location.href.indexOf('?')<0?window.location.length:window.location.href.indexOf('?'))
 					)+'?tableName='+this.value"/>
@@ -101,11 +101,21 @@
 		<s:if test="search.resultSet!=null">
 			<!-- ###### 表头 ###### -->
 			<tr class="mytableTitle">
+			<!--<td style="width:13px;text-align:center;">序号</td>
+				<td style="text-align:center;" colspan="2">操作</td>-->
+				<td colspan="3"></td>
+				<s:iterator value="search.restraint" var="__label">
+					<td style="word-wrap:break-word;word-break:break-all;text-align:center;">
+						<s:property value="%{#__label.fieldName}"/>
+					</td>
+				</s:iterator>
+			</tr>
+			<tr class="mytableTitle">
 				<td style="width:13px;text-align:center;">序号</td>
 				<td style="text-align:center;" colspan="2">操作</td>
 				<s:iterator value="search.restraint" var="__label">
 					<td style="word-wrap:break-word;word-break:break-all;text-align:center;">
-						<s:property value="%{#__label.fieldName}"/>
+						<s:property value="%{#__label.fieldDescription}"/>
 					</td>
 				</s:iterator>
 			</tr>

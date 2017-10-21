@@ -12,11 +12,11 @@ public class Time extends AnnualBase{
 
 	@SQLField(needSorted=true)
 	private int id;
-	@SQLField(isKey=true,source="ACCESS.project")
+	@SQLField(value="项目名称",isKey=true,source="ACCESS.project")
 	private String project;
-	@SQLField
+	@SQLField(value="起始时间")
 	private Timestamp time1;
-	@SQLField
+	@SQLField(value="终止时间")
 	private Timestamp time2;
 	
 	

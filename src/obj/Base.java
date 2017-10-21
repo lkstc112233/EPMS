@@ -173,13 +173,16 @@ public abstract class Base {
 		m.setAccessible(true);
 		m.invoke(this,o);
 	}
-	
-	static public String getSQLFieldName(Field f){
+
+	static public String getFieldDescription(Field f){
 		if(f==null) return null;
 		SQLField s=f.getAnnotation(SQLField.class);
-		if(s==null) return null;
-		if(s.value().isEmpty()) return f.getName();
-		return s.value();
+		return s==null?"":s.value();
+	}
+	static public String getFieldPs(Field f){
+		if(f==null) return null;
+		SQLField s=f.getAnnotation(SQLField.class);
+		return s==null?"":s.ps();
 	}
 	
 	@Override

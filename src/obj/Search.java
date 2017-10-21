@@ -30,6 +30,10 @@ public final class Search<T extends Base>{
 		public String value;
 		Triple(Field f,RestraintType t,String s){field=f;type=t;value=s;}
 		public String getFieldName(){return this.field.getName();}
+		public String getFieldDescription(){
+			SQLField s=field.getAnnotation(SQLField.class);
+			return s==null?"":s.value();
+		}
 		public String getTypeName(){return String.valueOf(type);}	public void setTypeName(String s){this.type=RestraintType.valueOf(s);}
 		public String getTypeOperation(){if(type==null) return "";return type.operator;}
 		public RestraintType getType(){return this.type;}

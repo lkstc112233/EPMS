@@ -7,7 +7,7 @@ public class PracticeBase extends ListableBase implements ListableBase.ListableB
 
 	@SQLField(isKey=true,needImport=true,value="实习基地名称")
 	private String name;
-	@SQLField(value="拒绝接收的民族",needImport=true,description="('汉族'),('蒙古族'),('回族'),('东乡族'),('维吾尔族'),('哈萨克族'),('土家族'),('藏族'),('壮族'),...")
+	@SQLField(value="拒绝接收的民族",needImport=true,ps="('汉族'),('蒙古族'),('回族'),('东乡族'),('维吾尔族'),('哈萨克族'),('土家族'),('藏族'),('壮族'),...")
 	private String refuseNation;
 	@SQLField(value="所处城市",source="City.name",needImport=true)
 	private String city;
@@ -19,7 +19,7 @@ public class PracticeBase extends ListableBase implements ListableBase.ListableB
 	private String khh;
 	@SQLField(value="账户",needImport=true)
 	private String zh;
-	@SQLField(value="税务识别码",needImport=true,description="2017年7月1日起实施")
+	@SQLField(value="税务识别码",needImport=true,ps="2017年7月1日起实施")
 	private String swsbm;
 
 	public String getName(){return name;}

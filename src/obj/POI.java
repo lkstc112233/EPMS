@@ -75,10 +75,10 @@ public class POI implements SQLIO{
 				if(s==null) continue;
 				cell.setCellType(CellType.STRING);
 				cell.setCellValue(r==0?fs[i].getName()
-						:(r==1?Base.getSQLFieldName(fs[i]):""));
+						:(r==1?Base.getFieldDescription(fs[i]):""));
 				cell.setCellStyle(r==0?styleTitle:styleContent);
 				System.out.print(cell.getStringCellValue()+"\t");
-				if(r==0&&flag && !s.description().isEmpty()) flag=false;
+				if(r==0&&flag && !s.ps().isEmpty()) flag=false;
 			}if(r==0 && flag) r++;//略过description
 			System.out.println();
 		}
