@@ -5,10 +5,10 @@ import java.sql.Timestamp;
 
 import obj.*;
 
-@SQLTable("Student")
+@SQLTable("Region")
 public class Region extends AnnualBase{
 	
-	@SQLField(value="大区名称",isKey=true,ps="学号不能重复")
+	@SQLField(value="大区名称",isKey=true,ps="大区名称不能重复")
 	private String name;
 	@SQLField(value="实习基地",source="PracticeBase.name")
 	private String practiceBase;
@@ -18,12 +18,12 @@ public class Region extends AnnualBase{
 	private Timestamp enterPracticeBaseTime;
 	@SQLField(value="入校地点",source="Province.name")
 	private String enterPracticeBasePlace;
-	@SQLField(value="动员会时间",ps="是否希望回生源地进行教育实习")
+	@SQLField(value="动员会时间")
 	private Timestamp mobilizationTime;
-	@SQLField(value="动员会地点",source="InnerPerson.id",ps="指导老师需要属于校内人员列表")
-	private String teacherId;
+	@SQLField(value="动员会地点",source="InnerPerson.id")
+	private String mobilizationPlace;
 	@SQLField(value="备注",ps="二进制储存")
-	private byte[] remark;
+	private String remark;
 
 
 	public String getName() {return name;}
@@ -38,10 +38,10 @@ public class Region extends AnnualBase{
 	public void setEnterPracticeBasePlace(String enterPracticeBasePlace) {this.enterPracticeBasePlace = enterPracticeBasePlace;}
 	public Timestamp getMobilizationTime() {return mobilizationTime;}
 	public void setMobilizationTime(Timestamp mobilizationTime) {this.mobilizationTime = mobilizationTime;}
-	public String getTeacherId() {return teacherId;}
-	public void setTeacherId(String teacherId) {this.teacherId = teacherId;}
-	public byte[] getRemark() {return remark;}
-	public void setRemark(byte[] remark) {this.remark = remark;}
+	public String getMobilizationPlace() {return mobilizationPlace;}
+	public void setMobilizationPlace(String mobilizationPlace) {this.mobilizationPlace=mobilizationPlace;}
+	public String getRemark() {return remark;}
+	public void setRemark(String remark) {this.remark = remark;}
 
 
 	

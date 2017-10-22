@@ -33,7 +33,7 @@ public class ActionInterceptor extends AbstractInterceptor{
 		String actionType=actionName.split("_",2)[0];
 		if(Role.containActionPrefix(actionType)){
 			if(!actionType.equals(Role.getActionPrefix(Role.getRoleByOffice(inner)))){
-				session.put(ErrorTipsName,inner.getOffice()+"无权访问"+actionType+"，请重新登录！");
+				session.put(ErrorTipsName,inner.getOffice()+"无权访问("+actionType+")，请重新登录！");
 				return "error";
 			}
 		}

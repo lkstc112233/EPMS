@@ -24,11 +24,11 @@
 				<div class="right">
 					修改操作表: 
 					<s:select id="tableName" name="tableName" cssClass="title_button" style="width:200px;margin-bottom:2px;"
+					value="<s:property value='tableName'/>"
 					list="{
 					'ACCESS','InnerOffice','Major','OuterOffice','Province','School','ZZMM',
 					'Time','PracticeBase','Student','Region'
 					}" theme="simple"
-					value="<s:property value='tableName'/>"
 					onchange="window.location.href=window.location.href.substring(0,(
 					window.location.href.indexOf('?')<0?window.location.length:window.location.href.indexOf('?'))
 					)+'?tableName='+this.value"/>
