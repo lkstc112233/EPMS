@@ -291,6 +291,8 @@ public abstract class Base {
 	//增删改查
 	//=============================================================
 	public void load() throws SQLException, IllegalArgumentException, IllegalAccessException{
+		if(this.checkKeyNull())
+			throw new IllegalArgumentException("The key fields are not completed!");
 		int SQLParameterIndex=1;
 		for(Field f:this.getFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
@@ -385,7 +387,8 @@ public abstract class Base {
 			System.err.println("更新了"+num+"重值！("+sqlps.toString()+")");
 	}
 	public void delete() throws IllegalArgumentException, IllegalAccessException, SQLException{
-		//delete it
+		if(this.checkKeyNull())
+			throw new IllegalArgumentException("The key fields are not completed!");
 		int SQLParameterIndex=1;
 		for(Field f:this.getFields()){
 			SQLField s=f.getAnnotation(SQLField.class);

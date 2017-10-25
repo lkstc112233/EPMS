@@ -39,8 +39,9 @@
 				<s:hidden name="executive" value="true" />
 				<s:token />
 				<tr><td colspan="2" style="text-align:left;">
+					将选中基地放入大区（若不存在则新建）：
 					<s:textfield name="newRegionName" />
-					<s:submit value="上传" cssClass="inlineButton"/>
+					<s:submit value="放入新建" cssClass="inlineButton"/>
 				</td></tr>
 			</s:form>
 		</s:if><s:else>
