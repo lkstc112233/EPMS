@@ -22,9 +22,10 @@
 					<s:property value="tableName"/>
 				</div>
 				<div class="right">
-					修改操作表: 
-					<s:select id="tableName" name="tableName" cssClass="title_button" style="width:200px;margin-bottom:2px;"
-					value="<s:property value='tableName'/>"
+					修改操作表:
+					<!-- name="tableName" --> 
+					<s:select id="tableName" cssClass="title_button" style="width:200px;margin-bottom:2px;"
+					value="%{tableName}"
 					list="{
 					'ACCESS','InnerOffice','Major','OuterOffice','Province','School','ZZMM',
 					'Time','PracticeBase','Student','Region'

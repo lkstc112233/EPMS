@@ -89,6 +89,8 @@ public abstract class ListableBase extends Base{
 	static public class JoinParam{
 		private List<Class<? extends Base>> cs;	//0  1  2  3  4...
 		private List<String> onFieldNames;		//0  12 34 56 78...
+		private List<String[]> onCheckFieldNames;
+		private List<Object[]> onCheckFieldValues;
 		private List<JoinType> jps;
 		public void clear(){if(cs!=null) cs.clear();}
 		public int size(){return cs==null?0:cs.size();}
@@ -98,16 +100,24 @@ public abstract class ListableBase extends Base{
 			if(c==null) throw new NullPointerException("JoinParam cannot accept the first class is NULL!");
 			this.cs=new ArrayList<Class<? extends Base>>();
 			this.onFieldNames=new ArrayList<String>();
+			this.onCheckFieldNames=new ArrayList<String[]>();
+			this.onCheckFieldValues=new ArrayList<Object[]>();
 			this.cs.add(c);
 			this.jps=new ArrayList<JoinType>();
 		}
 		public void append(String field1Name,JoinType jp,Class<? extends Base> c,String field2Name) throws NoSuchFieldException{
+			this.append(field1Name,jp,c,field2Name,null,null);
+		}
+		public void append(String field1Name,JoinType jp,Class<? extends Base> c,String field2Name,
+				String[] oncheckFieldNames,Object[] oncheckFieldValues) throws NoSuchFieldException{
 			Class<? extends Base> c1=cs.get(cs.size()-1);
 			Class<? extends Base> c2=c;
 			Base.getField(c1,field1Name);
 			Base.getField(c2,field2Name);
 			this.onFieldNames.add(field1Name);
 			this.onFieldNames.add(field2Name);
+			this.onCheckFieldNames.add(oncheckFieldNames==null?new String[0]:oncheckFieldNames);
+			this.onCheckFieldValues.add(oncheckFieldValues==null?new Object[0]:oncheckFieldValues);
 			this.jps.add(jp);
 			this.cs.add(c2);
 		}
@@ -121,13 +131,21 @@ public abstract class ListableBase extends Base{
 				sb.append(' ');
 				Class<? extends Base> c1=cs.get(i-1);
 				Class<? extends Base> c2=cs.get(i);
+				String c1table=Base.getSQLTableName(c1);
+				String c2table=Base.getSQLTableName(c2);
 				String f1=onFieldNames.get((i-1)<<1);
 				String f2=onFieldNames.get((i<<1)-1);
-				sb.append(Base.getSQLTableName(c2));
-				sb.append(" ON ");
-				sb.append(Base.getSQLTableName(c1));sb.append('.');sb.append(f1);
+				sb.append(c2table);
+				sb.append(" ON ( ");
+				sb.append(c1table);sb.append('.');sb.append(f1);
 				sb.append(" = ");
-				sb.append(Base.getSQLTableName(c2));sb.append('.');sb.append(f2);
+				sb.append(c2table);sb.append('.');sb.append(f2);
+				for(String onCheckFieldName:this.onCheckFieldNames.get(i-1)){
+					sb.append(" AND ");
+					sb.append(c2table);sb.append('.');sb.append(onCheckFieldName);
+					sb.append(" = ?");
+				}
+				sb.append(" )");
 			}
 			return sb.toString();
 		}
@@ -135,6 +153,10 @@ public abstract class ListableBase extends Base{
 			return cs.get(0);
 		}
 	}
+	static public List<Base[]> list(JoinParam param) throws SQLException, IllegalArgumentException, IllegalAccessException, InstantiationException{
+		return list(param,null,null,null);}
+	static public List<Base[]> list(JoinParam param,String[] checkFields,Object[] checkObjects) throws SQLException, IllegalArgumentException, IllegalAccessException, InstantiationException{
+		return list(param,checkFields,checkObjects,null);}
 	static public List<Base[]> list(JoinParam param,String[] checkFields,Object[] checkObjects,String[] orderFields)
 			 throws SQLException, IllegalArgumentException, IllegalAccessException, InstantiationException{
 		StringBuilder sql=new StringBuilder();
@@ -181,8 +203,11 @@ public abstract class ListableBase extends Base{
 			}
 		}
 		PreparedStatement pst=DB.con().prepareStatement(sql.toString());
+		int pstindex=0;
+		for(Object[] os:param.onCheckFieldValues) for(Object o:os)
+			pst.setObject(++pstindex,o);
 		for(int i=0;i<checkLength;i++)
-			pst.setObject(i+1,checkObjects[i]);
+			pst.setObject(++pstindex,checkObjects[i]);
 		ResultSet rs=pst.executeQuery();
 		List<Base[]> res=new ArrayList<Base[]>();
 		int len=param.size();
@@ -192,12 +217,19 @@ public abstract class ListableBase extends Base{
 				Class<? extends Base> c=param.getClassByIndex(i);
 				String ct=Base.getSQLTableName(c);
 				x[i]=c.newInstance();
+				boolean flag=true;
 				for(Field f:Base.getFields(c)){
 					f.setAccessible(true);
 					String columnName=ct+"_"+f.getName();
-					Object o=rs.getObject(columnName);
+					Object o=null;
+				try{o=rs.getObject(columnName);}catch(SQLException e){}
+					if(flag && o!=null) flag=false;
 					f.set(x[i],o);
 				}
+				//若x[i]的属性全部都是null，则x[i]应为null
+				if(flag) x[i]=null;
+				//若x[i]的key属性都是null，则x[i]应为null
+				if(x[i]!=null&&x[i].checkKeyNull()) x[i]=null;
 			}
 			res.add(x);
 		}

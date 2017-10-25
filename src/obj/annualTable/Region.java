@@ -10,7 +10,7 @@ public class Region extends AnnualBase{
 	
 	@SQLField(value="大区名称",isKey=true,ps="大区名称不能重复")
 	private String name;
-	@SQLField(value="实习基地",source="PracticeBase.name")
+	@SQLField(value="实习基地",isKey=true,source="PracticeBase.name")
 	private String practiceBase;
 	@SQLField(value="总领队工号",source="InnerPerson.id")
 	private String leaderId;

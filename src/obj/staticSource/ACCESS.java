@@ -15,7 +15,7 @@ public class ACCESS extends ListableBase{
 	@SQLField(isKey=true)
 	private String project;
 	@SQLField
-	private String actionClass;
+	private String actionClass="";
 	@SQLField
 	private Timestamp time1;
 	@SQLField
