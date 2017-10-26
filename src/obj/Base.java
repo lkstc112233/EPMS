@@ -322,7 +322,10 @@ public abstract class Base {
 	//=============================================================
 	//增删改查
 	//=============================================================
-	public void load() throws SQLException, IllegalArgumentException, IllegalAccessException{
+	public int load() throws SQLException, IllegalArgumentException, IllegalAccessException{
+		return this.load(true);
+	}
+	private int load(boolean setFields) throws SQLException, IllegalArgumentException, IllegalAccessException{
 		if(this.checkKeyNull())
 			throw new IllegalArgumentException("The key fields are not completed!");
 		int SQLParameterIndex=1;
@@ -339,13 +342,16 @@ public abstract class Base {
 		if(num!=1)
 			System.err.println("查询到"+num+"重值！("+this.sql_load.toString()+")");
 		rs.first();
-		for(Field f:this.getFields()){
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null) continue;
-			f.setAccessible(true);
-			if(!s.isKey())
-				f.set(this,rs.getObject(f.getName()));
+		if(setFields){
+			for(Field f:this.getFields()){
+				SQLField s=f.getAnnotation(SQLField.class);
+				if(s==null) continue;
+				f.setAccessible(true);
+				if(!s.isKey())
+					f.set(this,rs.getObject(f.getName()));
+			}
 		}
+		return num;
 	}
 	public void update()throws SQLException, IllegalArgumentException, IllegalAccessException{
 		Class<? extends Base> clazz=this.getClass();
@@ -497,5 +503,12 @@ public abstract class Base {
 		if(num!=1)
 			System.err.println("更新了"+num+"重值！("+this.sql_insert.toString()+")");
 	}
+	public boolean exist() throws InstantiationException, IllegalAccessException, IllegalArgumentException, SQLException{
+		Class<? extends Base> clazz=this.getClass();
+		Base b=clazz.newInstance();
+		this.copyTo(b);
+		return b.load(false)>0;
+	}
+	
 
 }

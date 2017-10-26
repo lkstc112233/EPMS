@@ -113,8 +113,12 @@ public class TableImportOperationAction extends action.login.AnnualAction{
 		}
 		for(int i=0;i<content.size();i++){
 			try{
-				content.get(i).create();
-			}catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
+				Base b=content.get(i);
+				if(b.exist())
+					b.update();
+				else
+					b.create();
+			}catch (IllegalArgumentException | IllegalAccessException | SQLException | InstantiationException e) {
 				e.printStackTrace();
 				errorIndex.add(i);
 			}
