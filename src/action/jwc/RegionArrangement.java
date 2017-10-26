@@ -121,7 +121,7 @@ public class RegionArrangement extends action.login.AnnualAction{
 		System.out.println(">> RegionArrangement:execute > regionName= "+this.regionName);
 		if(this.regionName==null || this.regionName.isEmpty()){
 			session.put(token.ActionInterceptor.ErrorTipsName,
-					"请输入新大区名称！");
+					"请输入大区名称！");
 			System.out.println(">> RegionArrangement:execute <NONE");
 			return NONE;
 		}
@@ -133,7 +133,7 @@ public class RegionArrangement extends action.login.AnnualAction{
 		for(boolean s:checkBox) flag|=s;
 		if(!flag){
 			session.put(token.ActionInterceptor.ErrorTipsName,
-					"请至少选择一个实习基地添加到新大区！");
+					"请至少选择一个实习基地添加到大区！");
 			System.out.println(">> RegionArrangement:execute <NONE");
 			return NONE;
 		}
@@ -162,7 +162,7 @@ public class RegionArrangement extends action.login.AnnualAction{
 			}
 		}
 		session.put(token.ActionInterceptor.ErrorTipsName,
-				sb.toString()+" 已经添加到新大区("+this.regionName+")！");
+				sb.toString()+" 已经添加到大区("+this.regionName+")！");
 		session.remove(SessionListKey);
 		return display();
 	}
@@ -193,7 +193,7 @@ public class RegionArrangement extends action.login.AnnualAction{
 			System.out.println(">> RegionArrangement:delete <NONE");
 			return NONE;
 		}
-		List<PracticeBase> deletePracticeBases=this.regionAndPracticeBase.get((Region)null).getPracticeBases();
+		List<PracticeBase> deletePracticeBases=this.regionAndPracticeBase.get(this.regionName).getPracticeBases();
 		if(deletePracticeBases==null){
 			session.put(token.ActionInterceptor.ErrorTipsName,
 					"选中了一个不存在的大区（"+this.regionName+"）！");

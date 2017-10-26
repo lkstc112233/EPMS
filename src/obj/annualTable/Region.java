@@ -20,13 +20,13 @@ public class Region extends AnnualBase implements ListableBaseWithNoSave{
 	private String practiceBase;
 	@SQLField(value="总领队工号",source="InnerPerson.id")
 	private String leaderId;
-	@SQLField(value="入校时间",source="ZZMM.name")
+	@SQLField(value="入校时间")
 	private Timestamp enterPracticeBaseTime;
-	@SQLField(value="入校地点",source="Province.name")
+	@SQLField(value="入校地点")
 	private String enterPracticeBasePlace;
 	@SQLField(value="动员会时间")
 	private Timestamp mobilizationTime;
-	@SQLField(value="动员会地点",source="InnerPerson.id")
+	@SQLField(value="动员会地点")
 	private String mobilizationPlace;
 	@SQLField(value="备注",ps="文本储存")
 	private String remark;
@@ -37,7 +37,7 @@ public class Region extends AnnualBase implements ListableBaseWithNoSave{
 	public String getPracticeBase() {return practiceBase;}
 	public void setPracticeBase(String practiceBase) {this.practiceBase = practiceBase;}
 	public String getLeaderId() {return leaderId;}
-	public void setLeaderId(String leaderId) {this.leaderId = leaderId;}
+	public void setLeaderId(String leaderId) {this.leaderId = leaderId==null||leaderId.isEmpty()?null:leaderId;}
 	public Timestamp getEnterPracticeBaseTime() {return enterPracticeBaseTime;}
 	public void setEnterPracticeBaseTime(Timestamp enterPracticeBaseTime) {this.enterPracticeBaseTime = enterPracticeBaseTime;}
 	public String getEnterPracticeBasePlace() {return enterPracticeBasePlace;}
@@ -95,7 +95,36 @@ public class Region extends AnnualBase implements ListableBaseWithNoSave{
 	 */
 	@Override
 	public void update() throws IllegalArgumentException, IllegalAccessException, SQLException{
-		this.update(this);
+		Class<? extends Base> clazz=this.getClass();
+		List<Field> fs=Base.getFields(clazz);
+		StringBuilder sb=new StringBuilder();
+		sb.append("UPDATE ");
+		sb.append(Base.getSQLTableName(clazz));
+		sb.append(" SET ");
+		boolean first=true;
+		for(Field f:fs){
+			SQLField s=f.getAnnotation(SQLField.class);
+			if(s==null || s.isKey()) continue;
+			if(f.getName().equals("practiceBase")) continue;
+			if(first) first=false;
+			else sb.append(" , ");
+			sb.append(f.getName());
+			sb.append(" = ?");
+		}
+		sb.append(" WHERE ");
+		sb.append("year = ? AND name = ?");
+		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
+		int parameterIndex=1;
+		for(Field f:fs){
+			SQLField s=f.getAnnotation(SQLField.class);
+			if(s==null || s.isKey()) continue;
+			f.setAccessible(true);
+			pst.setObject(parameterIndex++,f.get(this));
+		}
+		pst.setObject(parameterIndex++,this.getYear());
+		pst.setObject(parameterIndex++,this.getName());
+		int num=pst.executeUpdate();
+		System.out.println("+> Region:update > update "+num+" column!");
 	}
 	/**
 	 * 需要同时修改所有该大区内容（包括year）
@@ -113,6 +142,9 @@ public class Region extends AnnualBase implements ListableBaseWithNoSave{
 		sb.append(" SET ");
 		boolean first=true;
 		for(Field f:fs){
+			SQLField s=f.getAnnotation(SQLField.class);
+			if(s==null) continue;
+			if(f.getName().equals("practiceBase")) continue;
 			if(first) first=false;
 			else sb.append(" , ");
 			sb.append(f.getName());
@@ -122,12 +154,19 @@ public class Region extends AnnualBase implements ListableBaseWithNoSave{
 		sb.append("year = ? AND name = ?");
 		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
 		int parameterIndex=1;
-		for(Field f:fs)
-			pst.setObject(parameterIndex++,f.get(r));
+		for(Field f:fs){
+			SQLField s=f.getAnnotation(SQLField.class);
+			if(s==null) continue;
+			if(f.getName().equals("practiceBase")) continue;
+			f.setAccessible(true);
+			Object o=f.get(r);
+			pst.setObject(parameterIndex++,o);
+		}
 		pst.setObject(parameterIndex++,this.getYear());
 		pst.setObject(parameterIndex++,this.getName());
 		int num=pst.executeUpdate();
-		System.out.println("+> Region:update > update "+num+" column!");
+		System.out.println("+> Region:update(Base) > update "+num+" column!");
+		r.copyTo(this);
 	}
 	
 	

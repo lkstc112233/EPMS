@@ -23,7 +23,7 @@
 					未分配大区的实习基地
 				</div>
 			</td></tr>
-			<s:form action="jwc_function_RegionArrangement_execute" method="post" theme="simple" enctype="multipart/form-data">
+			<s:form action="jwc_function_RegionArrangement_execute" method="post" theme="simple">
 				<!-- ###### 表头 ###### -->
 				<tr class="mytableTitle">
 					<td>选择</td>
@@ -36,13 +36,13 @@
 						<s:property value="%{#__pbsRow.name}" />
 					</td></tr>
 				</s:iterator>
-				<s:hidden name="executive" value="true" />
-				<s:token />
 				<tr><td colspan="2" style="text-align:left;">
 					将选中基地放入大区（若不存在则新建）：
 					<s:textfield name="regionName" />
 					<s:submit value="放入新建" cssClass="buttonInline"/>
 				</td></tr>
+				<s:hidden name="executive" value="true" />
+				<s:token />
 			</s:form>
 		</s:if><s:else>
 			<!-- ######### 已有大区的基地 ######## -->
@@ -51,12 +51,12 @@
 					大区（<s:property value="%{#__Row.region.name}" />）
 					<div class="right">
 						<a href="<s:url action='jwc_function_RegionInfo_display'/>?region.name=<s:property value='%{#__Row.region.name}'/>"
-							style="color:#fff;text-decoration:none;">
+							style="color:#fff;text-decoration:none;" class="buttonInline">
 						修改大区信息</a>
 					</div>
 				</div>
 			</td></tr>
-			<s:form action="jwc_function_RegionArrangement_delete" method="post" theme="simple" enctype="multipart/form-data">
+			<s:form action="jwc_function_RegionArrangement_delete" method="post" theme="simple" >
 				<!-- ###### 表头 ###### -->
 				<tr class="mytableTitle">
 					<td>选择</td>
@@ -69,13 +69,13 @@
 						<s:property value="%{#__pbsRow.name}" />
 					</td></tr>
 				</s:iterator>
-				<s:hidden name="executive" value="true" />
-				<s:hidden name="newRegionName" value="%{#__Row.region.name}" />
-				<s:token />
 				<tr><td colspan="2" style="text-align:left;">
 					从该大区移除
 					<s:submit value="移除" cssClass="buttonInline"/>
 				</td></tr>
+				<s:hidden name="regionName" value="%{#__Row.region.name}" />
+				<s:hidden name="executive" value="true" />
+				<s:token />
 			</s:form>
 		</s:else>
 		</s:iterator>
