@@ -78,12 +78,15 @@
 						</div>
 						<!--<s:property value="%{#__restraintStatus.count}" /> -->
 					</s:iterator>
-					<div style="line-height:32px;float:left;width:120px;text-align:center">
-						排序
-					</div><div style="line-height:32px;float:left;text-align:center">
-						<s:select list="search.restraint" headerKey="" headerValue=""
-						listKey="fieldName" listValue="fieldName"
-						name="search.orderRestraintIndex"/>
+					<div style="line-height:32px;float:left">
+						<div style="line-height:32px;float:left">
+							排序
+						</div><div style="float:left;text-align:center">
+							<s:select list="search.restraint" headerKey="" headerValue=""
+							listKey="fieldName" listValue="fieldName"
+							name="search.orderRestraintIndex"/>
+							&nbsp;
+						</div>
 					</div>
 				</td></tr>
 				<tr><td colspan="1" style="width:20%;">
@@ -192,25 +195,23 @@
 							<!-- 内容 -->
 							<s:iterator value="#__tableRow.iteratorFieldsValue" var="__tableCol" status="__colStatus">
 								<td style="text-align:center;">
-									<s:if test="%{#__tableRow.iteratorFieldsKeyBoolean[#__colStatus.index]} == false"> -->
+									<s:if test="#__tableRow.iteratorFieldsKeyBoolean[#__colStatus.index] == false">
 										<s:if test="updateBaseFieldsSourceList[#__colStatus.index] == null">
 											<s:textfield value="%{#__tableCol}" theme="simple"
 											style="padding:0px;width:95%;min-width:30px;"
 											name="search.resultSet[%{#__status.index}].%{#__tableRow.iteratorFieldsName[#__colStatus.index]}" />
-									<!--	name="updateBase.%{#__tableRow.iteratorFieldsName[#__colStatus.index]}" />	-->
 										</s:if><s:else>
 											<s:select list="updateBaseFieldsSourceList[#__colStatus.index].list"
 											headerKey="" headerValue="空"
 											theme="simple"
 											style="padding:0px;"
 											name="search.resultSet[%{#__status.index}].%{#__tableRow.iteratorFieldsName[#__colStatus.index]}" />
-									<!--	name="updateBase.%{#__tableRow.iteratorFieldsName[#__colStatus.index]}" /> -->
 										</s:else>
 									</s:if><s:else>
 										<div style="padding:0px;width:95%;min-width:30px;">
 											<s:property value="%{#__tableCol}" />
 										</div>
-									</s:else>-->
+									</s:else>
 								</td>
 							</s:iterator>
 						</s:form>
