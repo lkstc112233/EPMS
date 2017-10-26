@@ -28,7 +28,7 @@ public class Region extends AnnualBase implements ListableBaseWithNoSave{
 	private Timestamp mobilizationTime;
 	@SQLField(value="动员会地点",source="InnerPerson.id")
 	private String mobilizationPlace;
-	@SQLField(value="备注",ps="二进制储存")
+	@SQLField(value="备注",ps="文本储存")
 	private String remark;
 
 
@@ -95,23 +95,24 @@ public class Region extends AnnualBase implements ListableBaseWithNoSave{
 	 */
 	@Override
 	public void update() throws IllegalArgumentException, IllegalAccessException, SQLException{
-		List<Field> fields=Base.getFields(this.getClass());
-		Field[] fs=new Field[fields.size()];
-		fs=fields.toArray(fs);
-		this.update(fs);//调用下面那个方法
+		this.update(this);
 	}
 	/**
 	 * 需要同时修改所有该大区内容（包括year）
 	 */
 	@Override
-	public void update(Field[] updateFields) throws IllegalArgumentException, IllegalAccessException, SQLException{
+	public void update(Base r) throws IllegalArgumentException, IllegalAccessException, SQLException{
+		if(r==null) return;
+		if(!r.getClass().equals(this.getClass()))
+			throw new IllegalArgumentException("类型不同！");
 		Class<? extends Base> clazz=this.getClass();
+		List<Field> fs=Base.getFields(clazz);
 		StringBuilder sb=new StringBuilder();
 		sb.append("UPDATE ");
 		sb.append(Base.getSQLTableName(clazz));
 		sb.append(" SET ");
 		boolean first=true;
-		for(Field f:updateFields){
+		for(Field f:fs){
 			if(first) first=false;
 			else sb.append(" , ");
 			sb.append(f.getName());
@@ -120,10 +121,11 @@ public class Region extends AnnualBase implements ListableBaseWithNoSave{
 		sb.append(" WHERE ");
 		sb.append("year = ? AND name = ?");
 		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
-		for(int i=0;i<updateFields.length;i++)
-			pst.setObject(i+1,updateFields[i].get(this));
-		pst.setObject(updateFields.length  ,this.getYear());
-		pst.setObject(updateFields.length+1,this.getName());
+		int parameterIndex=1;
+		for(Field f:fs)
+			pst.setObject(parameterIndex++,f.get(r));
+		pst.setObject(parameterIndex++,this.getYear());
+		pst.setObject(parameterIndex++,this.getName());
 		int num=pst.executeUpdate();
 		System.out.println("+> Region:update > update "+num+" column!");
 	}

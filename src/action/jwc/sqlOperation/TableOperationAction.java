@@ -45,7 +45,7 @@ public class TableOperationAction extends ActionSupport{
 	private Search<? extends Base> search=null;//查询信息
 	private boolean modify=false;//是否可修改内容并提交
 	private int choose=0;//操作项
-	private Base updateBase;
+//	private Base updateBase;
 	private Pair[] updateBaseFieldsSourceList;		public Pair[] getUpdateBaseFieldsSourceList(){return this.updateBaseFieldsSourceList;}
 		static public class Pair{
 			private Map<String,String> list;
@@ -66,7 +66,7 @@ public class TableOperationAction extends ActionSupport{
 	public List<String> getTypes(){return Search.RestraintType.list();}
 	public Boolean getModify(){return this.modify;} public void setModify(Boolean x){this.modify=x;} public void setModify(String x){this.modify=Boolean.valueOf(x);}
 	public Integer getChoose(){return this.choose;} public void setChoose(Integer x){this.choose=x;} public void setChoose(String x){this.choose=Integer.valueOf(x);}
-	public Base getUpdateBase(){return this.updateBase;}	public void setUpdateBase(Base b){this.updateBase=b;}
+//	public Base getUpdateBase(){return this.updateBase;}	public void setUpdateBase(Base b){this.updateBase=b;}
 	public Base getCreateNewBase(){return this.createNewBase;}	public void setCreateNewBase(Base b){this.createNewBase=b;}
 	
 	/**
@@ -76,9 +76,15 @@ public class TableOperationAction extends ActionSupport{
 	private void setupOther(Class<? extends Base> clazz){
 		if(clazz==null) return;
 		try {
-			this.updateBase=clazz.newInstance();
+//			this.updateBase=clazz.newInstance();
+//			Base b=null;
+//			try{
+//				b=this.getChooseBase();
+//			}catch(IllegalArgumentException | IndexOutOfBoundsException e){}
+//			if(b!=null)
+//				b.copyTo(this.updateBase);
 			this.createNewBase=clazz.newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException e) {
 			e.printStackTrace();
 		}
 		List<Field> fs=Base.getFields(clazz);
@@ -100,11 +106,9 @@ public class TableOperationAction extends ActionSupport{
 				for(Base b:list){
 					Object o=field.get(b);
 					String key=o==null?null:o.toString();
-					String value=b.toNametring();
+					String value=b.getSimpleToString();
 					if(value==null)
 						value=key;
-					else
-						value+="("+key+")";
 					map.put(key,value);
 				}
 				this.updateBaseFieldsSourceList[i]=//new Pair(list,field);
@@ -202,10 +206,20 @@ public class TableOperationAction extends ActionSupport{
 				this.setupSearch())
 			return display();
 		Map<String, Object> session=ActionContext.getContext().getSession();
-		Base b=this.getChooseBase();
+		Base b=null;
+		try{
+			b=this.getChooseBase();
+		}catch(IllegalArgumentException e){
+			session.put(token.ActionInterceptor.ErrorTipsName,
+					e.getMessage());
+		}catch(IndexOutOfBoundsException e){
+			session.put(token.ActionInterceptor.ErrorTipsName,
+					"条目选择错误！");
+		}
 		this.choose=0;
 		if(b==null) return NONE;
 		try{
+//			b.update(updateBase);
 			b.update();
 		}catch (IllegalArgumentException e) {
 			e.printStackTrace();
@@ -238,7 +252,16 @@ public class TableOperationAction extends ActionSupport{
 				this.setupSearch())
 			return display();
 		Map<String, Object> session=ActionContext.getContext().getSession();
-		Base b=this.getChooseBase();
+		Base b=null;
+		try{
+			b=this.getChooseBase();
+		}catch(IllegalArgumentException e){
+			session.put(token.ActionInterceptor.ErrorTipsName,
+					e.getMessage());
+		}catch(IndexOutOfBoundsException e){
+			session.put(token.ActionInterceptor.ErrorTipsName,
+					"条目选择错误！");
+		}
 		this.choose=0;
 		if(b==null) return NONE;
 		try {
@@ -309,22 +332,11 @@ public class TableOperationAction extends ActionSupport{
 	}
 	
 	
-	private Base getChooseBase(){
-		Map<String, Object> session=ActionContext.getContext().getSession();
-		if(this.search==null){
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"搜索引擎初始化失败！");
-			return null;
-		}
+	private Base getChooseBase()throws IndexOutOfBoundsException,IllegalArgumentException{
+		if(this.search==null)
+			throw new IllegalArgumentException("搜索引擎初始化失败！");
 		List<? extends Base> list=this.search.getResultSet();
-		try{
-			return list.get(this.choose);
-		}catch(IndexOutOfBoundsException e){
-			e.printStackTrace();
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"条目选择错误！");
-			return null;
-		}
+		return list.get(this.choose);
 	}
 
 

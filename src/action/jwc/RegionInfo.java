@@ -16,9 +16,12 @@ public class RegionInfo extends action.login.AnnualAction{
 	
 	private Region region;
 	private List<InnerPerson> innerPersons;
+	private String newRegionName=null;
 	
 	public Region getRegion(){return this.region;}
 	public List<InnerPerson> getInnerPersons(){return this.innerPersons;}
+	public String getNewRegionName(){return this.newRegionName;}
+	public void setNewRegionName(String a){this.newRegionName=a;}
 	
 	public RegionInfo() throws SQLException, NoSuchFieldException, SecurityException{
 		super();
@@ -33,7 +36,11 @@ public class RegionInfo extends action.login.AnnualAction{
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		System.out.println(">> RegionInfo_info:execute > region= "+this.region);
 		try {
-			this.region.update();
+			Region tmp=new Region();
+			this.region.copyTo(tmp);
+			if(newRegionName!=null || !newRegionName.isEmpty())
+				tmp.setName(this.newRegionName);
+			this.region.update(tmp);
 		} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
 			e.printStackTrace();
 			session.put(token.ActionInterceptor.ErrorTipsName,

@@ -15,16 +15,16 @@
 
 <div class="bag">
 		<s:form action="inner_info" method="post" cssClass="myform">
-			<s:textfield label="id" name="inner.id" value="%{#session.inner.id}" />
+			<s:textfield label="id" value="%{#session.inner.id}" readonly="true"/>
 
 			<s:textfield label="name" name="inner.name"
 				value="%{#session.inner.name}" />
 
-			<s:password label="old password" showPassword="true"
-				name="inner.password" value="%{#session.inner.password}" />
+	<!--	<s:password label="old password" showPassword="true"
+				name="inner.password" value="%{#session.inner.password}" />	-->
 
 			<s:password label="new password(if necessary)" showPassword="true"
-				name="newpassword" value="" />
+				name="newPassword" value="" />
 
 			<s:select label="office" disabled="true" 
 				list="list_office" value="%{#session.inner.office}" listKey="name" listValue="name"

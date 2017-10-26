@@ -70,9 +70,15 @@ public abstract class ListableBase extends Base{
 		Class<? extends ListableBase> clazz=this.getClass();
 		ListableBase.StaticList.remove(clazz);
 	}
-	@Override
+/*	@Override
 	public void update(Field[] updateFields) throws IllegalArgumentException, IllegalAccessException, SQLException{
 		super.update(updateFields);
+		Class<? extends ListableBase> clazz=this.getClass();
+		ListableBase.StaticList.remove(clazz);
+	}*/
+	@Override
+	public void update(Base b) throws IllegalArgumentException, IllegalAccessException, SQLException{
+		super.update(b);
 		Class<? extends ListableBase> clazz=this.getClass();
 		ListableBase.StaticList.remove(clazz);
 	}

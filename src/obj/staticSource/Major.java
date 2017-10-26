@@ -9,7 +9,7 @@ public class Major extends ListableBase{
 	
 	@SQLField(isKey=true)
 	private String name;
-	@SQLField(source="School")
+	@SQLField(source="School.name")
 	private String school;
 
 	public String getName(){return this.name;}

@@ -185,6 +185,26 @@ public abstract class Base {
 		return s==null?"":s.ps();
 	}
 	
+	/**
+	 * 把this的所有SQLField的值导入b中
+	 * @param b 
+	 */
+	public void copyTo(Base b) throws IllegalArgumentException, IllegalAccessException{
+		if(b==null) return;
+		Class<? extends Base> bc=b.getClass();
+		for(Field f:Base.getFields(this.getClass())){
+			f.setAccessible(true);
+			Object o=f.get(this);
+			try {
+				Field fb=Base.getField(bc,f.getName());
+				fb.setAccessible(true);
+				fb.set(b,o);
+			} catch (NoSuchFieldException e) {
+			}
+		}
+		
+	}
+	
 	@Override
 	public String toString(){
 		Class<? extends Base> clazz=this.getClass();
@@ -213,17 +233,20 @@ public abstract class Base {
 		sb.append(']');
 		return sb.toString();
 	}
-	public String toNametring(){
+	public String getSimpleToString(){
 		Class<? extends Base> clazz=this.getClass();
-		StringBuilder sb=new StringBuilder();
+		String s1,s2;
 		try {
-			Field nameF=Base.getField(clazz,"name");
-			nameF.setAccessible(true);
-			sb.append(nameF.get(this));
+			Field f1=Base.getField(clazz,"name");
+			f1.setAccessible(true);
+			Field f2=Base.getField(clazz,"id");
+			f2.setAccessible(true);
+			s1=String.valueOf(f1.get(this));
+			s2=String.valueOf(f2.get(this));
 		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
 			return null;
 		}
-		return sb.toString();
+		return s1+"("+s2+")";
 	}
 	@Override
 	public boolean equals(Object o){
@@ -274,6 +297,15 @@ public abstract class Base {
 		}
 		return res;
 	}
+	public final boolean[] getIteratorFieldsKeyBoolean(){
+		Class<? extends Base> clazz=this.getClass();
+		List<Field> fs=Base.getFields(clazz);
+		boolean[] res=new boolean[fs.size()];
+		int i=0;
+		for(Field f:Base.getFields(clazz))
+			res[i++]=f.getAnnotation(SQLField.class).isKey();
+		return res;
+	}
 	
 	public boolean checkKeyNull() throws IllegalArgumentException, IllegalAccessException{
 		for(Field f:this.getFields()){
@@ -316,24 +348,9 @@ public abstract class Base {
 		}
 	}
 	public void update()throws SQLException, IllegalArgumentException, IllegalAccessException{
-		int SQLParameterIndex=1;
-		for(Field f:this.getFields()){
-			f.setAccessible(true);
-			Object o=f.get(this);
-			o=(o==null||o.toString().isEmpty())?null:o;
-			this.sql_update.setObject(SQLParameterIndex++,o);
-		}
-		for(Field f:this.getFields()){
-			SQLField s=f.getAnnotation(SQLField.class);
-			f.setAccessible(true);
-			if(s.isKey())
-				this.sql_update.setObject(SQLParameterIndex++,f.get(this));
-		}
-		int num=this.sql_update.executeUpdate();
-		if(num!=1)
-			System.err.println("更新了"+num+"重值！("+this.sql_update.toString()+")");
+		this.update(this);
 	}
-	public void update(Field[] updateFields)throws SQLException, IllegalArgumentException, IllegalAccessException{
+/*	public void update(Field[] updateFields)throws SQLException, IllegalArgumentException, IllegalAccessException{
 		Class<? extends Base> clazz=this.getClass();
 		StringBuilder sql_set=new StringBuilder();
 		StringBuilder sql_where=new StringBuilder();
@@ -385,7 +402,33 @@ public abstract class Base {
 		int num=sqlps.executeUpdate();
 		if(num!=1)
 			System.err.println("更新了"+num+"重值！("+sqlps.toString()+")");
+	}*/
+	/**
+	 * 把b的值更新到当前上
+	 * @param b
+	 */
+	public void update(Base b)throws SQLException, IllegalArgumentException, IllegalAccessException{
+		if(b==null) return;
+		if(!b.getClass().equals(this.getClass()))
+			throw new IllegalArgumentException("类型不同！");
+		int SQLParameterIndex=1;
+		for(Field f:b.getFields()){
+			f.setAccessible(true);
+			Object o=f.get(b);
+			o=(o==null||o.toString().isEmpty())?null:o;
+			this.sql_update.setObject(SQLParameterIndex++,o);
+		}
+		for(Field f:this.getFields()){
+			SQLField s=f.getAnnotation(SQLField.class);
+			f.setAccessible(true);
+			if(s.isKey())
+				this.sql_update.setObject(SQLParameterIndex++,f.get(this));
+		}
+		int num=this.sql_update.executeUpdate();
+		if(num!=1)
+			System.err.println("更新了"+num+"重值！("+this.sql_update.toString()+")");
 	}
+	
 	public void delete() throws IllegalArgumentException, IllegalAccessException, SQLException{
 		if(this.checkKeyNull())
 			throw new IllegalArgumentException("The key fields are not completed!");

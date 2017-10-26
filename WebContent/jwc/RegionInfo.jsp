@@ -15,16 +15,53 @@
 		
 <div class="bag">
 	<table width="80%"><tbody>
-		<tr><td>
+		<tr><td colspan="3">
 			<div class="listHeader">
 				大区（<s:property value="region.name" />）
 			</div>
 		</td></tr>
+		<s:form action="jwc_function_RegionInfo_execute" method="post" cssClass="myform">
+			<tr><td>
+				<s:textfield label="新的大区名称（如无需修改可不填）" name="newRegionName"
+				value="%{region.name}"/>
+			</td></tr>
+			<tr><td>
+				<s:select label="总领队老师" list="InnerPersons"
+				listKey="id" listValue="simpleToString"
+				headerKey="" headerValue="-无-"
+				name="region.leaderId" />
+			</td></tr>
+			<tr><td>
+				<s:textfield label="入校时间" name="region.enterPracticeBaseTime" />
+			</td></tr>
+			<tr><td>
+				<s:textfield label="入校地点" name="region.enterPracticeBasePlace" />
+			</td></tr>
+			<tr><td>
+				<s:textfield label="动员会时间" name="region.mobilizationTime" />
+			</td></tr>
+			<tr><td>
+				<s:textfield label="动员会地点" name="region.mobilizationPlace" />
+			</td></tr>
+			<tr><td>
+				<s:textarea label="备注信息" name="region.remark"
+				style="height:70px;" />
+			</td></tr>
+			<tr><td>
+				<s:hidden name="region.year" value="%{year}" />
+				<s:hidden name="region.name" value="%{region.name}" />
+				<s:submit value="提交修改" cssClass="button"/>
+			</td></tr>
+			<s:hidden name="executive" value="true" />
+			<s:token />
+		</s:form>
 	</tbody></table>
 	
-	<table width="80%"><tbody><tr><td>
-		<a href='JavaScript:history.back(1)' class="button">返回</a>
-	</td></tr></tbody></table>
+	
+	<table style="width:60%;border:0;cellspacing:0;cellpadding:0"><tbody>
+		<tr><td height="100px" width="100%" colspan="3" valign="top" /></tr>
+		<tr><td><a href='JavaScript:history.back(1)' class="button">返回</a></td></tr>
+	</tbody></table>
 </div>
 
 	<jsp:include page="../common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>

@@ -78,9 +78,9 @@
 						</div>
 						<!--<s:property value="%{#__restraintStatus.count}" /> -->
 					</s:iterator>
-					<div style="float:left;width:120px;text-align:center">
+					<div style="line-height:32px;float:left;width:120px;text-align:center">
 						排序
-					</div><div style="float:left;text-align:center">
+					</div><div style="line-height:32px;float:left;text-align:center">
 						<s:select list="search.restraint" headerKey="" headerValue=""
 						listKey="fieldName" listValue="fieldName"
 						name="search.orderRestraintIndex"/>
@@ -192,29 +192,25 @@
 							<!-- 内容 -->
 							<s:iterator value="#__tableRow.iteratorFieldsValue" var="__tableCol" status="__colStatus">
 								<td style="text-align:center;">
-									<s:if test="updateBaseFieldsSourceList[#__colStatus.index] == null">
-										<s:textfield value="%{#__tableCol}" theme="simple"
-										style="padding:0px;width:95%;min-width:30px;"
-										name="search.resultSet[%{#__status.index}].%{#__tableRow.iteratorFieldsName[#__colStatus.index]}" />
+									<s:if test="%{#__tableRow.iteratorFieldsKeyBoolean[#__colStatus.index]} == false"> -->
+										<s:if test="updateBaseFieldsSourceList[#__colStatus.index] == null">
+											<s:textfield value="%{#__tableCol}" theme="simple"
+											style="padding:0px;width:95%;min-width:30px;"
+											name="search.resultSet[%{#__status.index}].%{#__tableRow.iteratorFieldsName[#__colStatus.index]}" />
+									<!--	name="updateBase.%{#__tableRow.iteratorFieldsName[#__colStatus.index]}" />	-->
+										</s:if><s:else>
+											<s:select list="updateBaseFieldsSourceList[#__colStatus.index].list"
+											headerKey="" headerValue="空"
+											theme="simple"
+											style="padding:0px;"
+											name="search.resultSet[%{#__status.index}].%{#__tableRow.iteratorFieldsName[#__colStatus.index]}" />
+									<!--	name="updateBase.%{#__tableRow.iteratorFieldsName[#__colStatus.index]}" /> -->
+										</s:else>
 									</s:if><s:else>
-										<s:select list="updateBaseFieldsSourceList[#__colStatus.index].list"
-										headerKey="" headerValue="空"
-										theme="simple"
-										style="padding:0px;"
-										name="search.resultSet[%{#__status.index}].%{#__tableRow.iteratorFieldsName[#__colStatus.index]}"/>
-									</s:else>
-								<!-- 
-									<s:if test='#__tableCol==null || #__tableCol==""'>
-										<s:textfield value="" theme="simple"
-										style="padding:0px;width:95%;min-width:30px;"
-										name="search.resultSet[%{#__status.index}].%{#__tableRow.iteratorFieldsName[#__colStatus.index]}" />
-									</s:if>
-									<s:else>
-										<s:textfield value="%{#__tableCol}" theme="simple"
-										style="padding:0px;width:auto;"
-										name="search.resultSet[%{#__status.index}].%{#__tableRow.iteratorFieldsName[#__colStatus.index]}" />
-									</s:else>
-								 -->
+										<div style="padding:0px;width:95%;min-width:30px;">
+											<s:property value="%{#__tableCol}" />
+										</div>
+									</s:else>-->
 								</td>
 							</s:iterator>
 						</s:form>
@@ -227,6 +223,14 @@
 		</s:else>
 	</tbody></table></div>
 	<!-- ################# -->
+	
+	
+	
+	
+	<table style="width:60%;border:0;cellspacing:0;cellpadding:0"><tbody>
+		<tr><td height="100px" width="100%" colspan="3" valign="top" /></tr>
+		<tr><td><a href='JavaScript:history.back(1)' class="button">返回</a></td></tr>
+	</tbody></table>
 </div>
 
 	<jsp:include page="../common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>

@@ -4,8 +4,9 @@
 
 <div>
 	<div class="bag">
-		<table style="width:100%;border:0;cellspacing:0;cellpadding:0"><tbody>
-			<tr><td height="100px" width="100%" colspan="3" valign="top" /></tr>
+	
+		<table style="width:60%;border:0;cellspacing:0;cellpadding:0"><tbody>	
+			<tr><td height="160px" width="100%" colspan="3" valign="top" /></tr>
 		</tbody></table>
 	</div>
 	<div class="footer">
