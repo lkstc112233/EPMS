@@ -10,7 +10,7 @@ import token.Role;
 
 public abstract class AnnualBase extends ListableBase implements ListableBase.ListableBaseWithNoSave{
 	
-	@SQLField(isKey=true,needImport=false,needSorted=true)
+	@SQLField(value="年",isKey=true,needImport=false,needSorted=true)
 	public Integer year;
 		public int getYear(){return year;}
 		public void setYear(int year){this.year=year;}
@@ -28,7 +28,7 @@ public abstract class AnnualBase extends ListableBase implements ListableBase.Li
 	public AnnualBase() throws SQLException {
 		super();
 	}
-		
+		/*
 	static class Pair{
 		public Class<? extends AnnualBase> clazz;
 		public Integer year;
@@ -76,7 +76,9 @@ public abstract class AnnualBase extends ListableBase implements ListableBase.Li
 		*/
 		List<Time> res=new ArrayList<Time>();
 		if(setupIfEmpty){
-			res=list(Time.class,year);
+			res=ListableBase.list(Time.class,
+					new String[]{"year"},
+					new Object[]{Integer.valueOf(year)});
 			if(res.isEmpty()){
 				persistence.DB.setupTimeTable(year);
 				initialize(Time.class,year);
@@ -84,7 +86,6 @@ public abstract class AnnualBase extends ListableBase implements ListableBase.Li
 			}
 		}
 		else{
-			//TODO listTime
 			//将Time和ACCESS表联合查询，check筛选出当前权限符合的条目，依次放入res即可
 			ListableBase.JoinParam param=new JoinParam(Time.class);
 			param.append("project",ListableBase.JoinType.InnerJoin,ACCESS.class,"project");
@@ -117,10 +118,10 @@ public abstract class AnnualBase extends ListableBase implements ListableBase.Li
 				Base.getField(clazz,"year")},
 				new Object[]{year});//主要代码，从数据库读取数据，这里不会调用Base.load()
 		res.addAll(tmp);
-		AnnualBase.AnnualList.put(new Pair(clazz,year),res);
+	//	AnnualBase.AnnualList.put(new Pair(clazz,year),res);
 	}
 	
-	
+	/*
 	@Override
 	public void update() throws IllegalArgumentException, IllegalAccessException, SQLException{
 		super.update();
@@ -139,7 +140,7 @@ public abstract class AnnualBase extends ListableBase implements ListableBase.Li
 		Class<? extends AnnualBase> clazz=this.getClass();
 		AnnualBase.AnnualList.remove(new Pair(clazz,this.getYear()));
 	}
-	
+	*/
 	
 	
 	

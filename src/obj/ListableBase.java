@@ -26,6 +26,14 @@ public abstract class ListableBase extends Base{
 	
 	//只保存非即用即查的Base对应的list内容
 	static private Map<Class<? extends ListableBase>,List<ListableBase>> StaticList=new HashMap<Class<? extends ListableBase>,List<ListableBase>>();
+	static public <T extends ListableBase>  List<T> list(Class<T> clazz,String[] checkFieldNames,Object[] checkFieldValues) throws SQLException, NoSuchFieldException{
+		List<T> res=new ArrayList<T>();
+		Field[] checkFields=new Field[checkFieldNames.length];
+		for(int i=0;i<checkFieldNames.length;i++)
+			checkFields[i]=Base.getField(clazz,checkFieldNames[i]);
+		res.addAll(SQLCollection.selectAll(clazz,checkFields,checkFieldValues));
+		return res;
+	}
 	static public <T extends ListableBase>  List<T> list(Class<T> clazz) throws SQLException{
 		List<ListableBase> tmp;
 		boolean nosave=ListableBase.isListableBaseWithNoSave(clazz);

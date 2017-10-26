@@ -5,17 +5,16 @@ import java.util.*;
 
 import com.opensymphony.xwork2.ActionContext;
 
-import action.jwc.qrsxdqxx.SetOfRegionAndPractice.Pair;
+import action.jwc.RegionArrangement.SetOfRegionAndPractice.Pair;
 import obj.Base;
 import obj.ListableBase;
 import obj.annualTable.Region;
-import obj.staticObject.InnerPerson;
 import obj.staticObject.PracticeBase;
 
 /**
  * 导入免费师范生数据
  */
-public class qrsxdqxx extends action.login.AnnualAction{
+public class RegionArrangement extends action.login.AnnualAction{
 	private static final long serialVersionUID = 5998268336475528662L;
 	
 	static public class SetOfRegionAndPractice{
@@ -47,15 +46,13 @@ public class qrsxdqxx extends action.login.AnnualAction{
 			if(r==null) return this.getNullRegionPair();
 			return this.get(r.getName());
 		}
-		public void put(Region r, PracticeBase l) {
-			if(l==null) return;
-			List<PracticeBase> tmp=this.get(r).practiceBases;
-			Pair p=null;
+		public void put(Region r, PracticeBase pb) {
+			if(pb==null) return;
+			Pair tmp=this.get(r);
 			if(tmp==null){
-				this.list.add(p=new Pair(r));
-				tmp=p.practiceBases;
+				this.list.add(tmp=new Pair(r));
 			}
-			tmp.add(l);
+			tmp.practiceBases.add(pb);
 		}
 		static private SetOfRegionAndPractice listRegionAndPracticeBase(int year) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException, SQLException{
 			SetOfRegionAndPractice res=new SetOfRegionAndPractice();
@@ -84,29 +81,23 @@ public class qrsxdqxx extends action.login.AnnualAction{
 	private boolean[] checkBox;
 	private SetOfRegionAndPractice regionAndPracticeBase;
 	private String regionName;
-	private List<InnerPerson> innerPersons;
-	private InnerPerson leader=new InnerPerson();
 	
 	public void setCheckBox(boolean[] a){this.checkBox=a;}
 	public boolean[] getCheckBox(){return this.checkBox;}
 	public SetOfRegionAndPractice getRegionAndPracticeBase(){return this.regionAndPracticeBase;}
-	public String getregionName(){return this.regionName;}
-	public void setregionName(String a){this.regionName=a;}
-	public List<InnerPerson> getInnerPersons(){return this.innerPersons;}
-	public InnerPerson getLeader(){return this.leader;}
-	public void setLeader(InnerPerson a){this.leader=a;}
+	public String getRegionName(){return this.regionName;}
+	public void setRegionName(String a){this.regionName=a;}
 	
 
-	static public final String SessionListKey="qrsxdqxx_RegionAndPracticeBases"; 
+	static public final String SessionListKey="RegionArrangement_RegionAndPracticeBases"; 
 	
-	public qrsxdqxx() throws SQLException, NoSuchFieldException, SecurityException{
+	public RegionArrangement() throws SQLException, NoSuchFieldException, SecurityException{
 		super();
-		System.out.println(">> qrsxdqxx:constructor > year="+this.getYear());
+		System.out.println(">> RegionArrangement:constructor > year="+this.getYear());
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		Object o=session.get(SessionListKey);
 		this.regionAndPracticeBase=o==null?null:((SetOfRegionAndPractice)o);
 		this.setupCheckBox();
-		this.innerPersons=InnerPerson.list(InnerPerson.class);
 	}
 
 	private void setupCheckBox(){
@@ -127,23 +118,23 @@ public class qrsxdqxx extends action.login.AnnualAction{
 		if(!executive || this.regionAndPracticeBase==null)
 			return display();
 		Map<String, Object> session=ActionContext.getContext().getSession();
-		System.out.println(">> qrsxdqxx:execute > regionName= "+this.regionName);
+		System.out.println(">> RegionArrangement:execute > regionName= "+this.regionName);
 		if(this.regionName==null || this.regionName.isEmpty()){
 			session.put(token.ActionInterceptor.ErrorTipsName,
 					"请输入新大区名称！");
-			System.out.println(">> qrsxdqxx:execute <NONE");
+			System.out.println(">> RegionArrangement:execute <NONE");
 			return NONE;
 		}
-		System.out.println(">> qrsxdqxx:execute > checkBox=[");
+		System.out.println(">> RegionArrangement:execute > checkBox=[");
 		for(boolean s:checkBox) System.out.println(s);
-		System.out.println(">> qrsxdqxx:execute > ]");
-		//qrsxdqxx:execute
+		System.out.println(">> RegionArrangement:execute > ]");
+		//RegionArrangement:execute
 		boolean flag=false;
 		for(boolean s:checkBox) flag|=s;
 		if(!flag){
 			session.put(token.ActionInterceptor.ErrorTipsName,
 					"请至少选择一个实习基地添加到新大区！");
-			System.out.println(">> qrsxdqxx:execute <NONE");
+			System.out.println(">> RegionArrangement:execute <NONE");
 			return NONE;
 		}
 		List<PracticeBase> nullRegionPracticeBases=this.regionAndPracticeBase.get((Region)null).getPracticeBases();
@@ -183,30 +174,30 @@ public class qrsxdqxx extends action.login.AnnualAction{
 		if(!executive || this.regionAndPracticeBase==null)
 			return display();
 		Map<String, Object> session=ActionContext.getContext().getSession();
-		System.out.println(">> qrsxdqxx:delete > regionName= "+this.regionName);
+		System.out.println(">> RegionArrangement:delete > regionName= "+this.regionName);
 		if(this.regionName==null || this.regionName.isEmpty()){
 			session.put(token.ActionInterceptor.ErrorTipsName,
 					"未选中大区！");
-			System.out.println(">> qrsxdqxx:delete <NONE");
+			System.out.println(">> RegionArrangement:delete <NONE");
 			return NONE;
 		}
-		System.out.println(">> qrsxdqxx:delete > checkBox=[");
+		System.out.println(">> RegionArrangement:delete > checkBox=[");
 		for(boolean s:checkBox) System.out.println(s);
-		System.out.println(">> qrsxdqxx:delete > ]");
-		//qrsxdqxx:execute
+		System.out.println(">> RegionArrangement:delete > ]");
+		//RegionArrangement:execute
 		boolean flag=false;
 		for(boolean s:checkBox) flag|=s;
 		if(!flag){
 			session.put(token.ActionInterceptor.ErrorTipsName,
 					"请至少选择一个实习基地来移除！");
-			System.out.println(">> qrsxdqxx:delete <NONE");
+			System.out.println(">> RegionArrangement:delete <NONE");
 			return NONE;
 		}
 		List<PracticeBase> deletePracticeBases=this.regionAndPracticeBase.get((Region)null).getPracticeBases();
 		if(deletePracticeBases==null){
 			session.put(token.ActionInterceptor.ErrorTipsName,
 					"选中了一个不存在的大区（"+this.regionName+"）！");
-			System.out.println(">> qrsxdqxx:delete <NONE");
+			System.out.println(">> RegionArrangement:delete <NONE");
 			return NONE;
 		}
 		//	List<PracticeBase> tmp=new ArrayList<PracticeBase>();
@@ -239,53 +230,12 @@ public class qrsxdqxx extends action.login.AnnualAction{
 	}
 	
 	/**
-	 * 用于设置大区领队老师
-	 */
-	public String update(){
-		if(!executive || this.regionAndPracticeBase==null)
-			return display();
-		Map<String, Object> session=ActionContext.getContext().getSession();
-		System.out.println(">> qrsxdqxx:update > regionName= "+this.regionName);
-		if(this.regionName==null || this.regionName.isEmpty()){
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"未选中大区！");
-			System.out.println(">> qrsxdqxx:update <NONE");
-			return NONE;
-		}
-		Region region=this.regionAndPracticeBase.get(this.regionName).getRegion();
-		if(region==null){
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"选中了一个不存在的大区（"+this.regionName+"）！");
-			System.out.println(">> qrsxdqxx:update <NONE");
-			return NONE;
-		}
-		try {
-			if(this.leader==null || this.leader.checkKeyNull()){
-				session.put(token.ActionInterceptor.ErrorTipsName,
-						"选中了一个不存在的领队老师（"+this.leader+"）！");
-				System.out.println(">> qrsxdqxx:update <NONE");
-				return NONE;
-			}
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"选中了一个出错的领队老师（"+this.leader+"）！");
-			System.out.println(">> qrsxdqxx:update <NONE");
-			return NONE;
-		}
-		//TODO 更新Region的Leader应该在Region类中新建方法完成，使用SQL语句
-		this.leader.getId();
-		
-		
-		return display();
-	}
-	
-	/**
 	 * 用于显示
 	 */
 	@Override
 	public String display(){
 		this.regionName=null;
-		System.out.println(">> qrsxdqxx:display > year="+this.getYear());
+		System.out.println(">> RegionArrangement:display > year="+this.getYear());
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		this.regionAndPracticeBase=null;
 		try {
@@ -295,20 +245,20 @@ public class qrsxdqxx extends action.login.AnnualAction{
 			session.put(token.ActionInterceptor.ErrorTipsName,
 					"数据库开小差去了！");
 		}
-		System.out.println(">> qrsxdqxx:display > regionAndPracticeBase=[");
+		System.out.println(">> RegionArrangement:display > regionAndPracticeBase=[");
 		for(SetOfRegionAndPractice.Pair t:this.regionAndPracticeBase.getList()){
 			System.out.print((t.region==null?"null":t.region.getName())+":[");
 			for(PracticeBase pb:t.practiceBases)
 				System.out.print(pb.getName()+",");
 			System.out.println("]");
 		}
-		System.out.println(">> qrsxdqxx:display > ]");
+		System.out.println(">> RegionArrangement:display > ]");
 		if(this.regionAndPracticeBase==null)
 			session.remove(SessionListKey);
 		else
 			session.put(SessionListKey,this.regionAndPracticeBase);
 		this.setupCheckBox();
-		System.out.println(">> qrsxdqxx:display <NONE");
+		System.out.println(">> RegionArrangement:display <NONE");
 		return NONE;
 	}
 	

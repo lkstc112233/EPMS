@@ -23,7 +23,7 @@
 					未分配大区的实习基地
 				</div>
 			</td></tr>
-			<s:form action="jwc_function_qrsxdqxx_execute" method="post" theme="simple" enctype="multipart/form-data">
+			<s:form action="jwc_function_RegionArrangement_execute" method="post" theme="simple" enctype="multipart/form-data">
 				<!-- ###### 表头 ###### -->
 				<tr class="mytableTitle">
 					<td>选择</td>
@@ -40,8 +40,8 @@
 				<s:token />
 				<tr><td colspan="2" style="text-align:left;">
 					将选中基地放入大区（若不存在则新建）：
-					<s:textfield name="newRegionName" />
-					<s:submit value="放入新建" cssClass="inlineButton"/>
+					<s:textfield name="regionName" />
+					<s:submit value="放入新建" cssClass="buttonInline"/>
 				</td></tr>
 			</s:form>
 		</s:if><s:else>
@@ -49,9 +49,14 @@
 			<tr><td colspan="2">
 				<div class="listHeader">
 					大区（<s:property value="%{#__Row.region.name}" />）
+					<div class="right">
+						<a href="<s:url action='jwc_function_RegionInfo_display'/>?region.name=<s:property value='%{#__Row.region.name}'/>"
+							style="color:#fff;text-decoration:none;">
+						修改大区信息</a>
+					</div>
 				</div>
 			</td></tr>
-			<s:form action="jwc_function_qrsxdqxx_delete" method="post" theme="simple" enctype="multipart/form-data">
+			<s:form action="jwc_function_RegionArrangement_delete" method="post" theme="simple" enctype="multipart/form-data">
 				<!-- ###### 表头 ###### -->
 				<tr class="mytableTitle">
 					<td>选择</td>
@@ -69,7 +74,7 @@
 				<s:token />
 				<tr><td colspan="2" style="text-align:left;">
 					从该大区移除
-					<s:submit value="移除" cssClass="inlineButton"/>
+					<s:submit value="移除" cssClass="buttonInline"/>
 				</td></tr>
 			</s:form>
 		</s:else>
