@@ -5,13 +5,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>EPMS-教务处-数据库管理</title>
+<title>EPMS-教务处-数据库管理(sudo)</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
 <body>
 	<center>
-		<jsp:include page="../common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
+		<jsp:include page="../../common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 
 <div class="bag">
 	<table width="80%"><tbody>
@@ -56,13 +56,13 @@
 	
 	
 	
-	<table style="width:60%;border:0;cellspacing:0;cellpadding:0"><tbody>
+	<table style="width:180px;border:0;cellspacing:0;cellpadding:0"><tbody>
 		<tr><td height="100px" width="100%" colspan="3" valign="top" /></tr>
 		<tr><td><a href='JavaScript:history.back(1)' class="button">返回</a></td></tr>
 	</tbody></table>
 </div>
 
-		<jsp:include page="../common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>
+		<jsp:include page="../../common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 	</center>
 </body>
 </html>

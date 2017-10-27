@@ -25,7 +25,7 @@ public class mfsfsxxsj extends action.login.AnnualAction{
 	
 	@Override
 	public String display(){
-		this.jumpURL="jwc_TableOperation_display.action?tableName=Student";
+		this.jumpURL="jwc_function_TableOperation_display.action?tableName=Student&year="+this.getYear();
 		return "jump";
 	}
 	

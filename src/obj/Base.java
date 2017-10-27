@@ -87,11 +87,10 @@ public abstract class Base {
 					sql_where.append(" AND ");
 				sql_where.append(f.getName());
 				sql_where.append(" = ? ");
-			}else{
-				if(load_select.length()>0)
-					load_select.append(',');
-				load_select.append(f.getName());
 			}
+			if(load_select.length()>0)
+				load_select.append(',');
+			load_select.append(f.getName());
 			if(update_set.length()>0)
 				update_set.append(',');
 			update_set.append(f.getName());
@@ -375,7 +374,7 @@ public abstract class Base {
 			SQLField s=f.getAnnotation(SQLField.class);
 			if(s==null || !s.isKey()) continue;
 			if(first) first=false;
-			else sb.append(" , ");
+			else sb.append(" AND ");
 			sb.append(f.getName());
 			sb.append(" = ?");
 		}
@@ -502,6 +501,9 @@ public abstract class Base {
 		int num=this.sql_insert.executeUpdate();
 		if(num!=1)
 			System.err.println("更新了"+num+"重值！("+this.sql_insert.toString()+")");
+	}
+	public boolean existAndLoad() throws IllegalArgumentException, IllegalAccessException, SQLException{
+		return this.load(true)>0;
 	}
 	public boolean exist() throws InstantiationException, IllegalAccessException, IllegalArgumentException, SQLException{
 		Class<? extends Base> clazz=this.getClass();

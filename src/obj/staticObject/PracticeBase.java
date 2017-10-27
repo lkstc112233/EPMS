@@ -24,7 +24,7 @@ public class PracticeBase extends ListableBase implements ListableBase.ListableB
 
 	public String getName(){return name;}
 	public void setName(String a){this.name=a;}
-	public String getCity(){return city;}
+	public String getCity(){return city==null||city.isEmpty()?null:city;}
 	public void setCity(String a){this.city=a;}
 	public String getRefuseNation(){return refuseNation;}
 	public void setRefuseNation(String a){this.refuseNation=a;}

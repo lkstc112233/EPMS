@@ -5,13 +5,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>EPMS-教务处-<s:property value="tableName" />数据处理</title>
+<title>EPMS-教务处-<s:property value="tableName" />数据处理(sudo)</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
 
 <body><center>
-	<jsp:include page="../common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
+	<jsp:include page="../../common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 		
 <div class="bag">
 	<!-- ################# -->
@@ -57,7 +57,7 @@
 		<!-- ################# -->
 		<!-- 查询限制条件 -->
 		<tr><td>
-			<table width="100%"><tbody><s:form action="jwc_function_TableOperation_execute" method="get" theme="simple">
+			<table width="100%"><tbody><s:form action="jwc_TableOperation_execute" method="get" theme="simple">
 				<s:hidden name="choose" value="-1" theme="simple"/>
 				<tr><td style="border:2px solid #0071BC;">
 					<s:iterator value="search.restraint" var="__restraintRow" status="__restraintStatus">
@@ -108,7 +108,7 @@
 			<!--<td style="width:13px;text-align:center;">序号</td>
 				<td style="text-align:center;" colspan="2">操作</td>-->
 				<td colspan="3"></td>
-				<s:iterator value="search.restraint" var="__label" status="__status">
+				<s:iterator value="search.restraint" var="__label" status="status">
 					<td style="word-wrap:break-word;word-break:break-all;text-align:center;">
 						<s:property value="%{#__label.fieldName}"/>
 						<s:if test="createNewBase.iteratorFieldsKeyBoolean[#__status.index] == true">
@@ -136,7 +136,7 @@
 					+
 				</td>
 				<!-- 内容 -->
-				<s:form action="jwc_function_TableOperation_create" method="post" theme="simple">
+				<s:form action="jwc_TableOperation_create" method="post" theme="simple">
 					<!-- 操作 -->
 					<td class="listContent" style="width:27px;text-align:center;padding:0px;" colspan="2">
 						<s:submit value="create" cssClass="inlineButton" theme="simple"/>
@@ -145,15 +145,9 @@
 					<s:iterator value="createNewBase.iteratorFieldsValue" var="__tableCol" status="__colStatus_create">
 						<td style="text-align:center;">
 							<s:if test="updateBaseFieldsSourceList[#__colStatus_create.index] == null">
-								<s:if test="search.restraint[#__colStatus_create.index] == 'year'">
-									<s:textfield value="%{#year}" theme="simple"
-									style="padding:0px;width:95%;min-width:30px;"
-									name="createNewBase.%{createNewBase.iteratorFieldsName[#__colStatus_create.index]}" />
-								</s:if><s:else>
-									<s:textfield value="" theme="simple"
-									style="padding:0px;width:95%;min-width:30px;"
-									name="createNewBase.%{createNewBase.iteratorFieldsName[#__colStatus_create.index]}" />
-								</s:else>
+								<s:textfield value="" theme="simple"
+								style="padding:0px;width:95%;min-width:30px;"
+								name="createNewBase.%{createNewBase.iteratorFieldsName[#__colStatus_create.index]}" />
 							</s:if><s:else>
 								<s:select list="updateBaseFieldsSourceList[#__colStatus_create.index].list"
 								headerKey="" headerValue="空"
@@ -174,7 +168,7 @@
 					</td>
 					<!-- 操作 -->
 					<td class="listContent" style="width:27px;text-align:center;padding:0px;">
-						<s:form action="jwc_function_TableOperation_delete" method="get" theme="simple">
+						<s:form action="jwc_TableOperation_delete" method="get" theme="simple">
 							<s:hidden name="choose" value="%{#__status.index}" theme="simple"/>
 							<s:submit value="X" cssClass="inlineButton"
 							style="color:red;" theme="simple"/>
@@ -184,7 +178,7 @@
 					<s:if test="choose != #__status.index">
 						<!-- 操作 -->
 						<td class="listContent" style="width:40px;text-align:center;padding:0px;">
-							<s:form action="jwc_function_TableOperation_display" method="get" theme="simple">
+							<s:form action="jwc_TableOperation_display" method="get" theme="simple">
 								<s:hidden name="choose" value="%{#__status.index}" theme="simple"/>
 								<s:submit value="修改" cssClass="inlineButton" theme="simple"/>
 							</s:form>
@@ -197,7 +191,7 @@
 						</s:iterator>
 					</s:if>
 					<s:else>
-						<s:form action="jwc_function_TableOperation_update" method="get" theme="simple">
+						<s:form action="jwc_TableOperation_update" method="get" theme="simple">
 							<!-- 操作 -->
 							<td class="listContent" style="width:40px;text-align:center;">
 								<s:hidden name="choose" value="%{#__status.index}" theme="simple"/>
@@ -246,6 +240,6 @@
 	</tbody></table>
 </div>
 
-	<jsp:include page="../common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>
+	<jsp:include page="../../common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 </center></body>
 </html>

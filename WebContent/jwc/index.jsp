@@ -91,7 +91,7 @@
 	
 	
 	
-	<table style="width:60%;border:0;cellspacing:0;cellpadding:0"><tbody>
+	<table style="width:180px;border:0;cellspacing:0;cellpadding:0"><tbody>
 		<tr><td height="100px" width="100%" colspan="3" valign="top" /></tr>
 		<tr><td><a href='JavaScript:history.back(1)' class="button">返回</a></td></tr>
 	</tbody></table>

@@ -25,7 +25,7 @@ public class qrsxjdxx extends action.login.AnnualAction{
 	
 	@Override
 	public String display(){
-		this.jumpURL="jwc_TableOperation_display.action?tableName=PracticeBase";
+		this.jumpURL="jwc_function_TableOperation_display.action?tableName=PracticeBase&year="+this.getYear();
 		return "jump";
 	}
 	

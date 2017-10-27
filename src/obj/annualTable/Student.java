@@ -37,7 +37,7 @@ public class Student extends AnnualBase{
 	private byte[] outstandingMaterial;
 	
 	public String getId() {return id;}
-	public void setId(String id) {this.id = id;}
+	public void setId(String id) {this.id = id==null||id.isEmpty()?null:id;}
 	public String getName() {return name;}
 	public void setName(String name) {this.name = name;}
 	public String getMobile() {return mobile;}
@@ -45,21 +45,21 @@ public class Student extends AnnualBase{
 	public String getEmail() {return email;}
 	public void setEmail(String email) {this.email = email;}
 	public String getMajor() {return major;}
-	public void setMajor(String major) {this.major = major;}
+	public void setMajor(String major) {this.major = major==null||major.isEmpty()?null:major;}
 	public String getPracticeBase() {return practiceBase;}
-	public void setPracticeBase(String practiceBase) {this.practiceBase = practiceBase;}
+	public void setPracticeBase(String practiceBase) {this.practiceBase = practiceBase==null||practiceBase.isEmpty()?null:practiceBase;}
 	public String getSfzh() {return sfzh;}
 	public void setSfzh(String sfzh) {this.sfzh = sfzh;}
 	public String getZzmm() {return zzmm;}
-	public void setZzmm(String zzmm) {this.zzmm = zzmm;}
+	public void setZzmm(String zzmm) {this.zzmm = zzmm==null||zzmm.isEmpty()?null:zzmm;}
 	public String getProvince() {return province;}
-	public void setProvince(String province) {this.province = province;}
+	public void setProvince(String province) {this.province = province==null||province.isEmpty()?null:province;}
 	public String getNation() {return nation;}
-	public void setNation(String nation) {this.nation = nation;}
+	public void setNation(String nation) {this.nation = nation==null|nation.isEmpty()?null:nation;}
 	public Boolean getHxyx() {return hxyx;}
 	public void setHxyx(Boolean hxyx) {this.hxyx = hxyx;}	public void setHxyx(String hxyx){this.hxyx=Boolean.valueOf(hxyx);}
 	public String getTeacherId() {return teacherId;}
-	public void setTeacherId(String teacherId) {this.teacherId = teacherId;}
+	public void setTeacherId(String teacherId) {this.teacherId = teacherId==null||teacherId.isEmpty()?null:teacherId;}
 	public String getOutstandingType() {return outstandingType;}
 	public void setOutstandingType(String outstandingType) {this.outstandingType = outstandingType;}
 	public byte[] getOutstandingMaterial() {return outstandingMaterial;}

@@ -66,9 +66,9 @@
 		</action>
 		
 		<!--动作：SQL Operation配置-->
-		<action name="jwc_sql_operation_select" class="action.jwc.sqlOperation.SQLOperationSelectAction" method="execute">
-			<result name="none"> jwc/sql_operation_select.jsp</result>
-			<result> jwc/sql_operation_select.jsp</result>
+		<action name="jwc_sql_operation_select" class="action.jwc.sudo.SQLOperationSelectAction" method="execute">
+			<result name="none"> jwc/sudo/sql_operation_select.jsp</result>
+			<result> jwc/sudo/sql_operation_select.jsp</result>
 		</action>
 		
 		
@@ -76,9 +76,9 @@
 		<!--动作：Table Operation配置-->
 		<!-- 第一个星号：人员类型actionPrefix -->
 		<!-- 第二个星号：调用的方法 -->
-		<action name="*_TableImportOperation_*" class="action.{1}.sqlOperation.TableImportOperationAction" method="{2}">
-			<result name="none"> {1}/TableOperation.jsp</result>
-			<result> {1}/TableOperation.jsp</result>
+		<action name="jwc_TableImportOperation_*" class="action.jwc.sudo.TableImportOperationAction" method="{2}">
+			<result name="none"> jwc/sudo/TableOperation.jsp</result>
+			<result> jwc/sudo/TableOperation.jsp</result>
 			<result name="downloadAttachment" type="stream">
 				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
 				<param name="inputName">downloadAttachment </param> <!-- 调用的getter名称，返回InputStream -->
@@ -91,9 +91,9 @@
 			</result>
 			<allowed-methods> display,execute,download,upload</allowed-methods>
 		</action>
-		<action name="*_TableOperation_*" class="action.{1}.sqlOperation.TableOperationAction" method="{2}">
-			<result name="none"> {1}/TableOperation.jsp</result>
-			<result> {1}/TableOperation.jsp</result>
+		<action name="jwc_TableOperation_*" class="action.jwc.sudo.TableOperationAction" method="{2}">
+			<result name="none"> jwc/sudo/TableOperation.jsp</result>
+			<result> jwc/sudo/TableOperation.jsp</result>
 			<allowed-methods> display,execute,update,delete,create </allowed-methods>
 		</action>
 		
@@ -127,7 +127,7 @@
 				<param name="inputName">downloadInline </param> <!-- 调用的getter名称，返回InputStream -->
 				<param name="contentDisposition">inline;filename="${downloadFileName}" </param> <!-- 内联方式下载，文件名使用EL获取 --> 
 			</result>
-			<allowed-methods> display,execute,download,upload,update,delete </allowed-methods>
+			<allowed-methods> display,execute,download,upload,update,delete,create, </allowed-methods>
 		</action>
 		
 

@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.*;
 
+import obj.staticSource.Major;
 import persistence.DB;
 
 public final class Search<T extends Base>{
@@ -43,6 +44,26 @@ public final class Search<T extends Base>{
 		public String getValue(){return this.value;}	public void setValue(String s){this.value=s;}
 		public String toString(){
 			return String.format("[Triple:%s(%s)%s]",this.getFieldName(),this.getTypeName(),this.getValue());
+		}
+		static public boolean isFitSchool(Field field,String value,String school){
+			if(school==null||school==null||school.isEmpty())
+				return true;
+			SQLField s=field.getAnnotation(SQLField.class);
+			if(s==null||s.source()==null||s.source().isEmpty())
+				return true;
+			if(s.source().equals("School.name")){
+				if(school.equals(value)) return true;
+				else return false;
+			}else if(s.source().equals("Major.name")){
+				try{
+					Major tmp=new Major();
+					tmp.setName(value);
+					//只有当前Triple存在，而且school相同时，才是fit的
+					return tmp.existAndLoad() && school.equals(tmp.getSchool());
+				}catch(SQLException | IllegalArgumentException | IllegalAccessException e){
+					return false;
+				}
+			}else return true;
 		}
 	}
 	

@@ -35,7 +35,9 @@ public class LoginAction extends ActionSupport{
 			}
 			inner=tmp;
 			System.out.println(">> LoginAction:execute > 从session中读取inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
-		}else if(inner.checkPassword()){
+		}
+		if(inner.checkPassword()){
+			session.clear();
 			System.out.println(">> LoginAction:execute > 保存到session中:inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
 			Manager.setUser(inner);
 			try {

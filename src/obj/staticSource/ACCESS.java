@@ -34,24 +34,12 @@ public class ACCESS extends ListableBase{
 	private Boolean 领导;
 	
 	
-	public int getId(){
-		return id;
-	}
-	public void setId(int id){
-		this.id=id;
-	}
-	public String getProject() {
-		return project;
-	}
-	public void setProject(String project) {
-		this.project = project;
-	}
-	public String getActionClass(){
-		return this.actionClass;
-	}
-	public void setActionClass(String actionClass){
-		this.actionClass=actionClass;
-	}
+	public int getId(){return id;}
+	public void setId(int id){this.id=id;} public void setId(String a){this.id=a==null?null:Integer.valueOf(a);}
+	public String getProject() {return project;}
+	public void setProject(String project) {this.project = project==null||project.isEmpty()?null:project;}
+	public String getActionClass(){return this.actionClass;}
+	public void setActionClass(String actionClass){this.actionClass=actionClass==null||actionClass.isEmpty()?null:actionClass;}
 	public Timestamp getTime1() {return time1;}
 	public void setTime1(Timestamp time) {this.time1 = time;
 	Manager.RegularPeriod(time1,time2);}

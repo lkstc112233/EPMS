@@ -1,4 +1,4 @@
-package action.jwc.sqlOperation;
+package action.jwc.sudo;
 
 import java.sql.*;
 import java.util.*;

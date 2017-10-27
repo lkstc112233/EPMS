@@ -33,9 +33,9 @@ public class Region extends AnnualBase implements ListableBaseWithNoSave{
 
 
 	public String getName() {return name;}
-	public void setName(String name) {this.name = name;}
+	public void setName(String name) {this.name = name==null||name.isEmpty()?null:name;}
 	public String getPracticeBase() {return practiceBase;}
-	public void setPracticeBase(String practiceBase) {this.practiceBase = practiceBase;}
+	public void setPracticeBase(String practiceBase) {this.practiceBase = practiceBase==null||practiceBase.isEmpty()?null:practiceBase;}
 	public String getLeaderId() {return leaderId;}
 	public void setLeaderId(String leaderId) {this.leaderId = leaderId==null||leaderId.isEmpty()?null:leaderId;}
 	public Timestamp getEnterPracticeBaseTime() {return enterPracticeBaseTime;}
