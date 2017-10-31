@@ -30,15 +30,23 @@ public class Time extends AnnualBase{
 	public void setTime1(Timestamp time) {this.time1 = time;
 	Manager.RegularPeriod(time1,time2);}
 	public void setTime1(String s){
-		this.time1=Timestamp.valueOf(s);
-		Manager.RegularPeriod(time1,time2);
+		try{
+			this.time1=Timestamp.valueOf(s);
+			Manager.RegularPeriod(time1,time2);
+		}catch(IllegalArgumentException e){
+			this.time1=null;
+		}
 	}
 	public Timestamp getTime2() {return time2;}
 	public void setTime2(Timestamp time) {this.time2 = time;
 	Manager.RegularPeriod(time1,time2);}
 	public void setTime2(String s){
-		this.time2=Timestamp.valueOf(s);
-		Manager.RegularPeriod(time1,time2);
+		try{
+			this.time2=Timestamp.valueOf(s);
+			Manager.RegularPeriod(time1,time2);
+		}catch(IllegalArgumentException e){
+			this.time2=null;
+		}
 	}
 	public String getActionClass(){
 		try{

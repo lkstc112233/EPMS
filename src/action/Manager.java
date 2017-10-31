@@ -1,7 +1,6 @@
 package action;
 
 import java.sql.Timestamp;
-import java.util.Map;
 
 import com.opensymphony.xwork2.ActionContext;
 
@@ -9,28 +8,40 @@ import obj.staticObject.InnerPerson;
 
 public class Manager {
 	
+
+	static public void saveSession(String key,Object value){
+		if(value==null) Manager.removeSession(key);
+		else ActionContext.getContext().getSession().put(key,value);
+	}
+	static public <T> T loadSession(Class<T> clazz,String key){
+		Object o=ActionContext.getContext().getSession().get(key);
+		if(o==null || !o.getClass().isAssignableFrom(clazz)) return null;
+		try{
+			return clazz.cast(o);
+		}catch(ClassCastException e){return null;}
+	}
+	static public Object removeSession(String key){
+		Object o=ActionContext.getContext().getSession().get(key);
+		ActionContext.getContext().getSession().remove(key);
+		return o;
+	}
+	
+	
+	
+	
 	static final public String userToken="inner";
 	
 	static public InnerPerson getUser(){
-		Map<String, Object> session=ActionContext.getContext().getSession();
-		Object tmp=session.get(userToken);
-		if(tmp==null)
-			return null;
-		try{
-			return (InnerPerson)tmp;
-		}catch(ClassCastException e){
-			return null;
-		}
+		return Manager.loadSession(InnerPerson.class,userToken);
 	}
 	static public void setUser(InnerPerson inner){
-		if(inner==null)
-			removeUser();
-		else
-			ActionContext.getContext().getSession().put(userToken,inner);
+		Manager.saveSession(userToken,inner);
 	}
 	static public void removeUser(){
-		ActionContext.getContext().getSession().remove(userToken);
+		Manager.removeSession(userToken);
 	}
+	
+	
 	
 	static public final String SQLCheck_Success="OK";
 	static public String SQLCheck(String sql){

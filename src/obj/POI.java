@@ -10,8 +10,6 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 
-import obj.annualTable.AnnualBase;
-
 @SuppressWarnings("unchecked")
 public class POI implements SQLIO{
 	
@@ -93,7 +91,7 @@ public class POI implements SQLIO{
 
 	@Override
 	public <T extends Base>
-	List<T> readExcel(Class<T> clazz,InputStream in,List<Integer> error,int year) throws IOException, EncryptedDocumentException, InvalidFormatException, InstantiationException, IllegalAccessException{
+	List<T> readExcel(Class<T> clazz,InputStream in,List<Integer> error,BaseRestraint restraint) throws IOException, EncryptedDocumentException, InvalidFormatException, InstantiationException, IllegalAccessException{
 		List<T> res=new ArrayList<T>();
 		Map<Short,Field> fsMap=new HashMap<Short,Field>();
 		try(Workbook wb=new XSSFWorkbook(in);){
@@ -131,9 +129,8 @@ public class POI implements SQLIO{
 							break;
 						}
 					}
-					if(t instanceof AnnualBase)
-						((AnnualBase)t).setYear(year);
-					if(t==null || t.checkKeyNull()){
+					if(t==null || t.checkKeyNull()
+							|| restraint!=null&& !restraint.fitBase(t)){
 						 if(error!=null)
 							 error.add(row.getRowNum());
 					}else

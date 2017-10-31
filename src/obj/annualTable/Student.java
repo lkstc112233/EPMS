@@ -61,7 +61,7 @@ public class Student extends AnnualBase{
 	public String getTeacherId() {return teacherId;}
 	public void setTeacherId(String teacherId) {this.teacherId = teacherId==null||teacherId.isEmpty()?null:teacherId;}
 	public String getOutstandingType() {return outstandingType;}
-	public void setOutstandingType(String outstandingType) {this.outstandingType = outstandingType;}
+	public void setOutstandingType(String outstandingType) {this.outstandingType = outstandingType==null||outstandingType.isEmpty()?null:outstandingType;}
 	public byte[] getOutstandingMaterial() {return outstandingMaterial;}
 	public void setOutstandingMaterial(byte[] outstandingMaterial) {this.outstandingMaterial = outstandingMaterial;}
 

@@ -76,9 +76,9 @@
 		<!--动作：Table Operation配置-->
 		<!-- 第一个星号：人员类型actionPrefix -->
 		<!-- 第二个星号：调用的方法 -->
-		<action name="jwc_TableImportOperation_*" class="action.jwc.sudo.TableImportOperationAction" method="{2}">
-			<result name="none"> jwc/sudo/TableOperation.jsp</result>
-			<result> jwc/sudo/TableOperation.jsp</result>
+		<action name="jwc_sudo_*_*" class="action.jwc.sudo.{1}" method="{2}">
+			<result name="none"> jwc/sudo/{1}.jsp</result>
+			<result> jwc/sudo/{1}.jsp</result>
 			<result name="downloadAttachment" type="stream">
 				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
 				<param name="inputName">downloadAttachment </param> <!-- 调用的getter名称，返回InputStream -->
@@ -89,23 +89,9 @@
 				<param name="inputName">downloadInline </param> <!-- 调用的getter名称，返回InputStream -->
 				<param name="contentDisposition">inline;filename="${downloadFileName}" </param> <!-- 内联方式下载，文件名使用EL获取 --> 
 			</result>
-			<allowed-methods> display,execute,download,upload</allowed-methods>
-		</action>
-		<action name="jwc_TableOperation_*" class="action.jwc.sudo.TableOperationAction" method="{2}">
-			<result name="none"> jwc/sudo/TableOperation.jsp</result>
-			<result> jwc/sudo/TableOperation.jsp</result>
-			<allowed-methods> display,execute,update,delete,create </allowed-methods>
+			<allowed-methods> display,execute,download,upload,update,delete,create, </allowed-methods>
 		</action>
 		
-		
-		
-		
-		
-		<!--动作：jwc的time设置 配置-->
-		<action name="jwc_timeManager" class="action.jwc.TimeManagerAction" method="execute">
-			<result name="none"> jwc/timeManager.jsp</result>	<!--用于display -->
-			<result> jwc/timeManager.jsp</result>
-		</action>
 		
 		
 		

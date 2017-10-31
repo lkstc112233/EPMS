@@ -15,4 +15,9 @@ public class School extends ListableBase{
 	public School() throws SQLException {
 		super();
 	}
+	
+	public School(String name) throws SQLException{
+		super();
+		this.setName(name);
+	}
 }

@@ -8,6 +8,11 @@ import persistence.DB;
 
 @SuppressWarnings("unchecked")
 public abstract class Base {
+	static public final String TableNames[]={
+			"ACCESS","InnerOffice","Major","OuterOffice","Province","School","ZZMM",
+			"PracticeBase",
+			"Time","Student","Region","Plan"
+	};
 	static public final String packageNames[]={"staticSource","staticObject","annualTable"};
 	static public Class<? extends Base> getClassForName(String name){
 		if(name==null||name.length()<=0)
@@ -191,7 +196,7 @@ public abstract class Base {
 	public void copyTo(Base b) throws IllegalArgumentException, IllegalAccessException{
 		if(b==null) return;
 		Class<? extends Base> bc=b.getClass();
-		for(Field f:Base.getFields(this.getClass())){
+		for(Field f:this.getFields()){
 			f.setAccessible(true);
 			Object o=f.get(this);
 			try {
@@ -206,15 +211,15 @@ public abstract class Base {
 	
 	@Override
 	public String toString(){
-		Class<? extends Base> clazz=this.getClass();
+	//	Class<? extends Base> clazz=this.getClass();
 		String sql_table=this.sql_table;
 		StringBuilder sb=new StringBuilder();
 		sb.append('[');
-		sb.append(clazz.getSimpleName());
-		sb.append('(');
+	//	sb.append(clazz.getSimpleName());
+	//	sb.append('(');
 		sb.append(sql_table);
-		sb.append(')');
-		for(Field f:Base.getFields(clazz)){
+	//	sb.append(')');
+		for(Field f:this.getFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
 			f.setAccessible(true);
 			sb.append(',');
@@ -271,38 +276,43 @@ public abstract class Base {
 		}
 		return false;
 	}
-	
-	static private List<String> getIteratorFieldsName(Class<? extends Base> clazz){
+
+	static protected List<String> getAllFieldsNameString(Class<? extends Base> clazz){
 		List<String> res=new ArrayList<String>();
 		for(Field f:Base.getFields(clazz))
 			res.add(f.getName());
 		return res;
 	}
-	public final List<String> getIteratorFieldsName(){
-		return Base.getIteratorFieldsName(this.getClass());
-	}
-	public final List<String> getIteratorFieldsValue(){
+	public List<String> getAllFieldsValueString(){
 		List<String> res=new ArrayList<String>();
-		Class<? extends Base> clazz=this.getClass();
-		for(Field f:Base.getFields(clazz)){
+		for(Field f:this.getFields()){
 			f.setAccessible(true);
-			Object o=null;
+			Object tmp=null;
 			try {
-				o=f.get(this);
+				tmp=f.get(this);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
-			res.add(o==null?"":o.toString());
+			res.add(String.valueOf(tmp));
 		}
 		return res;
 	}
-	public final boolean[] getIteratorFieldsKeyBoolean(){
-		Class<? extends Base> clazz=this.getClass();
-		List<Field> fs=Base.getFields(clazz);
-		boolean[] res=new boolean[fs.size()];
-		int i=0;
+	static protected List<String> getAllFieldsDescriptionString(Class<? extends Base> clazz){
+		List<String> res=new ArrayList<String>();
 		for(Field f:Base.getFields(clazz))
-			res[i++]=f.getAnnotation(SQLField.class).isKey();
+			res.add(f.getAnnotation(SQLField.class).value());
+		return res;
+	}
+	static protected List<String> getAllFieldsPsString(Class<? extends Base> clazz){
+		List<String> res=new ArrayList<String>();
+		for(Field f:Base.getFields(clazz))
+			res.add(f.getAnnotation(SQLField.class).ps());
+		return res;
+	}
+	static protected List<Boolean> getAllFieldsKeyBoolean(Class<? extends Base> clazz){
+		List<Boolean> res=new ArrayList<Boolean>();
+		for(Field f:Base.getFields(clazz))
+			res.add(f.getAnnotation(SQLField.class).isKey());
 		return res;
 	}
 	
@@ -321,6 +331,15 @@ public abstract class Base {
 	//=============================================================
 	//增删改查
 	//=============================================================
+	public void clear(){
+		for(Field f:this.getFields()){
+			f.setAccessible(true);
+			try {
+				f.set(this,null);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+			}
+		}
+	}
 	public int load() throws SQLException, IllegalArgumentException, IllegalAccessException{
 		return this.load(true);
 	}
@@ -353,12 +372,12 @@ public abstract class Base {
 		return num;
 	}
 	public void update()throws SQLException, IllegalArgumentException, IllegalAccessException{
-		Class<? extends Base> clazz=this.getClass();
+	//	Class<? extends Base> clazz=this.getClass();
 		StringBuilder sb=new StringBuilder();
 		sb.append("UPDATE ");
-		sb.append(Base.getSQLTableName(clazz));
+		sb.append(this.getSQLTableName());
 		sb.append(" SET ");
-		List<Field> fs=Base.getFields(clazz);
+		List<Field> fs=this.getFields();
 		boolean first=true;
 		for(Field f:fs){
 			SQLField s=f.getAnnotation(SQLField.class);

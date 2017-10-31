@@ -4,13 +4,18 @@ import java.sql.SQLException;
 import java.util.*;
 
 import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionSupport;
 
 import action.Manager;
 import obj.annualTable.Time;
 import token.Role;
 
-public class MenuAction extends AnnualAction{
+public class MenuAction extends ActionSupport{
 	private static final long serialVersionUID = 5246911694929172909L;
+	
+	private action.Annual annual=new action.Annual();
+	public action.Annual getAnnual(){return this.annual;}
+	
 	
 	private List<Time> times=new ArrayList<Time>();
 	private String actionPrefix;
@@ -31,17 +36,17 @@ public class MenuAction extends AnnualAction{
 	
 	@Override
 	public String execute(){
-		super.setupYear();
-		System.out.println(">> MenuAction:execute > year="+this.getYear());
+		System.out.println(">> MenuAction:execute > year="+this.getAnnual().getYear());
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		Role role=Role.getRoleByOffice(Manager.getUser());
-		try {//TODO listTime execute from MenuAction
-			this.times=Time.listTime(role,this.getYear(),false);
+		try {
+			//当setupIfEmpty为false时会实际调用join联合查询
+			this.times=Time.listTime(role,this.getAnnual().getYear(),/*setupIfEmpty*/false);
 		} catch (NoSuchFieldException | SecurityException | SQLException e) {
 			e.printStackTrace();
 			this.times=new ArrayList<Time>();
 			session.put(token.ActionInterceptor.ErrorTipsName,
-					"服务器开了一些小差，尚未搜索到["+this.getYear()+"年]的时间表！");//设置提示信息
+					"服务器开了一些小差，尚未搜索到["+this.getAnnual().getYear()+"年]的时间表！");//设置提示信息
 		}
 		String res=Role.getActionPrefix(Role.getRoleByOffice(Manager.getUser()));
 		System.out.println(">> MenuAction:execute <"+res);

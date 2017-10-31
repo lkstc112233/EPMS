@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.*;
 
 import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionSupport;
 
 import action.jwc.RegionArrangement.SetOfRegionAndPractice.Pair;
 import obj.Base;
@@ -14,8 +15,11 @@ import obj.staticObject.PracticeBase;
 /**
  * 导入免费师范生数据
  */
-public class RegionArrangement extends action.login.AnnualAction{
+public class RegionArrangement extends ActionSupport{
 	private static final long serialVersionUID = 5998268336475528662L;
+
+	private action.Annual annual=new action.Annual();
+	public action.Annual getAnnual(){return this.annual;}
 	
 	static public class SetOfRegionAndPractice{
 		static public class Pair{
@@ -93,7 +97,7 @@ public class RegionArrangement extends action.login.AnnualAction{
 	
 	public RegionArrangement() throws SQLException, NoSuchFieldException, SecurityException{
 		super();
-		System.out.println(">> RegionArrangement:constructor > year="+this.getYear());
+		System.out.println(">> RegionArrangement:constructor > year="+this.getAnnual().getYear());
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		Object o=session.get(SessionListKey);
 		this.regionAndPracticeBase=o==null?null:((SetOfRegionAndPractice)o);
@@ -115,7 +119,7 @@ public class RegionArrangement extends action.login.AnnualAction{
 	 */
 	@Override
 	public String execute(){
-		if(!executive || this.regionAndPracticeBase==null)
+		if(this.regionAndPracticeBase==null)
 			return display();
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		System.out.println(">> RegionArrangement:execute > regionName= "+this.regionName);
@@ -149,7 +153,7 @@ public class RegionArrangement extends action.login.AnnualAction{
 				//	tmp.add(pb);
 				try{
 					Region newRegion=new Region();
-					newRegion.setYear(this.getYear());
+					newRegion.setYear(this.getAnnual().getYear());
 					newRegion.setName(this.regionName);
 					newRegion.setPracticeBase(pb.getName());
 					newRegion.create();
@@ -171,7 +175,7 @@ public class RegionArrangement extends action.login.AnnualAction{
 	 * 用于从大区移除基地
 	 */
 	public String delete(){
-		if(!executive || this.regionAndPracticeBase==null)
+		if(this.regionAndPracticeBase==null)
 			return display();
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		System.out.println(">> RegionArrangement:delete > regionName= "+this.regionName);
@@ -211,7 +215,7 @@ public class RegionArrangement extends action.login.AnnualAction{
 				//	tmp.add(pb);
 				try{
 					Region newRegion=new Region();
-					newRegion.setYear(this.getYear());
+					newRegion.setYear(this.getAnnual().getYear());
 					newRegion.setName(this.regionName);
 					newRegion.setPracticeBase(pb.getName());
 					newRegion.delete();
@@ -232,14 +236,13 @@ public class RegionArrangement extends action.login.AnnualAction{
 	/**
 	 * 用于显示
 	 */
-	@Override
 	public String display(){
 		this.regionName=null;
-		System.out.println(">> RegionArrangement:display > year="+this.getYear());
+		System.out.println(">> RegionArrangement:display > year="+this.getAnnual().getYear());
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		this.regionAndPracticeBase=null;
 		try {
-			this.regionAndPracticeBase=SetOfRegionAndPractice.listRegionAndPracticeBase(this.getYear());
+			this.regionAndPracticeBase=SetOfRegionAndPractice.listRegionAndPracticeBase(this.getAnnual().getYear());
 		} catch (SQLException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException | InstantiationException e) {
 			e.printStackTrace();
 			session.put(token.ActionInterceptor.ErrorTipsName,

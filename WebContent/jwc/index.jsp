@@ -28,7 +28,7 @@
 				</li>
 				<li>
 					<span class="time">[All time]</span>
-					<a href='<s:url action="jwc_TableOperation_display"/>?tableName=Student'>
+					<a href='<s:url action="jwc_sudo_TableOperation_display"/>?tableName=Student'>
 						数据表管理
 					</a>
 				</li>
@@ -40,11 +40,11 @@
 					<div class="listHeaderLeft">自然年管理功能</div>
 					<div class="right">
 						当前自然年: 
-						<s:select id="year" name="year" cssClass="title_button" style="width:120px;margin-bottom:2px;"
+						<s:select id="annualYear" name="annual.year" cssClass="title_button" style="width:120px;margin-bottom:2px;"
 						list="{'2016','2017','2018','2019','2020','2021'}" theme="simple"
 						onchange="window.location.href=window.location.href.substring(0,(
 						window.location.href.indexOf('?')<0?window.location.length:window.location.href.indexOf('?'))
-						)+'?year='+this.value"/>
+						)+'?annual.year='+this.value"/>
 					</div>
 				</div>
 			</td>
@@ -53,7 +53,7 @@
 			<ul class="listContent">
 				<li>
 					<span class="time">[All time]</span>
-					<a href='<s:url action="jwc_timeManager"/>' onclick="this.href=this.href+'?year='+document.getElementById('year').value">
+					<a href='<s:url action="jwc_sudo_TimeManager_display"/>' onclick="this.href=this.href+'?annual.year='+document.getElementById('annualYear').value">
 						时间节点管理
 					</a>
 				</li>
@@ -78,7 +78,7 @@
 							</s:else>
 							]
 						</span>
-						<a href='<s:url action="%{actionPrefix}_function_%{#__tableRow.actionClass}_display"/>' onclick="this.href=this.href+'?year='+document.getElementById('year').value">
+						<a href='<s:url action="%{actionPrefix}_function_%{#__tableRow.actionClass}_display"/>' onclick="this.href=this.href+'?annual.year='+document.getElementById('annualYear').value">
 							<s:property value="%{#__tableRow.project}" />
 						</a>
 					</li>  

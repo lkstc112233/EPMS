@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.*;
 
 import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionSupport;
 
 import obj.annualTable.Region;
 import obj.staticObject.InnerPerson;
@@ -11,8 +12,12 @@ import obj.staticObject.InnerPerson;
 /**
  * 导入免费师范生数据
  */
-public class RegionInfo extends action.login.AnnualAction{
+public class RegionInfo extends ActionSupport{
 	private static final long serialVersionUID = 5998268336475528662L;
+
+	private action.Annual annual=new action.Annual();
+	public action.Annual getAnnual(){return this.annual;}
+
 	
 	private Region region;
 	private List<InnerPerson> innerPersons;
@@ -25,13 +30,13 @@ public class RegionInfo extends action.login.AnnualAction{
 	
 	public RegionInfo() throws SQLException, NoSuchFieldException, SecurityException{
 		super();
-		System.out.println(">> RegionInfo_info:constructor > year="+this.getYear());
+		System.out.println(">> RegionInfo_info:constructor > year="+this.getAnnual().getYear());
 		this.region=new Region();
 	}
 	
 	@Override
 	public String execute(){
-		if(!executive || this.region==null)
+		if(this.region==null)
 			return display();
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		System.out.println(">> RegionInfo_info:execute > region= "+this.region);
@@ -55,7 +60,6 @@ public class RegionInfo extends action.login.AnnualAction{
 	/**
 	 * 用于显示
 	 */
-	@Override
 	public String display(){
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		try {

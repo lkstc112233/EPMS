@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>EPMS-教务处-确认实习大区信息（<s:property value="year" />年）</title>
+<title>EPMS-教务处-确认实习大区信息（<s:property value="annual.year" />年）</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
@@ -52,7 +52,6 @@
 				<s:hidden name="region.name" value="%{region.name}" />
 				<s:submit value="提交修改" cssClass="button"/>
 			</td></tr>
-			<s:hidden name="executive" value="true" />
 			<s:token />
 		</s:form>
 	</tbody></table>

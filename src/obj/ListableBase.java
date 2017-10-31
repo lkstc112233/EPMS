@@ -1,6 +1,8 @@
 package obj;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.*;
 
@@ -23,6 +25,43 @@ public abstract class ListableBase extends Base{
 	public ListableBase() throws SQLException {
 		super();
 	}
+	
+	
+	static protected List<Map<String,String>> getAllFieldsSourceListDescription(Class<? extends Base> clazz){
+		List<Map<String,String>> res=new ArrayList<Map<String,String>>();
+		for(Field f:Base.getFields(clazz)){
+			String s=f.getAnnotation(SQLField.class).source();
+			if(s!=null){
+				String[] ss=s.split("\\.");
+				Class<? extends Base> sourceClass=Base.getClassForName(ss[0]);
+				if(sourceClass!=null && ListableBase.class.isAssignableFrom(sourceClass)){
+					try {
+						Method m=sourceClass.getMethod("list",sourceClass.getClass());
+						Field field = Base.getField(sourceClass,ss[1]);
+						@SuppressWarnings("unchecked")
+						List<? extends Base> list=(List<? extends Base>) m.invoke(null,sourceClass);
+						Map<String,String> map=new TreeMap<String,String>();
+						field.setAccessible(true);
+						for(Base b:list){
+							Object o=field.get(b);
+							String key=o==null?null:o.toString();
+							String value=b.getSimpleToString();
+							if(value==null)
+								value=key;
+							map.put(key,value);
+						}
+						res.add(map);
+						continue;
+					} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			res.add(null);
+		}
+		return res;
+	}
+	
 	
 	//只保存非即用即查的Base对应的list内容
 	static private Map<Class<? extends ListableBase>,List<ListableBase>> StaticList=new HashMap<Class<? extends ListableBase>,List<ListableBase>>();

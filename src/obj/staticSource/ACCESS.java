@@ -12,25 +12,25 @@ public class ACCESS extends ListableBase{
 	
 	@SQLField(needSorted=true)
 	private int id;
-	@SQLField(isKey=true)
+	@SQLField(value="项目名称",isKey=true)
 	private String project;
-	@SQLField
+	@SQLField(value="动作名称")
 	private String actionClass="";
-	@SQLField
+	@SQLField(value="起始时间")
 	private Timestamp time1;
-	@SQLField
+	@SQLField(value="终止时间")
 	private Timestamp time2;
-	@SQLField
+	@SQLField(value="学生权限")
 	private Boolean 学生;
-	@SQLField
+	@SQLField(value="教学院长权限")
 	private Boolean 教学院长;
-	@SQLField
+	@SQLField(value="教务员权限")
 	private Boolean 教务员;
-	@SQLField
+	@SQLField(value="教师权限")
 	private Boolean 教师;
-	@SQLField
+	@SQLField(value="教务处权限")
 	private Boolean 教务处;
-	@SQLField
+	@SQLField(value="领导权限")
 	private Boolean 领导;
 	
 	

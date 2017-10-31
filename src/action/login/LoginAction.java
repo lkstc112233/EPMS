@@ -56,7 +56,7 @@ public class LoginAction extends ActionSupport{
 			return ERROR;
 		}
 		System.out.println(">> LoginAction:execute <SUCCESS");
-		return SUCCESS;
+		return SUCCESS;//只有SUCCESS会redirect到menu
 	}
 	
 	

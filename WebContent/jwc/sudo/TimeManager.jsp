@@ -5,19 +5,19 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>EPMS-教务处-时间节点管理（<s:property value="year" />年）</title>
+<title>EPMS-教务处-时间节点管理（<s:property value="annual.year" />年）</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
 <body>
 	<center>
-		<jsp:include page="../common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
+		<jsp:include page="../../common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 
 <div class="bag">
-	<s:form action="jwc_timeManager" method="post" cssClass="myform">
+	<s:form action="jwc_sudo_TimeManager_execute" method="post" cssClass="myform">
 		<tr class="mytableTitle">
 			<td class="tdLabel">序号</td>
-			<td class="tdLabel">project(<s:property value="year" />)</td>
+			<td class="tdLabel">project(<s:property value="annual.year" />)</td>
 			<td class="tdLabel">time start</td>
 			<td class="tdLabel">time end</td>
 		</tr>
@@ -30,8 +30,6 @@
 				</td>
 				<td class="tdInput" style="width:380px;">
 					<s:property value="%{#__tableRow.project}" />
-					<s:hidden name="times[%{#__status.index}].year"
-					value="%{year}" theme="simple"/>
 					<s:hidden name="times[%{#__status.index}].project"
 					value="%{#__tableRow.project}"  theme="simple"/>
 				</td>
@@ -51,8 +49,7 @@
 				</td>
 			</tr>
 		</s:iterator>
-		<s:hidden name="year" value="%{year}" />
-		<s:hidden name="executive" value="true" />
+		<s:hidden name="annual.year" value="%{annual.year}" />
 		<tr>
 			<td colspan="4">
 				<s:submit value="提交修改" cssClass="button" theme="simple" />
@@ -69,7 +66,7 @@
 	</tbody></table>
 </div>
 
-		<jsp:include page="../common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>
+		<jsp:include page="../../common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 	</center>
 </body>
 </html>
