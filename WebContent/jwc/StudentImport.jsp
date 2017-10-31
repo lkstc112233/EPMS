@@ -5,22 +5,28 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>EPMS-教务处-免费师范生数据导入（<s:property value="annual.year" />）</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
-<body>
-<center>
+
+<body><center>
 	<jsp:include page="/model/common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 
 <div class="bag">
-	<div> welcome!</div>
-	<s:form action="login">
-		<s:submit value="登录系统"></s:submit>
-	</s:form>
-</div>
+
+	<jsp:include page="/model/TableOperationPage.jsp" flush="true">
+		<jsp:param name="actionName" value="jwc_function_StudentImport"/>
+		
+	</jsp:include>
 	
+	
+	<table style="width:180px;border:0;cellspacing:0;cellpadding:0"><tbody>
+		<tr><td height="100px" width="100%" colspan="3" valign="top" /></tr>
+		<tr><td><a href='JavaScript:history.back(1)' class="button">返回</a></td></tr>
+	</tbody></table>
+</div>
+
 	<jsp:include page="/model/common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>
-</center>
-</body>
+</center></body>
 </html>

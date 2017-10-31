@@ -121,17 +121,12 @@ public class Search2<T extends Base> {
 			Equal("="),
 			Like("LIKE");
 
-			static public List<String> list(){
-				List<String> res=new ArrayList<String>();
-				for(RestraintType r:RestraintType.values()) res.add(r.toString());
-				return res;
-			}
 			public final String operator;
 			RestraintType(String oper){this.operator=oper;}
 			public String getKey(){return this.toString();}
 			public String getValue(){return this.operator;}
 		}
-		public List<String> getRestraintTypeList(){return RestraintType.list();}
+		public RestraintType[] getRestraintTypeList(){return RestraintType.values();}
 		
 		static public class Triple{
 			public Field field;
@@ -146,8 +141,9 @@ public class Search2<T extends Base> {
 			public void setType(RestraintType t){this.type=t;}
 			public void setType(String s){this.type=s==null||s.isEmpty()?null:RestraintType.valueOf(s);}
 			public Object getValue(){return this.value;}
-			public void setValue(Object o){this.value=o;}
-			public void setValue(String s){this.value=s==null||s.isEmpty()?null:s;}
+			public void setValue(String s){
+				this.value=s==null||s.isEmpty()?null:s;
+			}
 			public String toString(){
 				return String.format("[Triple:%s(%s)%s]",this.field.getName(),this.getTypeName(),String.valueOf(this.getValue()));
 			}
@@ -217,15 +213,19 @@ public class Search2<T extends Base> {
 			public void setYear(String s){try{this.year=Integer.parseInt(s);}catch(NumberFormatException e){e.printStackTrace();};}
 			
 		private Field fieldYear=null,fieldSchool=null,fieldMajor=null;
-		private List<Major> majors;
+		private List<Major> majors=null;
 		
 		public jwyRestraint(@SuppressWarnings("rawtypes") Search2.ClassInfo classinfo,School school,int year) throws NoSuchFieldException, SQLException, IllegalArgumentException, IllegalAccessException{
 			this.school=school;
-			if(this.school==null || !this.school.existAndLoad())
-				throw new IllegalArgumentException("输入School不正确！");
+			if(this.school!=null && !this.school.existAndLoad())
+				this.school=null;
 			this.year=year;
 			for(Object o:classinfo.fields){
 				Field f=(Field)o;
+				if("year".equals(f.getName())){
+					this.fieldYear=f;
+					continue;
+				}
 				SQLField s=f.getAnnotation(SQLField.class);
 				if(s==null||s.source()==null||s.source().isEmpty()) continue;
 				String[] ss=s.source().split("\\.");
@@ -234,17 +234,15 @@ public class Search2<T extends Base> {
 				}else if(ss[0].equals("Major")){
 					this.fieldMajor=f;
 				}
-				if(f.getName().equals("year")){
-					this.fieldYear=f;
-				}
 				if(this.fieldMajor!=null && this.fieldSchool!=null && this.fieldYear!=null)
 					break;
 			}
-			if(this.fieldMajor!=null){
+			if(this.school==null)
+				this.fieldMajor=this.fieldSchool=null;
+			if(this.fieldMajor!=null)
 				this.majors=Major.list(Major.class,
 						new String[]{"school"},
-						new Object[]{school.getName()});
-			}
+						new Object[]{this.school.getName()});
 		}
 			
 		@Override

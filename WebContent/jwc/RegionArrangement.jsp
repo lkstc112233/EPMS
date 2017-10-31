@@ -11,7 +11,7 @@
 
 
 <body><center>
-	<jsp:include page="../common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
+	<jsp:include page="/model/common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 		
 <div class="bag">
 	<table width="80%"><tbody>
@@ -87,6 +87,6 @@
 	</tbody></table>
 </div>
 
-	<jsp:include page="../common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>
+	<jsp:include page="/model/common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 </center></body>
 </html>

@@ -89,6 +89,7 @@
 				<param name="inputName">downloadInline </param> <!-- 调用的getter名称，返回InputStream -->
 				<param name="contentDisposition">inline;filename="${downloadFileName}" </param> <!-- 内联方式下载，文件名使用EL获取 --> 
 			</result>
+			<result name="input"> login.jsp </result>
 			<allowed-methods> display,execute,download,upload,update,delete,create, </allowed-methods>
 		</action>
 		

@@ -12,7 +12,7 @@
 
 <body>
 <center>
-	<jsp:include page="common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
+	<jsp:include page="/model/common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 <div class="bag">
 	<s:form action="login"  method="post" cssClass="myform">
 		<s:textfield name="inner.id" label="学工号"></s:textfield>
@@ -21,7 +21,7 @@
 	</s:form>
 </div>
 	
-	<jsp:include page="common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>
+	<jsp:include page="/model/common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 </center>
 </body>
 </html>

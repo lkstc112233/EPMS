@@ -49,7 +49,7 @@ public class InnerPerson extends ListableBase implements ListableBase.ListableBa
 				rs.first();
 				String passwordFromSQL=rs.getString(1);
 				System.out.println("SQL查询到密码值:"+passwordFromSQL);
-				return password.equals(passwordFromSQL);
+				return passwordFromSQL.equals(password);
 			}else{
 				System.err.println("InnerPerson表有"+num+"重id值！("+this.sql_checkPassword.toString()+")");
 			}

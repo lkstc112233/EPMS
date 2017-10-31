@@ -63,7 +63,8 @@ public class Student extends AnnualBase{
 	public String getOutstandingType() {return outstandingType;}
 	public void setOutstandingType(String outstandingType) {this.outstandingType = outstandingType==null||outstandingType.isEmpty()?null:outstandingType;}
 	public byte[] getOutstandingMaterial() {return outstandingMaterial;}
-	public void setOutstandingMaterial(byte[] outstandingMaterial) {this.outstandingMaterial = outstandingMaterial;}
+	public void setOutstandingMaterial(byte[] outstandingMaterial) {this.outstandingMaterial = outstandingMaterial==null||outstandingMaterial.length<=0?null:outstandingMaterial;}
+	public void setOutstandingMaterial(String outstandingMaterial) {this.outstandingMaterial = outstandingMaterial==null||outstandingMaterial.isEmpty()?null:outstandingMaterial.getBytes();}
 
 
 	public Student() throws SQLException {

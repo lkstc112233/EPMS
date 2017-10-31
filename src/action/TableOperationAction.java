@@ -13,6 +13,7 @@ import java.util.*;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
@@ -165,7 +166,7 @@ public abstract class TableOperationAction extends ActionSupport{
 		}
 		if(!this.search.getRestraint().fitBase(this.chooseBase)){
 			session.put(token.ActionInterceptor.ErrorTipsName,
-					"不能修改为其他年份/部院系条目！");
+					"不能修改为其他[年份/部院系]条目！");
 			return NONE;
 		}
 		//b -> update to ->this.chooseBase
@@ -189,10 +190,9 @@ public abstract class TableOperationAction extends ActionSupport{
 		}
 		this.setChoose(-1);//will clear the chooseBase
 		System.out.println(">> TableOperationAction:delete > 修改成功");
-		this.execute();
 		session.put(token.ActionInterceptor.ErrorTipsName,
 				"修改成功！");
-		return display();
+		return this.execute();
 	}
 	/**
 	 * 删除选中条（根据choose值）
@@ -223,7 +223,7 @@ public abstract class TableOperationAction extends ActionSupport{
 		}
 		if(!this.search.getRestraint().fitBase(b)){
 			session.put(token.ActionInterceptor.ErrorTipsName,
-					"不能删除其他年份/部院系条目！");
+					"不能删除其他[年份/部院系]条目！");
 			return NONE;
 		}
 		//delete b (in the search result)
@@ -247,10 +247,9 @@ public abstract class TableOperationAction extends ActionSupport{
 			return NONE;
 		}
 		System.out.println(">> TableOperationAction:delete > 删除成功");
-		this.execute();
 		session.put(token.ActionInterceptor.ErrorTipsName,
 				"删除成功！");
-		return display();
+		return this.execute();
 	}
 	/**
 	 * 新建条（新建createBase）
@@ -283,7 +282,7 @@ public abstract class TableOperationAction extends ActionSupport{
 		}
 		if(!this.search.getRestraint().fitBase(this.createNewBase)){
 			session.put(token.ActionInterceptor.ErrorTipsName,
-					"不能新建其他年份/部院系条目！");
+					"不能新建其他[年份/部院系]条目！");
 			return NONE;
 		}
 		//create this.getCreateNewBase()
@@ -457,6 +456,11 @@ public abstract class TableOperationAction extends ActionSupport{
 		}
 		this.downloadOutputStream=null;
 		ByteArrayInputStream in=new ByteArrayInputStream(data);
+		try {
+			ServletActionContext.getResponse().setHeader("Content-Disposition","attachment;downloadFileName="+java.net.URLEncoder.encode(this.downloadFileName, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		return in;
 	}
 	
