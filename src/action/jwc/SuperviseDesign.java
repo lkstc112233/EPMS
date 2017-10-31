@@ -4,15 +4,15 @@ import java.sql.SQLException;
 
 import obj.Search2;
 
-public class PracticeBaseImport extends action.TableOperationAction{
+public class SuperviseDesign extends action.TableOperationAction{
 	private static final long serialVersionUID = 8833385464572061925L;
 
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
 	
 
-	public PracticeBaseImport() {
-		super("PracticeBase");
+	public SuperviseDesign() {
+		super("Supervise");
 	}
 
 	@Override
