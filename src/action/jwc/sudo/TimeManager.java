@@ -3,7 +3,6 @@ package action.jwc.sudo;
 import java.sql.*;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import action.Manager;
@@ -31,7 +30,6 @@ public class TimeManager extends ActionSupport{
 	@Override
 	public String execute(){
 		System.out.println(">> TimeManagerAction:execute > year="+this.getAnnual().getYear());
-		Map<String, Object> session=ActionContext.getContext().getSession();
 		System.out.println(">> TimeManagerAction:execute > 开始上传修改数据到数据库Time表");
 		for(int i=0;i<times.size();i++){
 			Time t=times.get(i);
@@ -40,12 +38,8 @@ public class TimeManager extends ActionSupport{
 			try {
 				t.update();
 			} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
-				e.printStackTrace();
-				session.put(token.ActionInterceptor.ErrorTipsName,"第"+i+"条上传Time失败！");
-				System.out.println(">> TimeManagerAction:execute > ["+i+"]Time失败");
-				//fail
-				System.out.println(">> TimeManagerAction:execute <NONE");
-				return NONE;
+				return Manager.tips("第"+i+"条上传Time失败！",
+						e,NONE);
 			}
 			System.out.println(">> TimeManagerAction:execute > ["+i+"]Time成功");
 		}
@@ -57,12 +51,8 @@ public class TimeManager extends ActionSupport{
 				ACCESS a=ACCESS.getFromTime(t);
 				a.update();
 			} catch (IllegalArgumentException | IllegalAccessException | SQLException | NullPointerException e) {
-				e.printStackTrace();
-				session.put(token.ActionInterceptor.ErrorTipsName,"第"+i+"条上传ACCESS失败！");
-				System.out.println(">> TimeManagerAction:execute > ["+i+"]ACCESS失败");
-				//fail
-				System.out.println(">> TimeManagerAction:execute <NONE");
-				return NONE;
+				return Manager.tips("第"+i+"条上传ACCESS失败！",
+						e,NONE);
 			}
 			System.out.println(">> TimeManagerAction:execute > ["+i+"]ACCESS成功");
 		}
@@ -76,9 +66,8 @@ public class TimeManager extends ActionSupport{
 		try {
 			times=Time.listTime(role,this.getAnnual().getYear(),/*setupIfEmpty*/true);
 		} catch (NoSuchFieldException | SecurityException | SQLException e) {
-			e.printStackTrace();
-			System.out.println(">> TimeManagerAction:display > list Exception("+e.getMessage()+")");
-			return ERROR;
+			return Manager.tips("出错了！",
+					e,ERROR);
 		}
 		System.out.print(">> TimeManagerAction:display > list=[\n");
 		for(Time t:times)

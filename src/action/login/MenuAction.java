@@ -3,7 +3,6 @@ package action.login;
 import java.sql.SQLException;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import action.Manager;
@@ -37,16 +36,14 @@ public class MenuAction extends ActionSupport{
 	@Override
 	public String execute(){
 		System.out.println(">> MenuAction:execute > year="+this.getAnnual().getYear());
-		Map<String, Object> session=ActionContext.getContext().getSession();
 		Role role=Role.getRoleByOffice(Manager.getUser());
 		try {
 			//当setupIfEmpty为false时会实际调用join联合查询
 			this.times=Time.listTime(role,this.getAnnual().getYear(),/*setupIfEmpty*/false);
 		} catch (NoSuchFieldException | SecurityException | SQLException e) {
-			e.printStackTrace();
 			this.times=new ArrayList<Time>();
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"服务器开了一些小差，尚未搜索到["+this.getAnnual().getYear()+"年]的时间表！");//设置提示信息
+			Manager.tips("服务器开了一些小差，尚未搜索到["+this.getAnnual().getYear()+"年]的时间表！",
+					e);
 		}
 		String res=Role.getActionPrefix(Role.getRoleByOffice(Manager.getUser()));
 		System.out.println(">> MenuAction:execute <"+res);

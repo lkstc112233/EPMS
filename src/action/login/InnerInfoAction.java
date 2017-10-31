@@ -3,7 +3,6 @@ package action.login;
 import java.sql.SQLException;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import action.Manager;
@@ -54,31 +53,24 @@ public class InnerInfoAction extends ActionSupport{
 		System.out.println(">> InnerInfoAction:execute > executive="+executive);
 		if(!this.executive)
 			return display();
-		Map<String, Object> session=ActionContext.getContext().getSession();
 		try {
 			if(inner==null || inner.checkKeyNull()){
 				System.out.println(">> InnerInfoAction:execute > inner=null");
-				session.put(token.ActionInterceptor.ErrorTipsName,
-						"服务器开了一些小差！");
-				return display();
+				return Manager.tips("服务器开了一些小差！",
+						display());
 			}
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
 			System.out.println(">> InnerInfoAction:execute > inner.checkKeyNull Exception("+e.getMessage()+")");
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"服务器开了一些小差！");
-			return display();
+			return Manager.tips("服务器开了一些小差！",
+					e,display());
 		}
 		if(this.newPassword!=null && this.newPassword.length()>0){
 			System.out.println(">> InnerInfoAction:execute > 开始修改密码");
 			try {
 				inner.updatePassword(this.newPassword);
 			} catch (SQLException e) {
-				e.printStackTrace();
-				System.out.println(">> InnerInfoAction:execute > 修改密码失败");
-				session.put(token.ActionInterceptor.ErrorTipsName,
-						"修改密码失败，请重试！");
-				return display();
+				return Manager.tips("修改密码失败，请重试！",
+						e,display());
 			}
 			System.out.println(">> InnerInfoAction:execute > 成功修改密码");
 		}
@@ -88,16 +80,11 @@ public class InnerInfoAction extends ActionSupport{
 			inner.update();
 			Manager.setUser(inner);
 		} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
-			e.printStackTrace();
-			System.out.println(">> InnerInfoAction:execute > 上传个人信息失败");
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"修改个人信息失败，请重试！");
-			return display();
+			return Manager.tips("修改个人信息失败，请重试！",
+					e,display());
 		}
-		session.put(token.ActionInterceptor.ErrorTipsName,
-				"修改个人信息成功！");
-		System.out.println(">> InnerInfoAction:display <SUCCESS");
-		return SUCCESS;
+		return Manager.tips("修改个人信息成功！",
+				SUCCESS);
 	}
 	
 	public String display(){

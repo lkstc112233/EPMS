@@ -1,9 +1,6 @@
 package action.login;
 
 import java.sql.SQLException;
-import java.util.Map;
-
-import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import action.Manager;
@@ -26,7 +23,7 @@ public class LoginAction extends ActionSupport{
 	@Override
 	public String execute(){
 		System.out.println(">> LoginAction:execute");
-		Map<String, Object> session=ActionContext.getContext().getSession();
+		Manager.clearSession();
 		if(inner.getId()==null&&inner.getPassword()==null){
 			InnerPerson tmp=Manager.getUser();
 			if(tmp==null){
@@ -37,21 +34,18 @@ public class LoginAction extends ActionSupport{
 			System.out.println(">> LoginAction:execute > 从session中读取inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
 		}
 		if(inner.checkPassword()){
-			session.clear();
 			System.out.println(">> LoginAction:execute > 保存到session中:inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
 			Manager.setUser(inner);
 			try {
 				inner.load();
 			} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
-				e.printStackTrace();
-				session.put(token.ActionInterceptor.ErrorTipsName,"读取个人信息失败，请重新登录！");//设置提示信息
-				System.out.println(">> LoginAction:execute <ERROR");
-				return ERROR;
+				Manager.tips("读取个人信息失败，请重新登录！",
+						e,ERROR);
 			}
 			System.out.println(">> LoginAction:execute > 登陆成功:"+inner);
 		}else{
 			System.out.println(">> LoginAction:execute > 登录失败:inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
-			session.put(token.ActionInterceptor.ErrorTipsName,"密码错误，请重新输入！");//设置提示信息
+			Manager.tips("密码错误，请重新输入！");//设置提示信息
 			System.out.println(">> LoginAction:execute <ERROR");
 			return ERROR;
 		}
@@ -62,8 +56,7 @@ public class LoginAction extends ActionSupport{
 	
 	public String logout(){
 		System.out.println(">> LoginAction:logout > inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
-		Map<String, Object> session=ActionContext.getContext().getSession();
-		session.clear();
+		Manager.clearSession();
 		System.out.println(">> LoginAction:logout <SUCCESS");
 		return SUCCESS;
 	}

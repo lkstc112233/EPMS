@@ -25,21 +25,41 @@ public class Manager {
 		ActionContext.getContext().getSession().remove(key);
 		return o;
 	}
+	static public void clearSession(){
+		ActionContext.getContext().getSession().clear();
+	}
+
+	static private final String TipsName="errorTips";
+	static public void tips(String msg){
+		Manager.tips(msg,null,null);
+	}
+	static public void tips(String msg,Throwable exception){
+		Manager.tips(msg,exception,null);
+	}
+	static public String tips(String msg,String result){
+		return Manager.tips(msg,null,result);
+	}
+	static public String tips(String msg,Throwable exception,String result){
+		if(msg==null) msg="";
+		if(exception!=null){
+			msg+="\n("+exception.getMessage()+")";
+			exception.printStackTrace();
+		}
+		if(!msg.isEmpty()){
+			Manager.saveSession(TipsName,msg);
+			System.err.println("Tips>> "+msg);
+		}
+		System.err.println("Tips>> return "+result);
+		return result;
+	}
 	
-	
-	
-	
-	static final public String userToken="inner";
-	
+	static private final String userToken="inner";
 	static public InnerPerson getUser(){
-		return Manager.loadSession(InnerPerson.class,userToken);
-	}
+		return Manager.loadSession(InnerPerson.class,userToken);}
 	static public void setUser(InnerPerson inner){
-		Manager.saveSession(userToken,inner);
-	}
+		Manager.saveSession(userToken,inner);}
 	static public void removeUser(){
-		Manager.removeSession(userToken);
-	}
+		Manager.removeSession(userToken);}
 	
 	
 	

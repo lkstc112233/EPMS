@@ -15,7 +15,6 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.struts2.ServletActionContext;
 
-import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import obj.*;
@@ -87,7 +86,6 @@ public abstract class TableOperationAction extends ActionSupport{
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public String display(){
-		Map<String, Object> session=ActionContext.getContext().getSession();
 		System.out.println(">> TableOperationAction:display > tableName="+this.getTableName());
 		Class<? extends Base> clazz=Base.getClassForName(this.getTableName());
 		try {
@@ -96,10 +94,8 @@ public abstract class TableOperationAction extends ActionSupport{
 				this.setupSearchRestraint();
 			}
 		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | SQLException e) {
-			e.printStackTrace();
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"搜索结果实例初始化失败！\n("+e.getMessage()+")");
-			return NONE;
+			return Manager.tips("搜索结果实例初始化失败！",
+					e,NONE);
 		}
 		if(this.search!=null)
 			Manager.saveSession(SessionSearchKey,this.search);
@@ -111,7 +107,6 @@ public abstract class TableOperationAction extends ActionSupport{
 	@Override
 	public String execute(){//执行查询
 		System.out.println(">> TableOperationAction:execute > tableName="+this.getTableName());
-		Map<String, Object> session=ActionContext.getContext().getSession();
 		if(this.search==null){
 			System.out.println("搜索结果实例初始化失败！");
 			return display();
@@ -120,15 +115,11 @@ public abstract class TableOperationAction extends ActionSupport{
 		try {
 			this.search.execute();
 		} catch (IllegalAccessException | InstantiationException e) {
-			e.printStackTrace();
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"搜索结果实例初始化失败！\n("+e.getMessage()+")");
-			return NONE;
+			return Manager.tips("搜索结果实例初始化失败！"
+					,e,NONE);
 		} catch (SQLException e) {
-			e.printStackTrace();
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"数据库开小差去了！");
-			return NONE;
+			Manager.tips("数据库开小差去了！",
+					e,NONE);
 		}
 		this.setChoose(-1);//will clear the chooseBase
 		System.out.println(">> TableOperationAction:execute > resultSet count="+this.search.getResult().size());
@@ -142,56 +133,41 @@ public abstract class TableOperationAction extends ActionSupport{
 	 */
 	public String update(){
 		System.out.println(">> TableOperationAction:update > tableName="+this.getTableName());
-		Map<String, Object> session=ActionContext.getContext().getSession();
-		if(this.search==null){
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"搜索结果实例初始化失败！");
-			return display();
-		}
+		if(this.search==null)
+			return Manager.tips("搜索结果实例初始化失败！",
+					display());
 		//===
 		Base b=null;
 		try{
 			b=this.search.getResult().get(this.getChoose());
 		}catch(IllegalArgumentException e){
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					e.getMessage());
+			return Manager.tips("出错了！",
+					NONE);
 		}catch(IndexOutOfBoundsException e){
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"条目选择错误！");
+			return Manager.tips("条目选择错误！",
+					NONE);
 		}
-		if(b==null || this.chooseBase==null){
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"条目选择为空！");
-			return NONE;
-		}
-		if(!this.search.getRestraint().fitBase(this.chooseBase)){
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"不能修改为其他[年份/部院系]条目！");
-			return NONE;
-		}
+		if(b==null || this.chooseBase==null)
+			return Manager.tips("条目选择为空！",
+					NONE);
+		if(!this.search.getRestraint().fitBase(this.chooseBase))
+			return Manager.tips("不能修改为其他[年份/部院系]条目！",
+					NONE);
 		//b -> update to ->this.chooseBase
 		try{
 			this.chooseBase.update(b);
 		}catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"修改参数错误！("+e.getMessage()+")");
-			return NONE;
+			return Manager.tips("修改参数错误！",
+					e,NONE);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"修改权限错误！("+e.getMessage()+")");
-			return NONE;
+			return Manager.tips("修改权限错误！",
+					e,NONE);
 		} catch (SQLException e) {
-			e.printStackTrace();
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"数据库错误！("+e.getMessage()+")");
-			return NONE;
+			return Manager.tips("数据库错误！",
+					e,NONE);
 		}
 		this.setChoose(-1);//will clear the chooseBase
-		System.out.println(">> TableOperationAction:delete > 修改成功");
-		session.put(token.ActionInterceptor.ErrorTipsName,
-				"修改成功！");
+		Manager.tips("修改成功！");
 		return this.execute();
 	}
 	/**
@@ -199,56 +175,41 @@ public abstract class TableOperationAction extends ActionSupport{
 	 */
 	public String delete(){
 		System.out.println(">> TableOperationAction:delete > tableName="+this.getTableName());
-		Map<String, Object> session=ActionContext.getContext().getSession();
-		if(this.search==null){
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"搜索结果实例初始化失败！");
-			return display();
-		}
+		if(this.search==null)
+			return Manager.tips("搜索结果实例初始化失败！",display());
 		//===
 		Base b=null;
 		try{
-			b=this.search.getResult().get(this.choose);
+			b=this.search.getResult().get(this.getChoose());
 		}catch(IllegalArgumentException e){
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					e.getMessage());
+			return Manager.tips("出错了！",
+					NONE);
 		}catch(IndexOutOfBoundsException e){
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"条目选择错误！");
+			return Manager.tips("条目选择错误！",
+					NONE);
 		}
-		if(b==null){
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"条目选择为空！");
-			return NONE;
-		}
-		if(!this.search.getRestraint().fitBase(b)){
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"不能删除其他[年份/部院系]条目！");
-			return NONE;
-		}
+		if(b==null || this.chooseBase==null)
+			return Manager.tips("条目选择为空！",
+					NONE);
+		if(!this.search.getRestraint().fitBase(this.chooseBase))
+			return Manager.tips("不能删除其他[年份/部院系]条目！",
+					NONE);
 		//delete b (in the search result)
 		try {
 			b.delete();
 			this.search.getResult().remove(this.choose);
 		}catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"修改参数错误！("+e.getMessage()+")");
-			return NONE;
+			return Manager.tips("修改参数错误！",
+					e,NONE);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"修改权限错误！("+e.getMessage()+")");
-			return NONE;
+			return Manager.tips("修改权限错误！",
+					e,NONE);
 		} catch (SQLException e) {
-			e.printStackTrace();
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"数据库错误！("+e.getMessage()+")");
-			return NONE;
+			return Manager.tips("数据库错误！",
+					e,NONE);
 		}
 		System.out.println(">> TableOperationAction:delete > 删除成功");
-		session.put(token.ActionInterceptor.ErrorTipsName,
-				"删除成功！");
+		Manager.tips("删除成功！");
 		return this.execute();
 	}
 	/**
@@ -256,52 +217,35 @@ public abstract class TableOperationAction extends ActionSupport{
 	 */
 	public String create(){
 		System.out.println(">> TableOperationAction:create > tableName="+this.getTableName());
-
-		Map<String, Object> session=ActionContext.getContext().getSession();
-		if(this.search==null){
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"搜索结果实例初始化失败！");
-			return display();
-		}
-		if(this.createNewBase==null){
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"条目选择为空！");
-			return NONE;
-		}
+		if(this.search==null)
+			return Manager.tips("搜索结果实例初始化失败！",
+					display());
+		if(this.createNewBase==null)
+			return Manager.tips("条目选择为空！",
+					NONE);
 		try{
-			if(this.createNewBase.checkKeyNull()){
-				session.put(token.ActionInterceptor.ErrorTipsName,
-						"新建条目内容不充分，请补全！");
-				return NONE;
-			}
+			if(this.createNewBase.checkKeyNull())
+				return Manager.tips("新建条目内容不充分，请补全！",
+						NONE);
 		}catch(IllegalArgumentException | IllegalAccessException e){
-			e.printStackTrace();
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"服务器开小差去了，暂时无法创建！("+e.getMessage()+")");
-			return NONE;
+			return Manager.tips("服务器开小差去了，暂时无法创建！",
+					e,NONE);
 		}
-		if(!this.search.getRestraint().fitBase(this.createNewBase)){
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"不能新建其他[年份/部院系]条目！");
-			return NONE;
-		}
+		if(!this.search.getRestraint().fitBase(this.createNewBase))
+			return Manager.tips("不能新建其他[年份/部院系]条目！",
+					NONE);
 		//create this.getCreateNewBase()
 		try {
 			this.createNewBase.create();
 		}catch(IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"服务器开小差去了，暂时无法创建！("+e.getMessage()+")");
-			return NONE;
+			return Manager.tips("服务器开小差去了，暂时无法创建！",
+					e,NONE);
 		}catch(SQLException e){
-			e.printStackTrace();
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"数据库发现问题，无法创建该条目！("+e.getMessage()+")");
-			return NONE;
+			return Manager.tips("数据库发现问题，无法创建该条目！",
+					e,NONE);
 		}
 		this.createNewBase.clear();
-		session.put(token.ActionInterceptor.ErrorTipsName,
-				"创建成功！");
+		Manager.tips("创建成功！");
 		return execute();
 	}
 	
@@ -321,65 +265,36 @@ public abstract class TableOperationAction extends ActionSupport{
 	public String upload(){//上传文件
 		System.out.println(">> TableOperationAction:upload > uploadFileContentType="+this.getUploadFileContentType());
 		System.out.println(">> TableOperationAction:upload > uploadFileFileName="+this.getUploadFileFileName());
-		Map<String, Object> session=ActionContext.getContext().getSession();
 		Class<? extends Base> clazz=Base.getClassForName(this.getTableName());
-		if(this.getUploadFile()==null){
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"上传了空文件！");
-			System.out.println(">> TableOperationAction:upload > 上传了空文件！");
-			System.out.println(">> TableOperationAction:upload <NONE");
-			return display();
-		}
+		if(this.getUploadFile()==null)
+			return Manager.tips("上传了空文件！",
+					display());
 		List<? extends Base> content=null;
 		List<Integer> errorIndex=new ArrayList<Integer>();
 		try(FileInputStream in=new FileInputStream(this.getUploadFile());){
 			content=SQLCollection.io.readExcel(clazz,in,errorIndex,this.getSearch().getRestraint());
 		}
 		catch(IOException e){
-			e.printStackTrace();
-			System.out.println(">> TableOperationAction:upload > 文件错误！");
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"文件错误！");
-			System.out.println(">> TableOperationAction:upload <NONE");
-			return display();
+			return Manager.tips("文件错误！",
+					e,display());
 		}
 		catch (EncryptedDocumentException e) {
-			e.printStackTrace();
-			System.out.println(">> TableOperationAction:upload > 解码错误！");
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"解码错误！");
-			System.out.println(">> TableOperationAction:upload <NONE");
-			return display();
+			return Manager.tips("解码错误！",
+					e,display());
 		}
 		catch (InvalidFormatException e) {
-			e.printStackTrace();
-			System.out.println(">> TableOperationAction:upload > 格式错误！");
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"格式错误！");
-			System.out.println(">> TableOperationAction:upload <NONE");
-			return display();
+			return Manager.tips("格式错误！",
+					e,display());
 		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
-			System.out.println(">> TableOperationAction:upload > 初始化实例错误！");
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"初始化实例错误！");
-			System.out.println(">> TableOperationAction:upload <NONE");
-			return display();
+			return Manager.tips("初始化实例错误！",
+					e,display());
 		}
-		if(content==null){
-			System.out.println(">> TableOperationAction:upload > 文件读取失败！");
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"文件读取失败！");
-			System.out.println(">> TableOperationAction:upload <NONE");
-			return display();
-		}
-		if(content.isEmpty()){
-			System.out.println(">> TableOperationAction:upload > 文件为空！");
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"文件为空！");
-			System.out.println(">> TableOperationAction:upload <NONE");
-			return NONE;
-		}
+		if(content==null)
+			return Manager.tips("文件读取失败！",
+					display());
+		if(content.isEmpty())
+			return Manager.tips("文件为空！",
+					display());
 		for(int i=0;i<content.size();i++){
 			try{
 				Base b=content.get(i);
@@ -398,16 +313,10 @@ public abstract class TableOperationAction extends ActionSupport{
 				error.append(i);
 				error.append(';');
 			}
-			System.out.println(">> TableOperationAction:upload > "+error);
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					error);
-			System.out.println(">> TableOperationAction:upload <SUCCESS");
-			return display();
+			return Manager.tips(error.toString(),
+					display());
 		}
-		System.out.println(">> TableOperationAction:upload > 上传成功！");
-		session.put(token.ActionInterceptor.ErrorTipsName,
-				"上传成功！");
-		System.out.println(">> TableOperationAction:upload <SUCCESS");
+		Manager.tips("上传成功！");
 		return display();
 	}
 
@@ -426,7 +335,6 @@ public abstract class TableOperationAction extends ActionSupport{
 	private OutputStream downloadOutputStream=null;
 	public String download(){//下载模板
 		System.out.println(">> TableOperationAction:download > tableName="+this.getTableName());
-		Map<String, Object> session=ActionContext.getContext().getSession();
 		Class<? extends Base> clazz=Base.getClassForName(this.getTableName());
 		this.setDownloadFileName(Base.getSQLTableName(clazz)+"模板.xlsx");//设置下载文件名称
 		System.out.println(">> TableOperationAction:download > tableName="+this.getTableName());
@@ -436,11 +344,9 @@ public abstract class TableOperationAction extends ActionSupport{
 			SQLCollection.io.getModelExcel(clazz,downloadOutputStream);
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
-			e.printStackTrace();
-			session.put(token.ActionInterceptor.ErrorTipsName,
-					"服务器开小差去了，暂时无法下载！");
 			downloadOutputStream=null;
-			return display();
+			return Manager.tips("服务器开小差去了，暂时无法下载！",
+					e,display());
 		}
 		System.out.println(">> TableOperationAction:download <downloadAttachment");
 		return "downloadAttachment";

@@ -3,7 +3,6 @@ package action.jwc.sudo;
 import java.sql.*;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import action.Manager;
@@ -31,12 +30,10 @@ public class SQLOperationSelectAction extends ActionSupport{
 		System.out.println(">> SQLOperationSelectAction:execute > sql: "+sql);
 		if(sql==null||sql.isEmpty())
 			return display();
-		Map<String, Object> session=ActionContext.getContext().getSession();
 		String check=Manager.SQLCheck(sql);
 		if(!Manager.SQLCheck_Success.equals(check)){
 			System.out.println(">> SQLOperationSelectAction:execute > sql不合法:"+check);
-			session.put(token.ActionInterceptor.ErrorTipsName,check+"，请重新输入！");
-			return display();
+			return Manager.tips(check+"，请重新输入！",display());
 		}
 		try{
 			Statement st=DB.con().createStatement();
@@ -64,10 +61,8 @@ public class SQLOperationSelectAction extends ActionSupport{
 				list.add(obj);
 			}
 		}catch(SQLException e){
-			e.printStackTrace();
-			System.out.println(">> SQLOperationSelectAction:execute > 数据库问题 Exception("+e.getMessage()+")");
-			session.put(token.ActionInterceptor.ErrorTipsName,"数据库开小差去了，请重新输入！");
-			return display();
+			return Manager.tips("数据库开小差去了，请重新输入！",
+					e,display());
 		}
 		System.out.println(">> SQLOperationSelectAction:execute <SUCCESS");
 		return SUCCESS;
