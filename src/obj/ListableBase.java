@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.*;
 
+import obj.ListableBase.JoinParam.JoinParamPart;
 import persistence.DB;
 
 public abstract class ListableBase extends Base{
@@ -140,70 +141,74 @@ public abstract class ListableBase extends Base{
 		}
 	}
 	static public class JoinParam{
-		private List<Class<? extends Base>> cs;	//0  1  2  3  4...
-		private List<String> onFieldNames;		//0  12 34 56 78...
-		private List<String[]> onCheckFieldNames;
-		private List<Object[]> onCheckFieldValues;
-		private List<JoinType> jps;
-		public void clear(){if(cs!=null) cs.clear();}
-		public int size(){return cs==null?0:cs.size();}
-		private Class<? extends Base> getClassByIndex(int index){return cs==null?null:cs.get(index);}
-		private List<Class<? extends Base>> getClassList(){return cs;}
-		public JoinParam(Class<? extends Base> c)throws NullPointerException{
-			if(c==null) throw new NullPointerException("JoinParam cannot accept the first class is NULL!");
-			this.cs=new ArrayList<Class<? extends Base>>();
-			this.onFieldNames=new ArrayList<String>();
-			this.onCheckFieldNames=new ArrayList<String[]>();
-			this.onCheckFieldValues=new ArrayList<Object[]>();
-			this.cs.add(c);
-			this.jps=new ArrayList<JoinType>();
+		static public class JoinParamPart{
+			private JoinType type;						public JoinType getType(){return type;}
+			private Class<? extends Base> clazz;		public Class<? extends Base> getClazz(){return clazz;}
+			private String lastOnFieldName;				public String getLastOnFieldName(){return this.lastOnFieldName;}
+			private String thisOnFieldName;				public String getThisOnFieldName(){return this.thisOnFieldName;}
+			private String[] onCheckFieldNames;			public String[] getOnCheckFieldNames(){return this.onCheckFieldNames;}
+			private Object[] onCheckFieldValues;		public Object[] getOnCheckFieldValues(){return this.onCheckFieldValues;}
+			public JoinParamPart(String field1Name,JoinType jp,Class<? extends Base> c,String field2Name,
+					String[] onCheckFieldNames,Object[] onCheckFieldValues){
+				this.type=jp;this.clazz=c;this.lastOnFieldName=field1Name;this.thisOnFieldName=field2Name;
+				this.onCheckFieldNames=onCheckFieldNames==null?new String[0]:onCheckFieldNames;
+				this.onCheckFieldValues=onCheckFieldValues==null?new Object[0]:onCheckFieldValues;
+			}
+			public String toString(Class<? extends Base> lastClazz){
+				StringBuilder sb=new StringBuilder();
+				sb.append(this.type.toString());
+				sb.append(' ');
+				Class<? extends Base> c1=lastClazz;
+				Class<? extends Base> c2=this.clazz;
+				String c1table=Base.getSQLTableName(c1);
+				String c2table=Base.getSQLTableName(c2);
+				sb.append(c2table);
+				sb.append(" ON ( ");
+				sb.append(c1table);sb.append('.');sb.append(this.lastOnFieldName);
+				sb.append(" = ");
+				sb.append(c2table);sb.append('.');sb.append(this.thisOnFieldName);
+				for(String f:this.onCheckFieldNames){
+					sb.append(" AND ");
+					sb.append(c2table);sb.append('.');sb.append(f);
+					sb.append(" = ?");
+				}
+				sb.append(" )");
+				return sb.toString();
+			}
 		}
+		private Class<? extends ListableBase> clazz;
+		private List<JoinParamPart> list=new ArrayList<JoinParamPart>();
+		public Class<? extends ListableBase> getClazz(){return clazz;}
+		public List<JoinParamPart> getList(){return list;}
+		
+		public JoinParam(Class<? extends ListableBase> clazz){
+			this.clazz=clazz;
+		}
+		public Class<? extends Base> getClassByIndex(int index){
+			return this.list.get(index).getClazz();
+		}
+		public int size(){return this.list.size()+1;}
 		public void append(String field1Name,JoinType jp,Class<? extends Base> c,String field2Name) throws NoSuchFieldException{
 			this.append(field1Name,jp,c,field2Name,null,null);
 		}
 		public void append(String field1Name,JoinType jp,Class<? extends Base> c,String field2Name,
 				String[] oncheckFieldNames,Object[] oncheckFieldValues) throws NoSuchFieldException{
-			Class<? extends Base> c1=cs.get(cs.size()-1);
-			Class<? extends Base> c2=c;
-			Base.getField(c1,field1Name);
-			Base.getField(c2,field2Name);
-			this.onFieldNames.add(field1Name);
-			this.onFieldNames.add(field2Name);
-			this.onCheckFieldNames.add(oncheckFieldNames==null?new String[0]:oncheckFieldNames);
-			this.onCheckFieldValues.add(oncheckFieldValues==null?new Object[0]:oncheckFieldValues);
-			this.jps.add(jp);
-			this.cs.add(c2);
+			this.append(new JoinParamPart(field1Name,jp,c,field2Name,oncheckFieldNames,oncheckFieldValues));
+		}
+		public void append(JoinParamPart part){
+			if(part!=null) this.list.add(part);
 		}
 		@Override
 		public String toString(){
 			StringBuilder sb=new StringBuilder();
-			sb.append(Base.getSQLTableName(cs.get(0)));
-			for(int i=1;i<cs.size();i++){
+			sb.append(Base.getSQLTableName(this.clazz));
+			Class<? extends Base> lastClazz=this.clazz;
+			for(JoinParamPart part:this.list){
 				sb.append(' ');
-				sb.append(jps.get(i-1));
-				sb.append(' ');
-				Class<? extends Base> c1=cs.get(i-1);
-				Class<? extends Base> c2=cs.get(i);
-				String c1table=Base.getSQLTableName(c1);
-				String c2table=Base.getSQLTableName(c2);
-				String f1=onFieldNames.get((i-1)<<1);
-				String f2=onFieldNames.get((i<<1)-1);
-				sb.append(c2table);
-				sb.append(" ON ( ");
-				sb.append(c1table);sb.append('.');sb.append(f1);
-				sb.append(" = ");
-				sb.append(c2table);sb.append('.');sb.append(f2);
-				for(String onCheckFieldName:this.onCheckFieldNames.get(i-1)){
-					sb.append(" AND ");
-					sb.append(c2table);sb.append('.');sb.append(onCheckFieldName);
-					sb.append(" = ?");
-				}
-				sb.append(" )");
+				sb.append(part.toString(lastClazz));
+				lastClazz=part.getClazz();
 			}
 			return sb.toString();
-		}
-		public Class<? extends Base> firstClass(){
-			return cs.get(0);
 		}
 	}
 	static public List<Base[]> list(JoinParam param) throws SQLException, IllegalArgumentException, IllegalAccessException, InstantiationException{
@@ -215,9 +220,9 @@ public abstract class ListableBase extends Base{
 		StringBuilder sql=new StringBuilder();
 		sql.append("SELECT ");
 		boolean first=true;
-		for(Class<? extends Base> _c:param.getClassList()){
-			String _ct=Base.getSQLTableName(_c);
-			for(Field f:Base.getFields(_c)){
+		for(JoinParamPart part:param.getList()){
+			String _ct=Base.getSQLTableName(part.getClazz());
+			for(Field f:Base.getFields(part.getClazz())){
 				f.setAccessible(true);
 				if(first) first=false;
 				else sql.append(',');
@@ -257,8 +262,9 @@ public abstract class ListableBase extends Base{
 		}
 		PreparedStatement pst=DB.con().prepareStatement(sql.toString());
 		int pstindex=0;
-		for(Object[] os:param.onCheckFieldValues) for(Object o:os)
-			pst.setObject(++pstindex,o);
+		for(JoinParamPart part:param.getList())
+			for(Object o:part.getOnCheckFieldValues())
+				pst.setObject(++pstindex,o);
 		for(int i=0;i<checkLength;i++)
 			pst.setObject(++pstindex,checkObjects[i]);
 		ResultSet rs=pst.executeQuery();
