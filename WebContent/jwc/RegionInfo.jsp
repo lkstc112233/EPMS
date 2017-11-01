@@ -48,7 +48,7 @@
 				style="height:70px;" />
 			</td></tr>
 			<tr><td>
-				<s:hidden name="region.year" value="%{year}" />
+				<s:hidden name="region.year" value="%{annual.year}" />
 				<s:hidden name="region.name" value="%{region.name}" />
 				<s:submit value="提交修改" cssClass="button"/>
 			</td></tr>

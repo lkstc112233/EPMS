@@ -23,31 +23,33 @@ public class LoginAction extends ActionSupport{
 	@Override
 	public String execute(){
 		System.out.println(">> LoginAction:execute");
-		Manager.clearSession();
+		boolean ok=false;
 		if(inner.getId()==null&&inner.getPassword()==null){
 			InnerPerson tmp=Manager.getUser();
-			if(tmp==null){
-				System.out.println(">> LoginAction:execute <LOGIN");
-				return LOGIN;
+			if(tmp!=null){
+				ok=true;
+				inner=tmp;
+				System.out.println(">> LoginAction:execute > 从session中读取inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
 			}
-			inner=tmp;
-			System.out.println(">> LoginAction:execute > 从session中读取inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
 		}
-		if(inner.checkPassword()){
+		if(!ok && inner.checkPassword()){
 			System.out.println(">> LoginAction:execute > 保存到session中:inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
 			Manager.setUser(inner);
 			try {
 				inner.load();
+				ok=true;
+				System.out.println(">> LoginAction:execute > 登陆成功:"+inner);
 			} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
-				Manager.tips("读取个人信息失败，请重新登录！",
-						e,ERROR);
+				Manager.tips("读取个人信息失败，请重新登录！",e);
 			}
-			System.out.println(">> LoginAction:execute > 登陆成功:"+inner);
 		}else{
 			System.out.println(">> LoginAction:execute > 登录失败:inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
-			Manager.tips("密码错误，请重新输入！");//设置提示信息
-			System.out.println(">> LoginAction:execute <ERROR");
-			return ERROR;
+			Manager.tips("密码错误，请重新输入！");
+		}
+		if(!ok){
+			Manager.clearSession();
+			System.out.println(">> LoginAction:execute <LOGIN");
+			return LOGIN;
 		}
 		System.out.println(">> LoginAction:execute <SUCCESS");
 		return SUCCESS;//只有SUCCESS会redirect到menu

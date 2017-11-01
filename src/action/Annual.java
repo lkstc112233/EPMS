@@ -8,7 +8,8 @@ public final class Annual {
 	static public int Year_Minimum=1990;
 	
 	public int year=0;
-		public void setYear(int a){this.year=a;}public void setYear(String a){try{this.year=Integer.parseInt(a);}catch(NumberFormatException e){}}
+		public void setYear(int a){this.year=a;}
+		public void setYear(String a){try{this.year=Integer.parseInt(a);}catch(NumberFormatException e){}}
 		public int getYear(){return year;}
 	
 	

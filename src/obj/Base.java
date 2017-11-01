@@ -173,7 +173,7 @@ public abstract class Base {
 	public final void setFieldValueBySetter(Field f,Object o) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
 		String tmp=f.getName();
 		tmp="set"+tmp.substring(0,1).toUpperCase()+tmp.substring(1);
-		Method m=this.getClass().getMethod(tmp,o.getClass());
+		Method m=this.getClass().getMethod(tmp,o==null?Object.class:o.getClass());
 		m.setAccessible(true);
 		m.invoke(this,o);
 	}

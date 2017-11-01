@@ -148,6 +148,7 @@ public abstract class ListableBase extends Base{
 			private String thisOnFieldName;				public String getThisOnFieldName(){return this.thisOnFieldName;}
 			private String[] onCheckFieldNames;			public String[] getOnCheckFieldNames(){return this.onCheckFieldNames;}
 			private Object[] onCheckFieldValues;		public Object[] getOnCheckFieldValues(){return this.onCheckFieldValues;}
+			private JoinParamPart(Class<? extends Base> c){this(null,null,c,null,null,null);}
 			public JoinParamPart(String field1Name,JoinType jp,Class<? extends Base> c,String field2Name,
 					String[] onCheckFieldNames,Object[] onCheckFieldValues){
 				this.type=jp;this.clazz=c;this.lastOnFieldName=field1Name;this.thisOnFieldName=field2Name;
@@ -155,6 +156,8 @@ public abstract class ListableBase extends Base{
 				this.onCheckFieldValues=onCheckFieldValues==null?new Object[0]:onCheckFieldValues;
 			}
 			public String toString(Class<? extends Base> lastClazz){
+				if(this.type==null || lastClazz==null)
+					return Base.getSQLTableName(this.clazz);
 				StringBuilder sb=new StringBuilder();
 				sb.append(this.type.toString());
 				sb.append(' ');
@@ -176,18 +179,17 @@ public abstract class ListableBase extends Base{
 				return sb.toString();
 			}
 		}
-		private Class<? extends ListableBase> clazz;
-		private List<JoinParamPart> list=new ArrayList<JoinParamPart>();
-		public Class<? extends ListableBase> getClazz(){return clazz;}
+		private List<JoinParamPart> list;
 		public List<JoinParamPart> getList(){return list;}
 		
 		public JoinParam(Class<? extends ListableBase> clazz){
-			this.clazz=clazz;
+			this.list=new ArrayList<JoinParamPart>();
+			this.list.add(new JoinParamPart(clazz));
 		}
 		public Class<? extends Base> getClassByIndex(int index){
 			return this.list.get(index).getClazz();
 		}
-		public int size(){return this.list.size()+1;}
+		public int size(){return this.list.size();}
 		public void append(String field1Name,JoinType jp,Class<? extends Base> c,String field2Name) throws NoSuchFieldException{
 			this.append(field1Name,jp,c,field2Name,null,null);
 		}
@@ -201,8 +203,7 @@ public abstract class ListableBase extends Base{
 		@Override
 		public String toString(){
 			StringBuilder sb=new StringBuilder();
-			sb.append(Base.getSQLTableName(this.clazz));
-			Class<? extends Base> lastClazz=this.clazz;
+			Class<? extends Base> lastClazz=null;
 			for(JoinParamPart part:this.list){
 				sb.append(' ');
 				sb.append(part.toString(lastClazz));
@@ -283,7 +284,16 @@ public abstract class ListableBase extends Base{
 					Object o=null;
 				try{o=rs.getObject(columnName);}catch(SQLException e){}
 					if(flag && o!=null) flag=false;
-					f.set(x[i],o);
+					try{
+						f.set(x[i],o);
+					}catch(IllegalArgumentException e){
+						try {
+							x[i].setFieldValueBySetter(f,o);
+						} catch (InvocationTargetException | NoSuchMethodException | SecurityException e1) {
+							e1.printStackTrace();
+							throw e;
+						}
+					}
 				}
 				//若x[i]的属性全部都是null，则x[i]应为null
 				if(flag) x[i]=null;
