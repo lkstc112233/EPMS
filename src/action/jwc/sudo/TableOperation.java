@@ -3,7 +3,7 @@ package action.jwc.sudo;
 import java.sql.SQLException;
 
 import obj.Base;
-import obj.Search2;
+import obj.Search;
 
 public class TableOperation extends action.TableOperationAction{
 	private static final long serialVersionUID = 8833385464572061925L;
@@ -19,7 +19,7 @@ public class TableOperation extends action.TableOperationAction{
 	@Override
 	protected void setupSearchRestraint()
 			throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, SQLException {
-		this.getSearch().setRestraint(new Search2.AllRestraint(this.getSearch().getClassInfo()));
+		this.getSearch().setRestraint(new Search.AllRestraint(this.getSearch().getClassInfo()));
 	}
 
 	

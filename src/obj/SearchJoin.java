@@ -10,7 +10,7 @@ import obj.staticSource.Major;
 import obj.staticSource.School;
 import persistence.DB;
 
-public class Search2<T extends Base> {
+public class SearchJoin<T extends Base> {
 	
 	/**
 	 * 类信息，包括类Class<T>、域List<Field>、以及关于域的其他信息PsString、KeyBoolean、SourceListDescription
@@ -65,10 +65,10 @@ public class Search2<T extends Base> {
 		public List<T> getResult(){return this.result;}
 		
 	
-	public Search2(Class<T> clazz){
+	public SearchJoin(Class<T> clazz){
 		this(clazz,null);
 	}
-	public Search2(Class<T> clazz,SearchRestraint restraint){
+	public SearchJoin(Class<T> clazz,SearchRestraint restraint){
 		this.classInfo=new ClassInfo(clazz);
 		this.restraint=restraint;
 	}
@@ -155,7 +155,7 @@ public class Search2<T extends Base> {
 			public void setOrderField(String a){this.orderField=a;}
 			public String getOrderField(){return this.orderField;}
 			
-		public AllRestraint(@SuppressWarnings("rawtypes") Search2.ClassInfo classinfo){
+		public AllRestraint(@SuppressWarnings("rawtypes") SearchJoin.ClassInfo classinfo){
 			this.triple=new Triple[classinfo.fields.size()];
 			for(int i=0;i<this.triple.length;i++)
 				triple[i]=new Triple((Field)classinfo.fields.get(i),null,null);
@@ -215,7 +215,7 @@ public class Search2<T extends Base> {
 		private Field fieldYear=null,fieldSchool=null,fieldMajor=null;
 		private List<Major> majors=null;
 		
-		public jwyRestraint(@SuppressWarnings("rawtypes") Search2.ClassInfo classinfo,School school,int year) throws NoSuchFieldException, SQLException, IllegalArgumentException, IllegalAccessException{
+		public jwyRestraint(@SuppressWarnings("rawtypes") SearchJoin.ClassInfo classinfo,School school,int year) throws NoSuchFieldException, SQLException, IllegalArgumentException, IllegalAccessException{
 			this.school=school;
 			if(this.school!=null && !this.school.existAndLoad())
 				this.school=null;

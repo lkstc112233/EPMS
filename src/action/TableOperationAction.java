@@ -28,13 +28,12 @@ public abstract class TableOperationAction extends ActionSupport{
 	public final String SessionSearchKey;
 	
 	
-	private Search2<? extends Base> search=null;//查询信息
+	private Search<? extends Base> search=null;//查询信息
 	private int choose=-1;//操作项
 	private Base chooseBase;
 	private Base createNewBase;
 	
-	public Search2<? extends Base> getSearch(){return this.search;}
-	public List<String> getTypes(){return Search.RestraintType.list();}
+	public Search<? extends Base> getSearch(){return this.search;}
 	public int getChoose(){return this.choose;}
 	public void setChoose(int x){
 		this.choose=x;
@@ -52,7 +51,7 @@ public abstract class TableOperationAction extends ActionSupport{
 	public TableOperationAction(){
 		super();
 		this.SessionSearchKey="TableOperationAction_Search2";
-		this.search=Manager.loadSession(Search2.class,SessionSearchKey);
+		this.search=Manager.loadSession(Search.class,SessionSearchKey);
 		if(this.search!=null)
 			this.setupTableName(this.search.getClassInfo().getTableName());
 	}
@@ -90,7 +89,7 @@ public abstract class TableOperationAction extends ActionSupport{
 		Class<? extends Base> clazz=Base.getClassForName(this.getTableName());
 		try {
 			if(this.search==null){
-				this.search=new Search2(clazz);
+				this.search=new Search(clazz);
 				this.setupSearchRestraint();
 			}
 		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | SQLException e) {

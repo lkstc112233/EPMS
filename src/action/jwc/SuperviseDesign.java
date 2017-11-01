@@ -2,7 +2,7 @@ package action.jwc;
 
 import java.sql.SQLException;
 
-import obj.Search2;
+import obj.Search;
 
 public class SuperviseDesign extends action.TableOperationAction{
 	private static final long serialVersionUID = 8833385464572061925L;
@@ -18,7 +18,7 @@ public class SuperviseDesign extends action.TableOperationAction{
 	@Override
 	protected void setupSearchRestraint()
 			throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, SQLException {
-		this.getSearch().setRestraint(new Search2.jwyRestraint(this.getSearch().getClassInfo(),
+		this.getSearch().setRestraint(new Search.jwyRestraint(this.getSearch().getClassInfo(),
 				null,//new School(Manager.getUser().getSchool()),
 				this.getAnnual().getYear()));
 	}
