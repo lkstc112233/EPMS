@@ -298,11 +298,10 @@ public class Search<T extends Base> {
 					Object o=this.fieldYear.get(b);
 					if(o!=null && o instanceof Integer){
 						Integer y=(Integer)o;
-						if(!y.equals(this.year)){
+						if(!y.equals(this.year))
 							res=false;
-							this.fieldYear.set(b,this.year);
-						}
 					}
+					this.fieldYear.set(b,this.year);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
 				}
@@ -313,11 +312,10 @@ public class Search<T extends Base> {
 					Object o=this.fieldSchool.get(b);
 					if(o!=null){
 						String y=String.valueOf(o);
-						if(!this.school.getName().equals(y)){
+						if(!this.school.getName().equals(y))
 							res=false;
-							this.fieldSchool.set(b,this.school.getName());
-						}
 					}
+					this.fieldSchool.set(b,this.school.getName());
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
 				}
@@ -332,12 +330,10 @@ public class Search<T extends Base> {
 						for(Major m:this.majors){
 							if(y.equals(m.getName())){flag=true;break;}
 						}
-						if(!flag){
-							res=false;
-							Major m=this.majors.get(0);
-							this.fieldMajor.set(b,m==null?null:m.getName());
-						}
+						if(!flag) res=false;
 					}
+					Major m=this.majors.get(0);
+					this.fieldMajor.set(b,m==null?null:m.getName());
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
 				}

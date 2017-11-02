@@ -46,7 +46,7 @@ public class Manager {
 			exception.printStackTrace();
 		}
 		if(!msg.isEmpty()){
-			Manager.saveSession(TipsName,msg);
+			Manager.saveSession(TipsName,msg.replaceAll("\n","\\\\n"));
 			System.err.println("Tips>> "+msg);
 		}
 		System.err.println("Tips>> return "+result);

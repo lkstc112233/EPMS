@@ -11,6 +11,7 @@ public final class Annual {
 		public void setYear(int a){this.year=a;}
 		public void setYear(String a){try{this.year=Integer.parseInt(a);}catch(NumberFormatException e){}}
 		public int getYear(){return year;}
+		public boolean checkYear(){return this.year>=Year_Minimum;}
 	
 	
 	public Annual(){
@@ -22,7 +23,7 @@ public final class Annual {
 		
 	public void setupYear(){
 		Integer tmp=Manager.loadSession(Integer.class,Annual.yearToken);
-		if(tmp==null || this.getYear()<Year_Minimum)
+		if(tmp==null || !this.checkYear())
 			tmp=Calendar.getInstance().get(Calendar.YEAR);
 		if(tmp!=null){
 			this.setYear(tmp);

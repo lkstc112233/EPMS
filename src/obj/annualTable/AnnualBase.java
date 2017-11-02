@@ -92,7 +92,7 @@ public abstract class AnnualBase extends ListableBase implements ListableBase.Li
 			List<Base[]> tmp=null;
 			try {
 				tmp=ListableBase.list(param,new String[]{
-						"Time.year","ACCESS."+role.name
+						"Time.year","ACCESS."+role.toString()
 				},new Object[]{
 						Integer.valueOf(year),Boolean.TRUE
 				},new String[]{"ACCESS.id"});

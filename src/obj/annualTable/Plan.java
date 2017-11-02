@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 import obj.*;
 
-@SQLTable("Region")
+@SQLTable("Plan")
 public class Plan extends AnnualBase {
 
 	@SQLField(value="实习基地",isKey=true,source="PracticeBase.name")

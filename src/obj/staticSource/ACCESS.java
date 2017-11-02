@@ -21,17 +21,17 @@ public class ACCESS extends ListableBase{
 	@SQLField(value="终止时间")
 	private Timestamp time2;
 	@SQLField(value="学生权限")
-	private Boolean 学生;
+	private boolean xs;
 	@SQLField(value="教学院长权限")
-	private Boolean 教学院长;
+	private boolean jxyz;
 	@SQLField(value="教务员权限")
-	private Boolean 教务员;
+	private boolean jwy;
 	@SQLField(value="教师权限")
-	private Boolean 教师;
+	private boolean js;
 	@SQLField(value="教务处权限")
-	private Boolean 教务处;
+	private boolean jwc;
 	@SQLField(value="领导权限")
-	private Boolean 领导;
+	private boolean ld;
 	
 	
 	public int getId(){return id;}
@@ -41,58 +41,48 @@ public class ACCESS extends ListableBase{
 	public String getActionClass(){return this.actionClass;}
 	public void setActionClass(String actionClass){this.actionClass=actionClass==null||actionClass.isEmpty()?null:actionClass;}
 	public Timestamp getTime1() {return time1;}
+	public void setTime1(String s){
+		try{
+			this.time1=Timestamp.valueOf(s);
+			Manager.RegularPeriod(time1,time2);
+		}catch(IllegalArgumentException e){
+			this.time1=null;
+		}
+	}
 	public void setTime1(Timestamp time) {this.time1 = time;
 	Manager.RegularPeriod(time1,time2);}
-	public void setTime1(String s){
-		this.time1=Timestamp.valueOf(s);
-		Manager.RegularPeriod(time1,time2);
-	}
 	public Timestamp getTime2() {return time2;}
+	public void setTime2(String s){
+		try{
+			this.time2=Timestamp.valueOf(s);
+			Manager.RegularPeriod(time1,time2);
+		}catch(IllegalArgumentException e){
+			this.time2=null;
+		}
+	}
 	public void setTime2(Timestamp time) {this.time2 = time;
 	Manager.RegularPeriod(time1,time2);}
-	public void setTime2(String s){
-		this.time2=Timestamp.valueOf(s);
-		Manager.RegularPeriod(time1,time2);
-	}
-	public Boolean is学生() {
-		return 学生;
-	}
-	public void set学生(Boolean 学生) {
-		this.学生 = 学生;
-	}
-	public Boolean is教学院长() {
-		return 教学院长;
-	}
-	public void set教学院长(Boolean 教学院长) {
-		this.教学院长 = 教学院长;
-	}
-	public Boolean is教务员() {
-		return 教务员;
-	}
-	public void set教务员(Boolean 教务员) {
-		this.教务员 = 教务员;
-	}
-	public Boolean is教师() {
-		return 教师;
-	}
-	public void set教师(Boolean 教师) {
-		this.教师 = 教师;
-	}
-	public Boolean is教务处() {
-		return 教务处;
-	}
-	public void set教务处(Boolean 教务处) {
-		this.教务处 = 教务处;
-	}
-	public Boolean is领导() {
-		return 领导;
-	}
-	public void set领导(Boolean 领导) {
-		this.领导 = 领导;
-	}
-
-
-
+	public boolean isXs() {return xs;}
+	public void setXs(boolean xs) {this.xs = xs;}
+	public void setXs(String a){this.xs=false;try{this.xs=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
+	public boolean isJxyz() {return jxyz;}
+	public void setJxyz(boolean jxyz) {this.jxyz = jxyz;}
+	public void setJxyz(String a){this.jxyz=false;try{this.jxyz=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
+	public boolean isJwy() {return jwy;}
+	public void setJwy(boolean jwy) {this.jwy = jwy;}
+	public void setJwy(String a){this.jwy=false;try{this.jwy=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
+	public boolean isJs() {return js;}
+	public void setJs(boolean js) {this.js = js;}
+	public void setJs(String a){this.js=false;try{this.js=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
+	public boolean isJwc() {return jwc;}
+	public void setJwc(boolean jwc) {this.jwc = jwc;}
+	public void setJwc(String a){this.jwc=false;try{this.jwc=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
+	public boolean isLd() {return ld;}
+	public void setLd(boolean ld) {this.ld = ld;}
+	public void setLd(String a){this.ld=false;try{this.ld=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
+	
+	
+	
 	public ACCESS() throws SQLException {
 		super();
 	}
