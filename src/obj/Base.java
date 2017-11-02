@@ -277,7 +277,7 @@ public abstract class Base {
 		return false;
 	}
 
-	static protected List<String> getAllFieldsNameString(Class<? extends Base> clazz){
+	static public List<String> getAllFieldsNameString(Class<? extends Base> clazz){
 		List<String> res=new ArrayList<String>();
 		for(Field f:Base.getFields(clazz))
 			res.add(f.getName());
@@ -297,19 +297,19 @@ public abstract class Base {
 		}
 		return res;
 	}
-	static protected List<String> getAllFieldsDescriptionString(Class<? extends Base> clazz){
+	static public List<String> getAllFieldsDescriptionString(Class<? extends Base> clazz){
 		List<String> res=new ArrayList<String>();
 		for(Field f:Base.getFields(clazz))
 			res.add(f.getAnnotation(SQLField.class).value());
 		return res;
 	}
-	static protected List<String> getAllFieldsPsString(Class<? extends Base> clazz){
+	static public List<String> getAllFieldsPsString(Class<? extends Base> clazz){
 		List<String> res=new ArrayList<String>();
 		for(Field f:Base.getFields(clazz))
 			res.add(f.getAnnotation(SQLField.class).ps());
 		return res;
 	}
-	static protected List<Boolean> getAllFieldsKeyBoolean(Class<? extends Base> clazz){
+	static public List<Boolean> getAllFieldsKeyBoolean(Class<? extends Base> clazz){
 		List<Boolean> res=new ArrayList<Boolean>();
 		for(Field f:Base.getFields(clazz))
 			res.add(f.getAnnotation(SQLField.class).isKey());

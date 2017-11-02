@@ -32,19 +32,21 @@ public class LoginAction extends ActionSupport{
 				System.out.println(">> LoginAction:execute > 从session中读取inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
 			}
 		}
-		if(!ok && inner.checkPassword()){
-			System.out.println(">> LoginAction:execute > 保存到session中:inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
-			Manager.setUser(inner);
-			try {
-				inner.load();
-				ok=true;
-				System.out.println(">> LoginAction:execute > 登陆成功:"+inner);
-			} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
-				Manager.tips("读取个人信息失败，请重新登录！",e);
+		if(!ok){
+			if(inner.checkPassword()){
+				System.out.println(">> LoginAction:execute > 保存到session中:inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
+				Manager.setUser(inner);
+				try {
+					inner.load();
+					ok=true;
+					System.out.println(">> LoginAction:execute > 登陆成功:"+inner);
+				} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
+					Manager.tips("读取个人信息失败，请重新登录！",e);
+				}
+			}else{
+				System.out.println(">> LoginAction:execute > 登录失败:inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
+				Manager.tips("密码错误，请重新输入！");
 			}
-		}else{
-			System.out.println(">> LoginAction:execute > 登录失败:inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
-			Manager.tips("密码错误，请重新输入！");
 		}
 		if(!ok){
 			Manager.clearSession();

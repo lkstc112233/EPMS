@@ -69,7 +69,7 @@
 		<s:if test="search.result!=null">
 			<!-- ###### 表头 ###### -->
 			<tr class="mytableTitle">
-				<td colspan="3"></td>
+				<td colspan="3">&nbsp;</td>
 				<s:iterator value="search.classInfo.allFieldsNameString" var="__Row" status="__Status">
 					<td style="word-wrap:break-word;word-break:break-all;text-align:center;">
 						<s:property value="#__Row"/>
@@ -147,7 +147,7 @@
 						</td>
 						<!-- 内容 -->
 						<s:iterator value="%{#__Row.allFieldsValueString}" var="__Col">
-							<td>
+							<td style="text-align:center;">
 								<s:property value="#__Col" />
 							</td>
 						</s:iterator>
@@ -178,7 +178,7 @@
 											name="search.result[%{#__Status.index}].%{search.classInfo.allFieldsNameString[#__ColStatus.index]}" />
 										</s:else>
 									</s:if><s:else>
-										<div style="padding:0px;width:95%;min-width:30px;">
+										<div style="padding:0px;width:95%;min-width:30px;text-align:center;">
 											<s:property value="#__Col" />
 										</div>
 									</s:else>
