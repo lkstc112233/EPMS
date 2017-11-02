@@ -7,7 +7,7 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import action.Manager;
-import action.jwc.RegionArrangement.SetOfRegionAndPractice.Pair;
+import action.jwc.RegionArrangement2.SetOfRegionAndPractice.Pair;
 import obj.Base;
 import obj.ListableBase;
 import obj.annualTable.Region;
@@ -16,7 +16,7 @@ import obj.staticObject.PracticeBase;
 /**
  * 导入免费师范生数据
  */
-public class RegionArrangement extends ActionSupport{
+public class RegionArrangement2 extends ActionSupport{
 	private static final long serialVersionUID = 5998268336475528662L;
 
 	private action.Annual annual=new action.Annual();
@@ -65,7 +65,7 @@ public class RegionArrangement extends ActionSupport{
 			param.append("name",ListableBase.JoinType.LeftJoin,Region.class,"practiceBase",
 					new String[]{"year"},
 					new Object[]{Integer.valueOf(year)});
-			List<Base[]> tmp=ListableBase.list(param,null,null,new String[]{"PracticeBase.name"});
+			List<Base[]> tmp=ListableBase.list(param,null,null,null);
 			for(Base[] bs:tmp){
 				PracticeBase pb=null;
 				Region r=null;
@@ -94,21 +94,9 @@ public class RegionArrangement extends ActionSupport{
 	public void setRegionName(String a){this.regionName=a;}
 	
 
-	private List<String> practiceBaseAllFieldsNameString=Base.getAllFieldsNameString(PracticeBase.class);
-		public List<String> getPracticeBaseAllFieldsNameString(){return this.practiceBaseAllFieldsNameString;}
-	private List<String> practiceBaseAllFieldsDescriptionString=Base.getAllFieldsDescriptionString(PracticeBase.class);
-		public List<String> getPracticeBaseAllFieldsDescriptionString(){return this.practiceBaseAllFieldsDescriptionString;}
-	private List<Boolean> practiceBaseAllFieldsKeyBoolean=Base.getAllFieldsKeyBoolean(PracticeBase.class);
-		public List<Boolean> getPracticeBaseAllFieldsKeyBoolean(){return this.practiceBaseAllFieldsKeyBoolean;}
-	/*private int choose;
-		public int getChoose(){return this.choose;}
-		public void setChoose(String s){try{this.choose=Integer.parseInt(s);}catch(NumberFormatException e){e.printStackTrace();}}
-		*/
-	
-
 	static public final String SessionListKey="RegionArrangement_RegionAndPracticeBases"; 
 	
-	public RegionArrangement() throws SQLException, NoSuchFieldException, SecurityException{
+	public RegionArrangement2() throws SQLException, NoSuchFieldException, SecurityException{
 		super();
 		System.out.println(">> RegionArrangement:constructor > year="+this.getAnnual().getYear());
 		Map<String, Object> session=ActionContext.getContext().getSession();
