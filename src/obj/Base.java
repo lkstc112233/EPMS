@@ -360,7 +360,7 @@ public abstract class Base {
 		if(num!=1)
 			System.err.println("查询到"+num+"重值！("+this.sql_load.toString()+")");
 		rs.first();
-		if(setFields){
+		if(num>0 && setFields){
 			for(Field f:this.getFields()){
 				SQLField s=f.getAnnotation(SQLField.class);
 				if(s==null) continue;

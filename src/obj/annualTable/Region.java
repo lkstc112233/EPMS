@@ -1,13 +1,11 @@
 package obj.annualTable;
 
 import java.lang.reflect.Field;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
 import obj.ListableBase.ListableBaseWithNoSave;
+import obj.staticObject.PracticeBase;
 import persistence.DB;
 import obj.*;
 
@@ -170,5 +168,31 @@ public class Region extends AnnualBase implements ListableBaseWithNoSave{
 	}
 	
 	
+	
+	
+
+	static public List<PracticeBase> listPracticeBasesWhichHaveARegion(int year) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException, SQLException {
+		List<PracticeBase> res=new ArrayList<PracticeBase>();
+		ListableBase.JoinParam param=new ListableBase.JoinParam(PracticeBase.class);
+		param.append("name",ListableBase.JoinType.InnerJoin,Region.class,"practiceBase",
+				new String[]{"year"},
+				new Object[]{Integer.valueOf(year)});
+		List<Base[]> tmp=ListableBase.list(param,null,null,new String[]{"PracticeBase.name"});
+		for(Base[] bs:tmp){
+			PracticeBase pb=null;
+			Region r=null;
+			if(bs!=null && bs.length>=2){
+				if(bs[0]!=null && bs[0] instanceof PracticeBase){
+					pb=(PracticeBase)bs[0];
+					if(bs[1]==null || bs[1] instanceof Region){
+						if(bs[1]!=null) r=(Region)bs[1];
+						if(r!=null)
+							res.add(pb);
+					}
+				}
+			}
+		}
+		return res;
+	}
 	
 }
