@@ -50,7 +50,7 @@ public abstract class TableOperationAction extends ActionSupport{
 	@SuppressWarnings({ "unchecked" })
 	public TableOperationAction(){
 		super();
-		this.SessionSearchKey="TableOperationAction_Search2";
+		this.SessionSearchKey="TableOperationAction_Search";
 		this.search=Manager.loadSession(Search.class,SessionSearchKey);
 		if(this.search!=null)
 			this.setupTableName(this.search.getClassInfo().getTableName());
@@ -66,6 +66,8 @@ public abstract class TableOperationAction extends ActionSupport{
 		Class<? extends Base> clazz=Base.getClassForName(this.getTableName());
 		try {
 			this.createNewBase=clazz.newInstance();
+			if(this.search!=null && this.search.getRestraint()!=null)
+				this.search.getRestraint().fitBase(this.createNewBase);
 			this.chooseBase=clazz.newInstance();
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException e) {
 			e.printStackTrace();
@@ -96,6 +98,8 @@ public abstract class TableOperationAction extends ActionSupport{
 			return Manager.tips("搜索结果实例初始化失败！",
 					e,NONE);
 		}
+		if(this.search!=null && this.search.getRestraint()!=null && this.createNewBase!=null)
+			this.search.getRestraint().fitBase(this.createNewBase);
 		if(this.search!=null)
 			Manager.saveSession(SessionSearchKey,this.search);
 		System.out.println(">> TableOperationAction:display <NONE");
