@@ -293,7 +293,7 @@ public abstract class Base {
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
-			res.add(String.valueOf(tmp));
+			res.add(tmp==null?null:String.valueOf(tmp));
 		}
 		return res;
 	}

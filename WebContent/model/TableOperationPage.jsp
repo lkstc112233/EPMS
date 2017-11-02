@@ -107,9 +107,9 @@
 					<s:iterator value="search.classInfo.allFieldsNameString" var="__Row" status="__Status">
 						<td style="text-align:center;">
 							<s:if test="search.classInfo.allFieldsSourceListDescription[#__Status.index] == null">
-								<s:textfield theme="simple"
-								style="padding:0px;width:95%;min-width:30px;"
-								name="createNewBase.%{#__Row}" value="%{createNewBase.%{#__Row}}"/>
+									<s:textfield theme="simple"
+									style="padding:0px;width:95%;min-width:30px;"
+									name="createNewBase.%{#__Row}" value="%{createNewBase.allFieldsValueString[#__Status.index]}"/>
 							</s:if><s:else>
 								<s:select list="search.classInfo.allFieldsSourceListDescription[#__Status.index]"
 								headerKey="" headerValue="无"
