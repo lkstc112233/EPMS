@@ -26,7 +26,7 @@
 				value="%{region.name}"/>
 			</td></tr>
 			<tr><td>
-				<s:select label="总领队老师" list="InnerPersons"
+				<s:select label="总领队老师" list="innerPersons"
 				listKey="id" listValue="simpleToString"
 				headerKey="" headerValue="-无-"
 				name="region.leaderId" />

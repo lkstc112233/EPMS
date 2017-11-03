@@ -50,7 +50,7 @@ public class SQLCollection {
 				if(sql_where.length()>0)
 					sql_where.append(" AND ");
 				sql_where.append(f.getName());
-				sql_where.append(" = ?");
+				sql_where.append(" LIKE ?");
 				if(++cnt>checkObjects.length)
 					throw new IndexOutOfBoundsException("selectALl(checkFieds' size is bigger than checkObjects' size)!");
 			}
@@ -70,7 +70,7 @@ public class SQLCollection {
 				f.setAccessible(true);
 				SQLField s=f.getAnnotation(SQLField.class);
 				if(s==null) continue;
-				sql_ps.setObject(SQLParameterIndex,checkObjects[SQLParameterIndex]);
+				sql_ps.setObject(SQLParameterIndex,checkObjects[SQLParameterIndex-1]);
 				SQLParameterIndex++;
 			}
 		}

@@ -173,7 +173,7 @@ public abstract class ListableBase extends Base{
 				for(String f:this.onCheckFieldNames){
 					sb.append(" AND ");
 					sb.append(c2table);sb.append('.');sb.append(f);
-					sb.append(" = ?");
+					sb.append(" LIKE ?");
 				}
 				sb.append(" )");
 				return sb.toString();
@@ -249,8 +249,7 @@ public abstract class ListableBase extends Base{
 			for(int i=0;i<checkLength;i++){
 				if(i!=0) sql.append(" AND ");
 				sql.append(checkFields[i]);
-				sql.append(" = ");
-				sql.append('?');
+				sql.append(" LIKE ?");
 			}
 		}
 		if(orderFields!=null && orderFields.length>0 && orderFields[0]!=null && orderFields[0].length()>0){
