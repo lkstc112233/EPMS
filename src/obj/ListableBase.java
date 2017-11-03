@@ -190,15 +190,16 @@ public abstract class ListableBase extends Base{
 			return this.list.get(index).getClazz();
 		}
 		public int size(){return this.list.size();}
-		public void append(String field1Name,JoinType jp,Class<? extends Base> c,String field2Name) throws NoSuchFieldException{
-			this.append(field1Name,jp,c,field2Name,null,null);
+		public JoinParam append(String field1Name,JoinType jp,Class<? extends Base> c,String field2Name) throws NoSuchFieldException{
+			return this.append(field1Name,jp,c,field2Name,null,null);
 		}
-		public void append(String field1Name,JoinType jp,Class<? extends Base> c,String field2Name,
+		public JoinParam append(String field1Name,JoinType jp,Class<? extends Base> c,String field2Name,
 				String[] oncheckFieldNames,Object[] oncheckFieldValues) throws NoSuchFieldException{
-			this.append(new JoinParamPart(field1Name,jp,c,field2Name,oncheckFieldNames,oncheckFieldValues));
+			return this.append(new JoinParamPart(field1Name,jp,c,field2Name,oncheckFieldNames,oncheckFieldValues));
 		}
-		public void append(JoinParamPart part){
+		public JoinParam append(JoinParamPart part){
 			if(part!=null) this.list.add(part);
+			return this;
 		}
 		@Override
 		public String toString(){

@@ -17,30 +17,38 @@
 	<table width="80%"><tbody>
 		<tr><td colspan="100">
 			<div class="listHeader">
-				全面确认布局规划（各实习基地学科接纳人数）（<s:property value="region.name" />）
+				全面确认布局规划（各实习基地学科接纳人数）（<s:property value="annual.year" />）
 			</div>
 		</td></tr>
 	</tbody></table>
 	<s:form action="jwc_function_PlanAllDesign_execute" method="post" theme="simple">
 		<table width="80%" border="1" cellpadding="0" cellspacing="0" style="table-layout:fixed;"><tbody>
 			<tr>
-				<td>&nbsp;</td>
+				<td style="text-align:center;width:3%;">大区</td>
+				<td style="text-align:center">基地名称</td>
 				<s:iterator value="majors" var="__majorCol">
-					<td width="5%"><s:property value="#__majorCol.name" /></td>
+					<td style="text-align:center;width:5%;"><s:property value="#__majorCol.name" /></td>
 				</s:iterator>
 			</tr>
-			<s:iterator value="practiceBaseWithARegion" var="__pbsRow" status="__pbsStatus">
+			<s:iterator value="regionAndPracticeBase.list" var="__regionRow" status="__regionStatus">
+			<s:iterator value="#__regionRow.practiceBases" var="__practiceBaseRow" status="__practiceBaseStatus">
 				<tr>
-					<td width="160px" style="text-align:center"><s:property value="#__pbsRow.name" /></td>
+					<s:if test="#__practiceBaseStatus.index == 0">
+						<s:set var="_colspan" value="%{#__regionRow.size}" />
+						<td rowspan="${_colspan}" style="text-align:center;width:3%;">
+							<s:property value="#__regionRow.region.name" />
+						</td>
+					</s:if>
+					<td width="160px" style="text-align:center"><s:property value="#__practiceBaseRow.name" /></td>
 					<s:iterator value="majors" status="__majorStatus">
-						<td width="5%" style="text-align:center">
-							<s:textfield theme="simple" style="width:85%"
-								name="numbers[%{#__pbsStatus.index}][%{#__majorStatus.index}]"
-								value="%{numbers[#__pbsStatus.index][#__majorStatus.index]}" />
+						<td style="text-align:center;width:5%;">
+							<s:textfield theme="simple" style="width:85%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;"
+								name="numbers[%{#__majorStatus.index}][%{#__regionStatus.index}][%{#__practiceBaseStatus.index}]"
+								value="%{numbers[#__majorStatus.index][#__regionStatus.index][#__practiceBaseStatus.index]}" />
 						</td>
 					</s:iterator>
 				</tr>
-			</s:iterator>
+			</s:iterator></s:iterator>
 		</tbody></table>
 		<table width="300px"><tbody>
 			<tr><td>

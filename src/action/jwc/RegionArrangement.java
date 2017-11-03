@@ -7,10 +7,8 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import action.Manager;
-import action.jwc.RegionArrangement.SetOfRegionAndPractice.Pair;
 import obj.Base;
-import obj.ListableBase;
-import obj.annualTable.Region;
+import obj.annualTable.*;
 import obj.staticObject.PracticeBase;
 
 /**
@@ -21,75 +19,14 @@ public class RegionArrangement extends ActionSupport{
 
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
-	
-	static public class SetOfRegionAndPractice{
-		static public class Pair{
-			private Region region;
-			private List<PracticeBase> practiceBases=new ArrayList<PracticeBase>();
-			public Region getRegion(){return this.region;}
-			public List<PracticeBase> getPracticeBases(){return this.practiceBases;}
-			public Pair(Region r){this.region=r;}
-		}
-		private List<Pair> list=new ArrayList<Pair>();
-			public List<Pair> getList(){return list;}
-		
-		public SetOfRegionAndPractice(){
-			list.add(new Pair(null));
-		}
-		public Pair getNullRegionPair(){
-			return list.get(0);
-		}
-		public Pair get(String regionName){
-			for(Pair p:this.list){
-				Region t=p.region;
-				if(t!=null && t.getName()!=null && t.getName().equals(regionName))
-					return p;
-			}
-			return null;
-		}
-		public Pair get(Region r) {
-			if(r==null) return this.getNullRegionPair();
-			return this.get(r.getName());
-		}
-		public void put(Region r, PracticeBase pb) {
-			if(pb==null) return;
-			Pair tmp=this.get(r);
-			if(tmp==null){
-				this.list.add(tmp=new Pair(r));
-			}
-			tmp.practiceBases.add(pb);
-		}
-		static private SetOfRegionAndPractice listRegionAndPracticeBase(int year) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException, SQLException{
-			SetOfRegionAndPractice res=new SetOfRegionAndPractice();
-			ListableBase.JoinParam param=new ListableBase.JoinParam(PracticeBase.class);
-			param.append("name",ListableBase.JoinType.LeftJoin,Region.class,"practiceBase",
-					new String[]{"year"},
-					new Object[]{Integer.valueOf(year)});
-			List<Base[]> tmp=ListableBase.list(param,null,null,new String[]{"PracticeBase.name"});
-			for(Base[] bs:tmp){
-				PracticeBase pb=null;
-				Region r=null;
-				if(bs!=null && bs.length>=2){
-					if(bs[0]!=null && bs[0] instanceof PracticeBase){
-						pb=(PracticeBase)bs[0];
-						if(bs[1]==null || bs[1] instanceof Region){
-							if(bs[1]!=null) r=(Region)bs[1];
-							res.put(r,pb);
-						}
-					}
-				}
-			}
-			return res;
-		}
-	}
 
 	private boolean[] checkBox;
-	private SetOfRegionAndPractice regionAndPracticeBase;
+	private ListOfRegionAndPracticeBases regionAndPracticeBase;
 	private String regionName;
 	
 	public void setCheckBox(boolean[] a){this.checkBox=a;}
 	public boolean[] getCheckBox(){return this.checkBox;}
-	public SetOfRegionAndPractice getRegionAndPracticeBase(){return this.regionAndPracticeBase;}
+	public ListOfRegionAndPracticeBases getRegionAndPracticeBase(){return this.regionAndPracticeBase;}
 	public String getRegionName(){return this.regionName;}
 	public void setRegionName(String a){this.regionName=a;}
 	
@@ -113,7 +50,7 @@ public class RegionArrangement extends ActionSupport{
 		System.out.println(">> RegionArrangement:constructor > year="+this.getAnnual().getYear());
 		Map<String, Object> session=ActionContext.getContext().getSession();
 		Object o=session.get(SessionListKey);
-		this.regionAndPracticeBase=o==null?null:((SetOfRegionAndPractice)o);
+		this.regionAndPracticeBase=o==null?null:((ListOfRegionAndPracticeBases)o);
 		this.setupCheckBox();
 	}
 
@@ -121,10 +58,38 @@ public class RegionArrangement extends ActionSupport{
 		this.checkBox=null;
 		if(this.regionAndPracticeBase!=null){
 			int len=0;
-			for(Pair p:this.regionAndPracticeBase.getList())
+			for(ListOfRegionAndPracticeBases.Pair p:this.regionAndPracticeBase.getList())
 				len=Math.max(len,p.getPracticeBases().size());
 			this.checkBox=new boolean[len];
 		}
+	}
+
+	
+	/**
+	 * 用于显示
+	 */
+	public String display(){
+		this.regionName=null;
+		System.out.println(">> RegionArrangement:display > year="+this.getAnnual().getYear());
+		this.regionAndPracticeBase=null;
+		try {
+			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/true);
+		} catch (SQLException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException | InstantiationException e) {
+			return Manager.tips("数据库开小差去了！",
+					e,NONE);
+		}
+		System.out.println(">> RegionArrangement:display > regionAndPracticeBase=[");
+		for(ListOfRegionAndPracticeBases.Pair t:this.regionAndPracticeBase.getList()){
+			System.out.print((t.getRegion()==null?"null":t.getRegion().getName())+":[");
+			for(PracticeBase pb:t.getPracticeBases())
+				System.out.print(pb.getName()+",");
+			System.out.println("]");
+		}
+		System.out.println(">> RegionArrangement:display > ]");
+		Manager.saveSession(SessionListKey,this.regionAndPracticeBase);
+		this.setupCheckBox();
+		System.out.println(">> RegionArrangement:display <NONE");
+		return NONE;
 	}
 	
 	/**
@@ -225,33 +190,6 @@ public class RegionArrangement extends ActionSupport{
 		Manager.tips(sb.toString()+" 已经从大区("+this.regionName+")移除！");
 		Manager.removeSession(SessionListKey);
 		return display();
-	}
-	
-	/**
-	 * 用于显示
-	 */
-	public String display(){
-		this.regionName=null;
-		System.out.println(">> RegionArrangement:display > year="+this.getAnnual().getYear());
-		this.regionAndPracticeBase=null;
-		try {
-			this.regionAndPracticeBase=SetOfRegionAndPractice.listRegionAndPracticeBase(this.getAnnual().getYear());
-		} catch (SQLException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException | InstantiationException e) {
-			return Manager.tips("数据库开小差去了！",
-					e,NONE);
-		}
-		System.out.println(">> RegionArrangement:display > regionAndPracticeBase=[");
-		for(SetOfRegionAndPractice.Pair t:this.regionAndPracticeBase.getList()){
-			System.out.print((t.region==null?"null":t.region.getName())+":[");
-			for(PracticeBase pb:t.practiceBases)
-				System.out.print(pb.getName()+",");
-			System.out.println("]");
-		}
-		System.out.println(">> RegionArrangement:display > ]");
-		Manager.saveSession(SessionListKey,this.regionAndPracticeBase);
-		this.setupCheckBox();
-		System.out.println(">> RegionArrangement:display <NONE");
-		return NONE;
 	}
 	
 	

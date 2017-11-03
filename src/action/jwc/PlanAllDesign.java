@@ -7,9 +7,7 @@ import com.opensymphony.xwork2.ActionSupport;
 
 import action.Manager;
 import obj.ListableBase;
-import obj.annualTable.Plan;
-import obj.annualTable.Region;
-import obj.staticObject.PracticeBase;
+import obj.annualTable.*;
 import obj.staticSource.Major;
 
 public class PlanAllDesign extends ActionSupport{
@@ -20,35 +18,56 @@ public class PlanAllDesign extends ActionSupport{
 	
 	
 	private List<Major> majors;
-	private List<PracticeBase> practiceBaseWithARegion;
-	private String[][] numbers;
+	private ListOfRegionAndPracticeBases regionAndPracticeBase;
+	private String[][][] numbers;
+	static public final String SessionMajorsKey="PlanAllDesign_Majors";
+	static public final String SessionListKey="PlanAllDesign_List";
+
 	
 	public List<Major> getMajors(){return this.majors;}
-	public List<PracticeBase> getPracticeBaseWithARegion(){return this.practiceBaseWithARegion;}
-	public String[][] getNumbers(){return this.numbers;}
-	public void setNumbers(String[][] numbers){this.numbers=numbers;}
+	public ListOfRegionAndPracticeBases getRegionAndPracticeBase(){return this.regionAndPracticeBase;}
+	public String[][][] getNumbers(){return this.numbers;}
+	public void setNumbers(String[][][] numbers){this.numbers=numbers;}
 
-	public PlanAllDesign() throws SQLException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException {
+	@SuppressWarnings("unchecked")
+	public PlanAllDesign(){
 		super();
 		System.out.println(">> PlanAllDesign:constructor > year="+this.getAnnual().getYear());
-		this.majors=ListableBase.list(Major.class);
 		if(!this.annual.checkYear()){
 			System.err.println(">> PlanAllDesign:constructor > year has been setup!");
 			this.annual.setupYear();
 		}
-		this.practiceBaseWithARegion=Region.listPracticeBasesWhichHaveARegion(this.annual.getYear());
-		this.numbers=new String[this.practiceBaseWithARegion.size()][this.majors.size()];
-		this.numbers[0][0]="x";
+		this.majors=Manager.loadSession(List.class,SessionMajorsKey);
+		this.regionAndPracticeBase=Manager.loadSession(ListOfRegionAndPracticeBases.class, SessionListKey);
+		this.setupNumbers();
+	}
+	private void setupNumbers(){
+		if(this.majors==null || this.regionAndPracticeBase==null)
+			return;
+		this.numbers=new String[this.majors.size()]
+				[this.regionAndPracticeBase.getList().size()][];
+		for(int i=0;i<this.majors.size();i++)
+			for(int j=0;j<this.regionAndPracticeBase.getList().size();j++)
+				this.numbers[i][j]=new String[this.regionAndPracticeBase.getList().get(j).getPracticeBases().size()];
 	}
 	
-	
 	public String display(){
+		try {
+			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/false);
+		} catch (SQLException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException | InstantiationException e) {
+			return Manager.tips("数据库开小差去了！",
+					e,NONE);
+		}
+		try {
+			this.majors=ListableBase.list(Major.class);
+		} catch (SQLException e) {
+			return Manager.tips("数据库开小差去了，没找到专业列表！",
+					e,NONE);
+		}
+		this.setupNumbers();
 		Map<String,Integer> majorsMap=new HashMap<String,Integer>();
 		for(int i=0;i<this.majors.size();i++)
 			majorsMap.put(this.majors.get(i).getName(),i);
-		Map<String,Integer> practiceBasesMap=new HashMap<String,Integer>();
-		for(int i=0;i<this.practiceBaseWithARegion.size();i++)
-			practiceBasesMap.put(this.practiceBaseWithARegion.get(i).getName(),i);
 		List<Plan> plans;
 		try {
 			plans = Plan.list(Plan.class,
@@ -58,9 +77,15 @@ public class PlanAllDesign extends ActionSupport{
 			return Manager.tips("服务器开小差去了！",
 					e,NONE);
 		}
-		for(Plan p:plans)
-			this.numbers[practiceBasesMap.get(p.getPracticeBase())]
-					[majorsMap.get(p.getMajor())] = String.valueOf(p.getNumber());
+		for(Plan p:plans){
+			int[] index=this.regionAndPracticeBase.indexOf(p.getPracticeBase());
+			if(index!=null && index.length>=2)
+				this.numbers[majorsMap.get(p.getMajor())][index[0]][index[1]] = String.valueOf(p.getNumber());
+		}
+		if(this.regionAndPracticeBase!=null)
+			Manager.saveSession(SessionListKey,this.regionAndPracticeBase);
+		if(this.majors!=null)
+			Manager.saveSession(SessionMajorsKey,this.majors);
 		return NONE;
 	}
 	
@@ -70,41 +95,43 @@ public class PlanAllDesign extends ActionSupport{
 		StringBuilder error=new StringBuilder();
 		for(int i=0;i<this.numbers.length;i++){
 			for(int j=0;j<this.numbers[i].length;j++){
-				if(this.numbers[i][j]==null || this.numbers[i][j].isEmpty())
-					continue;
-				int num;
-				try{
-					num=Integer.valueOf(this.numbers[i][j]);
-				}catch(NumberFormatException e){
-					e.printStackTrace();
-					error.append("\n("+i+","+j+")"+e.getMessage());
-					continue;
-				}
-				if(num<0) num=0;
-				Plan p;
-				try {
-					p = new Plan();
-				} catch (SQLException e) {
-					e.printStackTrace();
-					error.append("\n("+i+","+j+")"+e.getMessage());
-					continue;
-				}
-				p.setYear(this.getAnnual().getYear());
-				p.setPracticeBase(this.practiceBaseWithARegion.get(i).getName());
-				p.setMajor(this.majors.get(j).getName());
-				try {
-					if(p.existAndLoad()){
-						p.setNumber(num);
-						p.update();
-					}else{
-						p.setNumber(num);
-						p.create();
+				for(int k=0;k<this.numbers[i][j].length;k++){
+					if(this.numbers[i][j][k]==null || this.numbers[i][j][k].isEmpty())
+						continue;
+					int num;
+					try{
+						num=Integer.valueOf(this.numbers[i][j][k]);
+					}catch(NumberFormatException e){
+						e.printStackTrace();
+						error.append("\n("+i+","+j+","+k+")"+e.getMessage());
+						continue;
 					}
-					ok=true;
-				} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
-					e.printStackTrace();
-					error.append("\n("+i+","+j+")"+e.getMessage());
-					continue;
+					if(num<0) num=0;
+					Plan p;
+					try {
+						p = new Plan();
+					} catch (SQLException e) {
+						e.printStackTrace();
+						error.append("\n("+i+","+j+","+k+")"+e.getMessage());
+						continue;
+					}
+					p.setYear(this.getAnnual().getYear());
+					p.setMajor(this.majors.get(i).getName());
+					p.setPracticeBase(this.regionAndPracticeBase.getList().get(j).getPracticeBases().get(k).getName());
+					try {
+						if(p.existAndLoad()){
+							p.setNumber(num);
+							p.update();
+						}else{
+							p.setNumber(num);
+							p.create();
+						}
+						ok=true;
+					} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
+						e.printStackTrace();
+						error.append("\n("+i+","+j+","+k+")"+e.getMessage());
+						continue;
+					}
 				}
 			}
 		}
