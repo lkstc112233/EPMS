@@ -30,7 +30,7 @@ public class RegionInfo extends ActionSupport{
 	
 	public RegionInfo() throws SQLException, NoSuchFieldException, SecurityException{
 		super();
-		System.out.println(">> RegionInfo_info:constructor > year="+this.getAnnual().getYear());
+		System.out.println(">> RegionInfo:constructor > year="+this.getAnnual().getYear());
 		this.region=new Region();
 	}
 	
@@ -38,7 +38,7 @@ public class RegionInfo extends ActionSupport{
 	public String execute(){
 		if(this.region==null)
 			return display();
-		System.out.println(">> RegionInfo_info:execute > region= "+this.region);
+		System.out.println(">> RegionInfo:execute > region= "+this.region);
 		try {
 			Region tmp=new Region();
 			this.region.copyTo(tmp);
@@ -76,8 +76,8 @@ public class RegionInfo extends ActionSupport{
 		if(region==null)
 			return Manager.tips("不存在大区名为"+regionName+"！",
 					NONE);
-		System.out.println(">> RegionInfo_info:display > region="+this.region);
-		System.out.println(">> RegionInfo_info:display <NONE");
+		System.out.println(">> RegionInfo:display > region="+this.region);
+		System.out.println(">> RegionInfo:display <NONE");
 		return NONE;
 	}
 	

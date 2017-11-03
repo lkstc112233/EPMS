@@ -55,13 +55,13 @@ public class PlanAllDesign extends ActionSupport{
 		try {
 			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/false);
 		} catch (SQLException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException | InstantiationException e) {
-			return Manager.tips("数据库开小差去了！",
+			return Manager.tips("数据库读取实习基地及大区信息失败",
 					e,NONE);
 		}
 		try {
 			this.majors=ListableBase.list(Major.class);
 		} catch (SQLException e) {
-			return Manager.tips("数据库开小差去了，没找到专业列表！",
+			return Manager.tips("数据库读取专业列表失败！",
 					e,NONE);
 		}
 		this.setupNumbers();
@@ -74,7 +74,7 @@ public class PlanAllDesign extends ActionSupport{
 					new String[]{"year"},
 					new Object[]{Integer.valueOf(this.annual.getYear())});
 		} catch (NoSuchFieldException | SQLException e) {
-			return Manager.tips("服务器开小差去了！",
+			return Manager.tips("服务器读取布局规划失败！",
 					e,NONE);
 		}
 		for(Plan p:plans){
@@ -93,6 +93,8 @@ public class PlanAllDesign extends ActionSupport{
 	public String execute(){
 		boolean ok=false;
 		StringBuilder error=new StringBuilder();
+		if(this.regionAndPracticeBase==null||this.numbers==null||this.majors==null)
+			return display();
 		for(int i=0;i<this.numbers.length;i++){
 			for(int j=0;j<this.numbers[i].length;j++){
 				for(int k=0;k<this.numbers[i][j].length;k++){
@@ -120,8 +122,12 @@ public class PlanAllDesign extends ActionSupport{
 					p.setPracticeBase(this.regionAndPracticeBase.getList().get(j).getPracticeBases().get(k).getName());
 					try {
 						if(p.existAndLoad()){
-							p.setNumber(num);
-							p.update();
+							if(num==0)
+								p.delete();
+							else{
+								p.setNumber(num);
+								p.update();
+							}
 						}else{
 							p.setNumber(num);
 							p.create();

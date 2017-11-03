@@ -22,7 +22,7 @@
 			<td class="tdLabel">time end</td>
 		</tr>
 		<s:iterator value="times" var="__tableRow" status="__status">
-			<tr>
+			<tr class="myTable">
 				<td class="tdLabel">
 					<s:property value="%{#__tableRow.id}" />
 					<s:hidden name="times[%{#__status.index}].id"
