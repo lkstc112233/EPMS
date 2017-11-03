@@ -25,7 +25,7 @@ public abstract class TableOperationAction extends ActionSupport{
 	private String tableName;
 		public String getTableName(){return this.tableName;}
 		//public void setTableName(String tableName){this.setupTableName(tableName);}
-	public final String SessionSearchKey;
+	static public final String SessionSearchKey="TableOperationAction_Search";
 	
 	
 	private Search<? extends Base> search=null;//查询信息
@@ -50,7 +50,6 @@ public abstract class TableOperationAction extends ActionSupport{
 	@SuppressWarnings({ "unchecked" })
 	public TableOperationAction(){
 		super();
-		this.SessionSearchKey="TableOperationAction_Search";
 		this.search=Manager.loadSession(Search.class,SessionSearchKey);
 		if(this.search!=null)
 			this.setupTableName(this.search.getClassInfo().getTableName());

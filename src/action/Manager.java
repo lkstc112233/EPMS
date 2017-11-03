@@ -15,7 +15,8 @@ public class Manager {
 	}
 	static public <T> T loadSession(Class<T> clazz,String key){
 		Object o=ActionContext.getContext().getSession().get(key);
-		if(o==null || !o.getClass().isAssignableFrom(clazz)) return null;
+		if(o==null || !clazz.isAssignableFrom(o.getClass()))
+			return null;
 		try{
 			return clazz.cast(o);
 		}catch(ClassCastException e){return null;}
