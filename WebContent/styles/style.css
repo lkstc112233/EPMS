@@ -164,16 +164,15 @@ body {
     height: 20px;
     overflow: hidden;
     padding: 0px;
-    border: #797979 solid 1px;
+    border: 0px;
     cursor: default;
     text-align: left;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-left: 4px;
-    padding-right: 4px;
-    font-size: 15px;
+    padding: 0px;
+    font-size: 14px;
     text-align: center;
-	background: #d3d3d3;
+	background: #e4e4e4;
 }
 .mytable td {
     /*width: 100%;*/
@@ -185,9 +184,8 @@ body {
     text-align: left;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-left: 4px;
-    padding-right: 4px;
-    font-size: 15px;
+    padding: 0px;
+    font-size: 14px;
     text-align: center;
 	background: #fff;
 }
@@ -230,7 +228,31 @@ body {
     font-size: 12px;
     vertical-align: middle;
 }
-
+.wtable{
+	width:80%;
+}
+.wtableHeader td{
+    height: 20px;
+    text-align: center;
+    font-size: 15px;
+    font-weight:bold;
+	background: #e4e4e4;
+    border: solid 0px;
+    padding: 0px;
+    margin: 0px;
+}
+.wtableBorder{
+    border: #797979 solid 1px;
+}
+.wtableContent td{
+    height: 20px;
+    font-size: 14px;
+    text-align: center;
+    border: solid 0px;
+    padding: 0px;
+    padding: 0px;
+    margin: 0px;
+}
 
 /**********尾**********/
 .footer{/*底部*/

@@ -7,7 +7,7 @@
 	<% request.setAttribute("actionName",request.getParameter("actionName"));%>
 		
 	<!-- ################# -->
-	<table width="80%"><tbody>
+	<table class="wtable"><tbody>
 		<tr><td>
 			<div class="listHeader">
 				<div class="listHeaderLeft">
@@ -65,10 +65,10 @@
 	<!-- ################# -->
 	<!-- 结果集 -->
 	<div style="overflow-x:scroll;">
-	<table width="80%"><tbody>
+	<table class="wtable"><tbody>
 		<s:if test="search.result!=null">
 			<!-- ###### 表头 ###### -->
-			<tr class="mytableTitle">
+			<tr class="wtableHeader" style="display:none;">
 				<td colspan="3">&nbsp;</td>
 				<s:iterator value="search.classInfo.allFieldsNameString" var="__Row" status="__Status">
 					<td style="word-wrap:break-word;word-break:break-all;text-align:center;">
@@ -79,11 +79,11 @@
 					</td>
 				</s:iterator>
 			</tr>
-			<tr class="mytableTitle">
+			<tr class="wtableHeader">
 				<td style="width:13px;text-align:center;">序号</td>
 				<td style="text-align:center;" colspan="2">操作</td>
 				<s:iterator value="search.classInfo.allFieldsDescriptionString" var="__Row" status="__Status">
-					<td style="word-wrap:break-word;word-break:break-all;text-align:center;">
+					<td style="word-wrap:break-word;word-break:break-all">
 						<s:property value="%{#__Row}"/>
 						<s:if test="search.classInfo.allFieldsKeyBoolean[#__Status.index] == true">
 						*
@@ -92,97 +92,97 @@
 				</s:iterator>
 			</tr>
 			<!-- ###### 新增行 ###### -->
-			<tr>
+			<tr class="wtableContent">
 				<!-- 序号 -->
-				<td class="listContent" style="width:13px;text-align:center;">
+				<td style="width:13px;">
 					+
 				</td>
 				<!-- 新增行 -->
 				<s:form action="%{#request.actionName}_create" method="post" theme="simple">
 					<!-- 操作 -->
-					<td class="listContent" style="width:27px;text-align:center;padding:0px;" colspan="2">
-						<s:submit value="create" cssClass="inlineButton" theme="simple"/>
+					<td style="width:27px;" colspan="2">
+						<s:submit value="create" cssClass="inlineButton"
+						style="width:100%;" theme="simple" />
 					</td>
 					<!-- 内容 -->
 					<s:iterator value="search.classInfo.allFieldsNameString" var="__Row" status="__Status">
-						<td style="text-align:center;">
-							<s:if test="search.classInfo.allFieldsSourceListDescription[#__Status.index] == null">
-									<s:textfield theme="simple"
-									style="padding:0px;width:95%;min-width:30px;"
-									name="createNewBase.%{#__Row}" value="%{createNewBase.allFieldsValueString[#__Status.index]}"/>
-							</s:if><s:else>
+						<s:if test="search.classInfo.allFieldsSourceListDescription[#__Status.index] == null">
+							<td>
+								<s:textfield name="createNewBase.%{#__Row}"
+								value="%{createNewBase.allFieldsValueString[#__Status.index]}"
+								style="text-align:center;padding:0px;width:95%;" theme="simple" />
+							</td>
+						</s:if><s:else>
+							<td>
 								<s:select list="search.classInfo.allFieldsSourceListDescription[#__Status.index]"
+								name="createNewBase.%{#__Row}" value="%{createNewBase.#__Row}"
 								headerKey="" headerValue="无"
-								theme="simple"
-								style="padding:0px;"
-								name="createNewBase.%{#__Row}" value="%{createNewBase.#__Row}"/>
-							</s:else>
-						</td>
+								style="text-align:center;padding:0px;width:95%;" theme="simple" />
+							</td>
+						</s:else>
 					</s:iterator>
 				</s:form>
 			</tr>
 			<!-- ###### resultSet 内容 ###### -->
 			<s:iterator value="search.result" var="__Row" status="__Status">
-				<tr>
+				<tr class="wtableContent">
 					<!-- 序号 -->
-					<td class="listContent" style="width:13px;text-align:center;">
+					<td style="width:13px;">
 						<s:property value="%{#__Status.count}" />
 					</td>
 					<!-- 操作 -->
-					<td class="listContent" style="width:27px;text-align:center;padding:0px;">
+					<td style="width:27px;">
 						<s:form action="%{#request.actionName}_delete" method="get" theme="simple">
 							<s:hidden name="choose" value="%{#__Status.index}" theme="simple"/>
 							<s:submit value="X" cssClass="inlineButton"
-							style="color:red;" theme="simple"/>
+							style="color:red;width:100%;" theme="simple"/>
 						</s:form>
 					</td>
 					<!-- 内容 -->
 					<s:if test="choose != #__Status.index">
 						<!-- 操作 -->
-						<td class="listContent" style="width:40px;text-align:center;padding:0px;">
+						<td style="width:40px;">
 							<s:form action="%{#request.actionName}_display" method="get" theme="simple">
 								<s:hidden name="choose" value="%{#__Status.index}" theme="simple"/>
-								<s:submit value="修改" cssClass="inlineButton" theme="simple"/>
+								<s:submit value="修改" cssClass="inlineButton"
+								style="width:100%;" theme="simple" />
 							</s:form>
 						</td>
 						<!-- 内容 -->
 						<s:iterator value="%{#__Row.allFieldsValueString}" var="__Col">
-							<td style="text-align:center;">
-								<s:property value="#__Col" />
-							</td>
+							<td><s:property value="#__Col" /></td>
 						</s:iterator>
 					</s:if>
 					<s:else>
 						<s:form action="%{#request.actionName}_update" method="get" theme="simple">
 							<!-- 操作 -->
-							<td class="listContent" style="width:40px;text-align:center;">
+							<td style="width:40px;">
 								<s:hidden name="choose" value="%{#__Status.index}" theme="simple"/>
 								<s:submit value="保存" cssClass="inlineButton"
-								style="color:#ffffff;background-color:#0071bc" theme="simple"/>
+								style="color:#ffffff;background-color:#0071bc;width:95%;" theme="simple" />
 							</td>
 							<!-- 内容 -->
 							<s:iterator value="#__Row.allFieldsValueString" var="__Col" status="__ColStatus">
-								<td style="text-align:center;">
-									<s:if test="search.classInfo.allFieldsKeyBoolean[#__ColStatus.index] == false">
-										<s:if test="search.classInfo.allFieldsSourceListDescription[#__ColStatus.index] == null">
-											<s:textfield theme="simple"
-											style="padding:0px;width:95%;min-width:30px;"
+								<s:if test="search.classInfo.allFieldsKeyBoolean[#__ColStatus.index] == false">
+									<s:if test="search.classInfo.allFieldsSourceListDescription[#__ColStatus.index] == null">
+										<td>
+											<s:textfield
 											value="%{#__Col}"
-											name="search.result[%{#__Status.index}].%{search.classInfo.allFieldsNameString[#__ColStatus.index]}" />
-										</s:if><s:else>
+											name="search.result[%{#__Status.index}].%{search.classInfo.allFieldsNameString[#__ColStatus.index]}"
+											style="text-align:center;padding:0px;width:95%;" theme="simple" />
+										</td>
+									</s:if><s:else>
+										<td>
 											<s:select list="search.classInfo.allFieldsSourceListDescription[#__ColStatus.index]"
 											headerKey="" headerValue="无"
-											theme="simple"
-											style="padding:0px;"
+											name="search.result[%{#__Status.index}].%{search.classInfo.allFieldsNameString[#__ColStatus.index]}" 
 											value="%{#__Col}"
-											name="search.result[%{#__Status.index}].%{search.classInfo.allFieldsNameString[#__ColStatus.index]}" />
-										</s:else>
-									</s:if><s:else>
-										<div style="padding:0px;width:95%;min-width:30px;text-align:center;">
-											<s:property value="#__Col" />
-										</div>
+											style="text-align:center;padding:0px;width:95%;" theme="simple" />
+										</td>
 									</s:else>
-								</td>
+								</s:if><s:else>
+									<td><s:property value="#__Col" /></td>
+								</s:else>
 							</s:iterator>
 						</s:form>
 					</s:else>

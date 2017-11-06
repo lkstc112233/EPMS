@@ -3,7 +3,9 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 
 <div class="bag">
-
+	<% String noBackButton=request.getParameter("noBackButton"); 
+	 if(noBackButton==null || noBackButton.isEmpty() || noBackButton.toUpperCase().equals("FALSE")){
+	 %>
 	<table style="width: 180px; border: 0; cellspacing: 0; cellpadding: 0"><tbody>
 		<tr>
 			<td height="100px" width="100%" colspan="3" valign="top" />
@@ -16,6 +18,7 @@
 			</td>
 		</tr>
 	</tbody></table>
+	<% } %>
 
 	<table style="width: 180px; border: 0; cellspacing: 0; cellpadding: 0">
 		<tbody>
@@ -33,6 +36,5 @@
 			北京师范大学 </a>
 	</div>
 	<div class="footer_center">北京师范大学教务处 新街口外大街19号，北京·中国(100875)</div>
-	<div class="footer_center">E-mail: bnuwangfy@foxmail.com Tel:
-		010-58802413</div>
+	<div class="footer_center">E-mail: bnuwangfy@foxmail.com    Tel: 010-58802413</div>
 </div>

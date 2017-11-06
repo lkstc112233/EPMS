@@ -21,7 +21,9 @@
 	</s:form>
 </div>
 	
-	<jsp:include page="/model/common_bottom.jsp" flush="true" /><%-- 动态包含  页面头 --%>
+	<jsp:include page="/model/common_bottom.jsp" flush="true">
+		<jsp:param name="noBackButton" value="true"/>
+	</jsp:include>
 </center>
 </body>
 </html>

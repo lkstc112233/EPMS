@@ -21,7 +21,7 @@
 			</div>
 		</td></tr>
 	</tbody></table>
-	<s:form action="jwc_function_RegionLeaderDesign_execute" method="post" theme="simple">
+	<s:form action="jwc_function_RegionLeaderAndSupervisorDesign_execute" method="post" theme="simple">
 		<table width="80%" border="1" cellpadding="0" cellspacing="0" style="table-layout:fixed;"><tbody>
 			<tr class="mytableTitle">
 				<td style="width:3%;">大区</td>

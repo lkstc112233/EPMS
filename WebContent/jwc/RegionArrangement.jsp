@@ -32,7 +32,7 @@
 			</div>
 		</td></tr>
 		<!-- ########### 表头 ########### -->
-		<tr class="mytableTitle" style="visibility:hidden;">
+		<tr class="mytableTitle" style="display:none;">
 			<td colspan="2">&nbsp;</td>
 			<s:iterator value="practiceBaseAllFieldsNameString" var="__Col" status="__colStatus">
 				<td style="word-wrap:break-word;word-break:break-all;text-align:center;">
