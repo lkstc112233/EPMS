@@ -262,6 +262,7 @@ public class Search<T extends Base> {
 					else sb.append(" OR ");
 					sb.append("major = ?");
 				}
+				if(!g) sb.append(')');
 			}
 			if(this.fieldSchool!=null){
 				if(first){first=false;sb.append(" WHERE ");}
