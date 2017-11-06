@@ -21,6 +21,20 @@ public class Supervise extends AnnualBase implements ListableBaseWithNoSave{
 	private Timestamp time1;
 	@SQLField(value="督导结束时间")
 	private Timestamp time2;
+	@SQLField(value="机票费",ps="小于100000")
+	private float moneyPlane;
+	@SQLField(value="机票费",ps="小于100000")
+	private float moneyBooking;
+	@SQLField(value="机票费",ps="小于100000")
+	private float moneyInsurance;
+	@SQLField(value="机票费",ps="小于100000")
+	private float moneyTrain;
+	@SQLField(value="机票费",ps="小于100000")
+	private float moneyAccommodation;
+	@SQLField(value="住宿天数",ps="小于128")
+	private int   moneyAccommodationNum;
+	@SQLField(value="其他费用",ps="小于100000")
+	private float moneyElse;
 	@SQLField(value="备注",ps="文本储存")
 	private String remark;
 	
@@ -59,8 +73,29 @@ public class Supervise extends AnnualBase implements ListableBaseWithNoSave{
 	public String getRemark() {return remark;}
 	public void setRemark(String remark) {this.remark = remark;}
 
+	public float getMoneyPlane() {return moneyPlane;}
+	public void setMoneyPlane(float a) {this.moneyPlane = a;}
+	public void setMoneyPlane(String a){try{this.moneyPlane=Float.parseFloat(a);}catch(NumberFormatException e){e.printStackTrace();}}
+	public float getMoneyBooking() {return moneyBooking;}
+	public void setMoneyBooking(float a) {this.moneyBooking = a;}
+	public void setMoneyBooking(String a){try{this.moneyBooking=Float.parseFloat(a);}catch(NumberFormatException e){e.printStackTrace();}}
+	public float getMoneyInsurance() {return moneyInsurance;}
+	public void setMoneyInsurance(float a) {this.moneyInsurance = a;}
+	public void setMoneyInsurance(String a){try{this.moneyInsurance=Float.parseFloat(a);}catch(NumberFormatException e){e.printStackTrace();}}
+	public float getMoneyTrain() {return moneyTrain;}
+	public void setMoneyTrain(float a) {this.moneyTrain = a;}
+	public void setMoneyTrain(String a){try{this.moneyTrain=Float.parseFloat(a);}catch(NumberFormatException e){e.printStackTrace();}}
+	public float getMoneyAccommodation() {return moneyAccommodation;}
+	public void setMoneyAccommodation(float a) {this.moneyAccommodation = a;}
+	public void setMoneyAccommodation(String a){try{this.moneyAccommodation=Float.parseFloat(a);}catch(NumberFormatException e){e.printStackTrace();}}
+	public int getMoneyAccommodationNum() {return moneyAccommodationNum;}
+	public void setMoneyAccommodationNum(int a) {this.moneyAccommodationNum = a;}
+	public void setMoneyAccommodationNum(String a){try{this.moneyAccommodationNum=Integer.parseInt(a);}catch(NumberFormatException e){e.printStackTrace();}}
+	public float getMoneyElse() {return moneyElse;}
+	public void setMoneyElse(float a) {this.moneyElse = a;}
+	public void setMoneyElse(String a){try{this.moneyElse=Float.parseFloat(a);}catch(NumberFormatException e){e.printStackTrace();}}
 
-	
+
 	public Supervise() throws SQLException {
 		super();
 	}
