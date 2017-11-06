@@ -1,11 +1,12 @@
 package obj.staticObject;
 
+import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import action.Manager;
 import obj.*;
-import obj.staticSource.School;
 import persistence.DB;
 
 @SQLTable("InnerPerson")
@@ -37,6 +38,11 @@ public class InnerPerson extends ListableBase implements ListableBase.ListableBa
 				"SELECT password FROM "+this.getSQLTabelName()+" WHERE id = ?");
 		sql_updatePassword=DB.con().prepareStatement(
 				"UPDATE "+this.getSQLTabelName()+" SET password = ? WHERE id = ? AND password = ?");
+	}
+	public InnerPerson(String id) throws IllegalArgumentException, IllegalAccessException, SQLException{
+		this();
+		this.setId(id);
+		this.load();
 	}
 	
 	public boolean checkPassword(){
@@ -70,14 +76,50 @@ public class InnerPerson extends ListableBase implements ListableBase.ListableBa
 		this.password=newPassword;
 	}
 	
-	
-	public boolean isSchoolUser(){
-		try{
-			School tmp=new School();
-			tmp.setName(this.getOffice());
-			return tmp.exist() ;//&& !this.getOffice().equals("教务处");
-		}catch(SQLException | InstantiationException | IllegalAccessException | IllegalArgumentException e){
+	@Override
+	public int load(boolean setFields) throws SQLException, IllegalArgumentException, IllegalAccessException{
+		if(this.getId()==null||this.getId().isEmpty())
+			throw new IllegalArgumentException("The key fields are not completed!");
+		Class<? extends Base> clazz=this.getClass();
+		java.util.List<Field> fs=this.getFields();
+		StringBuilder sb=new StringBuilder();
+		sb.append("SELECT ");
+		boolean first=true;
+		for(Field f:fs){
+			if(f.getName().equals("password")) continue;
+			f.setAccessible(true);
+			if(first) first=false;
+			else sb.append(" , ");
+			sb.append(f.getName());
 		}
-		return false;
+		sb.append(" FROM ");
+		sb.append(Base.getSQLTableName(clazz));
+		sb.append(" WHERE id = ?");
+		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
+		pst.setObject(1,this.getId());
+		ResultSet rs=pst.executeQuery();
+		rs.last();
+		int num=rs.getRow();
+		if(num!=1)
+			System.err.println("查询到"+num+"重值！("+pst.toString()+")");
+		rs.first();
+		if(num>0 && setFields){
+			for(Field f:this.getFields()){
+				if(f.getName().equals("password")) continue;
+				SQLField s=f.getAnnotation(SQLField.class);
+				if(s==null) continue;
+				f.setAccessible(true);
+				if(!s.isKey())
+					f.set(this,rs.getObject(f.getName()));
+			}
+			this.setPassword(null);
+		}
+		return num;
+	}
+	
+	public boolean getIsSameSchool(){
+		//TODO
+		String user=Manager.getUser().getSchool();
+		return "教务处".equals(user) || user.equals(this.school);
 	}
 }

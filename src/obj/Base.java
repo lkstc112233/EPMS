@@ -343,7 +343,7 @@ public abstract class Base {
 	public int load() throws SQLException, IllegalArgumentException, IllegalAccessException{
 		return this.load(true);
 	}
-	private int load(boolean setFields) throws SQLException, IllegalArgumentException, IllegalAccessException{
+	public int load(boolean setFields) throws SQLException, IllegalArgumentException, IllegalAccessException{
 		if(this.checkKeyNull())
 			throw new IllegalArgumentException("The key fields are not completed!");
 		int SQLParameterIndex=1;
