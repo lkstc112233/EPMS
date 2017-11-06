@@ -66,7 +66,7 @@ public abstract class TableOperationAction extends ActionSupport{
 		try {
 			this.createNewBase=clazz.newInstance();
 			if(this.search!=null && this.search.getRestraint()!=null)
-				this.search.getRestraint().fitBase(this.createNewBase);
+				this.search.getRestraint().fitAndSetBase(this.createNewBase);
 			this.chooseBase=clazz.newInstance();
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException e) {
 			e.printStackTrace();
@@ -98,7 +98,7 @@ public abstract class TableOperationAction extends ActionSupport{
 					e,NONE);
 		}
 		if(this.search!=null && this.search.getRestraint()!=null && this.createNewBase!=null)
-			this.search.getRestraint().fitBase(this.createNewBase);
+			this.search.getRestraint().fitAndSetBase(this.createNewBase);
 		if(this.search!=null)
 			Manager.saveSession(SessionSearchKey,this.search);
 		System.out.println(">> TableOperationAction:display <NONE");

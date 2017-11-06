@@ -201,6 +201,10 @@ public class Search<T extends Base> {
 		public boolean fitBase(Base b) {
 			return true;
 		}
+		@Override
+		public boolean fitAndSetBase(Base b){
+			return true;
+		}
 		
 	}
 	static public class jwyRestraint implements SearchRestraint{
@@ -289,8 +293,7 @@ public class Search<T extends Base> {
 		public String getOrderString() {
 			return "";
 		}
-		@Override
-		public boolean fitBase(Base b) {
+		private boolean fitBase(Base b,boolean set) {
 			boolean res=true;
 			if(this.fieldYear!=null){
 				this.fieldYear.setAccessible(true);
@@ -301,7 +304,7 @@ public class Search<T extends Base> {
 						if(!y.equals(this.year))
 							res=false;
 					}
-					this.fieldYear.set(b,this.year);
+					if(set) this.fieldYear.set(b,this.year);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
 				}
@@ -315,7 +318,7 @@ public class Search<T extends Base> {
 						if(!this.school.getName().equals(y))
 							res=false;
 					}
-					this.fieldSchool.set(b,this.school.getName());
+					if(set) this.fieldSchool.set(b,this.school.getName());
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
 				}
@@ -332,15 +335,24 @@ public class Search<T extends Base> {
 						}
 						if(!flag) res=false;
 					}
-					Major m=this.majors.get(0);
-					this.fieldMajor.set(b,m==null?null:m.getName());
+					if(set){
+						Major m=this.majors.get(0);
+						this.fieldMajor.set(b,m==null?null:m.getName());
+					}
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
 				}
 			}
 			return res;
 		}
-		
+		@Override
+		public boolean fitBase(Base b){
+			return this.fitBase(b,false);
+		}
+		@Override
+		public boolean fitAndSetBase(Base b){
+			return this.fitBase(b,true);
+		}
 	}
 	
 }

@@ -189,6 +189,10 @@ public class SearchJoin {
 		public boolean fitBase(Base b) {
 			return true;
 		}
+		@Override
+		public boolean fitAndSetBase(Base b){
+			return true;
+		}
 		
 	}
 	
