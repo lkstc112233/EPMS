@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>EPMS-教务处-确认实习大区信息（<s:property value="annual.year" />年）</title>
+<title>EPMS-教务处-分配实习基地到实习大区（<s:property value="annual.year" />年）</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
@@ -32,10 +32,10 @@
 			</div>
 		</td></tr>
 		<!-- ########### 表头 ########### -->
-		<tr class="mytableTitle" style="display:none;">
+		<tr class="wtableHeader" style="display:none;">
 			<td colspan="2">&nbsp;</td>
 			<s:iterator value="practiceBaseAllFieldsNameString" var="__Col" status="__colStatus">
-				<td style="word-wrap:break-word;word-break:break-all;text-align:center;">
+				<td style="word-wrap:break-word;word-break:break-all;">
 					<s:property value="#__Col"/>
 					<s:if test="practiceBaseAllFieldsKeyBoolean[#__colStatus.index] == true">
 					*
@@ -43,11 +43,11 @@
 				</td>
 			</s:iterator>
 		</tr>
-		<tr class="mytableTitle">
-			<td style="width:13px;text-align:center;">选择</td>
-			<td style="width:13px;text-align:center;">序号</td>
+		<tr class="wtableHeader">
+			<td style="width:13px;">选择</td>
+			<td style="width:13px;">序号</td>
 			<s:iterator value="practiceBaseAllFieldsDescriptionString" var="__Col" status="__colStatus">
-				<td style="word-wrap:break-word;word-break:break-all;text-align:center;">
+				<td style="word-wrap:break-word;word-break:break-all;">
 					<s:property value="%{#__Col}"/>
 					<s:if test="practiceBaseAllFieldsKeyBoolean[#__colStatus.index] == true">
 					*
@@ -57,54 +57,60 @@
 		</tr>
 		<!-- ########### 实习基地列表 ########### -->
 		<s:if test="#__Row.region == null">
-			<s:form action="jwc_function_RegionArrangement_execute" method="post" theme="simple">
-				<s:iterator value="#__Row.practiceBases" var="__pbsRow" status="__pbsStatus"><tr>
+			<s:form action="jwc_function_PracticeBaseArrangeIntoRegion_execute" method="post" theme="simple">
+				<s:iterator value="#__Row.practiceBases" var="__pbsRow" status="__pbsStatus">
+				<tr class="wtableContent">
 					<!-- 选择 -->
-					<td class="listContent" style="width:13px;text-align:center;">
+					<td style="width:13px;">
 						<s:checkbox name="checkBox[%{#__pbsStatus.index}]" id="%{#__Status.index}_%{#__pbsStatus.index}"/>
 					</td>
 					<!-- 序号 -->
-					<td class="listContent" style="width:13px;text-align:center;">
+					<td style="width:13px;">
 						<s:property value="%{#__pbsStatus.count}" />
 					</td>
 					<!-- 内容 -->
 					<s:iterator value="%{#__pbsRow.allFieldsValueString}" var="__Col">
-						<td style="text-align:center;">
+						<td style="">
 							<s:property value="#__Col" />
 						</td>
 					</s:iterator>
 				</tr></s:iterator>
-				<tr><td colspan="100" style="text-align:center;border-bottom:#000 solid 3px;border-top: double;height:30px">
-					将选中基地放入大区（若不存在则新建）：
-					<s:textfield name="regionName" />
-					<s:submit value="放入新建" cssClass="buttonInline" style="padding-top:1px;"/>
-				</td></tr>
+				<tr class="wtableContent">
+					<td colspan="100" style="border-bottom:#000 solid 3px;border-top: double;height:30px">
+						将选中基地放入大区（若不存在则新建）：
+						<s:textfield name="regionName" />
+						<s:submit value="放入新建" cssClass="buttonInline" style="padding-top:1px;"/>
+					</td>
+				</tr>
 				<tr><td height="20px" width="100%" colspan="100" valign="top" /></tr>
 				<s:token />
 			</s:form>
 		</s:if><s:else>
-			<s:form action="jwc_function_RegionArrangement_delete" method="post" theme="simple">
-				<s:iterator value="#__Row.practiceBases" var="__pbsRow" status="__pbsStatus"><tr>
+			<s:form action="jwc_function_PracticeBaseArrangeIntoRegion_delete" method="post" theme="simple">
+				<s:iterator value="#__Row.practiceBases" var="__pbsRow" status="__pbsStatus">
+				<tr class="wtableContent">
 					<!-- 选择 -->
-					<td class="listContent" style="width:13px;text-align:center;">
+					<td style="width:13px;">
 						<s:checkbox name="checkBox[%{#__pbsStatus.index}]" id="%{#__Status.index}_%{#__pbsStatus.index}"/>
 					</td>
 					<!-- 序号 -->
-					<td class="listContent" style="width:13px;text-align:center;">
+					<td style="width:13px;">
 						<s:property value="%{#__pbsStatus.count}" />
 					</td>
 					<!-- 内容 -->
 					<s:iterator value="%{#__pbsRow.allFieldsValueString}" var="__Col">
-						<td style="text-align:center;">
+						<td style="">
 							<s:property value="#__Col" />
 						</td>
 					</s:iterator>
 				</tr></s:iterator>
-				<tr><td colspan="100" style="text-align:center;border-bottom:#000 solid 3px;border-top: double;height:30px">	
-					从该大区移除
-					<s:hidden name="regionName" value="%{#__Row.region.name}" />
-					<s:submit value="移除" cssClass="buttonInline" style="padding-top:1px;"/>
-				</td></tr>
+				<tr class="wtableContent">
+					<td colspan="100" style="border-bottom:#000 solid 3px;border-top: double;height:30px">	
+						从该大区移除
+						<s:hidden name="regionName" value="%{#__Row.region.name}" />
+						<s:submit value="移除" cssClass="buttonInline" style="padding-top:1px;"/>
+					</td>
+				</tr>
 				<tr><td height="20px" width="100%" colspan="100" valign="top" /></tr>
 				<s:token />
 			</s:form>

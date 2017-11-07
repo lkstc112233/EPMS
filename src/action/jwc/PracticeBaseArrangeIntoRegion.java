@@ -14,7 +14,7 @@ import obj.staticObject.PracticeBase;
 /**
  * 导入免费师范生数据
  */
-public class RegionArrangement extends ActionSupport{
+public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 	private static final long serialVersionUID = 5998268336475528662L;
 
 	private action.Annual annual=new action.Annual();
@@ -45,7 +45,7 @@ public class RegionArrangement extends ActionSupport{
 
 	static public final String SessionListKey="RegionArrangement_RegionAndPracticeBases"; 
 	
-	public RegionArrangement() throws SQLException, NoSuchFieldException, SecurityException{
+	public PracticeBaseArrangeIntoRegion() throws SQLException, NoSuchFieldException, SecurityException{
 		super();
 		System.out.println(">> RegionArrangement:constructor > year="+this.getAnnual().getYear());
 		Map<String, Object> session=ActionContext.getContext().getSession();

@@ -243,12 +243,16 @@ public abstract class Base {
 		try {
 			Field f1=Base.getField(clazz,"name");
 			f1.setAccessible(true);
-			Field f2=Base.getField(clazz,"id");
-			f2.setAccessible(true);
 			s1=String.valueOf(f1.get(this));
-			s2=String.valueOf(f2.get(this));
 		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
 			return null;
+		}
+		try {
+			Field f2=Base.getField(clazz,"id");
+			f2.setAccessible(true);
+			s2=String.valueOf(f2.get(this));
+		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+			return s1;
 		}
 		return s1+"("+s2+")";
 	}
