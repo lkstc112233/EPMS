@@ -85,9 +85,9 @@ public final class DB {
 	}
 	
 	/**
-	 * 从ACCESS表中读取project信息，套用上当前输入的year来insert到Time表中
+	 * 从ACCESS表中读取project信息，套用上当前输入的year来insert到Time表中 
 	 */
-	static synchronized public void setupTimeTable(int year) throws SQLException{
+	static synchronized public void setupTimeTable(int year) throws SQLException, IllegalArgumentException, InstantiationException{
 		System.out.println("++ DB:setupTimeTable > year="+year);
 		List<ACCESS> accessList=ACCESS.list(ACCESS.class);
 		System.out.println("++ DB:setupTimeTable > list:[");
