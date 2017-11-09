@@ -1,7 +1,5 @@
 package obj.annualTable;
 
-import java.sql.SQLException;
-
 import obj.*;
 
 @SQLTable("Plan")
@@ -38,8 +36,11 @@ public class Plan extends AnnualBase {
 	public void setRemark(String remark) {this.remark = remark;}
 	
 	
-	public Plan() throws SQLException {
-		super();
+	
+	
+	@Override
+	public String getDescription() {
+		return this.practiceBase+"_"+this.major+"_"+this.number;
 	}
 	
 	

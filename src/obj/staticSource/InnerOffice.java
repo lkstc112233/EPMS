@@ -1,19 +1,21 @@
 package obj.staticSource;
 
-import java.sql.SQLException;
 
 import obj.*;
 
 @SQLTable("InnerOffice")
-public class InnerOffice extends ListableBase{
+public class InnerOffice extends Base{
 	
-	@SQLField(isKey=true)
+	@SQLField(value="校内人员类别",weight=1,isKey=true,notNull=true)
 	private String name;
+	
 	public String getName(){return this.name;}
 	public void setName(String name){this.name=name==null||name.isEmpty()?null:name;}
 	
-	public InnerOffice() throws SQLException {
-		super();
+	
+	@Override
+	public String getDescription() {
+		return this.name;
 	}
 	
 }

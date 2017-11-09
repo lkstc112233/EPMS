@@ -3,8 +3,7 @@ package obj.annualTable;
 import java.sql.SQLException;
 import java.util.*;
 
-import obj.Base;
-import obj.ListableBase;
+import obj.*;
 import obj.staticObject.PracticeBase;
 import obj.annualTable.Student;
 
@@ -34,13 +33,14 @@ public class ListOfPracticeBaseAndStudents{
 	private ListOfPracticeBaseAndStudents(int year,boolean containsNullPracticeBase) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException, SQLException{
 		if(containsNullPracticeBase)
 			list.add(new Pair(null));
-		ListableBase.JoinParam param=new ListableBase.JoinParam(Student.class);
-		param.append("practiceBase",containsNullPracticeBase ? ListableBase.JoinType.LeftJoin : ListableBase.JoinType.InnerJoin,
-				PracticeBase.class,"name");
-		List<Base[]> tmp=ListableBase.list(param,
-				new String[]{"year"},
-				new Object[]{Integer.valueOf(year)},
-				new String[]{"Student.id"});
+		List<Base[]> tmp=Base.list(
+				new Base.JoinParam(Student.class).append(containsNullPracticeBase ? Base.JoinType.LeftJoin : Base.JoinType.InnerJoin,
+						PracticeBase.class,
+						Field.getField(Student.class,"practiceBase"),
+						Field.getField(PracticeBase.class,"name")),
+				Field.getField(Student.class,"year"),
+				(Object)Integer.valueOf(year),
+				Field.getField(Student.class,"id"));
 		for(Base[] bs:tmp){
 			Student pb=null;
 			PracticeBase r=null;

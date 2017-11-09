@@ -1,18 +1,24 @@
 package obj.staticSource;
 
-import java.sql.SQLException;
-
 import obj.*;
 
 @SQLTable("Province")
-public class Province extends ListableBase{
+public class Province extends Base{
 	
-	@SQLField(isKey=true)
+	@SQLField(value="省份名称",weight=1,isKey=true,notNull=true)
 	private String name;
+	
 	public String getName(){return this.name;}
 	public void setName(String name){this.name=name==null||name.isEmpty()?null:name;}
 	
-	public Province() throws SQLException {
+	public Province(String name){
 		super();
+		this.name=name;
+	}
+	
+	
+	@Override
+	public String getDescription() {
+		return this.name;
 	}
 }

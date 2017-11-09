@@ -8,29 +8,29 @@ import obj.*;
 import obj.annualTable.Time;
 
 @SQLTable("ACCESS")
-public class ACCESS extends ListableBase{
+public class ACCESS extends Base{
 	
-	@SQLField(needSorted=true)
+	@SQLField(value="序号",weight=1,notNull=true)
 	private int id;
-	@SQLField(value="项目名称",isKey=true)
+	@SQLField(value="项目名称",weight=2,isKey=true,notNull=true)
 	private String project;
-	@SQLField(value="动作名称")
+	@SQLField(value="动作名称",weight=10)
 	private String actionClass="";
-	@SQLField(value="起始时间")
+	@SQLField(value="起始时间",weight=11)
 	private Timestamp time1;
-	@SQLField(value="终止时间")
+	@SQLField(value="终止时间",weight=12)
 	private Timestamp time2;
-	@SQLField(value="学生权限")
+	@SQLField(value="学生权限",weight=13)
 	private boolean xs;
-	@SQLField(value="教学院长权限")
+	@SQLField(value="教学院长权限",weight=14)
 	private boolean jxyz;
-	@SQLField(value="教务员权限")
+	@SQLField(value="教务员权限",weight=15)
 	private boolean jwy;
-	@SQLField(value="教师权限")
+	@SQLField(value="教师权限",weight=16)
 	private boolean js;
-	@SQLField(value="教务处权限")
+	@SQLField(value="教务处权限",weight=17)
 	private boolean jwc;
-	@SQLField(value="领导权限")
+	@SQLField(value="领导权限",weight=18)
 	private boolean ld;
 	
 	
@@ -83,9 +83,6 @@ public class ACCESS extends ListableBase{
 	
 	
 	
-	public ACCESS() throws SQLException {
-		super();
-	}
 	
 	static public ACCESS getFromTime(Time t) throws SQLException, IllegalArgumentException, IllegalAccessException{
 		if(t==null) return null;
@@ -96,6 +93,13 @@ public class ACCESS extends ListableBase{
 		a.setTime1(t.getTime1());
 		a.setTime2(t.getTime2());
 		return a;
+	}
+	
+	
+	
+	@Override
+	public String getDescription() {
+		return this.id+"_"+this.project;
 	}
 	
 	

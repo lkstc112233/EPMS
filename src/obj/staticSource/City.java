@@ -1,15 +1,13 @@
 package obj.staticSource;
 
-import java.sql.SQLException;
-
 import obj.*;
 
 @SQLTable("City")
-public class City extends ListableBase{
+public class City extends Base{
 	
-	@SQLField(isKey=true)
+	@SQLField(value="城市名称",weight=1,isKey=true,notNull=true)
 	private String name;
-	@SQLField(source="Province")
+	@SQLField(value="所属省份",weight=10,isKey=true,notNull=true,source="Province.name")
 	private String province;
 
 	public String getName(){return this.name;}
@@ -17,7 +15,9 @@ public class City extends ListableBase{
 	public String getProvince(){return this.province;}
 	public void setProvince(String province){this.province=province==null||province.isEmpty()?null:province;}
 	
-	public City() throws SQLException {
-		super();
+	
+	@Override
+	public String getDescription() {
+		return this.name;
 	}
 }

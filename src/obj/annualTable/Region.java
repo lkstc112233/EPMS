@@ -1,31 +1,28 @@
 package obj.annualTable;
 
-import java.lang.reflect.Field;
 import java.sql.*;
-import java.util.*;
 
-import obj.ListableBase.ListableBaseWithNoSave;
 import persistence.DB;
 import obj.*;
 
 @SQLTable("Region")
-public class Region extends AnnualBase implements ListableBaseWithNoSave{
+public class Region extends AnnualBase{
 	
-	@SQLField(value="大区名称",isKey=true,ps="大区名称不能重复")
+	@SQLField(value="大区名称",weight=1,isKey=true,notNull=true,ps="大区名称不能重复")
 	private String name;
-	@SQLField(value="实习基地",isKey=true,source="PracticeBase.name")
+	@SQLField(value="实习基地",weight=2,isKey=true,notNull=true,source="PracticeBase.name")
 	private String practiceBase;
-	@SQLField(value="总领队工号",source="InnerPerson.id")
+	@SQLField(value="总领队工号",weight=10,source="InnerPerson.id")
 	private String leaderId;
-	@SQLField(value="入校时间")
+	@SQLField(value="入校时间",weight=11)
 	private Timestamp enterPracticeBaseTime;
-	@SQLField(value="入校地点")
+	@SQLField(value="入校地点",weight=12)
 	private String enterPracticeBasePlace;
-	@SQLField(value="动员会时间")
+	@SQLField(value="动员会时间",weight=13)
 	private Timestamp mobilizationTime;
-	@SQLField(value="动员会地点")
+	@SQLField(value="动员会地点",weight=14)
 	private String mobilizationPlace;
-	@SQLField(value="备注",ps="文本储存")
+	@SQLField(value="备注",weight=15,ps="文本储存")
 	private String remark;
 
 
@@ -46,101 +43,48 @@ public class Region extends AnnualBase implements ListableBaseWithNoSave{
 	public String getRemark() {return remark;}
 	public void setRemark(String remark) {this.remark = remark;}
 
-
-	
-	public Region() throws SQLException {
-		super();
-	}
-	
-	
 	
 	
 	static public Region LoadOneRegionByName(String regionName) throws SQLException, IllegalArgumentException, IllegalAccessException{
-		List<Field> fs=Base.getFields(Region.class);
 		Region r=new Region();
 		r.setName(regionName);
 		StringBuilder sb=new StringBuilder();
 		sb.append("SELECT ");
 		boolean first=true;
-		for(Field f:fs){
+		for(Field f:Field.getFields(Region.class)){
 			if(first) first=false;
 			else sb.append(" , ");
 			sb.append(f.getName());
 		}
 		sb.append(" FROM ");
 		sb.append(Base.getSQLTableName(Region.class));
-		sb.append(" WHERE name = ?");
+		sb.append(" WHERE name = ? LIMIT 1");
 		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
 		pst.setObject(1,regionName);
 		ResultSet res=pst.executeQuery();
 		while(res.next()){
-			for(Field f:fs){
-				f.setAccessible(true);
-				Object o=res.getObject(f.getName());
-				f.set(r,o);
-			}
+			for(Field f:Field.getFields(Region.class))
+				f.set(r,res.getObject(f.getName()));
 			return r;
 		}
 		return null;
 	}
 	
 	
-	
-	
-	/**
-	 * 需要同时修改所有该大区内容
-	 */
-	@Override
-	public void update() throws IllegalArgumentException, IllegalAccessException, SQLException{
-		Class<? extends Base> clazz=this.getClass();
-		List<Field> fs=Base.getFields(clazz);
-		StringBuilder sb=new StringBuilder();
-		sb.append("UPDATE ");
-		sb.append(Base.getSQLTableName(clazz));
-		sb.append(" SET ");
-		boolean first=true;
-		for(Field f:fs){
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null || s.isKey()) continue;
-			if(f.getName().equals("practiceBase")) continue;
-			if(first) first=false;
-			else sb.append(" , ");
-			sb.append(f.getName());
-			sb.append(" = ?");
-		}
-		sb.append(" WHERE ");
-		sb.append("year = ? AND name = ?");
-		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
-		int parameterIndex=1;
-		for(Field f:fs){
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null || s.isKey()) continue;
-			f.setAccessible(true);
-			pst.setObject(parameterIndex++,f.get(this));
-		}
-		pst.setObject(parameterIndex++,this.getYear());
-		pst.setObject(parameterIndex++,this.getName());
-		int num=pst.executeUpdate();
-		System.out.println("+> Region:update > update "+num+" column!");
-	}
 	/**
 	 * 需要同时修改所有该大区内容（包括year）
 	 */
 	@Override
-	public void update(Base r) throws IllegalArgumentException, IllegalAccessException, SQLException{
-		if(r==null) return;
-		if(!r.getClass().equals(this.getClass()))
+	public void update(Base region) throws IllegalArgumentException, SQLException{
+		if(region==null) return;
+		if(!region.getClass().equals(this.getClass()))
 			throw new IllegalArgumentException("类型不同！");
-		Class<? extends Base> clazz=this.getClass();
-		List<Field> fs=Base.getFields(clazz);
 		StringBuilder sb=new StringBuilder();
 		sb.append("UPDATE ");
-		sb.append(Base.getSQLTableName(clazz));
+		sb.append(this.getSQLTableName());
 		sb.append(" SET ");
 		boolean first=true;
-		for(Field f:fs){
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null) continue;
+		for(Field f:this.getFields()){
 			if(f.getName().equals("practiceBase")) continue;
 			if(first) first=false;
 			else sb.append(" , ");
@@ -151,23 +95,26 @@ public class Region extends AnnualBase implements ListableBaseWithNoSave{
 		sb.append("year = ? AND name = ?");
 		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
 		int parameterIndex=1;
-		for(Field f:fs){
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null) continue;
+		for(Field f:this.getFields()){
 			if(f.getName().equals("practiceBase")) continue;
-			f.setAccessible(true);
-			Object o=f.get(r);
-			pst.setObject(parameterIndex++,o);
+			pst.setObject(parameterIndex++,f.get(region));
 		}
 		pst.setObject(parameterIndex++,this.getYear());
 		pst.setObject(parameterIndex++,this.getName());
 		int num=pst.executeUpdate();
 		System.out.println("+> Region:update(Base) > update "+num+" column!");
-		r.copyTo(this);
+		region.copyTo(this);
 	}
 	
 	
 	
+	
+	
+	
+	@Override
+	public String getDescription() {
+		return this.name;
+	}
 	
 
 	

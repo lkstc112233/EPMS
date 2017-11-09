@@ -1,15 +1,14 @@
 package obj.staticSource;
 
-import java.sql.SQLException;
 
 import obj.*;
 
 @SQLTable("Major")
-public class Major extends ListableBase{
+public class Major extends Base{
 	
-	@SQLField(isKey=true)
+	@SQLField(value="专业名称",weight=1,isKey=true,notNull=true)
 	private String name;
-	@SQLField(source="School.name")
+	@SQLField(value="所属学院",weight=10,isKey=true,notNull=true,source="School.name")
 	private String school;
 
 	public String getName(){return this.name;}
@@ -17,7 +16,8 @@ public class Major extends ListableBase{
 	public String getSchool(){return this.school;}
 	public void setSchool(String school){this.school=school==null||school.isEmpty()?null:school;}
 	
-	public Major() throws SQLException {
-		super();
+	@Override
+	public String getDescription() {
+		return this.getName();
 	}
 }
