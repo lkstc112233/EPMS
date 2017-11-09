@@ -3,7 +3,6 @@ package obj;
 import java.sql.*;
 import java.util.*;
 
-import obj.Base.JoinParam.Part;
 import persistence.DB;
 
 @SuppressWarnings("unchecked")
@@ -330,12 +329,12 @@ public abstract class Base {
 		List<T> res=(!Base.isListableWithNoSave(clazz)&&Base.MapList.containsKey(clazz))
 				? (List<T>) Base.MapList.get(clazz) : null;
 		if(res==null)
-			Base.MapList.put(clazz,res=Base.list(clazz,(Field[])null,(Object[])null,(Field[])null));
+			Base.MapList.put(clazz, res = Base.list(clazz,(Restraint)null) );
 		return res;
 	}
-	static public <T extends Base> List<T> list(Class<T> clazz,Field[] checkFields,Object[] checkFieldsValue,Field[] orderFields)
+	static public <T extends Base> List<T> list(Class<T> clazz,Restraint where)
 			throws IllegalArgumentException, InstantiationException, SQLException{
-		List<Base[]> tmp=Base.list(new JoinParam(clazz), checkFields, checkFieldsValue, orderFields);
+		List<Base[]> tmp=Base.list(new JoinParam(clazz),where);
 		List<T> res=new ArrayList<T>();
 		for(Base[] bs:tmp){
 			if(bs!=null && bs.length>=1 && bs[0]!=null
@@ -343,226 +342,37 @@ public abstract class Base {
 				res.add(clazz.cast(bs[0]));
 		}
 		return res;
-	}static public <T extends Base> List<T> list(Class<T> clazz,Field[] checkFields,Object[] checkFieldsValue,Field orderFields)
-			throws IllegalArgumentException, InstantiationException, SQLException{
-		return Base.list(clazz,checkFields,checkFieldsValue,new Field[]{orderFields});
-	}static public <T extends Base> List<T> list(Class<T> clazz,Field[] checkFields,Object[] checkFieldsValue)
-			throws IllegalArgumentException, InstantiationException, SQLException{
-		return Base.list(clazz,checkFields,checkFieldsValue,(Field[])null);
-	}static public <T extends Base> List<T> list(Class<T> clazz,Field checkFields,Object checkFieldsValue,Field[] orderFields)
-			throws IllegalArgumentException, InstantiationException, SQLException{
-		return Base.list(clazz,new Field[]{checkFields},new Object[]{checkFieldsValue},orderFields);
-	}static public <T extends Base> List<T> list(Class<T> clazz,Field checkFields,Object checkFieldsValue,Field orderFields)
-			throws IllegalArgumentException, InstantiationException, SQLException{
-		return Base.list(clazz,new Field[]{checkFields},new Object[]{checkFieldsValue},new Field[]{orderFields});
-	}static public <T extends Base> List<T> list(Class<T> clazz,Field checkFields,Object checkFieldsValue)
-			throws IllegalArgumentException, InstantiationException, SQLException{
-		return Base.list(clazz,new Field[]{checkFields},new Object[]{checkFieldsValue},(Field[])null);
-	}static public <T extends Base> List<T> list(Class<T> clazz,Field orderFields)
-			throws IllegalArgumentException, InstantiationException, SQLException{
-		return Base.list(clazz,(Field[])null,(Object[])null,new Field[]{orderFields});
 	}
 	
 	/**
-	 * 多表联合查询
-	 */
-	static public enum JoinType{
-		InnerJoin,LeftJoin,RightJoin;
-		@Override
-		public String toString(){
-			return this.name().replaceAll("Join"," Join").toUpperCase();
-		}
-	}
-	static public class JoinParam{
-		static public class Part{
-			private JoinType type;						public JoinType getType(){return type;}
-			private Class<? extends Base> clazz;		public Class<? extends Base> getClazz(){return clazz;}
-			private Set<Field> fields;					public Set<Field> getFields(){return fields;}
-			private Field[] lastOnFields;			public Field[] getLastOnFields(){return this.lastOnFields;}
-			private Field[] thisOnFields;			public Field[] getThisOnFields(){return this.thisOnFields;}
-			private Field[] onCheckFields;			public Field[] getOnCheckFields(){return this.onCheckFields;}
-			private Object[] onCheckFieldsValue;		public Object[] getOnCheckFieldsValue(){return this.onCheckFieldsValue;}
-			private Part(Class<? extends Base> c,Set<Field> fields){this(null,c,fields,null,null,null,null);}
-			public Part(JoinType jp,Class<? extends Base> c,Set<Field> fields,
-					Field[] lastOnFields,Field[] thisOnFields,
-					Field[] onCheckFields,Object[] onCheckFieldsValue){
-				this.type=jp;this.clazz=c;
-				this.lastOnFields=lastOnFields==null?new Field[0]:lastOnFields;
-				this.thisOnFields=thisOnFields==null?new Field[0]:thisOnFields;
-				this.onCheckFields=onCheckFields==null?new Field[0]:onCheckFields;
-				this.onCheckFieldsValue=onCheckFieldsValue==null?new Object[0]:onCheckFieldsValue;
-			}
-			public String toString(Class<? extends Base> lastClazz){
-				if(this.type==null || lastClazz==null)
-					return Base.getSQLTableName(this.clazz);
-				StringBuilder sb=new StringBuilder();
-				sb.append(this.type.toString());
-				sb.append(' ');
-				Class<? extends Base> c1=lastClazz;
-				Class<? extends Base> c2=this.clazz;
-				String c1table=Base.getSQLTableName(c1);
-				String c2table=Base.getSQLTableName(c2);
-				sb.append(c2table);
-				sb.append(" ON ( ");
-				boolean first=true;
-				for(int i=0;i<this.lastOnFields.length && i<this.thisOnFields.length;i++){
-					if(first) first=false;
-					else sb.append(" AND ");
-					sb.append(c1table);sb.append('.');sb.append(this.lastOnFields[i].getName());
-					sb.append(" = ");
-					sb.append(c2table);sb.append('.');sb.append(this.thisOnFields[i].getName());
-				}
-				for(Field f:this.onCheckFields){
-					if(first) first=false;
-					else sb.append(" AND ");
-					sb.append(c2table);sb.append('.');sb.append(f.getName());
-					sb.append(" LIKE ?");
-				}
-				sb.append(" )");
-				return sb.toString();
-			}
-		}
-		private List<Part> list=new ArrayList<Part>();	public List<Part> getList(){return list;}
-		
-		public JoinParam(Class<? extends Base> clazz){
-			this(clazz,Field.getFieldsSet(clazz));
-		}public JoinParam(Class<? extends Base> clazz,Set<Field> fields){
-			this.list.add(new Part(clazz,fields));
-		}
-		public Class<? extends Base> getClassByIndex(int index){
-			return this.list.get(index).getClazz();
-		}
-		public int size(){return this.list.size();}
-		
-		private JoinParam append(Part part){
-			if(part!=null) this.list.add(part);
-			return this;
-		}public JoinParam append(JoinType jp,Class<? extends Base> c,Set<Field> fields,
-				Field[] lastOnFields,Field[] thisOnFields,
-				Field[] onCheckFields,Object[] onCheckFieldsValue){
-			return this.append(new Part(
-					jp,c,fields,lastOnFields,thisOnFields,onCheckFields,onCheckFieldsValue));
-		}public JoinParam append(JoinType jp,Class<? extends Base> c,Set<Field> fields,
-				Field[] lastOnFields,Field[] thisOnFields,
-				Field onCheckFields,Object onCheckFieldsValue){
-			return this.append(new Part(
-					jp,c,fields,lastOnFields,thisOnFields,new Field[]{onCheckFields},new Object[]{onCheckFieldsValue}));
-		}public JoinParam append(JoinType jp,Class<? extends Base> c,Set<Field> fields,
-				Field[] lastOnFields,Field[] thisOnFields){
-			return this.append(new Part(
-					jp,c,fields,lastOnFields,thisOnFields,(Field[])null,(Object[])null));
-		}public JoinParam append(JoinType jp,Class<? extends Base> c,Set<Field> fields,
-				Field lastOnFields,Field thisOnFields,
-				Field[] onCheckFields,Object[] onCheckFieldsValue){
-			return this.append(new Part(
-					jp,c,fields,new Field[]{lastOnFields},new Field[]{thisOnFields},onCheckFields,onCheckFieldsValue));
-		}public JoinParam append(JoinType jp,Class<? extends Base> c,Set<Field> fields,
-				Field lastOnFields,Field thisOnFields,
-				Field onCheckFields,Object onCheckFieldsValue){
-			return this.append(new Part(
-					jp,c,fields,new Field[]{lastOnFields},new Field[]{thisOnFields},new Field[]{onCheckFields},new Object[]{onCheckFieldsValue}));
-		}public JoinParam append(JoinType jp,Class<? extends Base> c,Set<Field> fields,
-				Field lastOnFields,Field thisOnFields){
-			return this.append(new Part(
-					jp,c,fields,new Field[]{lastOnFields},new Field[]{thisOnFields},(Field[])null,(Object[])null));
-		}public JoinParam append(JoinType jp,Class<? extends Base> c,Set<Field> fields){
-			return this.append(new Part(
-					jp,c,fields,(Field[])null,(Field[])null,(Field[])null,(Object[])null));
-		}/*无fields*/
-		public JoinParam append(JoinType jp,Class<? extends Base> c,
-				Field[] lastOnFields,Field[] thisOnFields,
-				Field[] onCheckFields,Object[] onCheckFieldsValue){
-			return this.append(new Part(
-					jp,c,Field.getFieldsSet(c),lastOnFields,thisOnFields,onCheckFields,onCheckFieldsValue));
-		}public JoinParam append(JoinType jp,Class<? extends Base> c,
-				Field[] lastOnFields,Field[] thisOnFields,
-				Field onCheckFields,Object onCheckFieldsValue){
-			return this.append(new Part(
-					jp,c,Field.getFieldsSet(c),lastOnFields,thisOnFields,new Field[]{onCheckFields},new Object[]{onCheckFieldsValue}));
-		}public JoinParam append(JoinType jp,Class<? extends Base> c,
-				Field[] lastOnFields,Field[] thisOnFields){
-			return this.append(new Part(
-					jp,c,Field.getFieldsSet(c),lastOnFields,thisOnFields,null,null));
-		}public JoinParam append(JoinType jp,Class<? extends Base> c,
-				Field lastOnFields,Field thisOnFields,
-				Field[] onCheckFields,Object[] onCheckFieldsValue){
-			return this.append(new Part(
-					jp,c,Field.getFieldsSet(c),new Field[]{lastOnFields},new Field[]{thisOnFields},onCheckFields,onCheckFieldsValue));
-		}public JoinParam append(JoinType jp,Class<? extends Base> c,
-				Field lastOnFields,Field thisOnFields,
-				Field onCheckFields,Object onCheckFieldsValue){
-			return this.append(new Part(
-					jp,c,Field.getFieldsSet(c),new Field[]{lastOnFields},new Field[]{thisOnFields},new Field[]{onCheckFields},new Object[]{onCheckFieldsValue}));
-		}public JoinParam append(JoinType jp,Class<? extends Base> c,
-				Field lastOnFields,Field thisOnFields){
-			return this.append(new Part(
-					jp,c,Field.getFieldsSet(c),new Field[]{lastOnFields},new Field[]{thisOnFields},null,null));
-		}public JoinParam append(JoinType jp,Class<? extends Base> c){
-			return this.append(new Part(
-					jp,c,Field.getFieldsSet(c),null,null,null,null));
-		}
-		
-		@Override
-		public String toString(){
-			StringBuilder sb=new StringBuilder();
-			Class<? extends Base> lastClazz=null;
-			for(Part p:this.list){
-				sb.append(' ');
-				sb.append(p.toString(lastClazz));
-				lastClazz=p.getClazz();
-			}
-			return sb.toString();
-		}
-		static private String ListDelimiter="__LD__";
-	}
-	/**
 	 * 根据JoinParam进行联合查询
 	 */
-	static public List<Base[]> list(JoinParam param,Field[] checkFields,Object[] checkFieldsValue,Field[] orderFields)
+	static public List<Base[]> list(JoinParam param,Restraint restraint)
 			throws IllegalArgumentException,SQLException, InstantiationException{
 		StringBuilder sb=new StringBuilder();
 		sb.append("SELECT ");
 		boolean first=true;
-		for(Part p:param.getList()){
-			String ct=Base.getSQLTableName(p.getClazz());
-			for(Field f:p.fields){
+		for(JoinParam.Part p:param.getList()){
+			for(Field f:p.getFields()){
 				if(first) first=false;
-				else sb.append(",");
-				sb.append(ct);sb.append(".");sb.append(f.getName());
+				else sb.append(" , ");
+				sb.append(f.toString());
 				sb.append(" AS ");
-				sb.append(ct);sb.append(JoinParam.ListDelimiter);sb.append(f.getName());
+				sb.append(JoinParam.ListFieldPrefix);sb.append(f.toString());
 			}
 		}
 		if(first) throw new IllegalArgumentException("There is NO field in SELECT Field!");
 		sb.append(" FROM ");
 		sb.append(param.toString());//===
-		int checkLength=-1;
-		if(checkFields!=null && checkFieldsValue!=null && checkFields.length>0 && checkFieldsValue.length>0
-				&& checkFields[0]!=null && checkFieldsValue[0]!=null){
-			sb.append(" WHERE ");
-			checkLength=Math.min(checkFields.length,checkFieldsValue.length);
-			for(int i=0;i<checkLength;i++){
-				if(i!=0) sb.append(" AND ");
-				sb.append(checkFields[i].getName());
-				sb.append(" LIKE ?");
-			}
-		}
-		if(orderFields!=null && orderFields.length>0 && orderFields[0]!=null){
-			sb.append(" ORDER BY ");
-			first=true;
-			for(Field f:orderFields){
-				if(first) first=false;
-				else sb.append(",");
-				sb.append(f.toString());
-			}
-		}
+		if(restraint!=null)
+			sb.append(restraint.getSQLString());
 		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
 		int parameterIndex=1;
-		for(Part part:param.getList())
+		for(JoinParam.Part part:param.getList())
 			for(Object o:part.getOnCheckFieldsValue())
 				pst.setObject(parameterIndex++,o);
-		for(int i=0;i<checkLength;i++)
-			pst.setObject(parameterIndex++,checkFieldsValue[i]);
+		for(Restraint.Part part:restraint.getWhere())
+			pst.setObject(parameterIndex++,part.getValue());
 		ResultSet rs=pst.executeQuery();
 		List<Base[]> res=new ArrayList<Base[]>();
 		int len=param.size();
@@ -570,7 +380,6 @@ public abstract class Base {
 			Base[] x=new Base[len];
 			for(int i=0;i<len;i++){
 				Class<? extends Base> c=param.getClassByIndex(i);
-				String ct=Base.getSQLTableName(c);
 				try{
 					x[i]=c.newInstance();
 				} catch (IllegalAccessException e) {
@@ -578,7 +387,7 @@ public abstract class Base {
 				}
 				boolean flag=true;
 				for(Field f:Field.getFields(c)){
-					String columnName=ct+JoinParam.ListDelimiter+f.getName();
+					String columnName=JoinParam.ListFieldPrefix+f.toString();
 					Object o=null;
 					try{o=rs.getObject(columnName);}catch(SQLException e){}
 					if(flag && o!=null) flag=false;
@@ -597,54 +406,9 @@ public abstract class Base {
 			res.add(x);
 		}
 		return res;
-	}/**
-	 * 根据JoinParam进行联合查询
-	 */
-	static public List<Base[]> list(JoinParam param,Field[] checkFields,Object[] checkFieldsValue,Field orderFields)
+	}static public List<Base[]> list(JoinParam param)
 			throws IllegalArgumentException,SQLException, InstantiationException{
-		return Base.list(param, checkFields, checkFieldsValue, new Field[]{orderFields});
-	}/**
-	 * 根据JoinParam进行联合查询
-	 */
-	static public List<Base[]> list(JoinParam param,Field[] checkFields,Object[] checkFieldsValue)
-			throws IllegalArgumentException,SQLException, InstantiationException{
-		return Base.list(param, checkFields, checkFieldsValue,(Field[])null);
-	}/**
-	 * 根据JoinParam进行联合查询
-	 */
-	static public List<Base[]> list(JoinParam param,Field checkFields,Object checkFieldsValue,Field[] orderFields)
-			throws IllegalArgumentException,SQLException, InstantiationException{
-		return Base.list(param, new Field[]{checkFields}, new Object[]{checkFieldsValue}, orderFields);
-	}/**
-	 * 根据JoinParam进行联合查询
-	 */
-	static public List<Base[]> list(JoinParam param,Field checkFields,Object checkFieldsValue,Field orderFields)
-			throws IllegalArgumentException,SQLException, InstantiationException{
-		return Base.list(param, new Field[]{checkFields}, new Object[]{checkFieldsValue},new Field[]{orderFields});
-	}/**
-	 * 根据JoinParam进行联合查询
-	 */
-	static public List<Base[]> list(JoinParam param,Field checkFields,Object checkFieldsValue)
-			throws IllegalArgumentException,SQLException, InstantiationException{
-		return Base.list(param,new Field[]{checkFields},new Object[]{checkFieldsValue},(Field[])null);
-	}/**
-	 * 根据JoinParam进行联合查询
-	 */
-	static public List<Base[]> list(JoinParam param,Field[] orderFields)
-			throws IllegalArgumentException,SQLException, InstantiationException{
-		return Base.list(param,(Field[])null,(Object[])null,orderFields);
-	}/**
-	 * 根据JoinParam进行联合查询
-	 */
-	static public List<Base[]> list(JoinParam param,Field orderFields)
-			throws IllegalArgumentException,SQLException, InstantiationException{
-		return Base.list(param,(Field[])null,(Object[])null,new Field[]{orderFields});
-	}/**
-	 * 根据JoinParam进行联合查询
-	 */
-	static public List<Base[]> list(JoinParam param)
-			throws IllegalArgumentException,SQLException, InstantiationException{
-		return Base.list(param,(Field[])null,(Object[])null,(Field[])null);
+		return Base.list(param,(Restraint)null);
 	}
 	
 	

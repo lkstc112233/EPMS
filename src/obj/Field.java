@@ -14,6 +14,9 @@ public class Field implements Comparable<Field>{
 	public String toString(){
 		return Base.getSQLTableName(this.getClazz())+"."+this.getName();
 	}
+	public String getSQLField(){
+		return Base.getSQLTableName(this.getClazz())+"."+this.getName();
+	}
 	
 	protected Field(Class<? extends Base> clazz,java.lang.reflect.Field field){
 		this.clazz=clazz;
@@ -108,20 +111,14 @@ public class Field implements Comparable<Field>{
 	
 
 	/**
-	 * 获取该类所有Field的对应列表
+	 * 获取该Field的source对应列表
 	 */
-	static protected List<List<? extends Base>> getAllFieldsSourceListDescription(Class<? extends Base> clazz){
-		List<List<? extends Base>> res=new ArrayList<List<? extends Base>>();
-		for(Field f:Field.getFields(clazz)){
-			List<? extends Base> tmp=null;
-			try{
-				tmp=Base.list(f.source().getClazz());
-			}catch (IllegalArgumentException | InstantiationException | SQLException e){
-				e.printStackTrace();
-			}
-			res.add(tmp);
-		}
-		return res;
+	public List<? extends Base> getSourceList(Class<? extends Base> clazz){
+		try{
+			return Base.list(this.source().getClazz());
+		}catch (IllegalArgumentException | InstantiationException | SQLException e){
+			e.printStackTrace();
+		}return null;
 	}
 	
 	
