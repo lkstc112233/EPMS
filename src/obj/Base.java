@@ -1,13 +1,24 @@
 package obj;
 
-import java.lang.reflect.*;
 import java.sql.*;
 import java.util.*;
 
+import obj.Base.JoinParam.Part;
 import persistence.DB;
 
 @SuppressWarnings("unchecked")
 public abstract class Base {
+	protected Base(){
+		
+	}
+	/**
+	 * 用于select描述信息
+	 */
+	public abstract String getDescription();
+	
+	//=============================================================
+	//SQL表名
+	//=============================================================
 	static public final String TableNames[]={
 			"ACCESS","InnerOffice","Major","OuterOffice","Province","School","ZZMM",
 			"PracticeBase",
@@ -15,8 +26,7 @@ public abstract class Base {
 	};
 	static public final String packageNames[]={"staticSource","staticObject","annualTable"};
 	static public Class<? extends Base> getClassForName(String name){
-		if(name==null||name.length()<=0)
-			return null;
+		if(name==null||name.isEmpty()) return null;
 		for(String p:packageNames){
 			try {
 				Class<?> tmp=Class.forName("obj."+p+"."+name);
@@ -27,112 +37,6 @@ public abstract class Base {
 		}
 		return null;
 	}
-	
-	static private Map<Class<? extends Base>,String> SQL_table=new HashMap<Class<? extends Base>,String>();
-	static private Map<Class<? extends Base>,PreparedStatement> SQL_load=new HashMap<Class<? extends Base>,PreparedStatement>();
-	static private Map<Class<? extends Base>,PreparedStatement> SQL_update=new HashMap<Class<? extends Base>,PreparedStatement>();
-	static private Map<Class<? extends Base>,PreparedStatement> SQL_delete=new HashMap<Class<? extends Base>,PreparedStatement>();
-	static private Map<Class<? extends Base>,PreparedStatement> SQL_insert=new HashMap<Class<? extends Base>,PreparedStatement>();
-	
-	private final String sql_table;				public String getSQLTabelName(){return this.sql_table;}
-	private final PreparedStatement sql_load;
-	private final PreparedStatement sql_update;
-	private final PreparedStatement sql_delete;
-	private final PreparedStatement sql_insert;
-	
-	protected Base() throws SQLException{
-		Class<? extends Base> clazz=this.getClass();
-		String _sql_table=SQL_table.get(clazz);
-		PreparedStatement _sql_load=SQL_load.get(clazz);
-		PreparedStatement _sql_update=SQL_update.get(clazz);
-		PreparedStatement _sql_delete=SQL_delete.get(clazz);
-		PreparedStatement _sql_insert=SQL_insert.get(clazz);
-		if(_sql_table==null ||
-				_sql_load==null ||
-				_sql_update==null ||
-				_sql_delete==null ||
-				_sql_insert==null){
-			Base.initialize(clazz);
-			_sql_table=SQL_table.get(clazz);
-			_sql_load=SQL_load.get(clazz);
-			_sql_update=SQL_update.get(clazz);
-			_sql_delete=SQL_delete.get(clazz);
-			_sql_insert=SQL_insert.get(clazz);
-		}
-		this.sql_table=_sql_table;
-		this.sql_load=_sql_load;
-		this.sql_update=_sql_update;
-		this.sql_delete=_sql_delete;
-		this.sql_insert=_sql_insert;
-	}
-	
-	//初始化相关SQL语句，包括增删改查，以及SQL表名
-	static private void initialize(Class<? extends Base> clazz) throws SQLException{
-		if(SQL_table.containsKey(clazz) &&
-				SQL_load.containsKey(clazz) &&
-				SQL_update.containsKey(clazz) &&
-				SQL_delete.containsKey(clazz) &&
-				SQL_insert.containsKey(clazz))
-			return;
-		String sql_table=Base.getSQLTableName(clazz);
-		PreparedStatement sql_load;
-		PreparedStatement sql_update;
-		PreparedStatement sql_delete;
-		PreparedStatement sql_insert;
-		StringBuilder load_select=new StringBuilder();
-		StringBuilder update_set=new StringBuilder();
-		StringBuilder sql_where=new StringBuilder();
-		StringBuilder insert=new StringBuilder();
-		StringBuilder insert_values=new StringBuilder();
-		for(Field f:Base.getFields(clazz)){
-			f.setAccessible(true);
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(s.isKey()){
-				if(sql_where.length()>0)
-					sql_where.append(" AND ");
-				sql_where.append(f.getName());
-				sql_where.append(" = ? ");
-			}
-			if(load_select.length()>0)
-				load_select.append(',');
-			load_select.append(f.getName());
-			if(update_set.length()>0)
-				update_set.append(',');
-			update_set.append(f.getName());
-			update_set.append(" = ? ");
-			if(insert.length()>0)
-				insert.append(',');
-			insert.append(f.getName());
-			if(insert_values.length()>0)
-				insert_values.append(',');
-			insert_values.append('?');
-		}
-		sql_load=DB.con().prepareStatement(
-				"SELECT "+load_select.toString()
-				+" FROM "+sql_table
-				+" WHERE "+sql_where.toString());
-		sql_update=DB.con().prepareStatement(
-				"UPDATE "+sql_table
-				+" SET "+update_set.toString()
-				+" WHERE "+sql_where.toString());
-		sql_delete=DB.con().prepareStatement(
-				"DELETE FROM "+sql_table
-				+" WHERE "+sql_where.toString());
-		sql_insert=DB.con().prepareStatement(
-				"INSERT INTO  "+sql_table
-				+" ("+insert.toString()
-				+") VALUES ("+insert_values.toString()
-				+")");
-		SQL_table.put(clazz,sql_table);
-		SQL_load.put(clazz,sql_load);
-		SQL_update.put(clazz,sql_update);
-		SQL_delete.put(clazz,sql_delete);
-		SQL_insert.put(clazz,sql_insert);
-	}
-	
-
-	//=============================================================
-	//SQL表名
 	static public String getSQLTableName(Class<? extends Base> clazz){
 		return clazz.getAnnotation(SQLTable.class).value();
 	}
@@ -142,94 +46,76 @@ public abstract class Base {
 
 	//=============================================================
 	//关于Field
-	static public List<Field> getFields(Class<? extends Base> clazz){
-		List<Field> res=new ArrayList<Field>();
-		try{
-			res.add(Base.getField(clazz,"year"));
-		}catch(NoSuchFieldException e){}
-		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(Field f:c.getDeclaredFields()){
-			if(!res.isEmpty() && f.equals(res.get(0))) continue;
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null) continue;
-			res.add(f);
-		}
-		return res;
+	//=============================================================
+	public Field[] getFields(){
+		return Field.getFields(this.getClass());
 	}
-	public List<Field> getFields(){
-		return Base.getFields(this.getClass());
+	/**
+	 * 该性能比Field.getField(Class,String)要差，慎用。
+	 */
+	static public Field getField(Class<? extends Base> clazz,String fieldName){
+	/*	Class<? extends Base> clazz=Base.getClassForName(new Object(){public String getClassName(){
+			String s=this.getClass().getName();
+			return s.substring(0,s.lastIndexOf('$'));
+		}}.getClassName());*/
+		return Field.getField(clazz,fieldName);
 	}
-	static public Field getField(Class<? extends Base> clazz,String fieldName) throws NoSuchFieldException{
-		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()){
-			try{
-				return c.getDeclaredField(fieldName);
-			}catch(NoSuchFieldException|SecurityException e){
-			}
-		}
-		throw new NoSuchFieldException(fieldName);
-	}
-	public final Field getField(String fieldName) throws NoSuchFieldException{
+	public Field getField(String fieldName){
 		return Base.getField(this.getClass(),fieldName);
 	}
-	public final void setFieldValueBySetter(Field f,Object o) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
-		String tmp=f.getName();
-		tmp="set"+tmp.substring(0,1).toUpperCase()+tmp.substring(1);
-		Method m=this.getClass().getMethod(tmp,o==null?Object.class:o.getClass());
-		m.setAccessible(true);
-		m.invoke(this,o);
+	
+	public final Object[] getFieldsValue(){
+		Field[] fs=this.getFields();
+		Object[] res=new Object[fs.length];
+		for(int i=0;i<fs.length;i++) res[i]=fs[i].get(this);
+		return res;
 	}
-
-	static public String getFieldDescription(Field f){
-		if(f==null) return null;
-		SQLField s=f.getAnnotation(SQLField.class);
-		return s==null?"":s.value();
+	/**
+	 * 检查this是不是有key的Field为空
+	 */
+	public boolean checkKeyField(){
+		for(Field f:this.getFields()) if(f.isKey())
+			if(Field.nullValue(f.get(this)))
+				return false;
+		return true;
 	}
-	static public String getFieldPs(Field f){
-		if(f==null) return null;
-		SQLField s=f.getAnnotation(SQLField.class);
-		return s==null?"":s.ps();
+	/**
+	 * 检查this是不是有notNull的Field为空
+	 */
+	public boolean checkNotNullField(){
+		for(Field f:this.getFields()) if(f.notNull())
+			if(Field.nullValue(f.get(this)))
+				return false;
+		return true;
 	}
 	
 	/**
 	 * 把this的所有SQLField的值导入b中
 	 * @param b 
 	 */
-	public void copyTo(Base b) throws IllegalArgumentException, IllegalAccessException{
-		if(b==null) return;
-		Class<? extends Base> bc=b.getClass();
-		for(Field f:this.getFields()){
-			f.setAccessible(true);
-			Object o=f.get(this);
-			try {
-				Field fb=Base.getField(bc,f.getName());
-				fb.setAccessible(true);
-				fb.set(b,o);
-			} catch (NoSuchFieldException e) {
-			}
+	public void copyTo(Base b){
+		if(b==null || this==b) return;
+		for(Field f:this.getFields()) try{
+			b.getField(f.getName())
+				.set(b,f.get(this));
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
 		}
-		
 	}
-	
+	//=============================================================
+	//覆盖方法
 	@Override
 	public String toString(){
-	//	Class<? extends Base> clazz=this.getClass();
-		String sql_table=this.sql_table;
 		StringBuilder sb=new StringBuilder();
 		sb.append('[');
-	//	sb.append(clazz.getSimpleName());
-	//	sb.append('(');
-		sb.append(sql_table);
-	//	sb.append(')');
+		sb.append(this.getSQLTableName());
 		for(Field f:this.getFields()){
-			SQLField s=f.getAnnotation(SQLField.class);
-			f.setAccessible(true);
 			sb.append(',');
-			if(s.isKey()) sb.append('*');
+			if(f.isKey()) sb.append('*');
 			sb.append(f.getName());
 			sb.append('(');
-			try {
-				sb.append(f.get(this));
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
+			try{sb.append(f.get(this));
+			}catch (IllegalArgumentException e){
 				sb.append("?");
 			}
 			sb.append(')');
@@ -237,155 +123,107 @@ public abstract class Base {
 		sb.append(']');
 		return sb.toString();
 	}
-	public String getSimpleToString(){
-		Class<? extends Base> clazz=this.getClass();
-		String s1,s2;
-		try {
-			Field f1=Base.getField(clazz,"name");
-			f1.setAccessible(true);
-			s1=String.valueOf(f1.get(this));
-		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
-			return null;
-		}
-		try {
-			Field f2=Base.getField(clazz,"id");
-			f2.setAccessible(true);
-			s2=String.valueOf(f2.get(this));
-		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
-			return s1;
-		}
-		return s1+"("+s2+")";
-	}
 	@Override
 	public boolean equals(Object o){
 		if(o==null) return false;
-		if(o instanceof Base){
-			Base b=(Base)o;
-			if(!this.getClass().equals(b.getClass()))
-				return false;
-			for(Field f:Base.getFields(b.getClass())){
-				f.setAccessible(true);
-				Object ff=null,bb=null;;
-				try{
-					ff=f.get(this);
-					bb=f.get(b);
-				}catch (IllegalArgumentException | IllegalAccessException e) {
-					e.printStackTrace();
-					return false;
-				}
-				if((ff==null&&bb!=null)
-						||(ff!=null&&!ff.equals(bb)))
+		if(!(o instanceof Base)) return false;
+		Base b=(Base)o;
+		if(!this.getClass().equals(b.getClass())) return false;
+		for(Field f:b.getFields()){
+			Object ff=null,bb=null;
+			try{
+				ff=f.get(this);
+				bb=f.get(b);
+			}catch (IllegalArgumentException e) {
 				return false;
 			}
+			if((ff==null && bb!=null)
+					||(ff!=null && !ff.equals(bb)))
+				return false;
 		}
-		return false;
+		return true;
 	}
 
-	static public List<String> getAllFieldsNameString(Class<? extends Base> clazz){
-		List<String> res=new ArrayList<String>();
-		for(Field f:Base.getFields(clazz))
-			res.add(f.getName());
-		return res;
-	}
-	public List<String> getAllFieldsValueString(){
-		List<String> res=new ArrayList<String>();
-		for(Field f:this.getFields()){
-			f.setAccessible(true);
-			Object tmp=null;
-			try {
-				tmp=f.get(this);
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
-			}
-			res.add(tmp==null?null:String.valueOf(tmp));
-		}
-		return res;
-	}
-	static public List<String> getAllFieldsDescriptionString(Class<? extends Base> clazz){
-		List<String> res=new ArrayList<String>();
-		for(Field f:Base.getFields(clazz))
-			res.add(f.getAnnotation(SQLField.class).value());
-		return res;
-	}
-	static public List<String> getAllFieldsPsString(Class<? extends Base> clazz){
-		List<String> res=new ArrayList<String>();
-		for(Field f:Base.getFields(clazz))
-			res.add(f.getAnnotation(SQLField.class).ps());
-		return res;
-	}
-	static public List<Boolean> getAllFieldsKeyBoolean(Class<? extends Base> clazz){
-		List<Boolean> res=new ArrayList<Boolean>();
-		for(Field f:Base.getFields(clazz))
-			res.add(f.getAnnotation(SQLField.class).isKey());
-		return res;
-	}
+
 	
-	public boolean checkKeyNull() throws IllegalArgumentException, IllegalAccessException{
-		for(Field f:this.getFields()){
-			SQLField s=f.getAnnotation(SQLField.class);
-			f.setAccessible(true);
-			if(s.isKey()){
-				if(f.get(this)==null)
-					return true;
-			}
-		}
-		return false;
-	}
 	
 	//=============================================================
-	//增删改查
+	// 清除、存在
+	// 增删改查
 	//=============================================================
 	public void clear(){
-		for(Field f:this.getFields()){
-			f.setAccessible(true);
-			try {
-				f.set(this,null);
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-			}
-		}
+		for(Field f:this.getFields())try{
+			f.set(this,null);
+		} catch (IllegalArgumentException e) {}
 	}
-	public int load() throws SQLException, IllegalArgumentException, IllegalAccessException{
+	
+	public boolean existAndLoad() throws IllegalArgumentException, SQLException{
+		return this.load(true)>0;
+	}
+	public boolean exist() throws InstantiationException, IllegalArgumentException, SQLException, IllegalAccessException{
+		Base b=this.getClass().newInstance();
+		this.copyTo(b);
+		return b.load(false)>0;
+	}
+	public int load() throws SQLException, IllegalArgumentException{
 		return this.load(true);
 	}
-	public int load(boolean setFields) throws SQLException, IllegalArgumentException, IllegalAccessException{
-		if(this.checkKeyNull())
+	public int load(boolean setFields) throws SQLException, IllegalArgumentException{
+		if(this.checkKeyField())
 			throw new IllegalArgumentException("The key fields are not completed!");
-		int SQLParameterIndex=1;
+		StringBuilder sb=new StringBuilder();
+		sb.append("SELECT ");
+		boolean first=true;
 		for(Field f:this.getFields()){
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null) continue;
-			f.setAccessible(true);
-			if(s.isKey())
-				this.sql_load.setObject(SQLParameterIndex++,f.get(this));
+			if(first) first=false;
+			else sb.append(" , ");
+			sb.append(f.getName());
 		}
-		ResultSet rs=sql_load.executeQuery();
+		sb.append(" FROM ");
+		sb.append(this.getSQLTableName());
+		sb.append(" WHERE ");
+		first=true;
+		for(Field f:this.getFields()) if(f.isKey()){
+			if(first) first=false;
+			else sb.append(" AND ");
+			sb.append(f.getName());
+			sb.append(" = ?");
+		}
+		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
+		int SQLParameterIndex=1;
+		for(Field f:this.getFields()) if(f.isKey())
+			pst.setObject(SQLParameterIndex++,f.get(this));
+		ResultSet rs=pst.executeQuery();
 		rs.last();
 		int num=rs.getRow();
-		if(num!=1)
-			System.err.println("查询到"+num+"重值！("+this.sql_load.toString()+")");
+		System.err.println("更新了"+num+"重值！("+pst.toString()+")");
 		rs.first();
 		if(num>0 && setFields){
-			for(Field f:this.getFields()){
-				SQLField s=f.getAnnotation(SQLField.class);
-				if(s==null) continue;
-				f.setAccessible(true);
-				if(!s.isKey())
-					f.set(this,rs.getObject(f.getName()));
-			}
+			for(Field f:this.getFields()) if(!f.isKey())
+				f.set(this,rs.getObject(f.getName()));
 		}
 		return num;
 	}
-	public void update()throws SQLException, IllegalArgumentException, IllegalAccessException{
-	//	Class<? extends Base> clazz=this.getClass();
+	
+	public void update()throws SQLException, IllegalArgumentException{
+		this.update(this);
+	}
+	/**
+	 * 把b的值更新到当前上
+	 * @param b
+	 */
+	public void update(Base base)throws SQLException, IllegalArgumentException{
+		if(base==null) return;
+		if(!base.getClass().equals(this.getClass()))
+			throw new IllegalArgumentException("类型不同！");
+		if(this.checkKeyField())
+			throw new IllegalArgumentException("The key fields are not completed!");
 		StringBuilder sb=new StringBuilder();
 		sb.append("UPDATE ");
 		sb.append(this.getSQLTableName());
 		sb.append(" SET ");
-		List<Field> fs=this.getFields();
 		boolean first=true;
-		for(Field f:fs){
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null || s.isKey()) continue;
+		for(Field f:this.getFields()){
 			if(first) first=false;
 			else sb.append(" , ");
 			sb.append(f.getName());
@@ -393,9 +231,7 @@ public abstract class Base {
 		}
 		sb.append(" WHERE ");
 		first=true;
-		for(Field f:fs){
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null || !s.isKey()) continue;
+		for(Field f:this.getFields()) if(f.isKey()){
 			if(first) first=false;
 			else sb.append(" AND ");
 			sb.append(f.getName());
@@ -403,137 +239,414 @@ public abstract class Base {
 		}
 		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
 		int parameterIndex=1;
-		for(Field f:fs){
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null || s.isKey()) continue;
-			f.setAccessible(true);
+		for(Field f:this.getFields())
+			pst.setObject(parameterIndex++,f.get(base));
+		for(Field f:this.getFields()) if(f.isKey())
 			pst.setObject(parameterIndex++,f.get(this));
-		}
-		for(Field f:fs){
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null || !s.isKey()) continue;
-			f.setAccessible(true);
-			pst.setObject(parameterIndex++,f.get(this));
-		}
 		int num=pst.executeUpdate();
-		if(num!=1)
-			System.err.println("更新了"+num+"重值！("+this.sql_update.toString()+")");
-	}
-/*	public void update(Field[] updateFields)throws SQLException, IllegalArgumentException, IllegalAccessException{
-		Class<? extends Base> clazz=this.getClass();
-		StringBuilder sql_set=new StringBuilder();
-		StringBuilder sql_where=new StringBuilder();
-		for(Field f:updateFields){
-			try {
-				if(f==null || this.getField(f.getName())==null)
-					continue;
-			} catch (NoSuchFieldException e) {
-				continue;
-			}
-			f.setAccessible(true);
-			if(sql_set.length()>0)
-				sql_set.append(',');
-			sql_set.append(f.getName());
-			sql_set.append(" = ?");
-		}
-		for(Field f:this.getFields()){
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null) continue;
-			f.setAccessible(true);
-			if(s.isKey()){
-				if(sql_where.length()>0)
-					sql_where.append(" AND ");
-				sql_where.append(f.getName());
-				sql_where.append(" = ? ");
-			}
-		}
-		PreparedStatement sqlps=DB.con().prepareStatement(
-				"UPDATE "+this.getSQLTabelName()
-				+" SET "+sql_set.toString()
-				+" WHERE "+sql_where.toString());
-		int SQLParameterIndex=1;
-		for(Field f:updateFields){
-			if(f==null || f.getDeclaringClass()!=clazz)
-				continue;
-			SQLField s=f.getAnnotation(SQLField.class);
-			if(s==null) continue;
-			f.setAccessible(true);
-			Object o=f.get(this);
-			o=(o==null||o.toString().isEmpty())?null:o;
-			sqlps.setObject(SQLParameterIndex++,o);
-		}
-		for(Field f:this.getFields()){
-			SQLField s=f.getAnnotation(SQLField.class);
-			f.setAccessible(true);
-			if(s.isKey())
-				sqlps.setObject(SQLParameterIndex++,f.get(this));
-		}
-		int num=sqlps.executeUpdate();
-		if(num!=1)
-			System.err.println("更新了"+num+"重值！("+sqlps.toString()+")");
-	}*/
-	/**
-	 * 把b的值更新到当前上
-	 * @param b
-	 */
-	public void update(Base b)throws SQLException, IllegalArgumentException, IllegalAccessException{
-		if(b==null) return;
-		if(!b.getClass().equals(this.getClass()))
-			throw new IllegalArgumentException("类型不同！");
-		int SQLParameterIndex=1;
-		for(Field f:b.getFields()){
-			f.setAccessible(true);
-			Object o=f.get(b);
-			o=(o==null||o.toString().isEmpty())?null:o;
-			this.sql_update.setObject(SQLParameterIndex++,o);
-		}
-		for(Field f:this.getFields()){
-			SQLField s=f.getAnnotation(SQLField.class);
-			f.setAccessible(true);
-			if(s.isKey())
-				this.sql_update.setObject(SQLParameterIndex++,f.get(this));
-		}
-		int num=this.sql_update.executeUpdate();
-		if(num!=1)
-			System.err.println("更新了"+num+"重值！("+this.sql_update.toString()+")");
-		b.copyTo(this);
+		System.err.println("更新了"+num+"重值！("+pst.toString()+")");
+		base.copyTo(this);
+		Base.MapList.remove(this.getClass());
 	}
 	
-	public void delete() throws IllegalArgumentException, IllegalAccessException, SQLException{
-		if(this.checkKeyNull())
+	public void delete() throws IllegalArgumentException, SQLException{
+		if(this.checkKeyField())
 			throw new IllegalArgumentException("The key fields are not completed!");
-		int SQLParameterIndex=1;
-		for(Field f:this.getFields()){
-			SQLField s=f.getAnnotation(SQLField.class);
-			f.setAccessible(true);
-			if(s.isKey())
-				this.sql_delete.setObject(SQLParameterIndex++,f.get(this));
+		StringBuilder sb=new StringBuilder();
+		sb.append("DELETE FROM ");
+		sb.append(this.getSQLTableName());
+		sb.append(" WHERE ");
+		boolean first=true;
+		for(Field f:this.getFields()) if(f.isKey()){
+			if(first) first=false;
+			else sb.append(" AND ");
+			sb.append(f.getName());
+			sb.append(" = ?");
 		}
-		int num=sql_delete.executeUpdate();
-		if(num!=1)
-			System.err.println("删除了"+num+"重值！("+sql_delete.toString()+")");
+		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
+		int SQLParameterIndex=1;
+		for(Field f:this.getFields()) if(f.isKey())
+			pst.setObject(SQLParameterIndex++,f.get(this));
+		int num=pst.executeUpdate();
+		System.err.println("删除了"+num+"重值！("+pst.toString()+")");
+		Base.MapList.remove(this.getClass());
 	}
+	
 	public void create()throws SQLException, IllegalArgumentException, IllegalAccessException{
-		int SQLParameterIndex=1;
+		if(this.checkNotNullField())
+			throw new IllegalArgumentException("The notNull fields are not completed!");
+		StringBuilder sb=new StringBuilder();
+		sb.append("INSERT INTO ");
+		sb.append(this.getSQLTableName());
+		boolean first=true;
 		for(Field f:this.getFields()){
-			f.setAccessible(true);;
-			Object o=f.get(this);
-			o=(o==null||o.toString().isEmpty())?null:o;
-			this.sql_insert.setObject(SQLParameterIndex++,o);
+			if(first) first=false;
+			else sb.append(",");
+			sb.append(f.getName());
 		}
-		int num=this.sql_insert.executeUpdate();
-		if(num!=1)
-			System.err.println("更新了"+num+"重值！("+this.sql_insert.toString()+")");
+		sb.append(" VALUES (");
+		first=true;
+		for(@SuppressWarnings("unused")Field f:this.getFields()){
+			if(first) first=false;
+			else sb.append(",");
+			sb.append("?");
+		}
+		sb.append(")");
+		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
+		int SQLParameterIndex=1;
+		for(Field f:this.getFields())
+			pst.setObject(SQLParameterIndex++,f.get(this));
+		int num=pst.executeUpdate();
+		System.err.println("更新了"+num+"重值！("+pst.toString()+")");
+		Base.MapList.remove(this.getClass());
 	}
-	public boolean existAndLoad() throws IllegalArgumentException, IllegalAccessException, SQLException{
-		return this.load(true)>0;
+	
+	
+	
+
+	//=============================================================
+	// list相关
+	//=============================================================
+	/**
+	 * 即用即查的
+	 */
+	static public interface ListableWithNoSave{
 	}
-	public boolean exist() throws InstantiationException, IllegalAccessException, IllegalArgumentException, SQLException{
-		Class<? extends Base> clazz=this.getClass();
-		Base b=clazz.newInstance();
-		this.copyTo(b);
-		return b.load(false)>0;
+	/**
+	 * 是否是即用即查的
+	 */
+	static public boolean isListableWithNoSave(Class<? extends Base> clazz){
+		return ListableWithNoSave.class.isAssignableFrom(clazz);
 	}
+	/**
+	 * 只保存非即用即查的Base对应的list内容
+	 */
+	static private Map<Class<? extends Base>,List<? extends Base>> MapList=new HashMap<Class<? extends Base>,List<? extends Base>>();
+	/**
+	 * 列出清单，非即用即查的会立即从数据库查询一次 
+	 */
+	static public <T extends Base>  List<T> list(Class<T> clazz)
+			throws SQLException, IllegalArgumentException, InstantiationException{
+		List<T> res=(!Base.isListableWithNoSave(clazz)&&Base.MapList.containsKey(clazz))
+				? (List<T>) Base.MapList.get(clazz) : null;
+		if(res==null)
+			Base.MapList.put(clazz,res=Base.list(clazz,(Field[])null,(Object[])null,(Field[])null));
+		return res;
+	}
+	static public <T extends Base> List<T> list(Class<T> clazz,Field[] checkFields,Object[] checkFieldsValue,Field[] orderFields)
+			throws IllegalArgumentException, InstantiationException, SQLException{
+		List<Base[]> tmp=Base.list(new JoinParam(clazz), checkFields, checkFieldsValue, orderFields);
+		List<T> res=new ArrayList<T>();
+		for(Base[] bs:tmp){
+			if(bs!=null && bs.length>=1 && bs[0]!=null
+					&& clazz!=null && clazz.isInstance(bs[0]))
+				res.add(clazz.cast(bs[0]));
+		}
+		return res;
+	}static public <T extends Base> List<T> list(Class<T> clazz,Field[] checkFields,Object[] checkFieldsValue,Field orderFields)
+			throws IllegalArgumentException, InstantiationException, SQLException{
+		return Base.list(clazz,checkFields,checkFieldsValue,new Field[]{orderFields});
+	}static public <T extends Base> List<T> list(Class<T> clazz,Field[] checkFields,Object[] checkFieldsValue)
+			throws IllegalArgumentException, InstantiationException, SQLException{
+		return Base.list(clazz,checkFields,checkFieldsValue,(Field[])null);
+	}static public <T extends Base> List<T> list(Class<T> clazz,Field checkFields,Object checkFieldsValue,Field[] orderFields)
+			throws IllegalArgumentException, InstantiationException, SQLException{
+		return Base.list(clazz,new Field[]{checkFields},new Object[]{checkFieldsValue},orderFields);
+	}static public <T extends Base> List<T> list(Class<T> clazz,Field checkFields,Object checkFieldsValue,Field orderFields)
+			throws IllegalArgumentException, InstantiationException, SQLException{
+		return Base.list(clazz,new Field[]{checkFields},new Object[]{checkFieldsValue},new Field[]{orderFields});
+	}static public <T extends Base> List<T> list(Class<T> clazz,Field checkFields,Object checkFieldsValue)
+			throws IllegalArgumentException, InstantiationException, SQLException{
+		return Base.list(clazz,new Field[]{checkFields},new Object[]{checkFieldsValue},(Field[])null);
+	}static public <T extends Base> List<T> list(Class<T> clazz,Field orderFields)
+			throws IllegalArgumentException, InstantiationException, SQLException{
+		return Base.list(clazz,(Field[])null,(Object[])null,new Field[]{orderFields});
+	}
+	
+	/**
+	 * 多表联合查询
+	 */
+	static public enum JoinType{
+		InnerJoin,LeftJoin,RightJoin;
+		@Override
+		public String toString(){
+			return this.name().replaceAll("Join"," Join").toUpperCase();
+		}
+	}
+	static public class JoinParam{
+		static public class Part{
+			private JoinType type;						public JoinType getType(){return type;}
+			private Class<? extends Base> clazz;		public Class<? extends Base> getClazz(){return clazz;}
+			private Set<Field> fields;					public Set<Field> getFields(){return fields;}
+			private Field[] lastOnFields;			public Field[] getLastOnFields(){return this.lastOnFields;}
+			private Field[] thisOnFields;			public Field[] getThisOnFields(){return this.thisOnFields;}
+			private Field[] onCheckFields;			public Field[] getOnCheckFields(){return this.onCheckFields;}
+			private Object[] onCheckFieldsValue;		public Object[] getOnCheckFieldsValue(){return this.onCheckFieldsValue;}
+			private Part(Class<? extends Base> c,Set<Field> fields){this(null,c,fields,null,null,null,null);}
+			public Part(JoinType jp,Class<? extends Base> c,Set<Field> fields,
+					Field[] lastOnFields,Field[] thisOnFields,
+					Field[] onCheckFields,Object[] onCheckFieldsValue){
+				this.type=jp;this.clazz=c;
+				this.lastOnFields=lastOnFields==null?new Field[0]:lastOnFields;
+				this.thisOnFields=thisOnFields==null?new Field[0]:thisOnFields;
+				this.onCheckFields=onCheckFields==null?new Field[0]:onCheckFields;
+				this.onCheckFieldsValue=onCheckFieldsValue==null?new Object[0]:onCheckFieldsValue;
+			}
+			public String toString(Class<? extends Base> lastClazz){
+				if(this.type==null || lastClazz==null)
+					return Base.getSQLTableName(this.clazz);
+				StringBuilder sb=new StringBuilder();
+				sb.append(this.type.toString());
+				sb.append(' ');
+				Class<? extends Base> c1=lastClazz;
+				Class<? extends Base> c2=this.clazz;
+				String c1table=Base.getSQLTableName(c1);
+				String c2table=Base.getSQLTableName(c2);
+				sb.append(c2table);
+				sb.append(" ON ( ");
+				boolean first=true;
+				for(int i=0;i<this.lastOnFields.length && i<this.thisOnFields.length;i++){
+					if(first) first=false;
+					else sb.append(" AND ");
+					sb.append(c1table);sb.append('.');sb.append(this.lastOnFields[i].getName());
+					sb.append(" = ");
+					sb.append(c2table);sb.append('.');sb.append(this.thisOnFields[i].getName());
+				}
+				for(Field f:this.onCheckFields){
+					if(first) first=false;
+					else sb.append(" AND ");
+					sb.append(c2table);sb.append('.');sb.append(f.getName());
+					sb.append(" LIKE ?");
+				}
+				sb.append(" )");
+				return sb.toString();
+			}
+		}
+		private List<Part> list=new ArrayList<Part>();	public List<Part> getList(){return list;}
+		
+		public JoinParam(Class<? extends Base> clazz){
+			this(clazz,Field.getFieldsSet(clazz));
+		}public JoinParam(Class<? extends Base> clazz,Set<Field> fields){
+			this.list.add(new Part(clazz,fields));
+		}
+		public Class<? extends Base> getClassByIndex(int index){
+			return this.list.get(index).getClazz();
+		}
+		public int size(){return this.list.size();}
+		
+		private JoinParam append(Part part){
+			if(part!=null) this.list.add(part);
+			return this;
+		}public JoinParam append(JoinType jp,Class<? extends Base> c,Set<Field> fields,
+				Field[] lastOnFields,Field[] thisOnFields,
+				Field[] onCheckFields,Object[] onCheckFieldsValue){
+			return this.append(new Part(
+					jp,c,fields,lastOnFields,thisOnFields,onCheckFields,onCheckFieldsValue));
+		}public JoinParam append(JoinType jp,Class<? extends Base> c,Set<Field> fields,
+				Field[] lastOnFields,Field[] thisOnFields,
+				Field onCheckFields,Object onCheckFieldsValue){
+			return this.append(new Part(
+					jp,c,fields,lastOnFields,thisOnFields,new Field[]{onCheckFields},new Object[]{onCheckFieldsValue}));
+		}public JoinParam append(JoinType jp,Class<? extends Base> c,Set<Field> fields,
+				Field[] lastOnFields,Field[] thisOnFields){
+			return this.append(new Part(
+					jp,c,fields,lastOnFields,thisOnFields,(Field[])null,(Object[])null));
+		}public JoinParam append(JoinType jp,Class<? extends Base> c,Set<Field> fields,
+				Field lastOnFields,Field thisOnFields,
+				Field[] onCheckFields,Object[] onCheckFieldsValue){
+			return this.append(new Part(
+					jp,c,fields,new Field[]{lastOnFields},new Field[]{thisOnFields},onCheckFields,onCheckFieldsValue));
+		}public JoinParam append(JoinType jp,Class<? extends Base> c,Set<Field> fields,
+				Field lastOnFields,Field thisOnFields,
+				Field onCheckFields,Object onCheckFieldsValue){
+			return this.append(new Part(
+					jp,c,fields,new Field[]{lastOnFields},new Field[]{thisOnFields},new Field[]{onCheckFields},new Object[]{onCheckFieldsValue}));
+		}public JoinParam append(JoinType jp,Class<? extends Base> c,Set<Field> fields,
+				Field lastOnFields,Field thisOnFields){
+			return this.append(new Part(
+					jp,c,fields,new Field[]{lastOnFields},new Field[]{thisOnFields},(Field[])null,(Object[])null));
+		}public JoinParam append(JoinType jp,Class<? extends Base> c,Set<Field> fields){
+			return this.append(new Part(
+					jp,c,fields,(Field[])null,(Field[])null,(Field[])null,(Object[])null));
+		}/*无fields*/
+		public JoinParam append(JoinType jp,Class<? extends Base> c,
+				Field[] lastOnFields,Field[] thisOnFields,
+				Field[] onCheckFields,Object[] onCheckFieldsValue){
+			return this.append(new Part(
+					jp,c,Field.getFieldsSet(c),lastOnFields,thisOnFields,onCheckFields,onCheckFieldsValue));
+		}public JoinParam append(JoinType jp,Class<? extends Base> c,
+				Field[] lastOnFields,Field[] thisOnFields,
+				Field onCheckFields,Object onCheckFieldsValue){
+			return this.append(new Part(
+					jp,c,Field.getFieldsSet(c),lastOnFields,thisOnFields,new Field[]{onCheckFields},new Object[]{onCheckFieldsValue}));
+		}public JoinParam append(JoinType jp,Class<? extends Base> c,
+				Field[] lastOnFields,Field[] thisOnFields){
+			return this.append(new Part(
+					jp,c,Field.getFieldsSet(c),lastOnFields,thisOnFields,null,null));
+		}public JoinParam append(JoinType jp,Class<? extends Base> c,
+				Field lastOnFields,Field thisOnFields,
+				Field[] onCheckFields,Object[] onCheckFieldsValue){
+			return this.append(new Part(
+					jp,c,Field.getFieldsSet(c),new Field[]{lastOnFields},new Field[]{thisOnFields},onCheckFields,onCheckFieldsValue));
+		}public JoinParam append(JoinType jp,Class<? extends Base> c,
+				Field lastOnFields,Field thisOnFields,
+				Field onCheckFields,Object onCheckFieldsValue){
+			return this.append(new Part(
+					jp,c,Field.getFieldsSet(c),new Field[]{lastOnFields},new Field[]{thisOnFields},new Field[]{onCheckFields},new Object[]{onCheckFieldsValue}));
+		}public JoinParam append(JoinType jp,Class<? extends Base> c,
+				Field lastOnFields,Field thisOnFields){
+			return this.append(new Part(
+					jp,c,Field.getFieldsSet(c),new Field[]{lastOnFields},new Field[]{thisOnFields},null,null));
+		}public JoinParam append(JoinType jp,Class<? extends Base> c){
+			return this.append(new Part(
+					jp,c,Field.getFieldsSet(c),null,null,null,null));
+		}
+		
+		@Override
+		public String toString(){
+			StringBuilder sb=new StringBuilder();
+			Class<? extends Base> lastClazz=null;
+			for(Part p:this.list){
+				sb.append(' ');
+				sb.append(p.toString(lastClazz));
+				lastClazz=p.getClazz();
+			}
+			return sb.toString();
+		}
+		static private String ListDelimiter="__LD__";
+	}
+	/**
+	 * 根据JoinParam进行联合查询
+	 */
+	static public List<Base[]> list(JoinParam param,Field[] checkFields,Object[] checkFieldsValue,Field[] orderFields)
+			throws IllegalArgumentException,SQLException, InstantiationException{
+		StringBuilder sb=new StringBuilder();
+		sb.append("SELECT ");
+		boolean first=true;
+		for(Part p:param.getList()){
+			String ct=Base.getSQLTableName(p.getClazz());
+			for(Field f:p.fields){
+				if(first) first=false;
+				else sb.append(",");
+				sb.append(ct);sb.append(".");sb.append(f.getName());
+				sb.append(" AS ");
+				sb.append(ct);sb.append(JoinParam.ListDelimiter);sb.append(f.getName());
+			}
+		}
+		if(first) throw new IllegalArgumentException("There is NO field in SELECT Field!");
+		sb.append(" FROM ");
+		sb.append(param.toString());//===
+		int checkLength=-1;
+		if(checkFields!=null && checkFieldsValue!=null && checkFields.length>0 && checkFieldsValue.length>0
+				&& checkFields[0]!=null && checkFieldsValue[0]!=null){
+			sb.append(" WHERE ");
+			checkLength=Math.min(checkFields.length,checkFieldsValue.length);
+			for(int i=0;i<checkLength;i++){
+				if(i!=0) sb.append(" AND ");
+				sb.append(checkFields[i].getName());
+				sb.append(" LIKE ?");
+			}
+		}
+		if(orderFields!=null && orderFields.length>0 && orderFields[0]!=null){
+			sb.append(" ORDER BY ");
+			first=true;
+			for(Field f:orderFields){
+				if(first) first=false;
+				else sb.append(",");
+				sb.append(f.toString());
+			}
+		}
+		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
+		int parameterIndex=1;
+		for(Part part:param.getList())
+			for(Object o:part.getOnCheckFieldsValue())
+				pst.setObject(parameterIndex++,o);
+		for(int i=0;i<checkLength;i++)
+			pst.setObject(parameterIndex++,checkFieldsValue[i]);
+		ResultSet rs=pst.executeQuery();
+		List<Base[]> res=new ArrayList<Base[]>();
+		int len=param.size();
+		while(rs.next()){
+			Base[] x=new Base[len];
+			for(int i=0;i<len;i++){
+				Class<? extends Base> c=param.getClassByIndex(i);
+				String ct=Base.getSQLTableName(c);
+				try{
+					x[i]=c.newInstance();
+				} catch (IllegalAccessException e) {
+					throw new InstantiationException(e.getMessage());
+				}
+				boolean flag=true;
+				for(Field f:Field.getFields(c)){
+					String columnName=ct+JoinParam.ListDelimiter+f.getName();
+					Object o=null;
+					try{o=rs.getObject(columnName);}catch(SQLException e){}
+					if(flag && o!=null) flag=false;
+					try{
+						f.set(x[i],o);
+					}catch(IllegalArgumentException e){
+						throw e;
+					}
+				}
+				//若x[i]的属性全部都是null，则x[i]应为null
+				if(flag) x[i]=null;
+				//若x[i]的key的Field都是null，则x[i]应为null
+				if(x[i]!=null && x[i].checkKeyField())
+					x[i]=null;
+			}
+			res.add(x);
+		}
+		return res;
+	}/**
+	 * 根据JoinParam进行联合查询
+	 */
+	static public List<Base[]> list(JoinParam param,Field[] checkFields,Object[] checkFieldsValue,Field orderFields)
+			throws IllegalArgumentException,SQLException, InstantiationException{
+		return Base.list(param, checkFields, checkFieldsValue, new Field[]{orderFields});
+	}/**
+	 * 根据JoinParam进行联合查询
+	 */
+	static public List<Base[]> list(JoinParam param,Field[] checkFields,Object[] checkFieldsValue)
+			throws IllegalArgumentException,SQLException, InstantiationException{
+		return Base.list(param, checkFields, checkFieldsValue,(Field[])null);
+	}/**
+	 * 根据JoinParam进行联合查询
+	 */
+	static public List<Base[]> list(JoinParam param,Field checkFields,Object checkFieldsValue,Field[] orderFields)
+			throws IllegalArgumentException,SQLException, InstantiationException{
+		return Base.list(param, new Field[]{checkFields}, new Object[]{checkFieldsValue}, orderFields);
+	}/**
+	 * 根据JoinParam进行联合查询
+	 */
+	static public List<Base[]> list(JoinParam param,Field checkFields,Object checkFieldsValue,Field orderFields)
+			throws IllegalArgumentException,SQLException, InstantiationException{
+		return Base.list(param, new Field[]{checkFields}, new Object[]{checkFieldsValue},new Field[]{orderFields});
+	}/**
+	 * 根据JoinParam进行联合查询
+	 */
+	static public List<Base[]> list(JoinParam param,Field checkFields,Object checkFieldsValue)
+			throws IllegalArgumentException,SQLException, InstantiationException{
+		return Base.list(param,new Field[]{checkFields},new Object[]{checkFieldsValue},(Field[])null);
+	}/**
+	 * 根据JoinParam进行联合查询
+	 */
+	static public List<Base[]> list(JoinParam param,Field[] orderFields)
+			throws IllegalArgumentException,SQLException, InstantiationException{
+		return Base.list(param,(Field[])null,(Object[])null,orderFields);
+	}/**
+	 * 根据JoinParam进行联合查询
+	 */
+	static public List<Base[]> list(JoinParam param,Field orderFields)
+			throws IllegalArgumentException,SQLException, InstantiationException{
+		return Base.list(param,(Field[])null,(Object[])null,new Field[]{orderFields});
+	}/**
+	 * 根据JoinParam进行联合查询
+	 */
+	static public List<Base[]> list(JoinParam param)
+			throws IllegalArgumentException,SQLException, InstantiationException{
+		return Base.list(param,(Field[])null,(Object[])null,(Field[])null);
+	}
+	
 	
 
 }
