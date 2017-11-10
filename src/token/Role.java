@@ -1,19 +1,37 @@
 package token;
 
+import java.util.*;
+
+import obj.Field;
 import obj.staticObject.InnerPerson;
+import obj.staticSource.ACCESS;
 
 public enum Role{
-	jwc("教务处"),
-	jwy("教务员"),
+	xs("学生"),
 	jxyz("教学院长"),
-	ld("领导"),
+	jwy("教务员"),
 	js("教师"),
-	xs("学生");
+	jwc("教务处"),
+	ld("领导"),
+	;
 	public final String name;
 	Role(String name){this.name=name;}
 	
-	static public Role getRoleByOffice(InnerPerson inner){
-		if(inner==null) return null;
+	public boolean getACCESS(ACCESS a){
+		Object o=Field.getField(ACCESS.class,this.toString()).get(a);
+		if(o==null) return false;
+		if(o instanceof Boolean) return (Boolean)o;
+		return false;
+	}
+	static public List<Role> getAccessRolesList(ACCESS a){
+		List<Role> res=new ArrayList<Role>();
+		for(Role r:Role.values()) if(r.getACCESS(a)) res.add(r);
+		return res;
+	}
+	
+	static public Role getRoleByInnerPerson(InnerPerson inner){
+		if(inner==null)
+			return null;
 		return Role.getRoleByName(inner.getOffice().toString());
 	}
 	static public Role getRoleByName(String s){
@@ -30,5 +48,4 @@ public enum Role{
 			return true;
 		return false;
 	}
-	
 }

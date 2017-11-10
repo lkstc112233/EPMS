@@ -40,7 +40,7 @@ public class LoginAction extends ActionSupport{
 					inner.load();
 					ok=true;
 					System.out.println(">> LoginAction:execute > 登陆成功:"+inner);
-				} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
+				} catch (IllegalArgumentException | SQLException e) {
 					Manager.tips("读取个人信息失败，请重新登录！",e);
 				}
 			}else{

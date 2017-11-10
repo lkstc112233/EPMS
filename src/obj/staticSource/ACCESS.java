@@ -62,26 +62,24 @@ public class ACCESS extends Base{
 	}
 	public void setTime2(Timestamp time) {this.time2 = time;
 	Manager.RegularPeriod(time1,time2);}
-	public boolean isXs() {return xs;}
+	public boolean getXs() {return xs;}
 	public void setXs(boolean xs) {this.xs = xs;}
 	public void setXs(String a){this.xs=false;try{this.xs=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
-	public boolean isJxyz() {return jxyz;}
+	public boolean getJxyz() {return jxyz;}
 	public void setJxyz(boolean jxyz) {this.jxyz = jxyz;}
 	public void setJxyz(String a){this.jxyz=false;try{this.jxyz=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
-	public boolean isJwy() {return jwy;}
+	public boolean getJwy() {return jwy;}
 	public void setJwy(boolean jwy) {this.jwy = jwy;}
 	public void setJwy(String a){this.jwy=false;try{this.jwy=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
-	public boolean isJs() {return js;}
+	public boolean getJs() {return js;}
 	public void setJs(boolean js) {this.js = js;}
 	public void setJs(String a){this.js=false;try{this.js=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
-	public boolean isJwc() {return jwc;}
+	public boolean getJwc() {return jwc;}
 	public void setJwc(boolean jwc) {this.jwc = jwc;}
 	public void setJwc(String a){this.jwc=false;try{this.jwc=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
-	public boolean isLd() {return ld;}
+	public boolean getLd() {return ld;}
 	public void setLd(boolean ld) {this.ld = ld;}
 	public void setLd(String a){this.ld=false;try{this.ld=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
-	
-	
 	
 	
 	static public ACCESS getFromTime(Time t) throws SQLException, IllegalArgumentException, IllegalAccessException{
