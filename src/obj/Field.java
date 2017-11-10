@@ -77,7 +77,7 @@ public class Field implements Comparable<Field>{
 		if(o==null) return false;
 		if(!(o instanceof Field)) return false;
 		Field f=(Field)o;
-		return f.field.equals(this.field) && f.s.equals(this.s);
+		return f.field.equals(this.field);
 	}
 	@Override
 	public int compareTo(Field f){

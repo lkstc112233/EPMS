@@ -372,7 +372,7 @@ public abstract class Base {
 			for(Object o:part.getOnCheckFieldsValue())
 				pst.setObject(parameterIndex++,o);
 		for(Restraint.Part part:restraint.getWhere())
-			pst.setObject(parameterIndex++,part.getValue());
+			parameterIndex=part.setSQLParam(pst,parameterIndex);
 		ResultSet rs=pst.executeQuery();
 		List<Base[]> res=new ArrayList<Base[]>();
 		int len=param.size();

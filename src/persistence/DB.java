@@ -119,7 +119,7 @@ public final class DB {
 				try {
 					t.delete();
 					System.out.println("success");
-				} catch (IllegalArgumentException | IllegalAccessException e1) {
+				} catch (IllegalArgumentException e1) {
 					System.out.println("fail");
 					e1.printStackTrace();
 				}

@@ -1,5 +1,7 @@
 package obj;
 
+import java.sql.*;
+
 public class Restraint{
 	static public enum Type{
 		Smaller("<"),SmallerOrEqual("<="),
@@ -9,6 +11,20 @@ public class Restraint{
 		Type(String oper){this.operator=oper;}
 		public String getKey(){return this.toString();}//Smaller
 		public String getValue(){return this.operator;}//  <=
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public boolean checkBase(Object A,Object B){
+			if(!(A instanceof Comparable && B instanceof Comparable)) return false;
+			Comparable a=(Comparable)A;
+			Comparable b=(Comparable)B;
+			if(this==Smaller) return a.compareTo(b)<0;
+			if(this==SmallerOrEqual) return a.compareTo(b)<=0;
+			if(this==Bigger) return a.compareTo(b)>0;
+			if(this==BiggerOrEqual) return a.compareTo(b)>=0;
+			if(this==Equal) return a.equals(b);
+			//TODO SQL Like
+			if(this==Like) return a.equals(b);
+			return false;
+		}
 	}
 		public Type[] getTypeList(){return Type.values();}
 	static public class Part{
@@ -28,6 +44,21 @@ public class Restraint{
 			public void setValue(String s){
 				this.value=s==null||s.isEmpty()?null:s;
 			}
+		public void copyTo(Part p){
+			p.field=this.field;
+			p.type=this.type;
+			p.value=this.value;
+		}
+		public boolean checkAndSetBase(Base b,boolean setIfFalse) throws IllegalArgumentException{
+			if(this.field.getClazz().isAssignableFrom(b.getClass()))
+				throw new IllegalArgumentException("Class not correct!");
+			if(this.type.checkBase(this.field.get(b),value)) return true;
+			if(setIfFalse){
+		//TODO	if(this.type==Type.Equal)
+					this.field.set(b,this.value);
+			}
+			return false;
+		}
 		
 		public Part(Field f,Type t,Object s){field=f;type=t;value=s;}
 		public Part(Field f,Object s){field=f;type=Type.Equal;value=s;}
@@ -37,7 +68,54 @@ public class Restraint{
 			public String getSQLString(){
 				return this.field.toString()+" "+this.type.getValue()+" ?";
 			}
+			public int setSQLParam(PreparedStatement pst,int parameterIndex) throws SQLException{
+				pst.setObject(parameterIndex++,this.getValue());
+				return parameterIndex;
+			}
 	}
+	static public class OrPart extends Part{
+		public OrPart(Field f,Object[] s){
+			super(f,s);
+		}public OrPart(Field f,Type t,Object[] s){
+			super(f,t,s);
+		}
+		public boolean checkAndSetBase(Base b,boolean setIfFalse)throws IllegalArgumentException{
+			if(this.getField().getClazz().isAssignableFrom(b.getClass()))
+				throw new IllegalArgumentException("Class not correct!");
+			for(Object o:(Object[])this.getValue())
+				if(this.getType().checkBase(this.getField().get(b),o))
+					return true;
+			if(setIfFalse){
+		//TODO	if(this.type==Type.Equal)
+					this.getField().set(b,((Object[])this.getValue())[0]);
+			}
+			return false;
+		}
+		public String toString(){
+			StringBuilder sb=new StringBuilder();
+			return sb.toString();
+		}
+		public String getSQLString(){
+			StringBuilder sb=new StringBuilder("( ");
+			boolean first=true;
+			for(@SuppressWarnings("unused") Object o:(Object[])this.getValue()){
+				if(first) first=false;
+				else sb.append(" OR ");
+				sb.append(this.getField().toString());
+				sb.append(" ");
+				sb.append(this.getType().getValue());
+				sb.append(" ?");
+			}sb.append(" )");
+			return sb.toString();
+		}
+		public int setSQLParam(PreparedStatement pst,int parameterIndex) throws SQLException{
+			for(Object o:(Object[])this.getValue())
+				pst.setObject(parameterIndex++,o);
+			return parameterIndex;
+		}
+	}
+	
+	
 	
 	private Part[] where;		public Part[] getWhere(){return this.where;}
 	private Field[] order;		public Field[] getOrder(){return this.order;}
