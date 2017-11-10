@@ -1,5 +1,6 @@
 package obj;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -70,6 +71,28 @@ public class Field implements Comparable<Field>{
 		if(Field.nullValue(value)) value=null;
 		try{field.set(b,value);
 		}catch(IllegalAccessException e){e.printStackTrace();}
+		return b;
+	}
+	public Base setBySetter(Base b,Object value) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
+		field.setAccessible(true);
+		if(Field.nullValue(value)) value=null;
+		String methodName="set"+this.getName().substring(0,1).toUpperCase()+this.getName().substring(1);
+		java.lang.reflect.Method m=null;
+		boolean string=false;
+		try {
+			m=b.getClass().getMethod(methodName,value.getClass());
+		} catch (NoSuchMethodException | SecurityException e) {
+			try{
+				m=b.getClass().getMethod(methodName,String.class);
+				string=true;
+			} catch (NoSuchMethodException | SecurityException ee) {
+				try{
+					m=b.getClass().getMethod(methodName,Object.class);
+				} catch (NoSuchMethodException | SecurityException eee) {
+				}
+			}
+		}if(m==null) throw new NoSuchMethodException("Cannot find the method with name\""+methodName+"\"");
+		m.invoke(b,string?String.valueOf(value):value);
 		return b;
 	}
 	@Override
