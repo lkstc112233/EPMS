@@ -34,13 +34,13 @@ public class ListOfPracticeBaseAndStudents{
 		if(containsNullPracticeBase)
 			list.add(new Pair(null));
 		List<Base[]> tmp=Base.list(
-				new Base.JoinParam(Student.class).append(containsNullPracticeBase ? Base.JoinType.LeftJoin : Base.JoinType.InnerJoin,
+				new JoinParam(Student.class).append(containsNullPracticeBase ? JoinParam.Type.LeftJoin : JoinParam.Type.InnerJoin,
 						PracticeBase.class,
 						Field.getField(Student.class,"practiceBase"),
 						Field.getField(PracticeBase.class,"name")),
-				Field.getField(Student.class,"year"),
-				(Object)Integer.valueOf(year),
-				Field.getField(Student.class,"id"));
+				new Restraint(Field.getField(Student.class,"year"),(Object)Integer.valueOf(year),
+						Field.getField(Student.class,"id"))
+				);
 		for(Base[] bs:tmp){
 			Student pb=null;
 			PracticeBase r=null;

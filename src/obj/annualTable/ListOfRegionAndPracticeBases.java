@@ -3,8 +3,7 @@ package obj.annualTable;
 import java.sql.SQLException;
 import java.util.*;
 
-import obj.Base;
-import obj.Field;
+import obj.*;
 import obj.staticObject.PracticeBase;
 
 /**
@@ -32,13 +31,13 @@ public class ListOfRegionAndPracticeBases{
 		if(containsNullRegion)
 			list.add(new Pair(null));
 		List<Base[]> tmp=Base.list(
-				new Base.JoinParam(PracticeBase.class).append(containsNullRegion ? Base.JoinType.LeftJoin : Base.JoinType.InnerJoin,
+				new JoinParam(PracticeBase.class).append(containsNullRegion ? JoinParam.Type.LeftJoin : JoinParam.Type.InnerJoin,
 						Region.class,
 						Field.getField(PracticeBase.class,"name"),
 						Field.getField(Region.class,"practiceBase"),
 						Field.getField(PracticeBase.class,"year"),
 						new Object[]{Integer.valueOf(year)}),
-				new Field[]{Field.getField(PracticeBase.class,"name")});
+				new Restraint(Field.getField(PracticeBase.class,"name")));
 		for(Base[] bs:tmp){
 			PracticeBase pb=null;
 			Region r=null;

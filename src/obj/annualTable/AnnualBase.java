@@ -28,15 +28,17 @@ public abstract class AnnualBase extends Base implements Base.ListableWithNoSave
 		List<Time> res=new ArrayList<Time>();
 		//将Time和ACCESS表联合查询，check筛选出当前权限符合的条目，依次放入res即可
 		List<Base[]> tmp=Base.list(
-				new Base.JoinParam(Time.class).append(
-						Base.JoinType.InnerJoin, ACCESS.class,
+				new JoinParam(Time.class).append(
+						JoinParam.Type.InnerJoin, ACCESS.class,
 						Field.getField(Time.class,"project"),
 						Field.getField(ACCESS.class,"project")),
-				new Field[]{Field.getField(Time.class,"year"),
-						Field.getField(ACCESS.class,role.toString())},
-				new Object[]{Integer.valueOf(year),
-						Boolean.TRUE},
-				new Field[]{Field.getField(ACCESS.class,"id")}
+				new Restraint(new Restraint.Part[]{
+						new Restraint.Part(
+								Field.getField(Time.class,"year"),Integer.valueOf(year)),
+						new Restraint.Part(
+								Field.getField(ACCESS.class,role.toString()),Boolean.TRUE)
+						},
+						Field.getField(ACCESS.class,"id"))
 				);
 		if(setupIfEmpty && (tmp==null || tmp.isEmpty()) && first){
 			persistence.DB.setupTimeTable(year);
