@@ -32,20 +32,11 @@ public enum Role{
 	static public Role getRoleByInnerPerson(InnerPerson inner){
 		if(inner==null)
 			return null;
-		return Role.getRoleByName(inner.getOffice().toString());
+		return Role.getRoleByInnerOffice(inner.getOffice().toString());
 	}
-	static public Role getRoleByName(String s){
+	static public Role getRoleByInnerOffice(String s){
 		for(Role r:Role.values()) if(r.name.equals(s))
 			return r;
 		return null;
-	}
-	static public String getActionPrefix(Role role){
-		if(role==null) return null;
-		return role.toString();
-	}
-	static public boolean containActionPrefix(String prefix){
-		for(Role r:Role.values()) if(getActionPrefix(r).equals(prefix))
-			return true;
-		return false;
 	}
 }

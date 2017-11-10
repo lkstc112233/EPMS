@@ -31,11 +31,12 @@
 		
 		<!--设置全局result页面-->
 		<global-results>
-			<result name="error"> error.jsp</result>
+			<result name="error"> login.jsp</result>	<!-- //TODO error会跳转到login.jsp -->
 			<result name="invalid.token"> invalidToken.jsp</result>
 			<result name="jump" type="redirect"> ${jumpURL}</result>
 		</global-results>
 		
+		<!-- ################################################################################ -->
 		<!--动作：login配置-->
 		<action name="login" class="action.login.LoginAction" method="execute">
 			<result name="login"> login.jsp</result>
@@ -51,14 +52,15 @@
 		
 		<!--动作：menu配置-->
 		<action name="menu" class="action.login.MenuAction" method="execute">
-			<result name="jwc">		jwc/index.jsp</result>
-			<result name="jwy">		jwy/index.jsp</result>
-			<result name="jxyz">	jxyz/index.jsp</result>
-			<result name="ld">		ld/index.jsp</result>
-			<result name="js">		js/index.jsp</result>
+			<result name="jwc">		index.jsp</result>
+			<result name="jwy">		index.jsp</result>
+			<result name="jxyz">	index.jsp</result>
+			<result name="ld">		index.jsp</result>
+			<result name="js">		index.jsp</result>
 			<result> login.jsp</result>
 		</action>
 		
+		<!-- ################################################################################ -->
 		<!--动作：inner_info配置-->
 		<action name="inner_info" class="action.login.InnerInfoAction" method="execute">
 			<result> inner_info.jsp</result>

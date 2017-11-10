@@ -40,7 +40,7 @@ public abstract class AnnualBase extends Base implements Base.ListableWithNoSave
 						},
 						Field.getField(ACCESS.class,"id"))
 				);
-		if(setupIfEmpty && (tmp==null || tmp.isEmpty()) && first){
+		if(first && setupIfEmpty && (tmp==null || tmp.isEmpty())){//first保证了不会调用第2次
 			persistence.DB.setupTimeTable(year);
 			return listTime(role,year,false,first=false);
 		}
