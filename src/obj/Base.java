@@ -272,18 +272,19 @@ public abstract class Base {
 	}
 	
 	public void create()throws SQLException, IllegalArgumentException, IllegalAccessException{
-		if(this.checkNotNullField())
+		if(!this.checkNotNullField())
 			throw new IllegalArgumentException("The notNull fields are not completed!");
 		StringBuilder sb=new StringBuilder();
 		sb.append("INSERT INTO ");
 		sb.append(this.getSQLTableName());
+		sb.append(" (");
 		boolean first=true;
 		for(Field f:this.getFields()){
 			if(first) first=false;
 			else sb.append(",");
 			sb.append(f.getName());
 		}
-		sb.append(" VALUES (");
+		sb.append(") VALUES (");
 		first=true;
 		for(@SuppressWarnings("unused")Field f:this.getFields()){
 			if(first) first=false;
