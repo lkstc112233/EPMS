@@ -14,36 +14,36 @@
 		<jsp:include page="/model/common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 
 <div class="bag">
-		<s:form action="inner_info" method="post" cssClass="myform">
-			<s:textfield label="id" value="%{#session.inner.id}" readonly="true"/>
+		<s:form action="InnerInfo_execute" method="post" cssClass="myform">
+			<s:textfield label="id" value="%{inner.id}" readonly="true"/>
 
 			<s:textfield label="name" name="inner.name"
-				value="%{#session.inner.name}" />
-
-	<!--	<s:password label="old password" showPassword="true"
-				name="inner.password" value="%{#session.inner.password}" />	-->
+				value="%{inner.name}" />
 
 			<s:password label="new password(if necessary)" showPassword="true"
-				name="newPassword" value="" />
+				name="inner.password" value="" />
 
 			<s:select label="office" disabled="true" 
-				list="list_office" value="%{#session.inner.office}" listKey="name" listValue="name"
+				listKey="name" listValue="name"
+				list="list_office"
+				value="%{inner.office.name}"
 				/> <!-- name="inner.office"-->
 
 			<s:select label="school" disabled="true"
-				list="list_school" value="%{#session.inner.school}" listKey="name" listValue="name"
+				listKey="name" listValue="name"
+				list="list_school"
+				value="%{inner.school.name}"
 				/> <!-- name="inner.school"-->
 
 			<s:textfield label="phone" name="inner.phone"
-				value="%{#session.inner.phone}" />
+				value="%{inner.phone}" />
 
 			<s:textfield label="mobile" name="inner.mobile"
-				value="%{#session.inner.mobile}" />
+				value="%{inner.mobile}" />
 
 			<s:textfield label="email" name="inner.email"
-				value="%{#session.inner.email}" />
+				value="%{inner.email}" />
 		
-			<s:hidden name="executive" value="true" />
 			<s:submit value="提交修改" cssClass="button"/>
 			
 			<s:token />

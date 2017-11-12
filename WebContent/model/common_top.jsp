@@ -28,22 +28,10 @@ session.removeAttribute("errorTips");
 						<td>
 							<div class="title_label">
 							欢迎
-							<a href='<s:url action="inner_info"/>'><s:property value="#session.inner.name"/></a>
-						<!--
-							<s:form action="inner_info" method="post">
-								<s:submit value="%{#session.inner.name}" />
-							</s:form>
-						-->
+							<a href='<s:url action="InnerInfo_display"/>'><s:property value="#session.inner.name"/></a>
 							！
 							</div>
 						</td>
-						<!--
-						<td>
-							<s:form action="inner_info" method="excute">
-								<s:submit value="个人信息" cssClass="title_button"/>
-							</s:form>
-						</td>
-						-->
 					</s:if>
 					<s:if test="#session.inner==null">
 						<td colspan="2">

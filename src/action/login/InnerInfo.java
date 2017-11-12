@@ -10,7 +10,7 @@ import obj.staticObject.InnerPerson;
 import obj.staticSource.InnerOffice;
 import obj.staticSource.School;
 
-public class InnerInfoAction extends ActionSupport{
+public class InnerInfo extends ActionSupport{
 	private static final long serialVersionUID = -2488160597018042665L;
 
 	private InnerPerson inner;
@@ -24,14 +24,10 @@ public class InnerInfoAction extends ActionSupport{
 	public List<School> getList_school() {return list_school;}
 	public void setList_school(List<School> list_school) {this.list_school = list_school;}
 	
-	private boolean executive=false;
-	public boolean isExecutive() {return executive;}
-	public void setExecutive(boolean executive) {this.executive = executive;}
-	
-	
-	public InnerInfoAction(){
+	public InnerInfo(){
 		super();
 		System.out.println(">> InnerInfoAction:constructor >");
+		if(Manager.getUser()==null) return;
 		this.inner=new InnerPerson();
 		Manager.getUser().copyTo(this.inner);
 		inner.setPassword(null);
@@ -45,9 +41,6 @@ public class InnerInfoAction extends ActionSupport{
 	
 	@Override
 	public String execute(){
-		System.out.println(">> InnerInfoAction:execute > executive="+executive);
-		if(!this.executive)
-			return display();
 		if(this.inner.getPassword()!=null && this.inner.getPassword().length()>0){
 			System.out.println(">> InnerInfoAction:execute > 开始修改密码");
 			try {
@@ -59,8 +52,9 @@ public class InnerInfoAction extends ActionSupport{
 			System.out.println(">> InnerInfoAction:execute > 成功修改密码");
 		}
 		try {
+			inner.setPassword(Manager.getUser().getPassword());
 			Manager.getUser().update(inner);
-			Manager.setUser(inner);
+			inner.setPassword(null);
 		} catch (IllegalArgumentException | SQLException e) {
 			return Manager.tips("修改个人信息失败，请重试！",
 					e,display());
@@ -70,8 +64,6 @@ public class InnerInfoAction extends ActionSupport{
 	}
 	
 	public String display(){
-		System.out.println(">> InnerInfoAction:display >");
-		System.out.println(">> InnerInfoAction:display <NONE");
 		return NONE;
 	}
 	

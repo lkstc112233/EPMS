@@ -15,9 +15,10 @@ public class MenuAction extends ActionSupport{
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
 	
-	
+	private Role role;
 	private List<Time> times=new ArrayList<Time>();
 	
+	public Role getRole(){return this.role;}
 	public List<Time> getTimes(){return times;}
 	public void setTimes(List<Time> times){this.times=times;}
 
@@ -29,7 +30,7 @@ public class MenuAction extends ActionSupport{
 	@Override
 	public String execute(){
 		System.out.println(">> MenuAction:execute > year="+this.getAnnual().getYear());
-		Role role=Role.getRoleByInnerPerson(Manager.getUser());
+		this.role=Role.getRoleByInnerPerson(Manager.getUser());
 		try {
 			//当setupIfEmpty为false时会实际调用join联合查询
 			this.times=Time.listTime(role,this.getAnnual().getYear(),/*setupIfEmpty*/false);
