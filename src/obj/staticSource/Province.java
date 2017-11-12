@@ -15,6 +15,9 @@ public class Province extends Base{
 		super();
 		this.name=name;
 	}
+	public Province(){
+		super();
+	}
 	
 	
 	@Override

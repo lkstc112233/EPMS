@@ -22,7 +22,7 @@ public class InnerPerson extends Base implements Base.ListableWithNoSave{
 	private String phone;		public String getPhone(){return phone;}			public void setPhone(String a){this.phone=a;}
 	@SQLField(value="手机",weight=13,notNull=true)
 	private String mobile;		public String getMobile(){return mobile;}		public void setMobile(String a){this.mobile=a;}
-	@SQLField(value="邮箱",weight=14,isKey=true)
+	@SQLField(value="邮箱",weight=14)
 	private String email;		public String getEmail(){return email;}			public void setEmail(String a){this.email=a;}
 
 	public InnerPerson(){
@@ -42,7 +42,7 @@ public class InnerPerson extends Base implements Base.ListableWithNoSave{
 			PreparedStatement pst=DB.con().prepareStatement(sb.toString());
 			pst.setString(1,id);
 			ResultSet rs=pst.executeQuery();
-			rs.first();
+			if(!rs.next()) return false;
 			String passwordFromSQL=rs.getString(1);
 			System.out.println("SQL查询到密码值:"+passwordFromSQL);
 			return passwordFromSQL.equals(password);
@@ -65,14 +65,14 @@ public class InnerPerson extends Base implements Base.ListableWithNoSave{
 	 * load不会读取password，也不需要password
 	 */
 	public int load(boolean setFields) throws SQLException, IllegalArgumentException{
-		if(this.checkKeyField())
+		if(!this.checkKeyField())
 			throw new IllegalArgumentException("The key fields are not completed!");
 		StringBuilder sb=new StringBuilder();
 		sb.append("SELECT ");
 		boolean first=true;
 		for(Field f:this.getFields()) if(!f.getName().equals("password")){
 			if(first) first=false;
-			else sb.append(" , ");
+			else sb.append(",");
 			sb.append(f.getName());
 		}
 		sb.append(" FROM ");
@@ -92,11 +92,12 @@ public class InnerPerson extends Base implements Base.ListableWithNoSave{
 		ResultSet rs=pst.executeQuery();
 		rs.last();
 		int num=rs.getRow();
-		System.err.println("更新了"+num+"重值！("+pst.toString()+")");
+		System.err.println("查询了"+num+"重值！("+pst.toString()+")");
 		rs.first();
 		if(num>0 && setFields){
-			for(Field f:this.getFields()) if(!f.isKey())
-				f.set(this,rs.getObject(f.getName()));
+			for(Field f:this.getFields()) if(!f.getName().equals("password"))
+				if(!f.isKey())
+					f.set(this,rs.getObject(f.getName()));
 		}
 		return num;
 	}

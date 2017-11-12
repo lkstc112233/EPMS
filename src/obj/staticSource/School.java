@@ -15,7 +15,9 @@ public class School extends Base{
 		super();
 		this.setName(name);
 	}
-	
+	public School(){
+		super();
+	}
 	
 	@Override
 	public String getDescription() {
