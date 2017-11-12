@@ -18,44 +18,63 @@ public class ActionInterceptor extends AbstractInterceptor{
 	public String intercept(ActionInvocation invocation) throws Exception {
 		String actionName=invocation.getInvocationContext().getName();
 //		System.out.println(">? ActionInterceptor > (actionName="+actionName+")");
-		InnerPerson inner=Manager.getUser();
+		InnerPerson user=Manager.getUser();
 //		System.out.println(">? ActionInterceptor > ("
 //				+((System.currentTimeMillis()-org.apache.struts2.ServletActionContext.getRequest().getSession().getLastAccessedTime())/1000)
 //				+"/"+org.apache.struts2.ServletActionContext.getRequest().getSession().getMaxInactiveInterval()
 //				+")userToken="+inner);
-		if(inner==null)
+		if(user==null)
 			return Manager.tips("登录已超时，请重新登录！",
 					"error");
 		//判断的当前权限
-		List<ACCESS> as=null;
-		try{
-			as=Base.list(ACCESS.class,new Restraint(Field.getField(ACCESS.class,"actionClass"),actionName));
-		}catch(IllegalArgumentException|InstantiationException|SQLException e){
-			return Manager.tips("数据库错误!",
-					e,"error");
-		}
-		if(as==null || as.isEmpty()){
-			//没有权限限制的action
-		}else{
-			Role role=Role.getRoleByInnerPerson(Manager.getUser());
-			boolean ok=false;
-			//只要某一条包含当前actionName的ACCESS(actionClass)允许即可访问
-			for(ACCESS a:as) if(role.getACCESS(a)){
-				ok=true;break;
+	/*	<!-- Action名称登记 -->
+		<!-- sudo开头的必须要求教务处权限 -->
+		<!-- function开头的必须要求Manager.getUser().getInnerOffice()对应的权限 -->
+		<!-- 其他名称均可访问 --> */
+		StringBuilder errorMsg=null;
+		if(actionName.startsWith("function")){
+			Role role=Role.getRoleByInnerPerson(user);
+			//function
+			List<ACCESS> as=null;
+			try{
+				as=Base.list(ACCESS.class,new Restraint(Field.getField(ACCESS.class,"actionClass"),actionName));
+			}catch(IllegalArgumentException|InstantiationException|SQLException e){
+				return Manager.tips("数据库错误!",
+						e,"error");
 			}
-			if(!ok){
-				//一般很少运行到这里，所以把需要遍历的工作放在这里
-				Set<Role> tmp=new HashSet<Role>();
-				for(ACCESS a:as) tmp.addAll(Role.getAccessRolesList(a));
-				StringBuilder x=new StringBuilder();
-				for(Role r:tmp){
-					if(x.length()>0) x.append(",");
-					x.append(r.name);
+			if(as==null || as.isEmpty()){
+				//TODO 没有权限限制的action
+			}else{
+				//只要某一条包含当前actionName的ACCESS(actionClass)允许即可访问
+				boolean ok=false;
+				for(ACCESS a:as) if(role.getACCESS(a)){
+					ok=true;break;
 				}
-				return Manager.tips(inner.getOffice()+"无权访问（只允许"+x+"访问），请重新登录！",
-						"error");
+				if(!ok){
+					//一般很少运行到这里，所以把需要遍历的工作放在这里
+					Set<Role> tmp=new HashSet<Role>();
+					for(ACCESS a:as) tmp.addAll(Role.getAccessRolesList(a));
+					errorMsg=new StringBuilder();
+					for(Role r:tmp){
+						if(errorMsg.length()>0) errorMsg.append(",");
+						errorMsg.append(r.name);
+					}
+				}
 			}
+		}else if(actionName.startsWith("sudo")){
+			//sudo
+			//只有教务处可以访问
+			Role role=Role.getRoleByInnerPerson(user);
+			if(role!=Role.jwc)
+				errorMsg=new StringBuilder(Role.jwc.getName());
+		}else{
+			//不包含“_”的Action
+			//不限制
+			errorMsg=null;
 		}
+		if(errorMsg!=null)
+			return Manager.tips(user.getOffice()+"无权访问（只允许"+errorMsg.toString()+"访问），请重新登录！",
+					"error");
 		return invocation.invoke();
 	}
 	

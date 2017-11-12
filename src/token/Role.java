@@ -15,6 +15,8 @@ public enum Role{
 	ld("领导"),
 	;
 	public final String name;
+	public String getName(){return this.name;}
+	public String getString(){return this.toString();}
 	Role(String name){this.name=name;}
 	
 	public boolean getACCESS(ACCESS a){
