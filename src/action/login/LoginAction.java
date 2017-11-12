@@ -10,9 +10,12 @@ public class LoginAction extends ActionSupport{
 	private static final long serialVersionUID = -2488160597018042665L;
 
 	private InnerPerson inner;
+	private boolean back=false;
 	
 	public InnerPerson getInner(){return inner;}
 	public void setInner(InnerPerson inner){this.inner=inner;}
+	public void setBack(boolean b){this.back=b;}
+	public void setBack(String a){this.back=false;try{this.back=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
 	
 	public LoginAction() throws SQLException{
 		super();
@@ -30,9 +33,13 @@ public class LoginAction extends ActionSupport{
 				ok=true;
 				inner=tmp;
 				System.out.println(">> LoginAction:execute > 从session中读取inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
+			}else if(back){
+				Manager.tips("已超时，请重新输入！");
+			}else{
+				System.out.println(">> LoginAction:execute > 登录失败:inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
+				Manager.tips("密码错误，请重新输入！");
 			}
-		}
-		if(!ok){
+		}else if(!ok){
 			if(inner.checkPassword()){
 				System.out.println(">> LoginAction:execute > 保存到session中:inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
 				Manager.setUser(inner);

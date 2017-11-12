@@ -14,7 +14,7 @@
 		<jsp:include page="/model/common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 
 <div class="bag">
-	<table width="80%"><tbody>
+	<table class="wtable"><tbody>
 		<s:form action="sudo_SQLOperation_execute" method="post" cssClass="myform" theme="simple">
 			<tr><td>
 				<s:textarea name="sql" value="%{sql}" style="width:360px;height:60px;"/>
@@ -26,7 +26,7 @@
 		</s:form>
 		<tr><td height="30px"></td></tr>
 	</tbody></table>
-	<table width="80%" class="wtable"><tbody>
+	<table class="wtable"><tbody>
 		<s:if test="list!=null && labels!=null">
 			<tr class="wtableHeader">
 				<td style="width:13px">序号</td>
