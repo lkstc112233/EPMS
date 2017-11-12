@@ -27,7 +27,10 @@ public class Manager {
 		return o;
 	}
 	static public void clearSession(){
+		String errorTips=Manager.loadSession(String.class,TipsName);
 		ActionContext.getContext().getSession().clear();
+		if(errorTips!=null)
+			Manager.saveSession(TipsName,errorTips);
 	}
 
 	static private final String TipsName="errorTips";
