@@ -15,7 +15,7 @@
 
 <div class="bag">
 	<table width="80%"><tbody>
-		<s:form action="jwc_sql_operation_select" method="post" cssClass="myform" theme="simple">
+		<s:form action="sudo_SQLOperation_execute" method="post" cssClass="myform" theme="simple">
 			<tr><td>
 				<s:textarea name="sql" value="%{sql}" style="width:360px;height:60px;"/>
 			</td></tr>
@@ -26,9 +26,9 @@
 		</s:form>
 		<tr><td height="30px"></td></tr>
 	</tbody></table>
-	<table width="80%" class="mytable"><tbody>
+	<table width="80%" class="wtable"><tbody>
 		<s:if test="list!=null && labels!=null">
-			<tr class="mytableTitle">
+			<tr class="wtableHeader">
 				<td style="width:13px">序号</td>
 				<s:iterator value="labels" var="__label">
 					<td style="word-wrap:break-word;word-break:break-all;">
@@ -37,7 +37,7 @@
 				</s:iterator>
 			</tr>
 			<s:iterator value="list" var="__tableRow" status="__status">
-				<tr>
+				<tr class="wtableContent">
 					<td class="listContent" style="width:13px"><s:property value="%{#__status.count}" /></td>
 					<s:iterator value="__tableRow" var="__tableCol">
 						<td>
@@ -48,7 +48,9 @@
 			</s:iterator>
 		</s:if>
 		<s:else>
-			<tr><td>这里会显示结果集...</td></tr>
+			<tr class="wtableContent"><td>
+				这里会显示结果集...
+			</td></tr>
 		</s:else>
 	</tbody></table>
 	

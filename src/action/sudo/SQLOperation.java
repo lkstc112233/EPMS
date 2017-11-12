@@ -1,4 +1,4 @@
-package action.jwc.sudo;
+package action.sudo;
 
 import java.sql.*;
 import java.util.*;
@@ -9,9 +9,9 @@ import action.Manager;
 import persistence.DB;
 
 
-public class SQLOperationSelectAction extends ActionSupport{
+public class SQLOperation extends ActionSupport{
 	private static final long serialVersionUID = -2075656836784414352L;
-	static public final String SESSION_List="SQLOperationSelectAction_List";
+	static public final String SESSION_List="SQLOperation_List";
 	
 	private String sql="";
 	private List<String[]> list=null;
@@ -27,12 +27,12 @@ public class SQLOperationSelectAction extends ActionSupport{
 	
 	@Override
 	public String execute(){
-		System.out.println(">> SQLOperationSelectAction:execute > sql: "+sql);
 		if(sql==null||sql.isEmpty())
 			return display();
+		System.out.println(">> SQLOperstionSelectAction:execute > sql: "+sql);
 		String check=Manager.SQLCheck(sql);
 		if(!Manager.SQLCheck_Success.equals(check)){
-			System.out.println(">> SQLOperationSelectAction:execute > sql不合法:"+check);
+			System.out.println(">> SQLOperstionSelectAction:execute > sql不合法:"+check);
 			return Manager.tips(check+"，请重新输入！",display());
 		}
 		try{
@@ -40,7 +40,7 @@ public class SQLOperationSelectAction extends ActionSupport{
 			ResultSet rs=st.executeQuery(sql);
 			rs.last();
 			int num=rs.getRow();
-			System.out.println(">> SQLOperationSelectAction:execute > 查询到"+num+"重值");
+			System.out.println(">> SQLOperstionSelectAction:execute > 查询到"+num+"重值");
 			rs.beforeFirst();
 			ResultSetMetaData md=rs.getMetaData();
 			labels=new String[md.getColumnCount()];
@@ -64,12 +64,10 @@ public class SQLOperationSelectAction extends ActionSupport{
 			return Manager.tips("数据库开小差去了，请重新输入！",
 					e,display());
 		}
-		System.out.println(">> SQLOperationSelectAction:execute <SUCCESS");
 		return SUCCESS;
 	}
+	
 	public String display(){
-		System.out.println(">> SQLOperationSelectAction:display >");
-		System.out.println(">> SQLOperationSelectAction:display <NONE");
 		return NONE;
 	}
 

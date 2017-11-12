@@ -1,4 +1,4 @@
-package action.jwc.sudo;
+package action.sudo;
 
 import java.sql.SQLException;
 
