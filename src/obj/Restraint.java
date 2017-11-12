@@ -63,10 +63,10 @@ public class Restraint{
 		public Part(Field f,Type t,Object s){field=f;type=t;value=s;}
 		public Part(Field f,Object s){field=f;type=Type.Equal;value=s;}
 			@Override public String toString(){
-				return this.field.toString()+" "+this.type.getValue()+" "+this.value;
+				return this.field.getSQLField(".")+" "+this.type.getValue()+" "+this.value;
 			}
 			public String getSQLString(){
-				return this.field.toString()+" "+this.type.getValue()+" ?";
+				return this.field.getSQLField(".")+" "+this.type.getValue()+" ?";
 			}
 			public int setSQLParam(PreparedStatement pst,int parameterIndex) throws SQLException{
 				pst.setObject(parameterIndex++,this.getValue());
@@ -101,7 +101,7 @@ public class Restraint{
 			for(@SuppressWarnings("unused") Object o:(Object[])this.getValue()){
 				if(first) first=false;
 				else sb.append(" OR ");
-				sb.append(this.getField().toString());
+				sb.append(this.getField().getSQLField("."));
 				sb.append(" ");
 				sb.append(this.getType().getValue());
 				sb.append(" ?");
@@ -138,7 +138,7 @@ public class Restraint{
 			for(Field f:this.order){
 				if(first) first=false;
 				else sb.append(" AND ");
-				sb.append(f.toString());
+				sb.append(f.getSQLField("."));
 			}
 		}
 		return sb.toString();

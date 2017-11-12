@@ -168,7 +168,7 @@ public abstract class Base {
 		return this.load(true);
 	}
 	public int load(boolean setFields) throws SQLException, IllegalArgumentException{
-		if(this.checkKeyField())
+		if(!this.checkKeyField())
 			throw new IllegalArgumentException("The key fields are not completed!");
 		StringBuilder sb=new StringBuilder();
 		sb.append("SELECT ");
@@ -195,7 +195,7 @@ public abstract class Base {
 		ResultSet rs=pst.executeQuery();
 		rs.last();
 		int num=rs.getRow();
-		System.err.println("更新了"+num+"重值！("+pst.toString()+")");
+		System.err.println("查询了"+num+"重值！("+pst.toString()+")");
 		rs.first();
 		if(num>0 && setFields){
 			for(Field f:this.getFields()) if(!f.isKey())
@@ -215,7 +215,7 @@ public abstract class Base {
 		if(base==null) return;
 		if(!base.getClass().equals(this.getClass()))
 			throw new IllegalArgumentException("类型不同！");
-		if(this.checkKeyField())
+		if(!this.checkKeyField())
 			throw new IllegalArgumentException("The key fields are not completed!");
 		StringBuilder sb=new StringBuilder();
 		sb.append("UPDATE ");
@@ -249,7 +249,7 @@ public abstract class Base {
 	}
 	
 	public void delete() throws IllegalArgumentException, SQLException{
-		if(this.checkKeyField())
+		if(!this.checkKeyField())
 			throw new IllegalArgumentException("The key fields are not completed!");
 		StringBuilder sb=new StringBuilder();
 		sb.append("DELETE FROM ");
@@ -356,9 +356,9 @@ public abstract class Base {
 			for(Field f:p.getFields()){
 				if(first) first=false;
 				else sb.append(" , ");
-				sb.append(f.toString());
+				sb.append(f.getSQLField("."));
 				sb.append(" AS ");
-				sb.append(JoinParam.ListFieldPrefix);sb.append(f.toString());
+				sb.append(JoinParam.ListFieldPrefix);sb.append(f.getSQLField("_"));
 			}
 		}
 		if(first) throw new IllegalArgumentException("There is NO field in SELECT Field!");
@@ -371,8 +371,9 @@ public abstract class Base {
 		for(JoinParam.Part part:param.getList())
 			for(Object o:part.getOnCheckFieldsValue())
 				pst.setObject(parameterIndex++,o);
-		for(Restraint.Part part:restraint.getWhere())
-			parameterIndex=part.setSQLParam(pst,parameterIndex);
+		if(restraint!=null)
+			for(Restraint.Part part:restraint.getWhere())
+				parameterIndex=part.setSQLParam(pst,parameterIndex);
 		ResultSet rs=pst.executeQuery();
 		List<Base[]> res=new ArrayList<Base[]>();
 		int len=param.size();
@@ -387,7 +388,7 @@ public abstract class Base {
 				}
 				boolean flag=true;
 				for(Field f:Field.getFields(c)){
-					String columnName=JoinParam.ListFieldPrefix+f.toString();
+					String columnName=JoinParam.ListFieldPrefix+f.getSQLField("_");
 					Object o=null;
 					try{o=rs.getObject(columnName);}catch(SQLException e){}
 					if(flag && o!=null) flag=false;
@@ -400,7 +401,7 @@ public abstract class Base {
 				//若x[i]的属性全部都是null，则x[i]应为null
 				if(flag) x[i]=null;
 				//若x[i]的key的Field都是null，则x[i]应为null
-				if(x[i]!=null && x[i].checkKeyField())
+				if(x[i]!=null && !x[i].checkKeyField())
 					x[i]=null;
 			}
 			res.add(x);

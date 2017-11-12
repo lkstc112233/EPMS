@@ -13,10 +13,11 @@ public class Field implements Comparable<Field>{
 	public final SQLField s;
 	@Override
 	public String toString(){
-		return Base.getSQLTableName(this.getClazz())+"."+this.getName();
+		return this.getClazz().getSimpleName()+"."+this.getName();
 	}
-	public String getSQLField(){
-		return Base.getSQLTableName(this.getClazz())+"."+this.getName();
+	public String getSQLField(String dl){
+		if(dl==null) dl="";
+		return Base.getSQLTableName(this.getClazz())+dl+this.getName();
 	}
 	
 	protected Field(Class<? extends Base> clazz,java.lang.reflect.Field field){

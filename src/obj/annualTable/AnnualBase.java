@@ -9,7 +9,7 @@ import token.Role;
 
 public abstract class AnnualBase extends Base implements Base.ListableWithNoSave{
 	
-	@SQLField(value="年",weight=1,isKey=true,notNull=true)
+	@SQLField(value="年",weight=0,isKey=true,notNull=true)
 	public Integer year;
 		public Integer getYear(){return year;}
 		public void setYear(int year){this.year=year;}
