@@ -26,6 +26,17 @@ public abstract class TableOperationAction extends ActionSupport{
 	public Search getSearch(){return this.search;}
 	public Integer[] getChoose(){return this.choose;}
 	public Base getOperateBase(){return this.operateBase;}
+	public Field[] getAllSelectFields(){
+		int len=0;
+		for(JoinParam.Part part:this.getSearch().getParam().getList())
+			len+=Field.getFields(part.getClazz()).length;
+		Field[] res=new Field[len];
+		int i=0;
+		for(JoinParam.Part part:this.getSearch().getParam().getList())
+			for(Field f:Field.getFields(part.getClazz()))
+				res[i++]=f;
+		return res;
+	}
 
 
 	public TableOperationAction(){
