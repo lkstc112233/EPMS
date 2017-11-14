@@ -16,7 +16,7 @@
 <div class="bag">
 	<table width="80%" border="0" cellspacing="0" cellpadding="0"><tbody>
 		<s:if test="role.name == '教务处'">
-			<tr><td valign="top">
+			<tr><td valign="top" colspan="100">
 				<div class="listHeader">
 					<div class="listHeaderLeft">管理功能</div>
 				</div>
@@ -37,7 +37,7 @@
 			</td></tr>
 		</s:if>
 		<tr>
-			<td valign="top">
+			<td valign="top" colspan="100">
 				<div class="listHeader">
 					<div class="listHeaderLeft">自然年管理功能</div>
 					<div class="right">
@@ -52,7 +52,7 @@
 			</td>
 		</tr>
 		<s:if test="role.name == '教务处'">
-			<tr><td valign="top">
+			<tr><td valign="top" colspan="100">
 				<ul class="listContent">
 					<li>
 						<span class="time">[All time]</span>
@@ -65,7 +65,7 @@
 		</s:if>
 		<s:iterator value="times" var="__tableRow" status="__status">
 			<tr>
-				<td><s:property value="%{#__status.count}" /></td>
+				<td style="width:13px;"><s:property value="%{#__status.count}" /></td>
 				<td valign="middle"><ul class="listContent">
 					<li>
 						<span class="time">
