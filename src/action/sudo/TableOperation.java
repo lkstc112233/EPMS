@@ -1,56 +1,45 @@
 package action.sudo;
 
-import java.sql.SQLException;
+import obj.*;
+import obj.restraint.AllRestraint;
 
-import obj.Base;
-import obj.Search;
-
-public class TableOperation extends action.TableOperationAction{
+public class TableOperation extends action.TableOperation2Action{
 	private static final long serialVersionUID = 8833385464572061925L;
 
-	// 标志可变tableName
-	public void setTableName(String tableName){this.setupTableName(tableName);}
-	public String[] getTableNames(){return Base.TableNames;}
+	//可变tableName
+	private String tableName;
+		public String[] getTableNames(){return Base.TableNames;}
+		public String getTableName(){return this.tableName;}
+		public void setTableName(String tableName){
+			Class<? extends Base> clazz=Base.getClassForName(tableName);
+			if(clazz==null) this.tableName=null;
+			else if(this.getSearch()!=null){
+				JoinParam oldP=this.getSearch().getParam();
+				this.tableName=tableName;
+				if(oldP!=null && oldP.getList().size()==1 && oldP.getClassByIndex(0).equals(clazz)){
+					//same tableName
+					return;
+				}
+			}
+			this.search=null;
+			this.display();//will reset the 'search' and 'operateBase'
+		}
 	
 	public TableOperation() {
 		super();
+		this.tableName="ACCESS";
+		if(this.getSearch()!=null){
+			JoinParam oldP=this.getSearch().getParam();
+			if(oldP!=null && oldP.getList().size()==1 && oldP.getClassByIndex(0)!=null)
+				this.tableName=Base.getSQLTableName(oldP.getClassByIndex(0));
+		}
 	}
-
-	@Override
-	protected void setupSearchRestraint()
-			throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, SQLException {
-		this.getSearch().setRestraint(new Search.AllRestraint(this.getSearch().getClassInfo()));
-	}
-
 	
 	@Override
-	public String display(){
-		return super.display();
-	}
-
-	@Override
-	public String execute(){
-		return super.execute();
-	}
-	@Override
-	public String update(){
-		return super.update();
-	}
-	@Override
-	public String create(){
-		return super.create();
-	}
-	@Override
-	public String delete(){
-		return super.delete();
-	}
-	@Override
-	public String upload(){
-		return super.upload();
-	}
-	@Override
-	public String download(){
-		return super.download();
+	protected Search createSearch() throws Exception {
+		System.out.println(">> TableOperation:createSearch > tableName="+this.tableName);
+		JoinParam param=new JoinParam(Base.getClassForName(this.tableName));
+		return new Search(param,new AllRestraint(param,2));
 	}
 	
 }
