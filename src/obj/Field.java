@@ -137,9 +137,28 @@ public class Field implements Comparable<Field>{
 	/**
 	 * 获取该Field的source对应列表
 	 */
-	public List<? extends Base> getSourceList(Class<? extends Base> clazz){
+	static public class Pair{
+		String key,value;
+		public Pair(Object a,String b){key=a==null?null:String.valueOf(a);value=b;}
+		public String getKey(){return key;}
+		public String getValue(){return value;}
+	}
+	static private Map<Field,List<Pair>> MapSourceList=new HashMap<Field,List<Pair>>();
+	public List<Pair> getSourceList(){
+		if(MapSourceList.containsKey(this)) return MapSourceList.get(this);
+		Field sourceField=this.source();
+		if(sourceField==null) return null;
+		List<Pair> res=new ArrayList<Pair>();
+		for(Base b:this.sourceList())
+			res.add(new Pair(sourceField.get(b),b.getDescription()));
+		MapSourceList.put(this,res);
+		return res;
+	}
+	public List<? extends Base> sourceList(){
+		Field sourceField=this.source();
+		if(sourceField==null) return null;
 		try{
-			return Base.list(this.source().getClazz());
+			return Base.list(sourceField.getClazz());
 		}catch (IllegalArgumentException | InstantiationException | SQLException e){
 			e.printStackTrace();
 		}return null;

@@ -28,7 +28,7 @@ public class YearAndSchoolAndMajorRestraint extends HardRestraint{
 		List<Field> schoolFields=new ArrayList<Field>();
 		List<Field> majorFields=new ArrayList<Field>();
 		for(JoinParam.Part p:param.getList()){
-			for(Field f:p.getFields()){
+			for(Field f:Field.getFields(p.getClazz())){
 				if(f.getName().equals("year"))
 					yearFields.add(f);
 				else{

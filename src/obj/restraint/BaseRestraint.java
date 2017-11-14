@@ -14,4 +14,13 @@ public abstract class BaseRestraint{
 		
 		
 	public abstract boolean checkBase(Base b,boolean setIfFalse);
+	
+	public boolean checkBases(Base bs[],boolean setIfFalse){
+		boolean res=true;
+		for(Base b:bs){
+			if(!this.checkBase(b,setIfFalse))
+				res=false;
+		}
+		return res;
+	}
 }

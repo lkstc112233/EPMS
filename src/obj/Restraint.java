@@ -69,7 +69,8 @@ public class Restraint{
 				return this.field.getSQLField(".")+" "+this.type.getValue()+" ?";
 			}
 			public int setSQLParam(PreparedStatement pst,int parameterIndex) throws SQLException{
-				pst.setObject(parameterIndex++,this.getValue());
+				if(this.type!=null)
+					pst.setObject(parameterIndex++,this.getValue());
 				return parameterIndex;
 			}
 	}
@@ -124,10 +125,9 @@ public class Restraint{
 	public String getSQLString(){
 		StringBuilder sb=new StringBuilder();
 		if(where!=null && where.length>0 && where[0]!=null){
-			sb.append(" WHERE ");
 			boolean first=true;
-			for(Part w:this.where){
-				if(first) first=false;
+			for(Part w:this.where) if(w.type!=null) {
+				if(first){sb.append(" WHERE ");first=false;}
 				else sb.append(" AND ");
 				sb.append(w.getSQLString());
 			}

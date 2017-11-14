@@ -14,6 +14,11 @@ public abstract class Base {
 	 * 用于select描述信息
 	 */
 	public abstract String getDescription();
+	//=============================================================
+	//io
+	//=============================================================
+	static private SQLIO io=new POI();
+		static public SQLIO io(){return io;}
 	
 	//=============================================================
 	//SQL表名
@@ -354,7 +359,7 @@ public abstract class Base {
 		sb.append("SELECT ");
 		boolean first=true;
 		for(JoinParam.Part p:param.getList()){
-			for(Field f:p.getFields()){
+			for(Field f:Field.getFields(p.getClazz())){
 				if(first) first=false;
 				else sb.append(" , ");
 				sb.append(f.getSQLField("."));
@@ -377,16 +382,10 @@ public abstract class Base {
 				parameterIndex=part.setSQLParam(pst,parameterIndex);
 		ResultSet rs=pst.executeQuery();
 		List<Base[]> res=new ArrayList<Base[]>();
-		int len=param.size();
 		while(rs.next()){
-			Base[] x=new Base[len];
-			for(int i=0;i<len;i++){
+			Base[] x=param.newInstance();
+			for(int i=0;i<x.length;i++){
 				Class<? extends Base> c=param.getClassByIndex(i);
-				try{
-					x[i]=c.newInstance();
-				} catch (IllegalAccessException e) {
-					throw new InstantiationException(e.getMessage());
-				}
 				boolean flag=true;
 				for(Field f:Field.getFields(c)){
 					String columnName=JoinParam.ListFieldPrefix+f.getSQLField("_");
