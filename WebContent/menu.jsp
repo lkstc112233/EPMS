@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>EPMS-<s:property value="role.name" /></title>
+<title>EPMS-<s:property value="#session.role.name" /></title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
@@ -15,7 +15,7 @@
 		
 <div class="bag">
 	<table width="80%" border="0" cellspacing="0" cellpadding="0"><tbody>
-		<s:if test="role.name == '教务处'">
+		<s:if test="#session.role.name == '教务处'">
 			<tr><td valign="top" colspan="100">
 				<div class="listHeader">
 					<div class="listHeaderLeft">管理功能</div>
@@ -51,7 +51,7 @@
 				</div>
 			</td>
 		</tr>
-		<s:if test="role.name == '教务处'">
+		<s:if test="#session.role.name == '教务处'">
 			<tr><td valign="top" colspan="100">
 				<ul class="listContent">
 					<li>

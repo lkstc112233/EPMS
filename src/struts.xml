@@ -32,9 +32,10 @@
 		<!--设置全局result页面-->
 		<global-results>
 			<!-- //TODO error会跳转到login.jsp -->
-			<result name="error" type="redirect"> login.action</result>
+			<result name="error" type="redirect"> menu.action</result>
 			<result name="invalid.token"> invalidToken.jsp</result>
 			<result name="jump" type="redirect"> ${jumpURL}</result>
+			<result name="login"> login.jsp </result>
 		</global-results>
 		
 		<!-- ################################################################################ -->
@@ -48,7 +49,6 @@
 		<!-- ################################################################################ -->
 		<!--动作：login配置-->
 		<action name="login" class="action.login.LoginAction" method="execute">
-			<result name="login"> login.jsp</result>
 			<result type="redirect"> menu.action</result>
 			<!--该登录动作不受token过滤器影响-->
 			<interceptor-ref name="defaultStack" />
@@ -67,6 +67,8 @@
 			<result name="ld">		menu.jsp</result>
 			<result name="js">		menu.jsp</result>
 			<result> login.jsp</result>
+			<!--该登录动作不受token过滤器影响-->
+			<interceptor-ref name="defaultStack" />
 		</action>
 		
 		<!-- ################################################################################ -->

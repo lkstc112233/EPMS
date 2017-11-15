@@ -42,9 +42,9 @@ public class LoginAction extends ActionSupport{
 		}else if(!ok){
 			if(inner.checkPassword()){
 				System.out.println(">> LoginAction:execute > 保存到session中:inner(id="+inner.getId()+",ps="+inner.getPassword()+")");
-				Manager.setUser(inner);
 				try {
 					inner.load();
+					Manager.setUser(inner);
 					ok=true;
 					System.out.println(">> LoginAction:execute > 登陆成功:"+inner);
 				} catch (IllegalArgumentException | SQLException e) {
