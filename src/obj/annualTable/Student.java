@@ -15,7 +15,7 @@ public class Student extends AnnualBase{
 	private String email;
 	@SQLField(value="专业",weight=13,notNull=true,source="Major.name")
 	private String major;
-	@SQLField(value="实习基地",weight=14,notNull=true,source="PracticeBase.name")
+	@SQLField(value="实习基地",weight=14,source="PracticeBase.name")
 	private String practiceBase;
 	@SQLField(value="身份证号",weight=15,notNull=true)
 	private String sfzh;
@@ -25,8 +25,8 @@ public class Student extends AnnualBase{
 	private String province;
 	@SQLField(value="民族",weight=18,notNull=true,source="Nation.name")
 	private String nation;
-	@SQLField(value="回生源地",weight=19,notNull=true,ps="是否希望回生源地进行教育实习")
-	private Boolean hxyx;
+	@SQLField(value="回生源地",weight=19,ps="是否希望回生源地进行教育实习")
+	private Boolean hxyx=true;
 	@SQLField(value="指导老师工号",weight=20,source="InnerPerson.id",ps="指导老师需要属于校内人员列表")
 	private String teacherId;
 	@SQLField(value="优秀实习生类别",weight=21,autoInit=true,source="Outstanding.type")

@@ -50,7 +50,7 @@ public class Restraint{
 			p.value=this.value;
 		}
 		public boolean checkAndSetBase(Base b,boolean setIfFalse) throws IllegalArgumentException{
-			if(this.field.getClazz().isAssignableFrom(b.getClass()))
+			if(!this.field.getClazz().isAssignableFrom(b.getClass()))
 				throw new IllegalArgumentException("Class not correct!");
 			if(this.type.checkBase(this.field.get(b),value)) return true;
 			if(setIfFalse){

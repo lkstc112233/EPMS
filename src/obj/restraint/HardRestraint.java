@@ -42,10 +42,13 @@ public class HardRestraint extends AllRestraint{
 		boolean res=true;
 		int i=0;
 		for(Restraint.Part p:this.getRestraint().getWhere()){
-			if(this.isHardPart[i++]){
+			if(this.isHardPart[i++] && p!=null){
 				try{
 					if(p.checkAndSetBase(b,setIfFalse)) continue;
-				}catch(IllegalArgumentException e){continue;}
+				}catch(IllegalArgumentException e){
+					e.printStackTrace();
+					continue;
+				}
 				res=false;
 			}
 		}

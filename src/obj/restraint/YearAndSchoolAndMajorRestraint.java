@@ -14,15 +14,16 @@ import obj.staticSource.School;
  */
 public class YearAndSchoolAndMajorRestraint extends HardRestraint{
 
-	private boolean[] isHardPart;
-		public boolean[] getIsHeardPart(){return this.isHardPart;}
 	private List<Major> majors;
 		public List<Major> getMajors(){return this.majors;}
 	
 	public YearAndSchoolAndMajorRestraint(JoinParam param,int orderFieldsCount,
 			int year,School school) throws IllegalArgumentException, InstantiationException, SQLException {
 		super(param,orderFieldsCount,null);
-		this.majors=Base.list(Major.class,new Restraint(
+		if(school==null)
+			this.majors=null;// which means 'school!=null'
+		else
+			this.majors=Base.list(Major.class,new Restraint(
 				Field.getField(Major.class,"school"),school.getName()));
 		List<Field> yearFields=new ArrayList<Field>();
 		List<Field> schoolFields=new ArrayList<Field>();
@@ -31,7 +32,7 @@ public class YearAndSchoolAndMajorRestraint extends HardRestraint{
 			for(Field f:Field.getFields(p.getClazz())){
 				if(f.getName().equals("year"))
 					yearFields.add(f);
-				else{
+				else if(this.majors!=null){// which means 'school!=null'
 					Class<? extends Base> sourceClazz=f.source().getClazz();
 					if(sourceClazz.equals(School.class))
 						schoolFields.add(f);
@@ -45,10 +46,12 @@ public class YearAndSchoolAndMajorRestraint extends HardRestraint{
 			hps.add(new Restraint.Part(f,year));
 		for(Field f:schoolFields)
 			hps.add(new Restraint.Part(f,school.getName()));
-		String[] majorsName=new String[this.majors.size()];
-		for(int i=0;i<majorsName.length;i++) majorsName[i]=this.majors.get(i).getName();
-		for(Field f:majorFields)
-			hps.add(new Restraint.OrPart(f,majorsName));
+		if(this.majors!=null){// which means 'school!=null'
+			String[] majorsName=new String[this.majors.size()];
+			for(int i=0;i<majorsName.length;i++) majorsName[i]=this.majors.get(i).getName();
+			for(Field f:majorFields)
+				hps.add(new Restraint.OrPart(f,majorsName));
+		}
 		Restraint.Part[] hardPart=new Restraint.Part[hps.size()];
 		for(int i=0;i<hardPart.length;i++) hardPart[i]=hps.get(i);
 		super.setupHardPart(hardPart);
