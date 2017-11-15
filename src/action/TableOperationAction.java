@@ -47,7 +47,8 @@ public abstract class TableOperationAction extends ActionSupport{
 	protected void setup(){
 		if(this.search==null)
 			this.search=Manager.loadSession(Search.class,SessionSearchKey);
-		else Manager.saveSession(SessionSearchKey,this.search);
+		else
+			Manager.saveSession(SessionSearchKey,this.search);
 		if(this.search==null) return;
 		//===
 		if(this.choose==null)

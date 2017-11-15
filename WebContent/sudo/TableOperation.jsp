@@ -19,6 +19,9 @@
 		<jsp:param name="actionName" value="sudo_TableOperation"/>
 		<jsp:param name="joinParamPage" value="/model/search/joinparam/OneChangablePage.jsp"/>
 		<jsp:param name="restraintPage" value="/model/search/restraint/AllRestraintPage.jsp"/>
+		<jsp:param name="poiBoolean" value="true"/>
+		<jsp:param name="createBoolean" value="true"/>
+		<jsp:param name="deleteBoolean" value="true"/>
 	</jsp:include>
 	
 </div>

@@ -7,15 +7,16 @@
 	<% request.setAttribute("actionName",request.getParameter("actionName"));%>
 		
 	<table style="width:100%"><tbody><s:form action="%{#request.actionName}_display" method="get" theme="simple">
-		<tr><td style="border:2px solid #0071BC;" class="listHeader">
-			请选择操作表:
-			<s:select list="tableNames"
-			name="tableName"
-			value="%{tableName}"
-			onchange="window.location.href=window.location.href.substring(0,(
-			window.location.href.indexOf('?')<0?window.location.length:window.location.href.indexOf('?'))
-			)+'?tableName='+this.value"/>
-			/>
+		<tr><td style="border:2px solid #0071BC;">
+			<div style="padding-left:10px">
+				请选择操作表:
+				<s:select list="tableNames"
+				name="tableName"
+				value="%{tableName}"
+				onchange="window.location.href=window.location.href.substring(0,(
+				window.location.href.indexOf('?')<0?window.location.length:window.location.href.indexOf('?'))
+				)+'?tableName='+this.value"/>
+			</div>
 		</td></tr>
 	</s:form></tbody></table>
 	

@@ -6,15 +6,15 @@
 <div class="bag">
 	<% request.setAttribute("actionName",request.getParameter("actionName"));%>
 		
-	<table style="width:100%"><tbody><s:form action="%{#request.actionName}_execute" method="get" theme="simple">
+	<table style="width:100%"><tbody><s:form action="%{#request.actionName}_execute" method="post" theme="simple">
 		<tr><td style="border:2px solid #0071BC;">
 			<table style="width:100%"><tbody>
 				<tr><td colspan="100">
 					<s:iterator value="search.baseRestraint.restraint.where" var="__restraintPartRow" status="__restraintPartStatus">
 						<div style="line-height:32px;float:left">
 							<!-- 限制 -->
-							<div style="float:left;width:120px;text-align:center">
-								<s:property value="%{#__restraintPartRow.fieldName}" />
+							<div style="float:left;width:120px;text-align:left">
+								<s:property value="%{#__restraintPartRow.field}" />
 							</div><div style="float:left;text-align:center">
 								<s:select
 								list="search.baseRestraint.restraint.typeList"
@@ -34,13 +34,14 @@
 						<div style="line-height:32px;float:left">
 							<div style="line-height:32px;float:left">
 								第<s:property value="#__restraintOrderStatus.count" />排序项
-							</div><div style="float:left;text-align:center">
+							</div><div style="float:left;text-align:center;padding-top:5px;">
 								<s:select
 								list="allSelectFields"
+								listKey="allName" listValue="description"
 								headerKey="" headerValue="-排序-"
-								listKey="name" listValue="name"
 								value="%{search.baseRestraint.restraint.order[#__restraintOrderStatus.index]}"
-								name="search.baseRestraint.restraint.order[%{#__restraintOrderStatus.index}]"/>
+								name="search.baseRestraint.restraint.order[%{#__restraintOrderStatus.index}]"
+								/>
 							</div>
 							<div style="float:left;width:18px;">
 								&nbsp;
