@@ -126,7 +126,7 @@ public class Restraint{
 		StringBuilder sb=new StringBuilder();
 		if(where!=null && where.length>0 && where[0]!=null){
 			boolean first=true;
-			for(Part w:this.where) if(w.type!=null) {
+			for(Part w:this.where) if(w!=null && w.field!=null && w.type!=null) {
 				if(first){sb.append(" WHERE ");first=false;}
 				else sb.append(" AND ");
 				sb.append(w.getSQLString());
@@ -135,7 +135,7 @@ public class Restraint{
 		if(order!=null && order.length>0 && order[0]!=null){
 			sb.append(" ORDER BY ");
 			boolean first=true;
-			for(Field f:this.order){
+			for(Field f:this.order) if(f!=null){
 				if(first) first=false;
 				else sb.append(" AND ");
 				sb.append(f.getSQLField("."));

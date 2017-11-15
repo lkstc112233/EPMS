@@ -15,6 +15,7 @@ public class JoinParam{
 	
 	static public class Part{
 		private Type type;						public Type getType(){return type;}
+											public Field[] getFields(){return Field.getFields(this.getClazz());}
 		private Class<? extends Base> clazz;	public Class<? extends Base> getClazz(){return clazz;}
 											public String getSQLTableName(){return Base.getSQLTableName(clazz);} 
 		private Field[] lastOnFields;			public Field[] getLastOnFields(){return this.lastOnFields;}

@@ -19,6 +19,9 @@ public class Field implements Comparable<Field>{
 		if(dl==null) dl="";
 		return Base.getSQLTableName(this.getClazz())+dl+this.getName();
 	}
+	public String getAllName(){
+		return this.getSQLField(".");
+	}
 	
 	protected Field(Class<? extends Base> clazz,java.lang.reflect.Field field){
 		this.clazz=clazz;
