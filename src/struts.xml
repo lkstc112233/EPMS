@@ -67,8 +67,6 @@
 			<result name="ld">		menu.jsp</result>
 			<result name="js">		menu.jsp</result>
 			<result> login.jsp</result>
-			<!--该登录动作不受token过滤器影响-->
-			<interceptor-ref name="defaultStack" />
 		</action>
 		
 		<!-- ################################################################################ -->

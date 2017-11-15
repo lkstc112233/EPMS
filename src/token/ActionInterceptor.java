@@ -25,7 +25,7 @@ public class ActionInterceptor extends AbstractInterceptor{
 //				+")userToken="+inner);
 		if(user==null)
 			return Manager.tips("登录已超时，请重新登录！",
-					"error");
+					"login");
 		//判断的当前权限
 	/*	<!-- Action名称登记 -->
 		<!-- sudo开头的必须要求教务处权限 -->

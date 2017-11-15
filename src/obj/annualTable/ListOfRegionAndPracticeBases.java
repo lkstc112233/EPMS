@@ -35,7 +35,7 @@ public class ListOfRegionAndPracticeBases{
 						Region.class,
 						Field.getField(PracticeBase.class,"name"),
 						Field.getField(Region.class,"practiceBase"),
-						Field.getField(PracticeBase.class,"year"),
+						Field.getField(Region.class,"year"),
 						new Object[]{Integer.valueOf(year)}),
 				new Restraint(Field.getField(PracticeBase.class,"name")));
 		for(Base[] bs:tmp){
