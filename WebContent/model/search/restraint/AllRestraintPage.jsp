@@ -54,8 +54,8 @@
 		<tr><td colspan="100" style="width:20%;">
 			&nbsp;
 		</td></tr>
-		<tr><td colspan="100" style="width:20%;">
-			<s:submit value="查询" cssClass="button" />
+		<tr><td colspan="100" style="width:20%;border:0;">
+			<s:submit value="查询" cssClass="title_button" style="width:20%" />
 		</td></tr>
 		<tr><td colspan="100" style="width:20%;">
 			&nbsp;

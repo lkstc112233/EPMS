@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>EPMS-<s:property value="#session.role.name" />-<s:property value="tableName" />数据处理(sudo)</title>
+<title>EPMS-<s:property value="#session.role.name" />-免费师范生数据导入（<s:property value="annual.year" />）</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
@@ -16,13 +16,14 @@
 <div class="bag">
 
 	<jsp:include page="/model/search/TableOperationPage.jsp" flush="true">
-		<jsp:param name="actionName" value="sudo_TableOperation"/>
-		<jsp:param name="joinParamPage" value="/model/search/joinparam/OneChangablePage.jsp"/>
-		<jsp:param name="restraintPage" value="/model/search/restraint/AllRestraintPage.jsp"/>
+		<jsp:param name="actionName" value="function_OuterPersonImport"/>
+		<jsp:param name="joinParamPage" value="/model/search/joinparam/OnePage.jsp"/>
+
 		<jsp:param name="poiBoolean" value="true"/>
 		<jsp:param name="createBoolean" value="true"/>
 		<jsp:param name="deleteBoolean" value="true"/>
 	</jsp:include>
+	
 	
 </div>
 

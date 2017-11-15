@@ -65,6 +65,8 @@ public abstract class TableOperationAction extends ActionSupport{
 				//update|delete 备份旧数据
 				this.search.getResult().get(this.choose[1])[this.choose[0]].copyTo(this.operateBase);
 			}else this.choose[1]=-1;
+			if(this.search.getBaseRestraint()!=null)
+				this.search.getBaseRestraint().checkBase(this.operateBase,/*setIfFalse*/true);
 			Manager.saveSession(SessionChooseKey,this.choose);
 		}else{
 			this.operateBase=null;

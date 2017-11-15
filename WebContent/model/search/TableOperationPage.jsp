@@ -10,13 +10,6 @@
 	<table class="wtable"><tbody>
 		<!-- ################# -->
 		<!-- 联合查询配置 -->
-		<tr><td colspan="100">
-			<div class="listHeader">
-				<div class="listHeaderLeft">
-					<s:property value="tableName"/>
-				</div>
-			</div>
-		</td></tr>
 		<% String joinParamPage=request.getParameter("joinParamPage"); 
 		   if(joinParamPage!=null){ %>
 			<tr><td colspan="100">
@@ -27,7 +20,7 @@
 		<% } %>
 		<!-- ################# -->
 		<!-- 查询限制条件 -->
-		<tr><td colspan="100">
+		<tr class="wtableContent"><td colspan="100" style="width:20%;border:0;">
 			<% String restraintPage=request.getParameter("restraintPage"); 
 				if(restraintPage!=null){ %>
 				<jsp:include page="${param.restraintPage}" flush="true">
@@ -35,10 +28,12 @@
 				</jsp:include>
 			<% }else{ %>
 				<s:form action="%{#request.actionName}_execute" method="post" theme="simple">
-					<s:submit value="查询" cssClass="button" theme="simple"/>
+					<s:submit value="查询" cssClass="title_button" theme="simple" style="width:20%"/>
 				</s:form>
 			<% } %>
 		</td></tr>
+	</tbody></table>
+	<div style="overflow-x:scroll;"><table class="wtable"><tbody>
 		<tr>
 			<td style="width:13px;">&nbsp;</td>
 			<s:iterator value="search.param.list" var="__Part" status="__PartStatus">
@@ -77,11 +72,11 @@
 			</tr>
 		<% } %>
 		<tr class="wtableHeader">
-			<td style="width:13px;">序号</td>
+			<td style="width:13px;border:0;">序号</td>
 			<s:iterator value="search.param.list" var="__Part" status="__PartStatus">
-				<td colspan="2">操作</td>
+				<td colspan="2" style="border:0;">操作</td>
 				<s:iterator value="#__Part.fields" var="__Field" status="__FieldStatus">
-					<td style="word-wrap:break-word;word-break:break-all;">
+					<td style="border:0;">
 						<s:property value="#__Field.description"/>
 						<s:if test="#__Field.notNull == true">
 						*
@@ -90,35 +85,33 @@
 				</s:iterator>
 			</s:iterator>
 		</tr>
-	<s:if test="search == null || search.result == null || search.result.isEmpty()">
-		<tr><td colspan="100">
-			这里会显示结果集
-		</td></tr>
-	</s:if><s:else>
 		<% String createBoolean=request.getParameter("createBoolean");
 			if(Boolean.valueOf(createBoolean)){ %>
 			<tr class="wtableContent">
-				<td style="width:13px;">+</td>
+				<td style="width:13px;border:0;">
+					+
+				</td>
 				<s:iterator value="search.param.list" var="__Part" status="__PartStatus">
 					<s:if test="choose[0] == #__PartStatus.index && (choose[1] == null || choose[1] < 0)">
 						<s:form action="%{#request.actionName}_create" method="post" theme="simple">
-							<td style="width:27px;" colspan="2">
+							<td style="width:27px;border:0;" colspan="2">
 								<s:submit value="create" cssClass="inlineButton" style="width:100%;" theme="simple" />
 							</td>
 							<s:iterator value="operateBase.fields" var="__opField" status="__opFieldStatus">
 								<s:if test="fieldsDisplay[#__PartStatus.index][#__opFieldStatus.index] == false">
-								<td></td>
+								<td style="border:0;">&nbsp;</td>
 								</s:if><s:else>
-									<td>
+									<td style="border:0;">
 										<s:if test="#__opField.source == null">
 											<s:textfield name="operateBase.%{#__opField.name}"
-											value=""
+											value="%{operateBase.fieldsValue[#__opFieldStatus.index]}"
 											style="text-align:center;padding:0px;width:95%;" theme="simple" />
 										</s:if><s:else>
 											<s:select list="%{#__opField.sourceList}"
 											listKey="key" listValue="value"
-											name="operateBase.%{#__opField.name}"
 											headerKey="" headerValue="无"
+											name="operateBase.%{#__opField.name}"
+											value="%{operateBase.fieldsValue[#__opFieldStatus.index]}"
 											style="text-align:center;padding:0px;width:95%;" theme="simple" />
 										</s:else>
 									</td>
@@ -127,7 +120,7 @@
 						</s:form>
 					</s:if><s:else>
 						<% pageContext.setAttribute("_colspan",obj.Field.getFields(((obj.JoinParam.Part)request.getAttribute("__Part")).getClazz()).length+2); %>
-						<td colspan="${_colspan}">
+						<td colspan="${_colspan}" style="border:0;">
 							<s:form action="%{#request.actionName}_display" method="post" theme="simple">
 								<s:hidden name="choose[0]" value="%{#__PartStatus.index}" theme="simple"/>
 								<s:submit value="+ create +" cssClass="inlineButton" style="width:100%;" theme="simple"/>
@@ -137,75 +130,80 @@
 				</s:iterator>
 			</tr>
 		<% } %>
-		<s:iterator value="search.result" var="__Row" status="__Status">
-			<tr class="wtableContent">
-				<td style="width:13px;">
-					<s:property value="%{#__Status.count}" />
-				</td>
-				<s:iterator value="search.param.list" var="__Part" status="__PartStatus">
-					<td style="width:27px;">
-						<% String deleteBoolean=request.getParameter("deleteBoolean");
-							if(Boolean.valueOf(deleteBoolean)){ %>
-							<s:form action="%{#request.actionName}_delete" method="post" theme="simple">
-								<s:hidden name="choose[0]" value="%{#__PartStatus.index}" theme="simple"/>
-								<s:hidden name="choose[1]" value="%{#__Status.index}" theme="simple"/>
-								<s:submit value="X" cssClass="inlineButton"
-								style="color:red;width:100%;" theme="simple"/>
-							</s:form>
-						<% } %>
+		<s:if test="search == null || search.result == null || search.result.isEmpty()">
+			<tr><td colspan="100">
+				这里会显示结果集
+			</td></tr>
+		</s:if><s:else>
+			<s:iterator value="search.result" var="__Row" status="__Status">
+				<tr class="wtableContent">
+					<td style="width:13px;">
+						<s:property value="%{#__Status.count}" />
 					</td>
-					<s:if test="choose!=null && choose[0] == #__PartStatus.index && choose[1] == #__Status.index">
-						<s:form action="%{#request.actionName}_update" method="post" theme="simple">
+					<s:iterator value="search.param.list" var="__Part" status="__PartStatus">
+						<td style="width:27px;">
+							<% String deleteBoolean=request.getParameter("deleteBoolean");
+								if(Boolean.valueOf(deleteBoolean)){ %>
+								<s:form action="%{#request.actionName}_delete" method="post" theme="simple">
+									<s:hidden name="choose[0]" value="%{#__PartStatus.index}" theme="simple"/>
+									<s:hidden name="choose[1]" value="%{#__Status.index}" theme="simple"/>
+									<s:submit value="X" cssClass="inlineButton"
+									style="color:red;width:100%;" theme="simple"/>
+								</s:form>
+							<% } %>
+						</td>
+						<s:if test="choose!=null && choose[0] == #__PartStatus.index && choose[1] == #__Status.index">
+							<s:form action="%{#request.actionName}_update" method="post" theme="simple">
+								<td style="width:40px;">
+									<s:hidden name="choose[0]" value="%{#__PartStatus.index}" theme="simple"/>
+									<s:hidden name="choose[1]" value="%{#__Status.index}" theme="simple"/>
+									<s:submit value="保存" cssClass="inlineButton"
+									style="color:#ffffff;background-color:#0071bc;width:95%;" theme="simple" />
+								</td>
+								<s:iterator value="#__Row[#__PartStatus.index].fields" var="__opField" status="__opFieldStatus">
+									<s:if test="fieldsDisplay[#__PartStatus.index][#__opFieldStatus.index] == false">
+									<td></td>
+									</s:if><s:else>
+										<td>
+											<s:if test="#__opField.source == null">
+												<s:textfield
+												name="search.result[%{#__Status.index}][%{#__PartStatus.index}].%{#__opField.name}"
+												value="%{#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]}"
+												style="text-align:center;padding:0px;width:95%;" theme="simple" />
+											</s:if><s:else>
+												<s:select list="%{#__opField.sourceList}"
+												listKey="key" listValue="value"
+												name="search.result[%{#__Status.index}][%{#__PartStatus.index}].%{#__opField.name}"
+												value="%{#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]}"
+												headerKey="" headerValue="无"
+												style="text-align:center;padding:0px;width:95%;" theme="simple" />
+											</s:else>
+										</td>
+									</s:else>
+								</s:iterator>
+							</s:form>
+						</s:if><s:else>
 							<td style="width:40px;">
-								<s:hidden name="choose[0]" value="%{#__PartStatus.index}" theme="simple"/>
-								<s:hidden name="choose[1]" value="%{#__Status.index}" theme="simple"/>
-								<s:submit value="保存" cssClass="inlineButton"
-								style="color:#ffffff;background-color:#0071bc;width:95%;" theme="simple" />
+								<s:form action="%{#request.actionName}_display" method="post" theme="simple">
+									<s:hidden name="choose[0]" value="%{#__PartStatus.index}" theme="simple"/>
+									<s:hidden name="choose[1]" value="%{#__Status.index}" theme="simple"/>
+									<s:submit value="修改" cssClass="inlineButton"
+									style="width:100%;" theme="simple" />
+								</s:form>
 							</td>
-							<s:iterator value="#__Row[#__PartStatus.index].fields" var="__opField" status="__opFieldStatus">
+							<s:iterator value="%{#__Row[#__PartStatus.index].fields}" var="__opField" status="__opFieldStatus">
 								<s:if test="fieldsDisplay[#__PartStatus.index][#__opFieldStatus.index] == false">
 								<td></td>
 								</s:if><s:else>
-									<td>
-										<s:if test="#__opField.source == null">
-											<s:textfield
-											name="search.result[%{#__Status.index}][%{#__PartStatus.index}].%{#__opField.name}"
-											value="%{#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]}"
-											style="text-align:center;padding:0px;width:95%;" theme="simple" />
-										</s:if><s:else>
-											<s:select list="%{#__opField.sourceList}"
-											listKey="key" listValue="value"
-											name="search.result[%{#__Status.index}][%{#__PartStatus.index}].%{#__opField.name}"
-											value="%{#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]}"
-											headerKey="" headerValue="无"
-											style="text-align:center;padding:0px;width:95%;" theme="simple" />
-										</s:else>
-									</td>
+									<td><s:property value="#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]" /></td>
 								</s:else>
 							</s:iterator>
-						</s:form>
-					</s:if><s:else>
-						<td style="width:40px;">
-							<s:form action="%{#request.actionName}_display" method="post" theme="simple">
-								<s:hidden name="choose[0]" value="%{#__PartStatus.index}" theme="simple"/>
-								<s:hidden name="choose[1]" value="%{#__Status.index}" theme="simple"/>
-								<s:submit value="修改" cssClass="inlineButton"
-								style="width:100%;" theme="simple" />
-							</s:form>
-						</td>
-						<s:iterator value="%{#__Row[#__PartStatus.index].fields}" var="__opField" status="__opFieldStatus">
-							<s:if test="fieldsDisplay[#__PartStatus.index][#__opFieldStatus.index] == false">
-							<td></td>
-							</s:if><s:else>
-								<td><s:property value="#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]" /></td>
-							</s:else>
-						</s:iterator>
-					</s:else>
-				</s:iterator>
-			</tr>
-		</s:iterator>
-	</s:else>
-	</tbody></table>
+						</s:else>
+					</s:iterator>
+				</tr>
+			</s:iterator>
+		</s:else>
+	</tbody></table></div>
 	
 	
 </div>

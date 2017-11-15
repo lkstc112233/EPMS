@@ -39,7 +39,7 @@ public class TableOperation extends action.TableOperation2Action{
 	protected Search createSearch() throws Exception {
 		System.out.println(">> TableOperation:createSearch > tableName="+this.tableName);
 		JoinParam param=new JoinParam(Base.getClassForName(this.tableName));
-		return new Search(param,new AllRestraint(param,2));
+		return new Search(param,new AllRestraint(param,3));
 	}
 	
 }
