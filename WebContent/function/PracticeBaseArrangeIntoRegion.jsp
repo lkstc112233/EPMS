@@ -20,7 +20,12 @@
 				分配实习基地到实习大区（<s:property value="annual.year" />）
 			</div>
 		</td></tr>
+		<tr><td colspan="100" style="width:20%;border:0;height:25px;">
+			&nbsp;
+		</td></tr>
 	</tbody></table>
+	
+	
 	<table width="80%"><tbody>
 	<s:iterator value="regionAndPracticeBase.list" var="__Row" status="__Status">
 		<!-- ########### 大区信息 ########### -->
@@ -39,17 +44,6 @@
 			</div>
 		</td></tr>
 		<!-- ########### 表头 ########### -->
-		<tr class="wtableHeader" style="display:none;">
-			<td colspan="2">&nbsp;</td>
-			<s:iterator value="practiceBase.fields" var="__opField" status="__opFieldStatus">
-				<td style="word-wrap:break-word;word-break:break-all;">
-					<s:property value="#__opField.name"/>
-					<s:if test="#__opField.notNull == true">
-					*
-					</s:if>
-				</td>
-			</s:iterator>
-		</tr>
 		<tr class="wtableHeader">
 			<td style="width:13px;">选择</td>
 			<td style="width:13px;">序号</td>

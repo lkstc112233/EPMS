@@ -20,6 +20,9 @@
 				数据库管理
 			</div>
 		</td></tr>
+		<tr><td colspan="100" style="width:20%;border:0;height:25px;">
+			&nbsp;
+		</td></tr>
 	</tbody></table>
 	
 	<table class="wtable"><tbody>

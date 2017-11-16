@@ -35,7 +35,6 @@ public class RegionLeaderAndSupervisorArrangement extends ActionSupport{
 
 	public RegionLeaderAndSupervisorArrangement(){
 		super();
-		System.out.println(">> RegionLeaderAndSupervisorDesign:constructor > year="+this.getAnnual().getYear());
 		this.regionAndPracticeBase=Manager.loadSession(ListOfRegionAndPracticeBases.class, SessionListKey);
 		this.setupSupervises();
 	}
@@ -95,7 +94,7 @@ public class RegionLeaderAndSupervisorArrangement extends ActionSupport{
 		}
 		try{
 			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/false);
-		}catch (SQLException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException | InstantiationException e) {
+		}catch (SQLException | IllegalArgumentException | IllegalAccessException | InstantiationException e) {
 			return Manager.tips("数据库读取实习基地及大区信息失败！",e,NONE);
 		}
 		this.setupSupervises();

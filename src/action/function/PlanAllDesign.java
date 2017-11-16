@@ -50,7 +50,7 @@ public class PlanAllDesign extends ActionSupport{
 	public String display(){
 		try {
 			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/false);
-		} catch (SQLException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException | InstantiationException e) {
+		} catch (SQLException | IllegalArgumentException | IllegalAccessException | InstantiationException e) {
 			return Manager.tips("数据库读取实习基地及大区信息失败",e,ERROR);
 		}
 		try {

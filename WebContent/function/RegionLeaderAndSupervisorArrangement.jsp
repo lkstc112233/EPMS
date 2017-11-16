@@ -20,6 +20,9 @@
 				指定总领队及督导老师（<s:property value="annual.year" />）
 			</div>
 		</td></tr>
+		<tr><td colspan="100" style="width:20%;border:0;height:25px;">
+			&nbsp;
+		</td></tr>
 	</tbody></table>
 	
 	
@@ -51,7 +54,7 @@
 							<s:if test="innerPersonLeaders[#__regionStatus.index].isSameSchool">
 								<s:select list="innerPersons"
 									listKey="id" listValue="name"
-									headerKey="" headerValue="-无-"
+									headerKey="" headerValue="-未定-"
 									name="regionAndPracticeBase.list[%{#__regionStatus.index}].region.leaderId"
 									value="%{#__regionRow.region.leaderId}" />
 							</s:if><s:else>
@@ -64,7 +67,7 @@
 						<s:if test="innerPersonSupervisors[#__typeStatus.index][#__regionStatus.index][#__practiceBaseStatus.index].isSameSchool">
 							<s:select list="innerPersons"
 									listKey="id" listValue="name"
-									headerKey="" headerValue="-无-"
+									headerKey="" headerValue="-未定-"
 									name="supervises[%{#__typeStatus.index}][%{#__regionStatus.index}][%{#__practiceBaseStatus.index}].supervisorId"
 									value="%{supervises[#__typeStatus.index][#__regionStatus.index][#__practiceBaseStatus.index].supervisorId}" />
 						</s:if><s:else>

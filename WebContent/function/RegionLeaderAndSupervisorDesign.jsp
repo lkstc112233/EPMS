@@ -20,6 +20,9 @@
 				安排总领队及督导任务学科规划（<s:property value="annual.year" />）
 			</div>
 		</td></tr>
+		<tr><td colspan="100" style="width:20%;border:0;height:25px;">
+			&nbsp;
+		</td></tr>
 	</tbody></table>
 	
 	

@@ -20,6 +20,9 @@
 				全面确认布局规划（各实习基地学科接纳人数）（<s:property value="annual.year" />）
 			</div>
 		</td></tr>
+		<tr><td colspan="100" style="width:20%;border:0;height:25px;">
+			&nbsp;
+		</td></tr>
 	</tbody></table>
 	
 	<s:form action="function_PlanAllDesign_execute" method="post" theme="simple">

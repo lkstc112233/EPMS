@@ -27,7 +27,7 @@ public class ListOfRegionAndPracticeBases{
 	
 		
 
-	public ListOfRegionAndPracticeBases(int year,boolean containsNullRegion) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException, SQLException{
+	public ListOfRegionAndPracticeBases(int year,boolean containsNullRegion) throws IllegalArgumentException, IllegalAccessException, InstantiationException, SQLException{
 		if(containsNullRegion)
 			list.add(new Pair(null));
 		List<Base[]> tmp=Base.list(

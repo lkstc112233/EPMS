@@ -29,7 +29,7 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 
 	static public final String SessionListKey="RegionArrangement_RegionAndPracticeBases"; 
 	
-	public PracticeBaseArrangeIntoRegion() throws SQLException, NoSuchFieldException, SecurityException{
+	public PracticeBaseArrangeIntoRegion(){
 		super();
 		this.regionAndPracticeBase=Manager.loadSession(ListOfRegionAndPracticeBases.class,SessionListKey);
 		this.setupCheckBox();
@@ -51,7 +51,7 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 		this.regionAndPracticeBase=null;
 		try {
 			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/true);
-		} catch (SQLException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException | InstantiationException e) {
+		} catch (SQLException | IllegalArgumentException | IllegalAccessException | InstantiationException e) {
 			return Manager.tips("数据库开小差去了！",
 					e,NONE);
 		}

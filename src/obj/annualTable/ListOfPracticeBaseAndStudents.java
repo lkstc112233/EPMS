@@ -27,10 +27,10 @@ public class ListOfPracticeBaseAndStudents{
 		public int getSize(){return list.size();}
 	
 		
-	public ListOfPracticeBaseAndStudents(int year)throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException, SQLException{
+	public ListOfPracticeBaseAndStudents(int year)throws IllegalArgumentException, IllegalAccessException, InstantiationException, SQLException{
 		this(year,true);
 	}
-	private ListOfPracticeBaseAndStudents(int year,boolean containsNullPracticeBase) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException, SQLException{
+	private ListOfPracticeBaseAndStudents(int year,boolean containsNullPracticeBase) throws IllegalArgumentException, IllegalAccessException, InstantiationException, SQLException{
 		if(containsNullPracticeBase)
 			list.add(new Pair(null));
 		List<Base[]> tmp=Base.list(
