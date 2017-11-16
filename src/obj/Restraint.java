@@ -6,7 +6,7 @@ public class Restraint{
 	static public enum Type{
 		Smaller("<"),SmallerOrEqual("<="),
 		Bigger(">"),BiggerOrEqual(">="),
-		Equal("="),Like("LIKE");
+		Equal("="),Like("LIKE"),NotLike("NOT LIKE");
 		public final String operator;
 		Type(String oper){this.operator=oper;}
 		public String getKey(){return this.toString();}//Smaller
