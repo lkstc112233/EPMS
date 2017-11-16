@@ -32,6 +32,9 @@
 				</s:form>
 			<% } %>
 		</td></tr>
+		<tr><td colspan="100" style="width:20%;border:0;height:25px;">
+			&nbsp;
+		</td></tr>
 	</tbody></table>
 	<div style="overflow-x:scroll;"><table class="wtable"><tbody>
 		<tr>
@@ -150,6 +153,9 @@
 									<s:submit value="X" cssClass="inlineButton"
 									style="color:red;width:100%;" theme="simple"/>
 								</s:form>
+							<% }else{ %>
+								<input value="X" disabled="disabled" type="submit"
+								style="color:#999999;width:100%;disable:true;" />
 							<% } %>
 						</td>
 						<s:if test="choose!=null && choose[0] == #__PartStatus.index && choose[1] == #__Status.index">

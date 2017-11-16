@@ -7,7 +7,7 @@
 	<% request.setAttribute("actionName",request.getParameter("actionName"));%>
 		
 	<table style="width:100%"><tbody><s:form action="%{#request.actionName}_execute" method="post" theme="simple">
-		<tr><td colspan="100" style="width:20%;border:0;">
+		<tr><td colspan="100" style="width:20%;border:0;height:25px;">
 			&nbsp;
 		</td></tr>
 		<tr><td style="border:2px solid #0071BC;">
@@ -54,14 +54,11 @@
 				</td></tr>
 			</tbody></table>
 		</td></tr>
-		<tr><td colspan="100" style="width:20%;border:0;">
+		<tr><td colspan="100" style="width:20%;border:0;height:25px;">
 			&nbsp;
 		</td></tr>
 		<tr><td colspan="100" style="width:20%;border:0;">
 			<s:submit value="查询" cssClass="title_button" style="width:20%" />
-		</td></tr>
-		<tr><td colspan="100" style="width:20%;border:0;">
-			&nbsp;
 		</td></tr>
 	</s:form></tbody></table>
 	
