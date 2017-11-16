@@ -13,7 +13,7 @@
 					<s:iterator value="search.baseRestraint.restraint.where" var="__restraintPartRow" status="__restraintPartStatus">
 						<div style="line-height:32px;float:left">
 							<!-- 限制 -->
-							<div style="float:left;width:120px;text-align:left">
+							<div style="float:left;text-align:left">
 								<s:property value="%{#__restraintPartRow.field}" />
 							</div><div style="float:left;text-align:center">
 								<s:select
