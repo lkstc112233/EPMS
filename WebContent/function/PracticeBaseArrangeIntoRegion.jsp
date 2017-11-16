@@ -14,6 +14,13 @@
 	<jsp:include page="/model/common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 		
 <div class="bag">
+	<table style="width:80%"><tbody>
+		<tr><td colspan="100">
+			<div class="listHeader">
+				分配实习基地到实习大区（<s:property value="annual.year" />）
+			</div>
+		</td></tr>
+	</tbody></table>
 	<table width="80%"><tbody>
 	<s:iterator value="regionAndPracticeBase.list" var="__Row" status="__Status">
 		<!-- ########### 大区信息 ########### -->

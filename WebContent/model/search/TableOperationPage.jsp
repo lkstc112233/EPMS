@@ -12,7 +12,7 @@
 		<!-- 联合查询配置 -->
 		<% String joinParamPage=request.getParameter("joinParamPage"); 
 		   if(joinParamPage!=null){ %>
-			<tr><td colspan="100">
+			<tr class="wtableContent"><td colspan="100" style="padding:0;border:0;">
 				<jsp:include page="${param.joinParamPage}" flush="true">
 					<jsp:param name="actionName" value="${actionName}"/>
 				</jsp:include>
@@ -20,7 +20,7 @@
 		<% } %>
 		<!-- ################# -->
 		<!-- 查询限制条件 -->
-		<tr class="wtableContent"><td colspan="100" style="width:20%;border:0;">
+		<tr class="wtableContent"><td colspan="100" style="padding:0;border:0;">
 			<% String restraintPage=request.getParameter("restraintPage"); 
 				if(restraintPage!=null){ %>
 				<jsp:include page="${param.restraintPage}" flush="true">

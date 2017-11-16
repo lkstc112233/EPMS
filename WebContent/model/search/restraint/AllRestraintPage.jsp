@@ -9,7 +9,7 @@
 	<table style="width:100%"><tbody><s:form action="%{#request.actionName}_execute" method="post" theme="simple">
 		<tr><td style="border:2px solid #0071BC;">
 			<table style="width:100%"><tbody>
-				<tr><td colspan="100">
+				<tr><td colspan="100" style="border:0;">
 					<s:iterator value="search.baseRestraint.restraint.where" var="__restraintPartRow" status="__restraintPartStatus">
 						<div style="line-height:32px;float:left">
 							<!-- 限制 -->
@@ -51,13 +51,13 @@
 				</td></tr>
 			</tbody></table>
 		</td></tr>
-		<tr><td colspan="100" style="width:20%;">
+		<tr><td colspan="100" style="width:20%;border:0;">
 			&nbsp;
 		</td></tr>
 		<tr><td colspan="100" style="width:20%;border:0;">
 			<s:submit value="查询" cssClass="title_button" style="width:20%" />
 		</td></tr>
-		<tr><td colspan="100" style="width:20%;">
+		<tr><td colspan="100" style="width:20%;border:0;">
 			&nbsp;
 		</td></tr>
 	</s:form></tbody></table>

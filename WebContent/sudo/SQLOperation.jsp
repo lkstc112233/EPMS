@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>EPMS-教务处-数据库管理(sudo)</title>
+<title>EPMS-教务处-数据库管理</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
@@ -14,6 +14,14 @@
 		<jsp:include page="/model/common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 
 <div class="bag">
+	<table style="width:80%"><tbody>
+		<tr><td colspan="100">
+			<div class="listHeader">
+				数据库管理
+			</div>
+		</td></tr>
+	</tbody></table>
+	
 	<table class="wtable"><tbody>
 		<s:form action="sudo_SQLOperation_execute" method="post" cssClass="myform" theme="simple">
 			<tr><td>

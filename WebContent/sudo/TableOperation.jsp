@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>EPMS-<s:property value="#session.role.name" />-<s:property value="tableName" />数据处理(sudo)</title>
+<title>EPMS-<s:property value="#session.role.name" />-<s:property value="tableName" />数据处理</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
@@ -14,6 +14,13 @@
 	<jsp:include page="/model/common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 
 <div class="bag">
+	<table style="width:80%"><tbody>
+		<tr><td colspan="100">
+			<div class="listHeader">
+				数据处理
+			</div>
+		</td></tr>
+	</tbody></table>
 
 	<jsp:include page="/model/search/TableOperationPage.jsp" flush="true">
 		<jsp:param name="actionName" value="sudo_TableOperation"/>

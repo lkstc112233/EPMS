@@ -14,6 +14,13 @@
 	<jsp:include page="/model/common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 
 <div class="bag">
+	<table style="width:80%"><tbody>
+		<tr><td colspan="100">
+			<div class="listHeader">
+				确认本部院系教师信息（<s:property value="annual.year" />）
+			</div>
+		</td></tr>
+	</tbody></table>
 
 	<jsp:include page="/model/search/TableOperationPage.jsp" flush="true">
 		<jsp:param name="actionName" value="function_InnerPersonImport"/>
