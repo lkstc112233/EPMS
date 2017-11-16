@@ -7,6 +7,9 @@
 	<% request.setAttribute("actionName",request.getParameter("actionName"));%>
 		
 	<table style="width:100%"><tbody><s:form action="%{#request.actionName}_execute" method="post" theme="simple">
+		<tr><td colspan="100" style="width:20%;border:0;">
+			&nbsp;
+		</td></tr>
 		<tr><td style="border:2px solid #0071BC;">
 			<table style="width:100%"><tbody>
 				<tr><td colspan="100" style="border:0;">

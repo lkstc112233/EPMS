@@ -137,7 +137,7 @@ public class Restraint{
 			boolean first=true;
 			for(Field f:this.order) if(f!=null){
 				if(first) first=false;
-				else sb.append(" AND ");
+				else sb.append(" , ");
 				sb.append(f.getSQLField("."));
 			}
 		}

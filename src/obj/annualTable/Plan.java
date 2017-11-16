@@ -5,19 +5,19 @@ import obj.*;
 @SQLTable("Plan")
 public class Plan extends AnnualBase {
 
-	@SQLField(value="实习基地",isKey=true,source="PracticeBase.name")
+	@SQLField(value="实习基地",weight=1,isKey=true,notNull=true,source="PracticeBase.name")
 	private String practiceBase;
-	@SQLField(value="专业",isKey=true,source="Major.name")
+	@SQLField(value="专业",weight=2,isKey=true,notNull=true,source="Major.name")
 	private String major;
-	@SQLField(value="人数")
-	private int number;
-	@SQLField(value="拒绝接收的民族")
-	private String refuseNation;
-	@SQLField(value="拒绝接收的性别")
-	private int refuseSex;
-	@SQLField(value="是否携带数字媒体设备")
-	private boolean media;
-	@SQLField(value="备注",ps="文本储存")
+	@SQLField(value="人数",weight=10)
+	private int number=0;
+	@SQLField(value="拒绝接收的民族",weight=11)
+	private String refuseNation=null;
+	@SQLField(value="拒绝接收的性别",weight=12)
+	private int refuseSex=0;
+	@SQLField(value="是否携带数字媒体设备",weight=13)
+	private boolean media=false;
+	@SQLField(value="备注",weight=14,ps="文本储存")
 	private String remark;
 
 	public String getPracticeBase() {return practiceBase;}

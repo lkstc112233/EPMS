@@ -42,7 +42,8 @@ public class Field implements Comparable<Field>{
 		return res;
 	}
 	static public Field[] getFields(Class<? extends Base> clazz){
-		if(Field.MapFields.containsKey(clazz)) return Field.MapFields.get(clazz);
+		if(Field.MapFields.containsKey(clazz))
+			return Field.MapFields.get(clazz);
 		Set<Field> tmp=new TreeSet<Field>();
 		for(Class<? extends Base> c=clazz;c!=Base.class;c=(Class<? extends Base>)c.getSuperclass()) for(java.lang.reflect.Field f:c.getDeclaredFields()){
 			SQLField s=f.getAnnotation(SQLField.class);
@@ -108,7 +109,9 @@ public class Field implements Comparable<Field>{
 	}
 	@Override
 	public int compareTo(Field f){
-		return Integer.compare(this.getWeigth(),f==null?Integer.MIN_VALUE:f.getWeigth());
+		int cmp=Integer.compare(this.getWeigth(),f==null?Integer.MIN_VALUE:f.getWeigth());
+		if(cmp!=0) return cmp;
+		return Integer.compare(this.field.hashCode(),f.field.hashCode());
 	}
 	/**
 	 * SQLField
