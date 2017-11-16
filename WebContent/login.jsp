@@ -17,6 +17,7 @@
 	<s:form action="login"  method="post" cssClass="myform">
 		<s:textfield name="inner.id" label="学工号"></s:textfield>
 		<s:password name="inner.password" label="密码"></s:password>
+		<s:hidden name="back" value="1" theme="simple" />
 		<s:submit value="登录" cssClass="button" />
 	</s:form>
 </div>

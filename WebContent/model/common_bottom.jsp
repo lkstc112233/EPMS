@@ -13,7 +13,7 @@
 			<td>
 				<!--  a href='JavaScript:history.back(1)' class="button">返回</a -->
 				<s:form action="login" method="post" theme="simple">
-					<s:hidden name="back" value="true" theme="simple" />
+					<s:hidden name="back" value="-1" theme="simple" />
 					<s:submit value="返回" cssClass="button" />
 				</s:form>
 			</td>

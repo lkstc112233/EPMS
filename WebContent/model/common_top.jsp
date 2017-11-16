@@ -40,7 +40,7 @@ session.removeAttribute("errorTips");
 					</s:if><s:else>
 						<td>
 							<s:form action="login" method="post" cssClass="myform">
-								<s:hidden name="back" value="true" theme="simple" />
+								<s:hidden name="back" value="-1" theme="simple" />
 								<s:submit value="返回" cssClass="title_button"/>
 							</s:form>
 						</td><td>
