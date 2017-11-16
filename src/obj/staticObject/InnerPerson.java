@@ -24,7 +24,11 @@ public class InnerPerson extends Base implements Base.ListableWithNoSave{
 	private String mobile;		public String getMobile(){return mobile;}		public void setMobile(String a){this.mobile=a;}
 	@SQLField(value="邮箱",weight=14)
 	private String email;		public String getEmail(){return email;}			public void setEmail(String a){this.email=a;}
-
+	
+	
+	static public final String UndefinedName="%未定%";
+	
+	
 	public InnerPerson(){
 		super();
 	}
