@@ -154,17 +154,17 @@ public class Restraint{
 	}public Restraint(Field[] order){
 		this((Part[])null,order);
 	}public Restraint(Part where,Field[] order){
-		this(new Part[]{where},order);
+		this(where==null?null:new Part[]{where},order);
 	}public Restraint(Part[] where,Field order){
-		this(where,new Field[]{order});
+		this(where,order==null?null:new Field[]{order});
 	}public Restraint(Part where,Field order){
-		this(new Part[]{where},new Field[]{order});
+		this(where==null?null:new Part[]{where},order==null?null:new Field[]{order});
 	}
 	
 	public Restraint(Part where){
 		this(where,(Field)null);
 	}public Restraint(Field order){
-		this((Part)null,new Field[]{order});
+		this((Part)null,order);
 	}public Restraint(){
 		this((Part)null,(Field)null);
 	}

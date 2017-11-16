@@ -24,7 +24,7 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 	public ListOfRegionAndPracticeBases getRegionAndPracticeBase(){return this.regionAndPracticeBase;}
 	public String getRegionName(){return this.regionName;}
 	public void setRegionName(String a){this.regionName=a;}
-	public PracticeBase getPraceticeBase(){return new PracticeBase();}
+	public PracticeBase getPracticeBase(){return new PracticeBase();}
 	
 
 	static public final String SessionListKey="RegionArrangement_RegionAndPracticeBases"; 

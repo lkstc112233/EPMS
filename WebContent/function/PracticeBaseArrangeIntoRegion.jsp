@@ -29,7 +29,7 @@
 				<s:if test="#__Row.region == null">
 					未分配大区的实习基地
 				</s:if><s:else>
-					大区（<s:property value="%{#__Row.region.name}" />）
+					<s:property value="%{#__Row.region.name}" />
 					<div class="right">
 						<a href="<s:url action='function_RegionInfo_display'/>?region.name=<s:property value='%{#__Row.region.name}'/>"
 							style="color:#fff;text-decoration:none;" class="buttonInline">
