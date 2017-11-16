@@ -9,10 +9,10 @@ import obj.*;
 public class Supervise extends AnnualBase{
 	@SQLField(value="实习基地",weight=1,isKey=true,notNull=true,source="PracticeBase.name")
 	private String practiceBase;
-	@SQLField(value="督导老师工号",weight=2,isKey=true,notNull=true,source="InnerPerson.id")
-	private String supervisorId;
-	@SQLField(value="督导类型",weight=3,isKey=true,notNull=true,ps="0/1/2分别表示入校/中期/返校督导")
+	@SQLField(value="督导类型",weight=2,isKey=true,notNull=true,ps="0/1/2分别表示入校/中期/返校督导")
 	private int superviseType;
+	@SQLField(value="督导老师工号",weight=3,source="InnerPerson.id")
+	private String supervisorId;
 	@SQLField(value="督导开始时间",weight=10)
 	private Timestamp time1;
 	@SQLField(value="督导结束时间",weight=11)

@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>EPMS-<s:property value="#session.role.name" />-全面确认布局规划（各实习基地学科接纳人数）（<s:property value="annual.year" />年）</title>
+<title>EPMS-<s:property value="#session.role.name" />-安排总领队及督导任务学科规划（<s:property value="annual.year" />年）</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
@@ -17,25 +17,27 @@
 	<table style="width:80%"><tbody>
 		<tr><td colspan="100">
 			<div class="listHeader">
-				全面确认布局规划（各实习基地学科接纳人数）（<s:property value="annual.year" />）
+				安排总领队及督导任务学科规划（<s:property value="annual.year" />）
 			</div>
 		</td></tr>
 	</tbody></table>
 	
-	<s:form action="function_PlanAllDesign_execute" method="post" theme="simple">
+	
+	<s:form action="function_RegionLeaderAndSupervisorDesign_execute" method="post" theme="simple">
 		<table class="wtable" style="cellpadding:0;cellspacing:0;table-layout:fixed;"><tbody>
-			<tr class="wtableHeader" style="border:0;">
+			<tr class="wtableHeader">
 				<td style="width:3%;">大区</td>
 				<td>基地名称</td>
-				<s:iterator value="majors" var="__majorCol">
-					<td style="width:5%;"><s:property value="#__majorCol.name" /></td>
-				</s:iterator>
+				<td>总领队老师</td>
+				<td>入校督导老师</td>
+				<td>中期督导老师</td>
+				<td>返校督导老师</td>
 			</tr>
 			<s:iterator value="regionAndPracticeBase.list" var="__regionRow" status="__regionStatus">
 			<s:iterator value="#__regionRow.practiceBases" var="__practiceBaseRow" status="__practiceBaseStatus">
 				<tr class="wtableContent">
+					<s:set var="_colspan" value="%{#__regionRow.size}" />
 					<s:if test="#__practiceBaseStatus.index == 0">
-						<s:set var="_colspan" value="%{#__regionRow.size}" />
 						<td rowspan="${_colspan}" style="width:3%;">
 							<s:property value="#__regionRow.region.name" />
 						</td>
@@ -43,14 +45,24 @@
 					<td style="width:160px;text-align:left;padding-left:10px;">
 						<s:property value="#__practiceBaseRow.name" />
 					</td>
-					<s:iterator value="majors" status="__majorStatus">
-						<td style="width:5%;padding:0px;">
-							<s:textfield theme="simple"
-								style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;"
-								name="numbers[%{#__majorStatus.index}][%{#__regionStatus.index}][%{#__practiceBaseStatus.index}]"
-								value="%{numbers[#__majorStatus.index][#__regionStatus.index][#__practiceBaseStatus.index]}" />
+					<!-- 总领队 -->
+					<s:if test="#__practiceBaseStatus.index == 0">
+						<td rowspan="${_colspan}">
+							<s:select list="innerPersons"
+								listKey="id" listValue="name"
+								headerKey="" headerValue="-无-"
+								name="regionAndPracticeBase.list[%{#__regionStatus.index}].region.leaderId"
+								value="%{#__regionRow.region.leaderId}" />
 						</td>
-					</s:iterator>
+					</s:if>
+					<!-- 督导 -->
+					<s:iterator value="superviseTypeList" status="__typeStatus"><td>
+						<s:select list="innerPersons"
+								listKey="id" listValue="name"
+								headerKey="" headerValue="-无-"
+								name="supervises[%{#__typeStatus.index}][%{#__regionStatus.index}][%{#__practiceBaseStatus.index}].supervisorId"
+								value="%{supervises[#__typeStatus.index][#__regionStatus.index][#__practiceBaseStatus.index].supervisorId}" />
+					</td></s:iterator>
 				</tr>
 			</s:iterator></s:iterator>
 		</tbody></table>
@@ -60,6 +72,7 @@
 			</td></tr>
 		</tbody></table>
 	</s:form>
+	
 	
 </div>
 
