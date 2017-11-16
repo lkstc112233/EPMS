@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>EPMS-<s:property value="#session.role.name" />-免费师范生数据导入（<s:property value="annual.year" />）</title>
+<title>EPMS-<s:property value="#session.role.name" />-录入实习基地信息（<s:property value="annual.year" />）</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
