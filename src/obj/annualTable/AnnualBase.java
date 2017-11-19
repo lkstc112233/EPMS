@@ -13,7 +13,7 @@ public abstract class AnnualBase extends Base implements Base.ListableWithNoSave
 	public Integer year;
 		public Integer getYear(){return year;}
 		public void setYear(int year){this.year=year;}
-		public void setYear(String a) {year=Field.s2i(a);}
+		public void setYear(String a) {year=Field.s2i(a,0);}
 	
 	
 	/**

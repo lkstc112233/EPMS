@@ -9,7 +9,7 @@ public class Outstanding extends Base{
 	private String type;
 	
 	public String getType(){return this.type;}
-	public void setType(String type){this.type=type==null||type.isEmpty()?null:type;}
+	public void setType(String a){this.type=Field.s2S(a);}
 	
 	
 	@Override

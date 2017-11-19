@@ -11,9 +11,9 @@ public class City extends Base{
 	private String province;
 
 	public String getName(){return this.name;}
-	public void setName(String name){this.name=name==null||name.isEmpty()?null:name;}
+	public void setName(String a){this.name=Field.s2S(a);}
 	public String getProvince(){return this.province;}
-	public void setProvince(String province){this.province=province==null||province.isEmpty()?null:province;}
+	public void setProvince(String a){this.province=Field.s2S(a);}
 	
 	
 	@Override

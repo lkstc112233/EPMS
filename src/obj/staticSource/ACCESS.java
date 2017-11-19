@@ -35,51 +35,48 @@ public class ACCESS extends Base{
 	
 	
 	public int getId(){return id;}
-	public void setId(int id){this.id=id;} public void setId(String a){this.id=a==null?null:Integer.valueOf(a);}
+	public void setId(int id){this.id=id;}
+	public void setId(String a){this.id=Field.s2i(a,0);}
 	public String getProject() {return project;}
-	public void setProject(String project) {this.project = project==null||project.isEmpty()?null:project;}
+	public void setProject(String a) {this.project=Field.s2S(a);}
 	public String getActionClass(){return this.actionClass;}
-	public void setActionClass(String actionClass){this.actionClass=actionClass==null||actionClass.isEmpty()?null:actionClass;}
+	public void setActionClass(String a){this.actionClass=Field.s2S(a);}
 	public Timestamp getTime1() {return time1;}
-	public void setTime1(String s){
-		try{
-			this.time1=Timestamp.valueOf(s);
-			Manager.RegularPeriod(time1,time2);
-		}catch(IllegalArgumentException e){
-			this.time1=null;
-		}
+	public void setTime1(String a){
+		this.time1=Field.s2TS(a);
+		Manager.RegularPeriod(time1,time2);
 	}
-	public void setTime1(Timestamp time) {this.time1 = time;
-	Manager.RegularPeriod(time1,time2);}
+	public void setTime1(Timestamp time) {
+		this.time1=time;
+		Manager.RegularPeriod(time1,time2);
+	}
 	public Timestamp getTime2() {return time2;}
-	public void setTime2(String s){
-		try{
-			this.time2=Timestamp.valueOf(s);
-			Manager.RegularPeriod(time1,time2);
-		}catch(IllegalArgumentException e){
-			this.time2=null;
-		}
+	public void setTime2(String a){
+		this.time2=Field.s2TS(a);
+		Manager.RegularPeriod(time1,time2);
 	}
-	public void setTime2(Timestamp time) {this.time2 = time;
-	Manager.RegularPeriod(time1,time2);}
+	public void setTime2(Timestamp time) {
+		this.time2=time;
+		Manager.RegularPeriod(time1,time2);
+	}
 	public boolean getXs() {return xs;}
 	public void setXs(boolean xs) {this.xs = xs;}
-	public void setXs(String a){this.xs=false;try{this.xs=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
+	public void setXs(String a){this.xs=Field.s2b(a,false);}
 	public boolean getJxyz() {return jxyz;}
 	public void setJxyz(boolean jxyz) {this.jxyz = jxyz;}
-	public void setJxyz(String a){this.jxyz=false;try{this.jxyz=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
+	public void setJxyz(String a){this.jxyz=Field.s2b(a,false);}
 	public boolean getJwy() {return jwy;}
 	public void setJwy(boolean jwy) {this.jwy = jwy;}
-	public void setJwy(String a){this.jwy=false;try{this.jwy=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
+	public void setJwy(String a){this.jwy=Field.s2b(a,false);}
 	public boolean getJs() {return js;}
 	public void setJs(boolean js) {this.js = js;}
-	public void setJs(String a){this.js=false;try{this.js=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
+	public void setJs(String a){this.js=Field.s2b(a,false);}
 	public boolean getJwc() {return jwc;}
 	public void setJwc(boolean jwc) {this.jwc = jwc;}
-	public void setJwc(String a){this.jwc=false;try{this.jwc=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
+	public void setJwc(String a){this.jwc=Field.s2b(a,false);}
 	public boolean getLd() {return ld;}
 	public void setLd(boolean ld) {this.ld = ld;}
-	public void setLd(String a){this.ld=false;try{this.ld=Boolean.valueOf(a);}catch(IllegalArgumentException e){}}
+	public void setLd(String a){this.ld=Field.s2b(a,false);}
 	
 	
 	static public ACCESS getFromTime(Time t) throws SQLException, IllegalArgumentException, IllegalAccessException{

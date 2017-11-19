@@ -51,7 +51,7 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 		this.regionAndPracticeBase=null;
 		try {
 			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/true);
-		} catch (SQLException | IllegalArgumentException | IllegalAccessException | InstantiationException e) {
+		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
 			return Manager.tips("数据库开小差去了！",
 					e,NONE);
 		}
@@ -84,6 +84,7 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 		List<PracticeBase> nullRegionPracticeBases=this.regionAndPracticeBase.get((Region)null).getPracticeBases();
 		//	List<PracticeBase> tmp=new ArrayList<PracticeBase>();
 		StringBuilder sb=new StringBuilder();
+		StringBuilder error=new StringBuilder();
 		for(int i=0;i<nullRegionPracticeBases.size();i++){
 			if(checkBox[i]){
 				//选中了
@@ -99,13 +100,16 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 					newRegion.create();
 				}catch(SQLException|IllegalArgumentException|IllegalAccessException e){
 					e.printStackTrace();
+					if(error.length()>0) error.append('\n');
+					error.append(pb.getName()+"("+e.getMessage()+")");
 					continue;
 				}
 				if(sb.length()>0) sb.append(',');
 				sb.append(pb.getName());
 			}
 		}
-		Manager.tips(sb.toString()+" 已经添加到大区("+this.regionName+")！");
+		Manager.tips(sb.toString()+" 已经添加到大区("+this.regionName+")！"+
+			(error.length()>0?("\n错误信息："+error.toString()):""));
 		Manager.removeSession(SessionListKey);
 		return display();
 	}

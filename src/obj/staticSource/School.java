@@ -9,7 +9,7 @@ public class School extends Base{
 	private String name;
 	
 	public String getName(){return this.name;}
-	public void setName(String name){this.name=name==null||name.isEmpty()?null:name;}
+	public void setName(String a){this.name=Field.s2S(a);}
 	
 	public School(String name){
 		super();

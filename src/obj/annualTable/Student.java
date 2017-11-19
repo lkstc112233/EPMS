@@ -64,12 +64,18 @@ public class Student extends AnnualBase{
 	public void setOutstandingMaterial(byte[] outstandingMaterial) {this.outstandingMaterial = outstandingMaterial==null||outstandingMaterial.length<=0?null:outstandingMaterial;}
 	public void setOutstandingMaterial(String outstandingMaterial) {this.outstandingMaterial = outstandingMaterial==null||outstandingMaterial.isEmpty()?null:outstandingMaterial.getBytes();}
 	
-	
-	
-	
 	@Override
 	public String getDescription() {
 		return this.getName()+"("+this.getId()+")";
+	}
+	
+	
+	/**
+	 * 身份证号第17位，男性为奇数，女性为偶数
+	 * @return 女性为0，男性为1
+	 */
+	public String getSex(){
+		return (this.getSfzh().charAt(16)-'0')%2==0 ? "女" : "男";
 	}
 
 }

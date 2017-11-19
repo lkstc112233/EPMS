@@ -94,7 +94,7 @@ public class RegionLeaderAndSupervisorArrangement extends ActionSupport{
 		}
 		try{
 			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/false);
-		}catch (SQLException | IllegalArgumentException | IllegalAccessException | InstantiationException e) {
+		}catch (SQLException | IllegalArgumentException | InstantiationException e) {
 			return Manager.tips("数据库读取实习基地及大区信息失败！",e,NONE);
 		}
 		this.setupSupervises();

@@ -2,7 +2,10 @@ package obj;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.*;
+
+import action.Manager;
 
 @SuppressWarnings("unchecked")
 public class Field implements Comparable<Field>{
@@ -171,15 +174,40 @@ public class Field implements Comparable<Field>{
 	}
 	
 	
-	
-	static public Integer s2i(String a){
+	static public String s2S(String a){
+		return a==null||a.isEmpty()?null:a;
+	}
+	static public int s2i(String a,int defaultResult){
+		Integer res=s2I(a);
+		return res==null?defaultResult:res;
+	}
+	static public Integer s2I(String a){
 		if(a==null||a.isEmpty()) return null;
 		try{
 			return Integer.valueOf(a);
-		}catch(NumberFormatException e){
+		}catch(Exception e){
 			e.printStackTrace();
 		}return null;
 	}
-	
+	static public boolean s2b(String a,boolean defaultResult){
+		Boolean res=s2B(a);
+		return res==null?defaultResult:res;
+	}
+	static public Boolean s2B(String a){
+		if(a==null||a.isEmpty()) return null;
+		try{
+			return Boolean.valueOf(a);
+		}catch(Exception e){
+			e.printStackTrace();
+		}return null;
+	}
+	static public Timestamp s2TS(String a){
+		if(a==null||a.isEmpty()) return null;
+		try{
+			return Timestamp.valueOf(a);
+		}catch(Exception e){
+			e.printStackTrace();
+		}return null;
+	}
 	
 }
