@@ -5,8 +5,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
 
-import action.Manager;
-
 @SuppressWarnings("unchecked")
 public class Field implements Comparable<Field>{
 	

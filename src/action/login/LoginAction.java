@@ -15,7 +15,7 @@ public class LoginAction extends ActionSupport{
 	
 	public InnerPerson getInner(){return inner;}
 	public void setInner(InnerPerson inner){this.inner=inner;}
-	public void setBack(String a){this.back=Field.s2i(a);}
+	public void setBack(String a){this.back=Field.s2i(a,0);}
 	
 	public LoginAction() throws SQLException{
 		super();
