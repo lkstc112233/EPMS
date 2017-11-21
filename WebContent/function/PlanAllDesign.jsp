@@ -27,11 +27,11 @@
 	
 	<s:form action="function_PlanAllDesign_execute" method="post" theme="simple">
 		<table class="wtable" style="cellpadding:0;cellspacing:0;table-layout:fixed;"><tbody>
-			<tr class="wtableHeader" style="border:0;">
+			<tr class="wtableHeader" style="border:0;min-height:80px;height:80px;">
 				<td style="width:3%;">大区</td>
 				<td>基地名称</td>
 				<s:iterator value="majors" var="__majorCol">
-					<td style="width:5%;"><s:property value="#__majorCol.name" /></td>
+					<td style="width:5%;"><s:property value="#__majorCol.subject" /></td>
 				</s:iterator>
 			</tr>
 			<s:iterator value="regionAndPracticeBase.list" var="__regionRow" status="__regionStatus">
@@ -47,7 +47,7 @@
 						<s:property value="#__practiceBaseRow.name" />
 					</td>
 					<s:iterator value="majors" status="__majorStatus">
-						<td style="width:15px;padding:0px;">
+						<td style="width:5%;padding:0px;">
 							<s:textfield theme="simple"
 								style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;"
 								name="numbers[%{#__majorStatus.index}][%{#__regionStatus.index}][%{#__practiceBaseStatus.index}]"

@@ -50,26 +50,28 @@
 					</td>
 					<!-- 总领队 -->
 					<s:if test="#__practiceBaseStatus.index == 0">
-						<td rowspan="${_colspan}">
+						<td rowspan="${_colspan}" style="padding:0;">
 							<s:if test="innerPersonLeaders[#__regionStatus.index].isSameSchool">
 								<s:select list="innerPersons"
 									listKey="id" listValue="name"
 									headerKey="" headerValue="-未定-"
 									name="regionAndPracticeBase.list[%{#__regionStatus.index}].region.leaderId"
-									value="%{#__regionRow.region.leaderId}" />
+									value="%{#__regionRow.region.leaderId}"
+									style="text-align:center;width:100%;height:100%;border:0;" theme="simple"/>
 							</s:if><s:else>
 								<s:property value="%{innerPersonLeaders[#__regionStatus.index].name}" />
 							</s:else>
 						</td>
 					</s:if>
 					<!-- 督导 -->
-					<s:iterator value="superviseTypeList" status="__typeStatus"><td>
+					<s:iterator value="superviseTypeList" status="__typeStatus"><td style="padding:0;">
 						<s:if test="innerPersonSupervisors[#__typeStatus.index][#__regionStatus.index][#__practiceBaseStatus.index].isSameSchool">
 							<s:select list="innerPersons"
 									listKey="id" listValue="name"
 									headerKey="" headerValue="-未定-"
 									name="supervises[%{#__typeStatus.index}][%{#__regionStatus.index}][%{#__practiceBaseStatus.index}].supervisorId"
-									value="%{supervises[#__typeStatus.index][#__regionStatus.index][#__practiceBaseStatus.index].supervisorId}" />
+									value="%{supervises[#__typeStatus.index][#__regionStatus.index][#__practiceBaseStatus.index].supervisorId}"
+									style="text-align:center;width:100%;height:100%;border:0;" theme="simple"/>
 						</s:if><s:else>
 							<s:property value="%{innerPersonSupervisors[#__typeStatus.index][#__regionStatus.index][#__practiceBaseStatus.index].name}" />
 						</s:else>
