@@ -30,12 +30,15 @@ public final class DB {
 	    if(props!=null){
 		    String name=props.getProperty("name");
 		    String driver = props.getProperty("driver");
+	        System.out.println("++ DB:static > 开始加载"+name+"驱动程序("+driver+")");
 		    try{
 		        Class.forName(driver);
 		        System.out.println("++ DB:static > 成功加载"+name+"驱动程序");
 		    } catch (ClassNotFoundException e){
+		        System.err.println("++ DB:static > 加载"+name+"驱动程序("+driver+")失败！");
 				e.printStackTrace();
 			} catch (Exception e){
+		        System.err.println("++ DB:static > 加载"+name+"驱动程序("+driver+")失败！");
 				e.printStackTrace();
 			}
 	    }
