@@ -6,6 +6,8 @@ import java.util.*;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
+import obj.restraint.BaseRestraint;
+
 public interface SQLIO{
 	
 	/**

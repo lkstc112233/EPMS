@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import com.opensymphony.xwork2.ActionContext;
 
 import obj.staticObject.InnerPerson;
+import token.Role;
 
 public class Manager {
 	
@@ -27,7 +28,10 @@ public class Manager {
 		return o;
 	}
 	static public void clearSession(){
+		String errorTips=Manager.loadSession(String.class,TipsName);
 		ActionContext.getContext().getSession().clear();
+		if(errorTips!=null)
+			Manager.saveSession(TipsName,errorTips);
 	}
 
 	static private final String TipsName="errorTips";
@@ -55,10 +59,15 @@ public class Manager {
 	}
 	
 	static private final String userToken="inner";
+	static private final String userRoleToken="role";
 	static public InnerPerson getUser(){
 		return Manager.loadSession(InnerPerson.class,userToken);}
 	static public void setUser(InnerPerson inner){
-		Manager.saveSession(userToken,inner);}
+		Manager.saveSession(userToken,inner);
+		try{
+			Manager.saveSession(userRoleToken,Role.getRoleByInnerPerson(inner));
+		}catch(Exception e){Manager.removeSession(userRoleToken);}
+	}
 	static public void removeUser(){
 		Manager.removeSession(userToken);}
 	

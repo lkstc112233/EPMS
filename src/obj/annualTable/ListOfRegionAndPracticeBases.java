@@ -3,8 +3,7 @@ package obj.annualTable;
 import java.sql.SQLException;
 import java.util.*;
 
-import obj.Base;
-import obj.ListableBase;
+import obj.*;
 import obj.staticObject.PracticeBase;
 
 /**
@@ -28,27 +27,27 @@ public class ListOfRegionAndPracticeBases{
 	
 		
 
-	public ListOfRegionAndPracticeBases(int year,boolean containsNullRegion) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InstantiationException, SQLException{
+	public ListOfRegionAndPracticeBases(int year,boolean containsNullRegion) throws IllegalArgumentException, InstantiationException, SQLException{
 		if(containsNullRegion)
 			list.add(new Pair(null));
-		ListableBase.JoinParam param=new ListableBase.JoinParam(PracticeBase.class);
-		param.append("name",containsNullRegion ? ListableBase.JoinType.LeftJoin : ListableBase.JoinType.InnerJoin,
-				Region.class,"practiceBase",
-				new String[]{"year"},
-				new Object[]{Integer.valueOf(year)});
-		List<Base[]> tmp=ListableBase.list(param,null,null,new String[]{"PracticeBase.name"});
+		List<Base[]> tmp=Base.list(
+				new JoinParam(PracticeBase.class).append(containsNullRegion ? JoinParam.Type.LeftJoin : JoinParam.Type.InnerJoin,
+						Region.class,
+						Field.getField(PracticeBase.class,"name"),
+						Field.getField(Region.class,"practiceBase"),
+						Field.getField(Region.class,"year"),
+						Integer.valueOf(year)),
+				new Restraint(Field.getField(PracticeBase.class,"name")));
 		for(Base[] bs:tmp){
 			PracticeBase pb=null;
 			Region r=null;
-			if(bs!=null && bs.length>=2){
-				if(bs[0]!=null && bs[0] instanceof PracticeBase){
-					pb=(PracticeBase)bs[0];
-					if(bs[1]==null || bs[1] instanceof Region){
-						if(bs[1]!=null) r=(Region)bs[1];
-						if(containsNullRegion || r!=null)
-							this.put(r,pb);
-					}
-				}
+			if(bs!=null && bs.length>=2
+					&& bs[0]!=null && bs[0] instanceof PracticeBase
+					&& bs[1]==null || bs[1] instanceof Region){
+				pb=(PracticeBase)bs[0];
+				if(bs[1]!=null) r=(Region)bs[1];
+				if(containsNullRegion || r!=null)
+					this.put(r,pb);
 			}
 		}
 	}

@@ -10,38 +10,46 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface SQLField {
+	
+	/**
+	 * 描述信息、名称
+	 * 默认为空字符串
+	 */
+	String value() default "";
+	
+	/**
+	 * 排序价值
+	 */
+	int weight() default 0;
+
 	/**
 	 * 是否属于键值
 	 * 如果是，则会被放在WHERE后面，否则放在SELECT处
 	 * 默认为false
 	 */
 	boolean isKey() default false;
-	
-	/**
-	 * 是否在SQLCollection.selectAll时排序
-	 */
-	boolean needSorted() default false;
 
 	/**
-	 * 描述信息、名称
-	 * 默认为空字符串
+	 * NOT NULL
+	 * 只在Base.create时检查
 	 */
-	String value() default "";
-
-	/**
-	 * 注解
-	 * 默认为空字符串
-	 */
-	String ps() default "";
+	boolean notNull() default false;
 	
 	/**
 	 * 是否由外部POI导入
 	 * 默认为false
 	 */
-	boolean needImport() default false;
+	boolean autoInit() default false;
 	
 	/**
 	 * Static Source的类名
 	 */
 	String source() default "";
+	
+	/**
+	 * 注解
+	 * 默认为空字符串
+	 */
+	String ps() default "";
+
 }

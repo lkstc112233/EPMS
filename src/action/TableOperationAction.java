@@ -1,13 +1,6 @@
 package action;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.sql.*;
 import java.util.*;
 
@@ -22,108 +15,95 @@ import obj.*;
 public abstract class TableOperationAction extends ActionSupport{
 	private static final long serialVersionUID = 5998268336475528662L;
 
-	private String tableName;
-		public String getTableName(){return this.tableName;}
-		//public void setTableName(String tableName){this.setupTableName(tableName);}
 	static public final String SessionSearchKey="TableOperationAction_Search";
+	static public final String SessionChooseKey="TableOperationAction_Choose";
 	
 	
-	private Search<? extends Base> search=null;//查询信息
-	private int choose=-1;//操作项
-	private Base chooseBase;
-	private Base createNewBase;
+	protected Search search=null;//查询信息
+	private Integer[] choose;//操作项
+	private Base operateBase;//当为update|delete时，此处存放旧数据
 	
-	public Search<? extends Base> getSearch(){return this.search;}
-	public int getChoose(){return this.choose;}
-	public void setChoose(int x){
-		this.choose=x;
-		if(this.choose<0)
-			this.chooseBase.clear();
-		else
-			try{this.chooseBase=this.search.getResult().get(this.getChoose());
-			}catch(IllegalArgumentException | IndexOutOfBoundsException e){}
+	public Search getSearch(){return this.search;}
+	public Integer[] getChoose(){return this.choose;}
+	public Base getOperateBase(){return this.operateBase;}
+	public Field[] getAllSelectFields(){
+		int len=0;
+		for(JoinParam.Part part:this.getSearch().getParam().getList())
+			len+=Field.getFields(part.getClazz()).length;
+		Field[] res=new Field[len];
+		int i=0;
+		for(JoinParam.Part part:this.getSearch().getParam().getList())
+			for(Field f:Field.getFields(part.getClazz()))
+				res[i++]=f;
+		return res;
 	}
-	public Base getChooseBase(){return this.chooseBase;}
-	public Base getCreateNewBase(){return this.createNewBase;}
 
 
-	@SuppressWarnings({ "unchecked" })
 	public TableOperationAction(){
 		super();
-		this.search=Manager.loadSession(Search.class,SessionSearchKey);
-		if(this.search!=null)
-			this.setupTableName(this.search.getClassInfo().getTableName());
-	}
-	public TableOperationAction(String tableName){
-		this();
-		this.setupTableName(tableName);
-		System.out.println(">> TableOperationAction:constructor > tableName="+this.getTableName());
+		this.setup();
 	}
 	
-	protected void setupTableName(String tableName){
-		this.tableName=tableName;
-		Class<? extends Base> clazz=Base.getClassForName(this.getTableName());
-		try {
-			this.createNewBase=clazz.newInstance();
-			if(this.search!=null && this.search.getRestraint()!=null)
-				this.search.getRestraint().fitAndSetBase(this.createNewBase);
-			this.chooseBase=clazz.newInstance();
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException e) {
-			e.printStackTrace();
-		}
-		if(this.search!=null && !this.tableName.equals(this.search.getClassInfo().getTableName())){
-			Manager.removeSession(SessionSearchKey);
-			this.search=null;
-		}
-	}
-	
-	protected abstract void setupSearchRestraint()throws NoSuchFieldException,IllegalArgumentException,IllegalAccessException,SQLException;
-	/*	this.search.setRestraint(new Search2.jwyRestraint(this.search.getClassInfo(),
-			new School(Manager.getUser().getSchool()),
-			this.getYear()));
-	 */
-	
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public String display(){
-		System.out.println(">> TableOperationAction:display > tableName="+this.getTableName());
-		Class<? extends Base> clazz=Base.getClassForName(this.getTableName());
-		try {
-			if(this.search==null){
-				this.search=new Search(clazz);
-				this.setupSearchRestraint();
-			}
-		} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | SQLException e) {
-			return Manager.tips("搜索结果实例初始化失败！",
-					e,NONE);
-		}
-		if(this.search!=null && this.search.getRestraint()!=null && this.createNewBase!=null)
-			this.search.getRestraint().fitAndSetBase(this.createNewBase);
-		if(this.search!=null)
+	protected void setup(){
+		if(this.search==null)
+			this.search=Manager.loadSession(Search.class,SessionSearchKey);
+		else
 			Manager.saveSession(SessionSearchKey,this.search);
-		System.out.println(">> TableOperationAction:display <NONE");
+		if(this.search==null) return;
+		//===
+		if(this.choose==null)
+			this.choose=Manager.loadSession(Integer[].class,SessionChooseKey);
+		else Manager.saveSession(SessionChooseKey,this.choose);
+		if(this.choose!=null && this.choose.length>=2 && this.choose[0]!=null && this.choose[1]!=null
+				&& (0<=this.choose[0] && this.choose[0]<this.search.getParam().size())){
+			JoinParam.Part part=this.search.getParam().getList().get(this.choose[0]);
+			try{
+				this.operateBase=part.getClazz().newInstance();
+			}catch(InstantiationException | IllegalArgumentException | IllegalAccessException e){
+			}
+			if(this.choose[1]==null || (0<=this.choose[1] && this.choose[1]<this.search.getResult().size())){
+				//update|delete 备份旧数据
+				this.search.getResult().get(this.choose[1])[this.choose[0]].copyTo(this.operateBase);
+			}else this.choose[1]=-1;
+			if(this.search.getBaseRestraint()!=null)
+				this.search.getBaseRestraint().checkBase(this.operateBase,/*setIfFalse*/true);
+			Manager.saveSession(SessionChooseKey,this.choose);
+		}else{
+			this.operateBase=null;
+			this.choose=new Integer[]{-1,-1};
+			Manager.removeSession(SessionChooseKey);
+		}
+	}
+	
+	protected abstract Search createSearch() throws Exception;
+
+	public String display(){
+		if(this.search==null) try{
+			this.search=this.createSearch();
+		}catch(Exception e){
+			return Manager.tips("搜索结果实例初始化失败！",e,NONE);
+		}
+		this.setup();
 		return NONE;
 	}
 	
 	
 	@Override
 	public String execute(){//执行查询
-		System.out.println(">> TableOperationAction:execute > tableName="+this.getTableName());
-		if(this.search==null){
-			System.out.println("搜索结果实例初始化失败！");
-			return display();
-		}
-		//===
+		if(this.search==null)
+			return Manager.tips("搜索结果实例初始化失败！",display());
+		System.out.println(">> TableOperationAction:execute > start");
 		try {
 			this.search.execute();
 		} catch (IllegalAccessException | InstantiationException e) {
-			return Manager.tips("搜索结果实例初始化失败！"
+			return Manager.tips("搜索结果生成失败！"
 					,e,NONE);
 		} catch (SQLException e) {
-			Manager.tips("数据库开小差去了！",
+			Manager.tips("搜索操作失败，可能是数据库开小差去了！",
 					e,NONE);
 		}
-		this.setChoose(-1);//will clear the chooseBase
+		Manager.removeSession(SessionChooseKey);
+		this.choose=null;
 		System.out.println(">> TableOperationAction:execute > resultSet count="+this.search.getResult().size());
 		return display();
 	}
@@ -134,121 +114,92 @@ public abstract class TableOperationAction extends ActionSupport{
 	 * 更新选中条（根据choose值）
 	 */
 	public String update(){
-		System.out.println(">> TableOperationAction:update > tableName="+this.getTableName());
 		if(this.search==null)
-			return Manager.tips("搜索结果实例初始化失败！",
-					display());
-		//===
-		Base b=null;
+			return Manager.tips("搜索结果实例初始化失败！",display());
+		System.out.println(">> TableOperationAction:update > start");
+		if(this.operateBase==null)
+			return Manager.tips("操作选择错误！",
+					NONE);
+		Base newBase=null;
 		try{
-			b=this.search.getResult().get(this.getChoose());
-		}catch(IllegalArgumentException e){
-			return Manager.tips("出错了！",
-					NONE);
-		}catch(IndexOutOfBoundsException e){
-			return Manager.tips("条目选择错误！",
-					NONE);
+			newBase=this.search.getResult().get(this.choose[1])[this.choose[0]];
+		}catch(Exception e){
 		}
-		if(b==null || this.chooseBase==null)
-			return Manager.tips("条目选择为空！",
+		if(newBase==null)
+			return Manager.tips("选择条目错误！",
 					NONE);
-		if(!this.search.getRestraint().fitBase(this.chooseBase))
+		if(!this.search.getBaseRestraint().checkBase(newBase,/*setIfFalse*/false))
 			return Manager.tips("不能修改为其他[年份/部院系]条目！",
 					NONE);
-		//b -> update to ->this.chooseBase
 		try{
-			this.chooseBase.update(b);
+			this.operateBase.update(newBase);
 		}catch (IllegalArgumentException e) {
-			return Manager.tips("修改参数错误！",
-					e,NONE);
-		} catch (IllegalAccessException e) {
-			return Manager.tips("修改权限错误！",
+			return Manager.tips("修改时参数错误！",
 					e,NONE);
 		} catch (SQLException e) {
-			return Manager.tips("数据库错误！",
+			return Manager.tips("修改时遇到数据库错误！",
 					e,NONE);
 		}
-		this.setChoose(-1);//will clear the chooseBase
-		Manager.tips("修改成功！");
-		return this.execute();
+		return Manager.tips("修改成功！",
+				execute());
 	}
 	/**
 	 * 删除选中条（根据choose值）
 	 */
 	public String delete(){
-		System.out.println(">> TableOperationAction:delete > tableName="+this.getTableName());
 		if(this.search==null)
 			return Manager.tips("搜索结果实例初始化失败！",display());
-		//===
-		Base b=null;
+		System.out.println(">> TableOperationAction:delete > start");
+		this.operateBase=null;
 		try{
-			b=this.search.getResult().get(this.getChoose());
-		}catch(IllegalArgumentException e){
-			return Manager.tips("出错了！",
-					NONE);
-		}catch(IndexOutOfBoundsException e){
-			return Manager.tips("条目选择错误！",
-					NONE);
+			this.operateBase=this.search.getResult().get(this.choose[1])[this.choose[0]];
+		}catch(Exception e){
 		}
-		if(b==null || this.chooseBase==null)
-			return Manager.tips("条目选择为空！",
+		if(this.operateBase==null)
+			return Manager.tips("操作选择错误！",
 					NONE);
-		if(!this.search.getRestraint().fitBase(this.chooseBase))
+		if(!this.search.getBaseRestraint().checkBase(this.operateBase,/*setIfFalse*/false))
 			return Manager.tips("不能删除其他[年份/部院系]条目！",
 					NONE);
-		//delete b (in the search result)
-		try {
-			b.delete();
-			this.search.getResult().remove(this.choose);
+		try{
+			this.operateBase.delete();
 		}catch (IllegalArgumentException e) {
-			return Manager.tips("修改参数错误！",
-					e,NONE);
-		} catch (IllegalAccessException e) {
-			return Manager.tips("修改权限错误！",
+			return Manager.tips("删除时参数错误！",
 					e,NONE);
 		} catch (SQLException e) {
-			return Manager.tips("数据库错误！",
+			return Manager.tips("删除时遇到数据库错误！",
 					e,NONE);
 		}
-		System.out.println(">> TableOperationAction:delete > 删除成功");
-		Manager.tips("删除成功！");
-		return this.execute();
+		return Manager.tips("删除成功！",
+				execute());
 	}
 	/**
 	 * 新建条（新建createBase）
 	 */
 	public String create(){
-		System.out.println(">> TableOperationAction:create > tableName="+this.getTableName());
 		if(this.search==null)
-			return Manager.tips("搜索结果实例初始化失败！",
-					display());
-		if(this.createNewBase==null)
-			return Manager.tips("条目选择为空！",
+			return Manager.tips("搜索结果实例初始化失败！",display());
+		System.out.println(">> TableOperationAction:update > start");
+		if(this.operateBase==null)
+			return Manager.tips("操作选择错误！",
 					NONE);
-		try{
-			if(this.createNewBase.checkKeyNull())
-				return Manager.tips("新建条目内容不充分，请补全！",
-						NONE);
-		}catch(IllegalArgumentException | IllegalAccessException e){
-			return Manager.tips("服务器开小差去了，暂时无法创建！",
-					e,NONE);
-		}
-		if(!this.search.getRestraint().fitBase(this.createNewBase))
+		if(!this.search.getBaseRestraint().checkBase(this.operateBase,/*setIfFalse*/false))
 			return Manager.tips("不能新建其他[年份/部院系]条目！",
 					NONE);
-		//create this.getCreateNewBase()
-		try {
-			this.createNewBase.create();
-		}catch(IllegalArgumentException | IllegalAccessException e) {
-			return Manager.tips("服务器开小差去了，暂时无法创建！",
+		try{
+			this.operateBase.create();
+		} catch (IllegalArgumentException e) {
+			return Manager.tips("创建时参数错误！",
 					e,NONE);
-		}catch(SQLException e){
-			return Manager.tips("数据库发现问题，无法创建该条目！",
+		} catch (IllegalAccessException e) {
+			return Manager.tips("创建时参数权限错误！",
+					e,NONE);
+		} catch (SQLException e) {
+			return Manager.tips("创建时遇到数据库错误！",
 					e,NONE);
 		}
-		this.createNewBase.clear();
-		Manager.tips("创建成功！");
-		return execute();
+		return Manager.tips("创建成功！",
+				execute());
 	}
 	
 	
@@ -257,7 +208,9 @@ public abstract class TableOperationAction extends ActionSupport{
 	
 	
 	//============================================
-	
+	private String fileTableName;
+		public String getFileTableName(){return this.fileTableName;}
+		public void setFileTableName(String tableName){this.fileTableName=tableName==null||tableName.isEmpty()?null:tableName;}
 	/*
 	 * 上传文件
 	 */
@@ -267,47 +220,40 @@ public abstract class TableOperationAction extends ActionSupport{
 	public String upload(){//上传文件
 		System.out.println(">> TableOperationAction:upload > uploadFileContentType="+this.getUploadFileContentType());
 		System.out.println(">> TableOperationAction:upload > uploadFileFileName="+this.getUploadFileFileName());
-		Class<? extends Base> clazz=Base.getClassForName(this.getTableName());
+		Class<? extends Base> clazz=Base.getClassForName(this.fileTableName);
+		if(clazz==null)
+			return Manager.tips("选择了错误的表名称",display());
 		if(this.getUploadFile()==null)
-			return Manager.tips("上传了空文件！",
-					display());
+			return Manager.tips("上传了空文件！",display());
 		List<? extends Base> content=null;
 		List<Integer> errorIndex=new ArrayList<Integer>();
 		try(FileInputStream in=new FileInputStream(this.getUploadFile());){
-			content=SQLCollection.io.readExcel(clazz,in,errorIndex,this.getSearch().getRestraint());
+			content=Base.io().readExcel(clazz,in,errorIndex,this.getSearch().getBaseRestraint());
 		}
 		catch(IOException e){
-			return Manager.tips("文件错误！",
-					e,display());
+			return Manager.tips("文件错误！",e,display());
 		}
 		catch (EncryptedDocumentException e) {
-			return Manager.tips("解码错误！",
-					e,display());
+			return Manager.tips("解码错误！",e,display());
 		}
 		catch (InvalidFormatException e) {
-			return Manager.tips("格式错误！",
-					e,display());
+			return Manager.tips("格式错误！",e,display());
 		} catch (InstantiationException | IllegalAccessException e) {
-			return Manager.tips("初始化实例错误！",
-					e,display());
+			return Manager.tips("初始化实例错误！",e,display());
 		}
 		if(content==null)
-			return Manager.tips("文件读取失败！",
-					display());
+			return Manager.tips("文件读取失败！",display());
 		if(content.isEmpty())
-			return Manager.tips("文件为空！",
-					display());
-		for(int i=0;i<content.size();i++){
-			try{
-				Base b=content.get(i);
-				if(b.exist())
-					b.update();
-				else
-					b.create();
-			}catch (IllegalArgumentException | IllegalAccessException | SQLException | InstantiationException e) {
-				e.printStackTrace();
-				errorIndex.add(i);
-			}
+			return Manager.tips("文件为空！",display());
+		for(int i=0;i<content.size();i++) try{
+			Base b=content.get(i);
+			if(b.exist())
+				b.update();
+			else
+				b.create();
+		}catch (IllegalArgumentException | IllegalAccessException | SQLException | InstantiationException e) {
+			e.printStackTrace();
+			errorIndex.add(i);
 		}
 		if(!errorIndex.isEmpty()){
 			StringBuilder error=new StringBuilder("上传失败序号：");
@@ -315,8 +261,7 @@ public abstract class TableOperationAction extends ActionSupport{
 				error.append(i);
 				error.append(';');
 			}
-			return Manager.tips(error.toString(),
-					display());
+			return Manager.tips(error.toString(),display());
 		}
 		Manager.tips("上传成功！");
 		return display();
@@ -336,19 +281,20 @@ public abstract class TableOperationAction extends ActionSupport{
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private OutputStream downloadOutputStream=null;
 	public String download(){//下载模板
-		System.out.println(">> TableOperationAction:download > tableName="+this.getTableName());
-		Class<? extends Base> clazz=Base.getClassForName(this.getTableName());
+		System.out.println(">> TableOperationAction:download > tableName="+this.fileTableName);
+		Class<? extends Base> clazz=Base.getClassForName(this.fileTableName);
+		if(clazz==null)
+			return Manager.tips("选择了错误的表名称",display());
 		this.setDownloadFileName(Base.getSQLTableName(clazz)+"模板.xlsx");//设置下载文件名称
-		System.out.println(">> TableOperationAction:download > tableName="+this.getTableName());
+		System.out.println(">> TableOperationAction:download > tableName="+this.fileTableName);
 		System.out.println(">> TableOperationAction:download > downloadFielName="+this.getDownloadFileName());
 		downloadOutputStream=new ByteArrayOutputStream();
 		try{
-			SQLCollection.io.getModelExcel(clazz,downloadOutputStream);
+			Base.io().getModelExcel(clazz,downloadOutputStream);
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
 			downloadOutputStream=null;
-			return Manager.tips("服务器开小差去了，暂时无法下载！",
-					e,display());
+			return Manager.tips("服务器开小差去了，暂时无法下载！",e,display());
 		}
 		System.out.println(">> TableOperationAction:download <downloadAttachment");
 		return "downloadAttachment";

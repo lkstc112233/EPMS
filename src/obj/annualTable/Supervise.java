@@ -1,42 +1,38 @@
 package obj.annualTable;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import action.Manager;
-import obj.ListableBase.ListableBaseWithNoSave;
 import obj.*;
 
 @SQLTable("Supervise")
-public class Supervise extends AnnualBase implements ListableBaseWithNoSave{
-	
-	
-	@SQLField(value="实习基地",isKey=true,source="PracticeBase.name")
+public class Supervise extends AnnualBase{
+	@SQLField(value="实习基地",weight=1,isKey=true,notNull=true,source="PracticeBase.name")
 	private String practiceBase;
-	@SQLField(value="督导老师工号",source="InnerPerson.id")
-	private String supervisorId;
-	@SQLField(value="督导类型",isKey=true,ps="1/2/3分别表示入校/中期/返校督导")
+	@SQLField(value="督导类型",weight=2,isKey=true,notNull=true,ps="0/1/2分别表示入校/中期/返校督导")
 	private int superviseType;
-	@SQLField(value="督导开始时间")
+	@SQLField(value="督导老师工号",weight=3,source="InnerPerson.id")
+	private String supervisorId;
+	@SQLField(value="督导开始时间",weight=10)
 	private Timestamp time1;
-	@SQLField(value="督导结束时间")
+	@SQLField(value="督导结束时间",weight=11)
 	private Timestamp time2;
-	@SQLField(value="机票费",ps="小于100000")
-	private float moneyPlane;
-	@SQLField(value="机票费",ps="小于100000")
-	private float moneyBooking;
-	@SQLField(value="机票费",ps="小于100000")
-	private float moneyInsurance;
-	@SQLField(value="机票费",ps="小于100000")
-	private float moneyTrain;
-	@SQLField(value="机票费",ps="小于100000")
-	private float moneyAccommodation;
-	@SQLField(value="住宿天数",ps="小于128")
-	private int   moneyAccommodationNum;
-	@SQLField(value="其他费用",ps="小于100000")
-	private float moneyElse;
-	@SQLField(value="备注",ps="文本储存")
+	@SQLField(value="备注",weight=12,ps="文本储存")
 	private String remark;
+	@SQLField(value="机票费",weight=13,ps="小于100000")
+	private float moneyPlane;
+	@SQLField(value="机票费",weight=14,ps="小于100000")
+	private float moneyBooking;
+	@SQLField(value="机票费",weight=15,ps="小于100000")
+	private float moneyInsurance;
+	@SQLField(value="机票费",weight=16,ps="小于100000")
+	private float moneyTrain;
+	@SQLField(value="机票费",weight=17,ps="小于100000")
+	private float moneyAccommodation;
+	@SQLField(value="住宿天数",weight=18,ps="小于128")
+	private int   moneyAccommodationNum;
+	@SQLField(value="其他费用",weight=19,ps="小于100000")
+	private float moneyElse;
 	
 	static int[] TypeList=new int[]{0,1,2};
 		static public int[] getTypesList(){return Supervise.TypeList;}
@@ -96,8 +92,10 @@ public class Supervise extends AnnualBase implements ListableBaseWithNoSave{
 	public void setMoneyElse(String a){try{this.moneyElse=Float.parseFloat(a);}catch(NumberFormatException e){e.printStackTrace();}}
 
 
-	public Supervise() throws SQLException {
-		super();
+
+	@Override
+	public String getDescription() {
+		return this.superviseType+"_"+this.practiceBase+"("+this.supervisorId+")";
 	}
 	
 	

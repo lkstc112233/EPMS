@@ -3,23 +3,26 @@ package obj.staticObject;
 import obj.*;
 
 @SQLTable("PracticeBase")
-public class PracticeBase extends ListableBase implements ListableBase.ListableBaseWithNoSave{
+public class PracticeBase extends Base implements Base.ListableWithNoSave{
 
-	@SQLField(isKey=true,needImport=true,value="实习基地名称")
+	@SQLField(value="顺序号",weight=0)
+	private int orderId;	public void setOrderId(int a){this.orderId=a;}	public void setOrderId(String a) {this.orderId=Field.s2i(a,-1);}	public int getOrderId() {return this.orderId;}
+	
+	@SQLField(value="实习基地名称",weight=1,isKey=true,notNull=true)
 	private String name;
-	@SQLField(value="拒绝接收的民族",needImport=true,ps="('汉族'),('蒙古族'),('回族'),('东乡族'),('维吾尔族'),('哈萨克族'),('土家族'),('藏族'),('壮族'),...")
-	private String refuseNation;
-	@SQLField(value="所处城市",source="City.name",needImport=true)
+	@SQLField(value="所处城市",weight=2,notNull=true,source="City.name")
 	private String city;
-	@SQLField(value="具体地址",needImport=true)
+	@SQLField(value="拒绝接收的民族",weight=10,ps="('汉族'),('蒙古族'),('回族'),('东乡族'),('维吾尔族'),('哈萨克族'),('土家族'),('藏族'),('壮族'),...")
+	private String refuseNation;
+	@SQLField(value="具体地址",weight=11)
 	private String address;
-	@SQLField(value="账户名称",needImport=true)
+	@SQLField(value="账户名称",weight=12)
 	private String zhmc;
-	@SQLField(value="开户行",needImport=true)
+	@SQLField(value="开户行",weight=13)
 	private String khh;
-	@SQLField(value="账户",needImport=true)
+	@SQLField(value="账户",weight=14)
 	private String zh;
-	@SQLField(value="税务识别码",needImport=true,ps="2017年7月1日起实施")
+	@SQLField(value="税务识别码",weight=15,ps="2017年7月1日起实施")
 	private String swsbm;
 
 	public String getName(){return name;}
@@ -38,10 +41,13 @@ public class PracticeBase extends ListableBase implements ListableBase.ListableB
 	public void setZh(String zh) {this.zh = zh;}
 	public String getSwsbm() {return swsbm;}
 	public void setSwsbm(String swsbm) {this.swsbm = swsbm;}
+
 	
-	
-	public PracticeBase() throws java.sql.SQLException{
-		super();
+	@Override
+	public String getDescription() {
+		return this.name;
 	}
+	
+	
 		
 }

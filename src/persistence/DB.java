@@ -30,12 +30,15 @@ public final class DB {
 	    if(props!=null){
 		    String name=props.getProperty("name");
 		    String driver = props.getProperty("driver");
+	        System.out.println("++ DB:static > 开始加载"+name+"驱动程序("+driver+")");
 		    try{
 		        Class.forName(driver);
 		        System.out.println("++ DB:static > 成功加载"+name+"驱动程序");
 		    } catch (ClassNotFoundException e){
+		        System.err.println("++ DB:static > 加载"+name+"驱动程序("+driver+")失败！");
 				e.printStackTrace();
 			} catch (Exception e){
+		        System.err.println("++ DB:static > 加载"+name+"驱动程序("+driver+")失败！");
 				e.printStackTrace();
 			}
 	    }
@@ -85,9 +88,9 @@ public final class DB {
 	}
 	
 	/**
-	 * 从ACCESS表中读取project信息，套用上当前输入的year来insert到Time表中
+	 * 从ACCESS表中读取project信息，套用上当前输入的year来insert到Time表中 
 	 */
-	static synchronized public void setupTimeTable(int year) throws SQLException{
+	static synchronized public void setupTimeTable(int year) throws SQLException, IllegalArgumentException, InstantiationException{
 		System.out.println("++ DB:setupTimeTable > year="+year);
 		List<ACCESS> accessList=ACCESS.list(ACCESS.class);
 		System.out.println("++ DB:setupTimeTable > list:[");
@@ -119,7 +122,7 @@ public final class DB {
 				try {
 					t.delete();
 					System.out.println("success");
-				} catch (IllegalArgumentException | IllegalAccessException e1) {
+				} catch (IllegalArgumentException e1) {
 					System.out.println("fail");
 					e1.printStackTrace();
 				}

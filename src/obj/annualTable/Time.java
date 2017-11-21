@@ -10,13 +10,13 @@ import obj.staticSource.ACCESS;
 @SQLTable("Time")
 public class Time extends AnnualBase{
 
-	@SQLField(needSorted=true)
+	@SQLField(value="序号",weight=1,notNull=true)
 	private int id;
-	@SQLField(value="项目名称",isKey=true,source="ACCESS.project")
+	@SQLField(value="项目名称",weight=2,isKey=true,notNull=true,source="ACCESS.project")
 	private String project;
-	@SQLField(value="起始时间")
+	@SQLField(value="起始时间",weight=11)
 	private Timestamp time1;
-	@SQLField(value="终止时间")
+	@SQLField(value="终止时间",weight=12)
 	private Timestamp time2;
 	
 	
@@ -58,15 +58,12 @@ public class Time extends AnnualBase{
 		}
 	}
 	
-	public Time() throws SQLException {
-		super();
-	}
 	
 	@SuppressWarnings("deprecation")
 	static public Time getFromACCESS(int year,ACCESS a) throws SQLException{
 		if(a==null) return null;
 		Time t=new Time();
-		t.setId(a.getId());
+		t.setId(a.getOrderId());
 		t.setProject(a.getProject());
 		t.setYear(year);
 		if(a.getTime1()!=null){
@@ -82,6 +79,13 @@ public class Time extends AnnualBase{
 		}else
 			t.setTime2((Timestamp)null);
 		return t;
+	}
+	
+	
+	
+	@Override
+	public String getDescription() {
+		return this.id+"_"+this.project;
 	}
 	
 }

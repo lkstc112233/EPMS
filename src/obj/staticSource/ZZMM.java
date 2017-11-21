@@ -1,18 +1,25 @@
 package obj.staticSource;
 
-import java.sql.SQLException;
-
 import obj.*;
 
 @SQLTable("ZZMM")
-public class ZZMM extends ListableBase{
+public class ZZMM extends Base{
+	@SQLField(value="顺序号",weight=0)
+	private int orderId;	public void setOrderId(int a){this.orderId=a;}	public void setOrderId(String a) {this.orderId=Field.s2i(a,-1);}	public int getOrderId() {return this.orderId;}
 	
-	@SQLField(isKey=true)
+	@SQLField(value="政治面貌",weight=1,isKey=true,notNull=true)
 	private String name;
-	public String getName(){return this.name;}
-	public void setName(String name){this.name=name==null||name.isEmpty()?null:name;}
 	
-	public ZZMM() throws SQLException {
-		super();
+	public String getName(){return this.name;}
+	public void setName(String a){this.name=Field.s2S(a);}
+	
+	
+	
+	@Override
+	public String getDescription() {
+		return this.name;
 	}
+	
+
+	
 }

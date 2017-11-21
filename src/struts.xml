@@ -31,14 +31,24 @@
 		
 		<!--设置全局result页面-->
 		<global-results>
-			<result name="error"> error.jsp</result>
+			<!-- //TODO error会跳转到login.jsp -->
+			<result name="error" type="redirect"> menu.action</result>
 			<result name="invalid.token"> invalidToken.jsp</result>
 			<result name="jump" type="redirect"> ${jumpURL}</result>
+			<result name="login"> login.jsp </result>
 		</global-results>
 		
+		<!-- ################################################################################ -->
+		<!-- ################################################################################ -->
+		<!-- Action名称登记 -->
+		<!-- sudo开头的必须要求教务处权限 -->
+		<!-- function开头的必须要求Manager.getUser().getInnerOffice()对应的权限 -->
+		<!-- 其他名称均可访问 -->
+		<!-- ################################################################################ -->
+		
+		<!-- ################################################################################ -->
 		<!--动作：login配置-->
 		<action name="login" class="action.login.LoginAction" method="execute">
-			<result name="login"> login.jsp</result>
 			<result type="redirect"> menu.action</result>
 			<!--该登录动作不受token过滤器影响-->
 			<interceptor-ref name="defaultStack" />
@@ -51,59 +61,38 @@
 		
 		<!--动作：menu配置-->
 		<action name="menu" class="action.login.MenuAction" method="execute">
-			<result name="jwc">		jwc/index.jsp</result>
-			<result name="jwy">		jwy/index.jsp</result>
-			<result name="jxyz">	jxyz/index.jsp</result>
-			<result name="ld">		ld/index.jsp</result>
-			<result name="js">		js/index.jsp</result>
+			<result name="jwc">		menu.jsp</result>
+			<result name="jwy">		menu.jsp</result>
+			<result name="jxyz">	menu.jsp</result>
+			<result name="ld">		menu.jsp</result>
+			<result name="js">		menu.jsp</result>
 			<result> login.jsp</result>
 		</action>
 		
-		<!--动作：inner_info配置-->
-		<action name="inner_info" class="action.login.InnerInfoAction" method="execute">
-			<result> inner_info.jsp</result>
-			<result name="none"> inner_info.jsp</result>
+		<!-- ################################################################################ -->
+		<!--动作：innerInfo配置-->
+		<action name="InnerInfo_*" class="action.login.InnerInfo" method="{1}">
+			<result> InnerInfo.jsp</result>
+			<result name="none"> InnerInfo.jsp</result>
+			<allowed-methods> display,execute, </allowed-methods>
 		</action>
 		
 		<!--动作：SQL Operation配置-->
-		<action name="jwc_sql_operation_select" class="action.jwc.sudo.SQLOperationSelectAction" method="execute">
-			<result name="none"> jwc/sudo/sql_operation_select.jsp</result>
-			<result> jwc/sudo/sql_operation_select.jsp</result>
+		<action name="sudo_SQLOperation_*" class="action.sudo.SQLOperation" method="{1}">
+			<result name="none"> sudo/SQLOperation.jsp</result>
+			<result> sudo/SQLOperation.jsp</result>
+			<allowed-methods> display,execute, </allowed-methods>
 		</action>
-		
-		
 		
 		<!--动作：Table Operation配置-->
-		<!-- 第一个星号：人员类型actionPrefix -->
-		<!-- 第二个星号：调用的方法 -->
-		<action name="jwc_sudo_*_*" class="action.jwc.sudo.{1}" method="{2}">
-			<result name="none"> jwc/sudo/{1}.jsp</result>
-			<result> jwc/sudo/{1}.jsp</result>
-			<result name="downloadAttachment" type="stream">
-				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
-				<param name="inputName">downloadAttachment </param> <!-- 调用的getter名称，返回InputStream -->
-				<param name="contentDisposition">attachment;filename="${downloadFileName}" </param> <!-- 附件方式下载，文件名使用EL获取 --> 
-			</result>
-			<result name="downloadInline" type="stream">
-				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
-				<param name="inputName">downloadInline </param> <!-- 调用的getter名称，返回InputStream -->
-				<param name="contentDisposition">inline;filename="${downloadFileName}" </param> <!-- 内联方式下载，文件名使用EL获取 --> 
-			</result>
-			<result name="input"> login.jsp </result>
-			<allowed-methods> display,execute,download,upload,update,delete,create, </allowed-methods>
-		</action>
-		
-		
-		
-		
-		<!--动作：Role的设置 配置-->
-		<!-- 第一个星号：人员类型actionPrefix -->
-		<!-- 第二个星号：项目名称，对应ACCESS中project的actionClass -->
-		<!-- 第三个星号：调用的方法 -->
-		<action name="*_function_*_*" class="action.{1}.{2}" method="{3}">
+		<!-- 第一个星号：sudo或function -->
+		<!-- 第二个星号：调用的Action类 -->
+		<!-- 第三个星号：调用的Method方法 -->
+		<action name="*_*_*" class="action.{1}.{2}" method="{3}">
 			<result name="back" type="redirect"> menu.action</result>	<!--用于timeout和back -->
-			<result name="none"> {1}/{2}.jsp</result>	<!--用于display和timeout -->
+			<result name="none"> {1}/{2}.jsp</result>
 			<result> {1}/{2}.jsp</result>
+			<result name="input"> login.jsp </result>
 			<result name="downloadAttachment" type="stream">
 				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
 				<param name="inputName">downloadAttachment </param> <!-- 调用的getter名称，返回InputStream -->
@@ -116,6 +105,10 @@
 			</result>
 			<allowed-methods> display,execute,download,upload,update,delete,create, </allowed-methods>
 		</action>
+		
+		
+		
+		
 		
 
 		
