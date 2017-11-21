@@ -8,6 +8,8 @@ import java.util.*;
 @SuppressWarnings("unchecked")
 public class Field implements Comparable<Field>{
 	
+	static public String orderIdFieldName="orderId";
+	
 	public final Class<? extends Base> clazz;
 		public Class<? extends Base> getClazz(){return clazz;}
 	public final java.lang.reflect.Field field;

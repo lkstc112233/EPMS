@@ -9,9 +9,9 @@ import obj.annualTable.Time;
 
 @SQLTable("ACCESS")
 public class ACCESS extends Base{
-	
-	@SQLField(value="序号",weight=1,notNull=true)
-	private int id;
+
+	@SQLField(value="顺序号",weight=0)
+	private int orderId;	public void setOrderId(int a){this.orderId=a;}	public void setOrderId(String a) {this.orderId=Field.s2i(a,-1);}	public int getOrderId() {return this.orderId;}
 	@SQLField(value="项目名称",weight=2,isKey=true,notNull=true)
 	private String project;
 	@SQLField(value="动作名称",weight=10)
@@ -34,9 +34,6 @@ public class ACCESS extends Base{
 	private boolean ld;
 	
 	
-	public int getId(){return id;}
-	public void setId(int id){this.id=id;}
-	public void setId(String a){this.id=Field.s2i(a,0);}
 	public String getProject() {return project;}
 	public void setProject(String a) {this.project=Field.s2S(a);}
 	public String getActionClass(){return this.actionClass;}
@@ -82,7 +79,7 @@ public class ACCESS extends Base{
 	static public ACCESS getFromTime(Time t) throws SQLException, IllegalArgumentException, IllegalAccessException{
 		if(t==null) return null;
 		ACCESS a=new ACCESS();
-		a.setId(t.getId());
+		a.setOrderId(t.getId());
 		a.setProject(t.getProject());
 		a.load();
 		a.setTime1(t.getTime1());
@@ -94,7 +91,7 @@ public class ACCESS extends Base{
 	
 	@Override
 	public String getDescription() {
-		return this.id+"_"+this.project;
+		return this.orderId+"_"+this.project;
 	}
 	
 	

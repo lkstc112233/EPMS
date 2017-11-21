@@ -63,7 +63,7 @@ public class Time extends AnnualBase{
 	static public Time getFromACCESS(int year,ACCESS a) throws SQLException{
 		if(a==null) return null;
 		Time t=new Time();
-		t.setId(a.getId());
+		t.setId(a.getOrderId());
 		t.setProject(a.getProject());
 		t.setYear(year);
 		if(a.getTime1()!=null){

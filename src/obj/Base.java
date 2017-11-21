@@ -370,8 +370,21 @@ public abstract class Base {
 		if(first) throw new IllegalArgumentException("There is NO field in SELECT Field!");
 		sb.append(" FROM ");
 		sb.append(param.toString());//===
-		if(restraint!=null)
-			sb.append(restraint.getSQLString());
+		//新增的带orderId的字段会被强制排序
+		List<Field> orderFields=new ArrayList<Field>();
+		for(JoinParam.Part p:param.getList()) {
+			for(Field f:Field.getFields(p.getClazz()))
+				if(f.getName().equals(Field.orderIdFieldName))
+					orderFields.add(f);
+		}
+		if(restraint!=null && restraint.getOrder()!=null) {
+			for(Field f:restraint.getOrder())
+				orderFields.add(f);
+		}
+		Field[] fs=orderFields.toArray(new Field[0]);
+		restraint=new Restraint(restraint==null?null:restraint.getWhere(),
+				fs);
+		sb.append(restraint.getSQLString());
 		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
 		int parameterIndex=1;
 		for(JoinParam.Part part:param.getList())

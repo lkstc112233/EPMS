@@ -5,6 +5,9 @@ import obj.*;
 @SQLTable("PracticeBase")
 public class PracticeBase extends Base implements Base.ListableWithNoSave{
 
+	@SQLField(value="顺序号",weight=0)
+	private int orderId;	public void setOrderId(int a){this.orderId=a;}	public void setOrderId(String a) {this.orderId=Field.s2i(a,-1);}	public int getOrderId() {return this.orderId;}
+	
 	@SQLField(value="实习基地名称",weight=1,isKey=true,notNull=true)
 	private String name;
 	@SQLField(value="所处城市",weight=2,notNull=true,source="City.name")

@@ -8,22 +8,41 @@ import persistence.DB;
 
 @SQLTable("InnerPerson")
 public class InnerPerson extends Base implements Base.ListableWithNoSave{
+	
 	@SQLField(value="工号",weight=1,isKey=true,notNull=true)
-	private String id;			public String getId(){return id;}				public void setId(String a){this.id=a==null||a.isEmpty()?null:a;}
+	private String id;
 	@SQLField(value="密码",weight=2,notNull=true)
-	private String password;	public String getPassword(){return password;}	public void setPassword(String a){this.password=a==null||a.isEmpty()?null:a;}
+	private String password;
 	@SQLField(value="姓名",weight=3,notNull=true)
-	private String name;		public String getName(){return name;}			public void setName(String a){this.name=a;}
+	private String name;
 	@SQLField(value="校内人员类别",weight=10,notNull=true,source="InnerOffice.name")
-	private String office;		public String getOffice(){return office;}		public void setOffice(String a){this.office=a==null||a.isEmpty()?null:a;}
+	private String office;
 	@SQLField(value="学院",weight=11,notNull=true,source="School.name")
-	private String school;		public String getSchool(){return school;}		public void setSchool(String a){this.school=a==null||a.isEmpty()?null:a;}
+	private String school;
 	@SQLField(value="座机",weight=12)
-	private String phone;		public String getPhone(){return phone;}			public void setPhone(String a){this.phone=a;}
+	private String phone;
 	@SQLField(value="手机",weight=13,notNull=true)
-	private String mobile;		public String getMobile(){return mobile;}		public void setMobile(String a){this.mobile=a;}
+	private String mobile;
 	@SQLField(value="邮箱",weight=14)
-	private String email;		public String getEmail(){return email;}			public void setEmail(String a){this.email=a;}
+	private String email;
+	
+	
+	public String getId(){return id;}
+	public void setId(String a){this.id=Field.s2S(a);}
+	public String getPassword(){return password;}
+	public void setPassword(String a){this.password=Field.s2S(a);}
+	public String getName(){return name;}
+	public void setName(String a){this.name=a;}
+	public String getOffice(){return office;}
+	public void setOffice(String a){this.office=Field.s2S(a);}
+	public String getSchool(){return school;}
+	public void setSchool(String a){this.school=Field.s2S(a);}
+	public String getPhone(){return phone;}
+	public void setPhone(String a){this.phone=a;}
+	public String getMobile(){return mobile;}
+	public void setMobile(String a){this.mobile=a;}
+	public String getEmail(){return email;}
+	public void setEmail(String a){this.email=a;}
 	
 	
 	static public final String UndefinedName="%未定%";
