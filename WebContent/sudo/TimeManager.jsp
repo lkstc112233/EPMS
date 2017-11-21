@@ -28,32 +28,32 @@
 	<table class="wtable">
 		<s:form action="sudo_TimeManager_execute" method="post" cssClass="myform" theme="simple">
 			<tr class="wtableHeader">
-				<td>序号</td>
+				<td style="width:10px">序号</td>
 				<td>project(<s:property value="annual.year" />)</td>
 				<td>time start</td>
 				<td>time end</td>
 			</tr>
 			<s:iterator value="times" var="__tableRow" status="__status">
 				<tr class="wtableContent">
-					<td>
+					<td style="width:10px">
 						<s:property value="%{#__tableRow.id}" />
 						<s:hidden name="times[%{#__status.index}].id"
 						value="%{id}" theme="simple"/>
 					</td>
-					<td style="width:380px;">
+					<td style="text-align:left;">
 						<s:property value="%{#__tableRow.project}" />
 						<s:hidden name="times[%{#__status.index}].project"
 						value="%{#__tableRow.project}"  theme="simple"/>
 					</td>
-					<td style="width:180px;">
-						<s:textfield name="times[%{#__status.index}].time1" theme="simple">
+					<td style="width:180px;padding:0;">
+						<s:textfield name="times[%{#__status.index}].time1" theme="simple" style="width:100%;height:100%;border:0;text-align:center;">
 							<s:param name="value">
 								<s:date name="%{#__tableRow.time1}" format="yyyy-MM-dd HH:mm:ss"/>
 							</s:param>
 						</s:textfield>
 					</td>
-					<td style="width:180px;">
-						<s:textfield name="times[%{#__status.index}].time2" theme="simple">
+					<td style="width:180px;padding:0;">
+						<s:textfield name="times[%{#__status.index}].time2" theme="simple" style="width:100%;height:100%;border:0;text-align:center;">
 							<s:param name="value">
 								<s:date name="%{#__tableRow.time2}" format="yyyy-MM-dd HH:mm:ss"/>
 							</s:param>

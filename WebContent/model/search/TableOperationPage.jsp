@@ -104,18 +104,18 @@
 								<s:if test="fieldsDisplay[#__PartStatus.index][#__opFieldStatus.index] == false">
 								<td style="border:0;">&nbsp;</td>
 								</s:if><s:else>
-									<td style="border:0;">
+									<td style="border:0;padding:0;">
 										<s:if test="#__opField.source == null">
 											<s:textfield name="operateBase.%{#__opField.name}"
 											value="%{operateBase.fieldsValue[#__opFieldStatus.index]}"
-											style="text-align:center;padding:0px;width:95%;" theme="simple" />
+											style="text-align:center;border:0px;width:100%;height:100%;" theme="simple" />
 										</s:if><s:else>
 											<s:select list="%{#__opField.sourceList}"
 											listKey="key" listValue="value"
 											headerKey="" headerValue="无"
 											name="operateBase.%{#__opField.name}"
 											value="%{operateBase.fieldsValue[#__opFieldStatus.index]}"
-											style="text-align:center;padding:0px;width:95%;" theme="simple" />
+											style="text-align:center;border:0px;width:100%;height:100%" theme="simple" />
 										</s:else>
 									</td>
 								</s:else>
@@ -123,10 +123,10 @@
 						</s:form>
 					</s:if><s:else>
 						<% pageContext.setAttribute("_colspan",obj.Field.getFields(((obj.JoinParam.Part)request.getAttribute("__Part")).getClazz()).length+2); %>
-						<td colspan="${_colspan}" style="border:0;">
+						<td colspan="${_colspan}" style="border:0;padding:0;">
 							<s:form action="%{#request.actionName}_display" method="post" theme="simple">
 								<s:hidden name="choose[0]" value="%{#__PartStatus.index}" theme="simple"/>
-								<s:submit value="+ create +" cssClass="inlineButton" style="width:100%;" theme="simple"/>
+								<s:submit value="+ create +" cssClass="inlineButton" style="width:100%;height:100%;" theme="simple"/>
 							</s:form>
 						</td>
 					</s:else>
@@ -170,19 +170,19 @@
 									<s:if test="fieldsDisplay[#__PartStatus.index][#__opFieldStatus.index] == false">
 									<td></td>
 									</s:if><s:else>
-										<td>
+										<td style="padding:0;">
 											<s:if test="#__opField.source == null">
 												<s:textfield
 												name="search.result[%{#__Status.index}][%{#__PartStatus.index}].%{#__opField.name}"
 												value="%{#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]}"
-												style="text-align:center;padding:0px;width:95%;" theme="simple" />
+												style="text-align:center;border:0px;width:100%;height:100%;" theme="simple" />
 											</s:if><s:else>
 												<s:select list="%{#__opField.sourceList}"
 												listKey="key" listValue="value"
 												name="search.result[%{#__Status.index}][%{#__PartStatus.index}].%{#__opField.name}"
 												value="%{#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]}"
 												headerKey="" headerValue="无"
-												style="text-align:center;padding:0px;width:95%;" theme="simple" />
+												style="text-align:center;border:0px;width:100%;height:100%;" theme="simple" />
 											</s:else>
 										</td>
 									</s:else>

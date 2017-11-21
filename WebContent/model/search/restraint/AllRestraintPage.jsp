@@ -16,16 +16,19 @@
 					<s:iterator value="search.baseRestraint.restraint.where" var="__restraintPartRow" status="__restraintPartStatus">
 						<div style="line-height:32px;float:left">
 							<!-- 限制 -->
-							<div style="float:left;text-align:left">
+							<div style="float:left;text-align:left;padding-right:5px;">
 								<s:property value="%{#__restraintPartRow.field}" />
-							</div><div style="float:left;text-align:center">
+							</div><div style="float:left;text-align:center;height:32px">
 								<s:select
 								list="search.baseRestraint.restraint.typeList"
 								headerKey="" headerValue="-约束-"
 								listKey="key" listValue="value" value="%{#__Row.type}"
-								name="search.baseRestraint.restraint.where[%{#__restraintPartStatus.index}].type"/>
+								name="search.baseRestraint.restraint.where[%{#__restraintPartStatus.index}].type"
+								style="text-align:center;background-color:rgba(0,0,0,0);margin-top:5px;padding-bottom:3px;" theme="simple" />
+							</div><div style="float:left;text-align:center;height:32px">
 								<s:textfield value="%{#__restraintPartRow.value}"
-								name="search.baseRestraint.restraint.where[%{#__restraintPartStatus.index}].value"/>
+								name="search.baseRestraint.restraint.where[%{#__restraintPartStatus.index}].value"
+								style="text-align:center;margin-top:5px;padding-bottom:3px;" theme="simple" />
 							</div>
 							<div style="float:left;width:18px;">
 								&nbsp;
@@ -37,14 +40,14 @@
 						<div style="line-height:32px;float:left">
 							<div style="line-height:32px;float:left">
 								第<s:property value="#__restraintOrderStatus.count" />排序项
-							</div><div style="float:left;text-align:center;padding-top:5px;">
+							</div><div style="float:left;text-align:center;height:32px">
 								<s:select
 								list="allSelectFields"
 								listKey="allName" listValue="description"
 								headerKey="" headerValue="-排序-"
 								value="%{search.baseRestraint.restraint.order[#__restraintOrderStatus.index]}"
 								name="search.baseRestraint.restraint.order[%{#__restraintOrderStatus.index}]"
-								/>
+								style="text-align:center;background-color:rgba(0,0,0,0);margin-top:5px;padding-bottom:3px;" theme="simple" />
 							</div>
 							<div style="float:left;width:18px;">
 								&nbsp;

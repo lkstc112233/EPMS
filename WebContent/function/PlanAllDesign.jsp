@@ -43,11 +43,11 @@
 							<s:property value="#__regionRow.region.name" />
 						</td>
 					</s:if>
-					<td style="width:160px;text-align:left;padding-left:10px;">
+					<td style="text-align:left;padding-left:10px;">
 						<s:property value="#__practiceBaseRow.name" />
 					</td>
 					<s:iterator value="majors" status="__majorStatus">
-						<td style="width:5%;padding:0px;">
+						<td style="width:15px;padding:0px;">
 							<s:textfield theme="simple"
 								style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;"
 								name="numbers[%{#__majorStatus.index}][%{#__regionStatus.index}][%{#__practiceBaseStatus.index}]"
