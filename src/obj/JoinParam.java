@@ -55,7 +55,7 @@ public class JoinParam{
 			for(Field f:this.onCheckFields){
 				if(first) first=false;
 				else sb.append(" AND ");
-				sb.append(c2table);sb.append('.');sb.append(f.getName());
+				sb.append(f.getSQLField("."));
 				sb.append(" LIKE ?");
 			}
 			sb.append(" )");

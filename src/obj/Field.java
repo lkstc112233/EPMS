@@ -37,6 +37,12 @@ public class Field implements Comparable<Field>{
 			return f;
 		return null;
 	}
+	static public Field[] getFields(Class<? extends Base> clazz,String fieldName,String... fieldNames){
+		Field[] fs=new Field[fieldNames.length+1];
+		for(int i=0;i<fs.length;i++)
+			fs[i]=i==0?Field.getField(clazz,fieldName):Field.getField(clazz,fieldNames[i-1]);
+		return fs;
+	}
 	
 	static private Map<Class<? extends Base>,Field[]> MapFields=new HashMap<Class<? extends Base>,Field[]>();
 	static public Set<Field> getFieldsSet(Class<? extends Base> clazz){
