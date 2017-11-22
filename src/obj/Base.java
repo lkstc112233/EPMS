@@ -206,6 +206,7 @@ public abstract class Base {
 			for(Field f:this.getFields()) if(!f.isKey())
 				f.set(this,rs.getObject(f.getName()));
 		}
+		if(num==0) throw new SQLException("未查询到值！");
 		return num;
 	}
 	
@@ -405,10 +406,14 @@ public abstract class Base {
 					Object o=null;
 					try{o=rs.getObject(columnName);}catch(SQLException e){}
 					if(flag && o!=null) flag=false;
+					if(f.isKey() && o==null) {flag=true;break;}
 					try{
 						f.set(x[i],o);
 					}catch(IllegalArgumentException e){
-						throw e;
+						flag=false;
+						try{f.set(x[i],null);
+						}catch(IllegalArgumentException e2){
+						}
 					}
 				}
 				//若x[i]的属性全部都是null，则x[i]应为null

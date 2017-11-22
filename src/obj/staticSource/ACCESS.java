@@ -11,7 +11,7 @@ import obj.annualTable.Time;
 public class ACCESS extends Base{
 
 	@SQLField(value="顺序号",weight=0)
-	private int orderId;	public void setOrderId(int a){this.orderId=a;}	public void setOrderId(String a) {this.orderId=Field.s2i(a,-1);}	public int getOrderId() {return this.orderId;}
+	private int orderId=-1;	public void setOrderId(int a){this.orderId=a;}	public void setOrderId(String a) {this.orderId=Field.s2i(a,-1);}	public int getOrderId() {return this.orderId;}
 	@SQLField(value="项目名称",weight=2,isKey=true,notNull=true)
 	private String project;
 	@SQLField(value="动作名称",weight=10)

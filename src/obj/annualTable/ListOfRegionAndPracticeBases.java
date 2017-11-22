@@ -42,8 +42,7 @@ public class ListOfRegionAndPracticeBases{
 			PracticeBase pb=null;
 			Region r=null;
 			if(bs!=null && bs.length>=2
-					&& bs[0]!=null && bs[0] instanceof PracticeBase
-					&& bs[1]==null || bs[1] instanceof Region){
+					&& bs[0]!=null){
 				pb=(PracticeBase)bs[0];
 				if(bs[1]!=null) r=(Region)bs[1];
 				if(containsNullRegion || r!=null)

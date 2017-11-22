@@ -1,12 +1,14 @@
 package obj.staticObject;
 
+import java.sql.SQLException;
+
 import obj.*;
 
 @SQLTable("PracticeBase")
 public class PracticeBase extends Base implements Base.ListableWithNoSave{
 
 	@SQLField(value="顺序号",weight=0)
-	private int orderId;	public void setOrderId(int a){this.orderId=a;}	public void setOrderId(String a) {this.orderId=Field.s2i(a,-1);}	public int getOrderId() {return this.orderId;}
+	private int orderId=-1;	public void setOrderId(int a){this.orderId=a;}	public void setOrderId(String a) {this.orderId=Field.s2i(a,-1);}	public int getOrderId() {return this.orderId;}
 	
 	@SQLField(value="实习基地名称",weight=1,isKey=true,notNull=true)
 	private String name;
@@ -46,6 +48,17 @@ public class PracticeBase extends Base implements Base.ListableWithNoSave{
 	@Override
 	public String getDescription() {
 		return this.name;
+	}
+	
+	
+	
+	public PracticeBase() {
+		super();
+	}
+	public PracticeBase(String name) throws IllegalArgumentException, SQLException {
+		super();
+		this.setName(name);
+		this.load();
 	}
 	
 	

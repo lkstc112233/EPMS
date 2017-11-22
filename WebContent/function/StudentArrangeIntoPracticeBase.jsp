@@ -17,7 +17,15 @@
 	<table style="width:80%"><tbody>
 		<tr><td colspan="100">
 			<div class="listHeader">
-				分配实习生到实习基地（<s:property value="annual.year" />）
+				分配
+				<s:select id="MajorName" name="majorName" list="majors"
+				listKey="name" listValue="subject"
+				theme="simple" cssClass="title_button" style="margin-bottom:2px;"
+				onchange="window.location.href=window.location.href.substring(0,(
+				window.location.href.indexOf('?')<0?window.location.length:window.location.href.indexOf('?'))
+				)+'?majorName='+this.value"
+				/>
+				实习生到实习基地（<s:property value="annual.year" />）
 			</div>
 		</td></tr>
 		<tr><td colspan="100" style="width:20%;border:0;height:25px;">
@@ -34,7 +42,13 @@
 				<s:if test="#__Row.practiceBase == null">
 					未分配实习基地的实习生
 				</s:if><s:else>
-					实习基地（<s:property value="%{#__Row.practiceBase.name}" />）
+					实习基地（<s:property value="#__Row.practiceBase.name" />）
+					<div class="right">
+						人数:
+						<s:property value="#__Row.size"/>
+						/
+						<s:property value="#__Row.plan.number"/>
+					</div>
 				</s:else>
 			</div>
 		</td></tr>
@@ -74,7 +88,6 @@
 				<tr class="wtableContent">
 					<td colspan="100" style="border-bottom:#000 solid 3px;border-top: double;height:30px">
 						将选中实习生分配至实习基地：
-						<!-- s:textfield name="regionName" -->
 						<s:select list="practiceBases"
 						listKey="name" listValue="description"
 						headerKey="" headerValue="-无-"
@@ -83,7 +96,7 @@
 					</td>
 				</tr>
 				<tr><td height="20px" width="100%" colspan="100" valign="top" /></tr>
-				<s:token />
+				<s:hidden name="majorName" value="%{majorName}" theme="simple" />
 			</s:form>
 		</s:if><s:else>
 			<s:form action="function_StudentArrangeIntoPracticeBase_delete" method="post" theme="simple">
@@ -112,7 +125,7 @@
 					</td>
 				</tr>
 				<tr><td height="20px" width="100%" colspan="100" valign="top" /></tr>
-				<s:token />
+				<s:hidden name="majorName" value="%{majorName}" theme="simple" />
 			</s:form>
 		</s:else>
 	</s:iterator>

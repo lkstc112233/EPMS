@@ -6,7 +6,7 @@ import obj.*;
 @SQLTable("OuterPerson")
 public class OuterPerson extends Base implements Base.ListableWithNoSave{
 	@SQLField(value="顺序号",weight=0)
-	private int orderId;	public void setOrderId(int a){this.orderId=a;}	public void setOrderId(String a) {this.orderId=Field.s2i(a,-1);}	public int getOrderId() {return this.orderId;}
+	private int orderId=-1;	public void setOrderId(int a){this.orderId=a;}	public void setOrderId(String a) {this.orderId=Field.s2i(a,-1);}	public int getOrderId() {return this.orderId;}
 	
 	@SQLField(value="姓名",weight=2,isKey=true,notNull=true)
 	private String name;

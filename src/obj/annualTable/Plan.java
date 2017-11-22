@@ -46,6 +46,11 @@ public class Plan extends AnnualBase {
 	}
 	
 	
+	/**
+	 * 检查当前Plan是否能放入该学生，不能放入时抛出IllegalArgumentException
+	 * 能放入时返回true
+	 * 该函数不会返回false，只会抛出异常
+	 */
 	public boolean check(Student stu,int alreadyStudentCount) throws IllegalArgumentException{
 		if(stu==null)
 			throw new IllegalArgumentException("检测学生为空！");
