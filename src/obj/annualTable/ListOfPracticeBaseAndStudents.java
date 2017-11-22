@@ -40,7 +40,13 @@ public class ListOfPracticeBaseAndStudents{
 				.append(containsNullPracticeBase ? JoinParam.Type.LeftJoin : JoinParam.Type.InnerJoin,
 						PracticeBase.class,
 						Field.getField(Student.class,"practiceBase"),
-						Field.getField(PracticeBase.class,"name")),
+						Field.getField(PracticeBase.class,"name"))
+				.append(JoinParam.Type.LeftJoin,
+						Plan.class,
+						Field.getField(PracticeBase.class,"name"),
+						Field.getField(Plan.class,"practiceBase"),
+						Field.getField(Plan.class,"major"),
+						major.getName()),
 				new Restraint(new Restraint.Part[]{
 						new Restraint.Part(Field.getField(Student.class,"year"),year),
 						new Restraint.Part(Field.getField(Student.class,"major"),major.getName())
@@ -50,13 +56,11 @@ public class ListOfPracticeBaseAndStudents{
 			Student stu=null;
 			PracticeBase pb=null;
 			if(bs!=null && bs.length>=2){
-				if(bs[0]!=null && bs[0] instanceof Student){
+				if(bs[0]!=null){
 					stu=(Student)bs[0];
-					if(bs[1]==null || bs[1] instanceof PracticeBase){
-						if(bs[1]!=null) pb=(PracticeBase)bs[1];
-						if(containsNullPracticeBase || pb!=null){
-							this.put(pb,stu,year,major);
-						}
+					if(bs[1]!=null) pb=(PracticeBase)bs[1];
+					if(containsNullPracticeBase || pb!=null){
+						this.put(pb,stu,year,major);
 					}
 				}
 			}
@@ -95,7 +99,6 @@ public class ListOfPracticeBaseAndStudents{
 		return null;
 	}
 	public void put(PracticeBase pb,Student stu,int year,Major major) throws IllegalArgumentException, InstantiationException, SQLException {
-		if(stu==null) return;
 		Pair tmp=this.get(pb);
 		if(tmp==null){
 			//需要新增一个Pair
@@ -111,6 +114,7 @@ public class ListOfPracticeBaseAndStudents{
 				return;
 			this.list.add(tmp=new Pair(pb,plan));
 		}
-		tmp.students.add(stu);
+		if(stu!=null)
+			tmp.students.add(stu);
 	}
 }
