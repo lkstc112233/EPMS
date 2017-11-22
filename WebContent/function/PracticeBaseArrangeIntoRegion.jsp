@@ -80,7 +80,7 @@
 					<td colspan="100" style="border-bottom:#000 solid 3px;border-top: double;height:30px">
 						将选中基地放入大区（若不存在则新建）：
 						<s:textfield name="regionName" theme="simple"/>
-						<s:submit value="放入新建" cssClass="buttonInline" style="padding-top:1px;" theme="simple" />
+						<s:submit value="放入新建" cssClass="buttonInline" style="padding-top:3px;" theme="simple" />
 					</td>
 				</tr>
 				<tr><td height="20px" width="100%" colspan="100" valign="top" /></tr>
@@ -109,7 +109,7 @@
 					<td colspan="100" style="border-bottom:#000 solid 3px;border-top: double;height:30px">	
 						从该大区移除
 						<s:hidden name="regionName" value="%{#__Row.region.name}" />
-						<s:submit value="移除" cssClass="buttonInline" style="padding-top:1px;"/>
+						<s:submit value="移除" cssClass="buttonInline" style="padding-top:3px;"/>
 					</td>
 				</tr>
 				<tr><td height="20px" width="100%" colspan="100" valign="top" /></tr>

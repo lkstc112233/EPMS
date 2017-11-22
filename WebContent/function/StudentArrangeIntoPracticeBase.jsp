@@ -42,7 +42,7 @@
 				<s:if test="#__Row.practiceBase == null">
 					未分配实习基地的实习生
 				</s:if><s:else>
-					实习基地（<s:property value="#__Row.practiceBase.name" />）
+					<s:property value="#__Row.practiceBase.name" />
 					<div class="right">
 						人数:
 						<s:property value="#__Row.size"/>
@@ -92,10 +92,11 @@
 						listKey="name" listValue="description"
 						headerKey="" headerValue="-无-"
 						name="practiceBaseName" />
-						<s:submit value="放入" cssClass="buttonInline" style="padding-top:1px;"/>
+						<s:submit value="放入" cssClass="buttonInline"
+						style="padding-top:0;height:auto;" theme="simple"/>
 					</td>
 				</tr>
-				<tr><td height="20px" width="100%" colspan="100" valign="top" /></tr>
+				<tr><td height="45px" width="100%" colspan="100" valign="top" /></tr>
 				<s:hidden name="majorName" value="%{majorName}" theme="simple" />
 			</s:form>
 		</s:if><s:else>
@@ -119,12 +120,13 @@
 				</tr></s:iterator>
 				<tr class="wtableContent">
 					<td colspan="100" style="border-bottom:#000 solid 3px;border-top: double;height:30px">	
-						从该基地移出
+						从该基地移出：
 						<s:hidden name="practiceBaseName" value="%{#__Row.practiceBase.name}" />
-						<s:submit value="移出" cssClass="buttonInline" style="padding-top:1px;"/>
+						<s:submit value="移出" cssClass="buttonInline"
+						style="padding-top:0;height:auto;" theme="simple"/>
 					</td>
 				</tr>
-				<tr><td height="20px" width="100%" colspan="100" valign="top" /></tr>
+				<tr><td height="35px" width="100%" colspan="100" valign="top" /></tr>
 				<s:hidden name="majorName" value="%{majorName}" theme="simple" />
 			</s:form>
 		</s:else>

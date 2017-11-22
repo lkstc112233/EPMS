@@ -74,8 +74,8 @@
 				</s:iterator>
 			</tr>
 		<% } %>
-		<tr class="wtableHeader">
-			<td style="width:13px;border:0;">序号</td>
+		<tr class="wtableHeader" >
+			<td style="width:13px;border:0;line-height:50px;">序号</td>
 			<s:iterator value="search.param.list" var="__Part" status="__PartStatus">
 				<td colspan="2" style="border:0;">操作</td>
 				<s:iterator value="#__Part.fields" var="__Field" status="__FieldStatus">
