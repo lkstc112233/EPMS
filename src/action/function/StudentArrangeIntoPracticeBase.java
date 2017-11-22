@@ -6,10 +6,7 @@ import java.util.*;
 import com.opensymphony.xwork2.ActionSupport;
 
 import action.Manager;
-import obj.Base;
-import obj.Field;
-import obj.JoinParam;
-import obj.Restraint;
+import obj.*;
 import obj.annualTable.*;
 import obj.staticObject.PracticeBase;
 import obj.staticSource.Major;
@@ -42,35 +39,17 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 	private List<PracticeBase> practiceBases;
 		public List<PracticeBase> getPracticeBases(){
 			if(this.practiceBases!=null) return this.practiceBases;
-			try {
-				this.practiceBases=new ArrayList<PracticeBase>();
-				List<Base[]> tmp=Base.list(new JoinParam(PracticeBase.class).append(
-						JoinParam.Type.InnerJoin,Region.class,
-						Field.getField(PracticeBase.class,"name"),
-						Field.getField(Plan.class,"practiceBase"),
-						new Field[]{
-								Field.getField(Plan.class,"year"),
-								Field.getField(Plan.class,"major")},
-						new Object[]{
-								Integer.valueOf(this.getAnnual().getYear()),
-								this.majorName}
-						),
-						new Restraint(Field.getField(Plan.class,"number"),Restraint.Type.Bigger,0));
-				for(Base[] bs:tmp) {
-					if(bs!=null &&bs.length>=2 && bs[0]!=null && bs[1]!=null) {
-						PracticeBase pb=(PracticeBase)bs[0];
-						this.practiceBases.add(pb);
-					}
-				}
-			}catch(SQLException | IllegalArgumentException | InstantiationException e) {
-				e.printStackTrace();
-			}return this.practiceBases=null;
+			if(this.practiceBaseAndStudents==null) return null;
+			this.practiceBases=new ArrayList<PracticeBase>();
+			for(ListOfPracticeBaseAndStudents.Pair p:this.getPracticeBaseAndStudents().getList())
+				this.practiceBases.add(p.getPracticeBase());
+			return this.practiceBases;
 		}
 	private List<Major> majors;
 		public List<Major> getMajors(){
 			if(this.majors!=null) return this.majors;
 			Role role=Role.getRoleByInnerPerson(Manager.getUser());
-			if(role==null) return this.majors=null;
+			if(role==null) return null;
 			try{
 				if(role==Role.jwc)
 					return this.majors=Base.list(Major.class);
@@ -109,10 +88,17 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 		this.practiceBaseName=null;
 		System.out.println(">> RegionArrangement:display > year="+this.getAnnual().getYear()+",majorName="+majorName);
 		this.practiceBaseAndStudents=null;
+		Major major=null;
 		try{
-			new Major(this.majorName);
+			major=new Major(this.majorName);
 		}catch(IllegalArgumentException | SQLException e){
 			return Manager.tips("专业("+this.majorName+")不存在！",e,NONE);
+		}
+		try {
+			this.practiceBaseAndStudents=new ListOfPracticeBaseAndStudents(this.getAnnual().getYear(),
+					major,/*minPlanNumber*/1);
+		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
+			return Manager.tips("数据库开小差去了！",e,NONE);
 		}
 		if(this.getPracticeBases()==null)
 			return Manager.tips("读取实习基地列表失败!",NONE);
@@ -136,17 +122,7 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 			return Manager.tips("请选择一个实习基地！",
 					display());
 		ListOfPracticeBaseAndStudents.Pair pair=this.practiceBaseAndStudents.get(this.practiceBaseName);
-		if(pair==null) {
-			try {
-				PracticeBase pb=new PracticeBase(this.practiceBaseName);
-				Major major=new Major(this.majorName);
-				this.practiceBaseAndStudents.put(pb,null,this.annual.getYear(),major);
-				pair=this.practiceBaseAndStudents.get(this.practiceBaseName);
-			}catch(IllegalArgumentException | SQLException | InstantiationException e) {
-				return Manager.tips("数据库开小差去了！",
-						e,display());
-			}
-		}else if(pair.getPlan()==null)
+		if(pair==null || pair.getPlan()==null)
 			return Manager.tips("基地("+this.practiceBaseName+")没有("+this.majorName+")专业派遣计划！",
 					display());
 		//RegionArrangement:execute
@@ -156,7 +132,7 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 			return Manager.tips("请至少选择一个实习生分配到实习基地！",
 					display());
 		ListOfPracticeBaseAndStudents.Pair nullPair=this.practiceBaseAndStudents.get((PracticeBase)null);
-		//	List<PracticeBase> tmp=new ArrayList<PracticeBase>();
+		List<Student> tmp=new ArrayList<Student>();
 		StringBuilder sb=new StringBuilder();
 		StringBuilder error=new StringBuilder();
 		for(int i=0;i<nullPair.getStudents().size();i++){
@@ -165,9 +141,8 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 				Student stu=nullPair.getStudents().get(i);
 				if(stu==null||stu.getName()==null)
 					continue;
-				//	tmp.add(s);
 				try{
-					if(pair.getPlan().check(stu,pair.getStudents().size())){
+					if(pair.getPlan().check(stu,pair.getStudents().size()+tmp.size())){
 						stu.setPracticeBase(this.practiceBaseName);
 						stu.update();
 					}
@@ -177,11 +152,14 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 					error.append(stu.getName()+"("+e.getMessage()+")");
 					continue;
 				}
-				pair.getStudents().add(stu);
-				nullPair.getStudents().remove(stu);
+				tmp.add(stu);
 				if(sb.length()>0) sb.append(',');
 				sb.append(stu.getName());
 			}
+		}
+		for(Student s:tmp) {
+			pair.getStudents().add(s);
+			nullPair.getStudents().remove(s);
 		}
 		Manager.tips(sb.toString()+" 已经分配到基地("+this.practiceBaseName+")！"+
 				(error.length()>0?("\n错误信息："+error.toString()):""));
@@ -204,30 +182,32 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 		if(!flag)
 			return Manager.tips("请至少选择一个实习生来移除！",
 					display());
-		List<Student> deleteStudents=this.practiceBaseAndStudents.get(this.practiceBaseName).getStudents();
-		if(deleteStudents==null)
+		ListOfPracticeBaseAndStudents.Pair deletePair=this.practiceBaseAndStudents.get(this.practiceBaseName);
+		if(deletePair==null)
 			return Manager.tips("选中了一个不存在的实习基地（"+this.practiceBaseName+"）！",
 					display());
-		//	List<PracticeBase> tmp=new ArrayList<PracticeBase>();
+		List<Student> tmp=new ArrayList<Student>();
 		StringBuilder sb=new StringBuilder();
-		for(int i=0;i<deleteStudents.size();i++){
+		for(int i=0;i<deletePair.getStudents().size();i++){
 			if(checkBox[i]){
 				//选中了
-				Student s=deleteStudents.get(i);
-				if(s==null||s.getName()==null)
+				Student stu=deletePair.getStudents().get(i);
+				if(stu==null||stu.getName()==null)
 					continue;
-				//	tmp.add(s);
 				try{
-					s.setPracticeBase(null);
-					s.update();
+					stu.setPracticeBase(null);
+					stu.update();
 				}catch(SQLException | IllegalArgumentException e){
 					e.printStackTrace();
 					continue;
 				}
+				tmp.add(stu);
 				if(sb.length()>0) sb.append(',');
-				sb.append(s.getName());
+				sb.append(stu.getName());
 			}
 		}
+		for(Student s:tmp)
+			deletePair.getStudents().remove(s);
 		Manager.tips(sb.toString()+" 已经从实习基地("+this.practiceBaseName+")移出！");
 		Manager.removeSession(SessionListKey);
 		return display();

@@ -30,39 +30,55 @@ public class ListOfPracticeBaseAndStudents{
 		public int getSize(){return list.size();}
 	
 		
-	public ListOfPracticeBaseAndStudents(int year,Major major,boolean containsNullPracticeBase) throws IllegalArgumentException, InstantiationException, SQLException{
-		if(containsNullPracticeBase)
-			list.add(new Pair(null,null));
+	public ListOfPracticeBaseAndStudents(int year,Major major,int minPlanNumber) throws IllegalArgumentException, InstantiationException, SQLException{
+		list.add(new Pair(null,null));
 		if(major==null||major.getName()==null||major.getName().isEmpty())
 			throw new IllegalArgumentException("Major can NOT be null or empty!");
 		List<Base[]> tmp=Base.list(
 				new JoinParam(Student.class)
-				.append(containsNullPracticeBase ? JoinParam.Type.LeftJoin : JoinParam.Type.InnerJoin,
-						PracticeBase.class,
-						Field.getField(Student.class,"practiceBase"),
-						Field.getField(PracticeBase.class,"name"))
 				.append(JoinParam.Type.LeftJoin,
 						Plan.class,
-						Field.getField(PracticeBase.class,"name"),
+						Field.getFields(Student.class,"practiceBase","major","year"),
+						Field.getFields(Plan.class,"practiceBase","major","year"),
+						Field.getFields(Plan.class,"major","year"),
+						new Object[]{major.getName(),year})
+				.append(JoinParam.Type.LeftJoin,
+						PracticeBase.class,
 						Field.getField(Plan.class,"practiceBase"),
-						Field.getField(Plan.class,"major"),
-						major.getName()),
-				new Restraint(new Restraint.Part[]{
-						new Restraint.Part(Field.getField(Student.class,"year"),year),
-						new Restraint.Part(Field.getField(Student.class,"major"),major.getName())
-				},
+						Field.getField(PracticeBase.class,"name")
+				),
+				new Restraint(Field.getField(Student.class,"major"),
+						major.getName(),
 						Field.getField(Student.class,"id")));
+		tmp.addAll(Base.list(
+				new JoinParam(Student.class)
+				.append(JoinParam.Type.RightJoin,
+						Plan.class,
+						Field.getFields(Student.class,"practiceBase","major","year"),
+						Field.getFields(Plan.class,"practiceBase","major","year"),
+						Field.getFields(Student.class,"major","year"),
+						new Object[]{major.getName(),year})
+				.append(JoinParam.Type.LeftJoin,
+						PracticeBase.class,
+						Field.getField(Plan.class,"practiceBase"),
+						Field.getField(PracticeBase.class,"name")
+				),
+				new Restraint(Field.getField(Plan.class,"major"),
+						major.getName(),
+						Field.getField(Student.class,"id")))
+				);
 		for(Base[] bs:tmp){
-			Student stu=null;
-			PracticeBase pb=null;
-			if(bs!=null && bs.length>=2){
-				if(bs[0]!=null){
-					stu=(Student)bs[0];
-					if(bs[1]!=null) pb=(PracticeBase)bs[1];
-					if(containsNullPracticeBase || pb!=null){
-						this.put(pb,stu,year,major);
-					}
+			if(bs!=null && bs.length>=3){
+				Student stu=null;
+				Plan plan=null;
+				PracticeBase pb=null;
+				if(bs[0]!=null) stu=(Student)bs[0];
+				if(bs[1]!=null){
+					plan=(Plan)bs[1];
+					if(plan.getNumber()<minPlanNumber) plan=null;
 				}
+				if(bs[2]!=null && plan!=null) pb=(PracticeBase)bs[2];
+				this.put(pb,plan,stu);
 			}
 		}
 	}
@@ -98,23 +114,13 @@ public class ListOfPracticeBaseAndStudents{
 		}
 		return null;
 	}
-	public void put(PracticeBase pb,Student stu,int year,Major major) throws IllegalArgumentException, InstantiationException, SQLException {
+	public void put(PracticeBase pb,Plan plan,Student stu) throws IllegalArgumentException, InstantiationException, SQLException {
 		Pair tmp=this.get(pb);
-		if(tmp==null){
-			//需要新增一个Pair
-			Plan plan=null;
-			if(pb!=null){
-				List<Plan> ps=Base.list(Plan.class,new Restraint(new Restraint.Part[]{
-						new Restraint.Part(Field.getField(Plan.class,"year"),year),
-						new Restraint.Part(Field.getField(Plan.class,"practiceBase"),pb.getName()),
-						new Restraint.Part(Field.getField(Plan.class,"major"),major)}));
-				if(ps!=null && ps.size()>0) plan=ps.get(0);
-			}
-			if(plan==null)
-				return;
-			this.list.add(tmp=new Pair(pb,plan));
+		if(tmp==null){//需要新增一个Pair
+			if(pb!=null && plan!=null)
+				this.list.add(tmp=new Pair(pb,plan));
 		}
-		if(stu!=null)
+		if(stu!=null && !tmp.students.contains(stu))
 			tmp.students.add(stu);
 	}
 }
