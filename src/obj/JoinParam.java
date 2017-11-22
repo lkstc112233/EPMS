@@ -38,9 +38,9 @@ public class JoinParam{
 			StringBuilder sb=new StringBuilder();
 			sb.append(this.type.toString());
 			sb.append(' ');
-			Class<? extends Base> c1=lastClazz;
+		//	Class<? extends Base> c1=lastClazz;
 			Class<? extends Base> c2=this.clazz;
-			String c1table=Base.getSQLTableName(c1);
+		//	String c1table=Base.getSQLTableName(c1);
 			String c2table=Base.getSQLTableName(c2);
 			sb.append(c2table);
 			sb.append(" ON ( ");
@@ -48,9 +48,9 @@ public class JoinParam{
 			for(int i=0;i<this.lastOnFields.length && i<this.thisOnFields.length;i++){
 				if(first) first=false;
 				else sb.append(" AND ");
-				sb.append(c1table);sb.append('.');sb.append(this.lastOnFields[i].getName());
+				sb.append(this.lastOnFields[i].getSQLField("."));
 				sb.append(" = ");
-				sb.append(c2table);sb.append('.');sb.append(this.thisOnFields[i].getName());
+				sb.append(this.thisOnFields[i].getSQLField("."));
 			}
 			for(Field f:this.onCheckFields){
 				if(first) first=false;
