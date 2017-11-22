@@ -395,6 +395,10 @@ public abstract class Base {
 			for(Restraint.Part part:restraint.getWhere()) if(part!=null)
 				parameterIndex=part.setSQLParam(pst,parameterIndex);
 		ResultSet rs=pst.executeQuery();
+		rs.last();
+		int num=rs.getRow();
+		System.err.println("list了"+num+"重值！("+pst.toString()+")");
+		rs.beforeFirst();
 		List<Base[]> res=new ArrayList<Base[]>();
 		while(rs.next()){
 			Base[] x=param.newInstance();
