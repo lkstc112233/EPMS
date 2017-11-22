@@ -35,36 +35,54 @@
 	
 	
 	<table width="80%"><tbody>
+	<% boolean[] StudentFieldDisplay=new boolean[]{
+			true,true,true,true,true,
+			false,false,false,
+			true,true,true,true,
+			false,false,false,}; %>
 	<s:iterator value="practiceBaseAndStudents.list" var="__Row" status="__Status">
 		<!-- ########### 大区信息 ########### -->
 		<tr><td colspan="100">
-			<div class="listHeader">
-				<s:if test="#__Row.practiceBase == null">
+			<s:if test="#__Row.practiceBase == null">
+				<div class="listHeader" style="width:80%;background:linear-gradient(to right,gold,rgba(0,0,0,0));border:0;
+				color:red;font-size:16px;">
 					未分配实习基地的实习生
-				</s:if><s:else>
+				</div>
+			</s:if><s:else>
+				<div class="listHeader" style="width:80%;background:linear-gradient(to right,#0071bc,rgba(0,0,0,0));border:0;">
 					<s:property value="#__Row.practiceBase.name" />
-					<div class="right">
-						人数:
-						<s:property value="#__Row.size"/>
-						/
-						<s:property value="#__Row.plan.number"/>
-					</div>
-				</s:else>
-			</div>
+					<s:if test="#__Row.size < #__Row.plan.number">
+						<div class="right" style="color:red;font-size:16px;">
+							人数:<s:property value="#__Row.size"/>/<s:property value="#__Row.plan.number"/>
+						</div>
+					</s:if><s:else>
+						<div class="right" style="color:black;">
+							人数:<s:property value="#__Row.size"/>/<s:property value="#__Row.plan.number"/>
+						</div>
+					</s:else>
+				</div>
+			</s:else>
 		</td></tr>
 		<!-- ########### 表头 ########### -->
-		<tr class="wtableHeader">
-			<td style="width:13px;">选择</td>
-			<td style="width:13px;">序号</td>
-			<s:iterator value="student.fields" var="__opField" status="__opFieldStatus">
-				<td style="word-wrap:break-word;word-break:break-all;">
-					<s:property value="#__opField.description"/>
-					<s:if test="#__opField.notNull == true">
-					*
-					</s:if>
-				</td>
-			</s:iterator>
-		</tr>
+		<s:if test="#__Row.practiceBase == null">
+			<tr class="wtableHeader">
+				<td style="width:13px;">选择</td>
+				<td style="width:13px;">序号</td>
+				<% int i=0; %>
+				<s:iterator value="student.fields" var="__opField" status="__opFieldStatus">
+					<% if(StudentFieldDisplay[i++]){ %>
+					<td style="word-wrap:break-word;word-break:break-all;">
+					<% }else{ %>
+					<td style="word-wrap:break-word;word-break:break-all;display:none;">
+					<% } %>
+						<s:property value="#__opField.description"/>
+						<s:if test="#__opField.notNull == true">
+						*
+						</s:if>
+					</td>
+				</s:iterator>
+			</tr>
+		</s:if>
 		<!-- ########### 实习基地列表 ########### -->
 		<s:if test="#__Row.practiceBase == null">
 			<s:form action="function_StudentArrangeIntoPracticeBase_execute" method="post" theme="simple">
@@ -79,8 +97,13 @@
 						<s:property value="%{#__studentStatus.count}" />
 					</td>
 					<!-- 内容 -->
+					<% int i=0; %>
 					<s:iterator value="%{#__studentRow.fieldsValue}" var="__Col">
-						<td>
+						<% if(StudentFieldDisplay[i++]){ %>
+						<td style="word-wrap:break-word;word-break:break-all;">
+						<% }else{ %>
+						<td style="word-wrap:break-word;word-break:break-all;display:none;">
+						<% } %>
 							<s:property value="#__Col" />
 						</td>
 					</s:iterator>
@@ -112,8 +135,13 @@
 						<s:property value="%{#__studentStatus.count}" />
 					</td>
 					<!-- 内容 -->
+					<% int i=0; %>
 					<s:iterator value="%{#__studentRow.fieldsValue}" var="__Col">
-						<td>
+						<% if(StudentFieldDisplay[i++]){ %>
+						<td style="word-wrap:break-word;word-break:break-all;">
+						<% }else{ %>
+						<td style="word-wrap:break-word;word-break:break-all;display:none;">
+						<% } %>
 							<s:property value="#__Col" />
 						</td>
 					</s:iterator>

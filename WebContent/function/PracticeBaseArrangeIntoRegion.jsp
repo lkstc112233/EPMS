@@ -27,35 +27,46 @@
 	
 	
 	<table width="80%"><tbody>
+	<% boolean[] PracticeBaseFieldDisplay=new boolean[]{
+			false,true,true,true,
+			false,true,
+			false,false,false,}; %>
 	<s:iterator value="regionAndPracticeBase.list" var="__Row" status="__Status">
 		<!-- ########### 大区信息 ########### -->
 		<tr><td colspan="100">
-			<div class="listHeader">
+			<div class="listHeader" style="width:80%;background:linear-gradient(to right,#0071bc,rgba(0,0,0,0));border:0;">
 				<s:if test="#__Row.region == null">
 					未分配大区的实习基地
 				</s:if><s:else>
 					<s:property value="%{#__Row.region.name}" />
 					<div class="right">
 						<a href="<s:url action='function_RegionInfo_display'/>?region.name=<s:property value='%{#__Row.region.name}'/>"
-							style="color:#fff;text-decoration:none;" class="buttonInline">
+							style="color:black;text-decoration:none;" class="buttonInline">
 						修改大区信息</a>
 					</div>
 				</s:else>
 			</div>
 		</td></tr>
 		<!-- ########### 表头 ########### -->
-		<tr class="wtableHeader">
-			<td style="width:13px;">选择</td>
-			<td style="width:13px;">序号</td>
-			<s:iterator value="practiceBase.fields" var="__opField" status="__opFieldStatus">
-				<td style="word-wrap:break-word;word-break:break-all;">
-					<s:property value="#__opField.description"/>
-					<s:if test="#__opField.notNull == true">
-					*
-					</s:if>
-				</td>
-			</s:iterator>
-		</tr>
+		<s:if test="#__Row.region == null">
+			<tr class="wtableHeader">
+				<td style="width:13px;">选择</td>
+				<td style="width:13px;">序号</td>
+				<% int i=0; %>
+				<s:iterator value="practiceBase.fields" var="__opField" status="__opFieldStatus">
+					<% if(PracticeBaseFieldDisplay[i++]){ %>
+					<td style="word-wrap:break-word;word-break:break-all;">
+					<% }else{ %>
+					<td style="word-wrap:break-word;word-break:break-all;display:none;">
+					<% } %>
+						<s:property value="#__opField.description"/>
+						<s:if test="#__opField.notNull == true">
+						*
+						</s:if>
+					</td>
+				</s:iterator>
+			</tr>
+		</s:if>
 		<!-- ########### 实习基地列表 ########### -->
 		<s:if test="#__Row.region == null">
 			<s:form action="function_PracticeBaseArrangeIntoRegion_execute" method="post" theme="simple">
@@ -70,8 +81,13 @@
 						<s:property value="%{#__pbsStatus.count}" />
 					</td>
 					<!-- 内容 -->
+					<% int i=0; %>
 					<s:iterator value="%{#__pbsRow.fieldsValue}" var="__Col">
-						<td style="">
+						<% if(PracticeBaseFieldDisplay[i++]){ %>
+						<td style="word-wrap:break-word;word-break:break-all;">
+						<% }else{ %>
+						<td style="word-wrap:break-word;word-break:break-all;display:none;">
+						<% } %>
 							<s:property value="#__Col" />
 						</td>
 					</s:iterator>
@@ -80,10 +96,11 @@
 					<td colspan="100" style="border-bottom:#000 solid 3px;border-top: double;height:30px">
 						将选中基地放入大区（若不存在则新建）：
 						<s:textfield name="regionName" theme="simple"/>
-						<s:submit value="放入新建" cssClass="buttonInline" style="padding-top:3px;" theme="simple" />
+						<s:submit value="放入新建" cssClass="buttonInline"
+						style="padding-top:0;height:auto;" theme="simple"/>
 					</td>
 				</tr>
-				<tr><td height="20px" width="100%" colspan="100" valign="top" /></tr>
+				<tr><td height="45px" width="100%" colspan="100" valign="top" /></tr>
 				<s:token />
 			</s:form>
 		</s:if><s:else>
@@ -99,8 +116,13 @@
 						<s:property value="%{#__pbsStatus.count}" />
 					</td>
 					<!-- 内容 -->
+					<% int i=0; %>
 					<s:iterator value="%{#__pbsRow.fieldsValue}" var="__Col">
-						<td style="">
+						<% if(PracticeBaseFieldDisplay[i++]){ %>
+						<td style="word-wrap:break-word;word-break:break-all;">
+						<% }else{ %>
+						<td style="word-wrap:break-word;word-break:break-all;display:none;">
+						<% } %>
 							<s:property value="#__Col" />
 						</td>
 					</s:iterator>
@@ -109,10 +131,11 @@
 					<td colspan="100" style="border-bottom:#000 solid 3px;border-top: double;height:30px">	
 						从该大区移除
 						<s:hidden name="regionName" value="%{#__Row.region.name}" />
-						<s:submit value="移除" cssClass="buttonInline" style="padding-top:3px;"/>
+						<s:submit value="移除" cssClass="buttonInline"
+						style="padding-top:0;height:auto;" theme="simple"/>
 					</td>
 				</tr>
-				<tr><td height="20px" width="100%" colspan="100" valign="top" /></tr>
+				<tr><td height="35px" width="100%" colspan="100" valign="top" /></tr>
 				<s:token />
 			</s:form>
 		</s:else>
