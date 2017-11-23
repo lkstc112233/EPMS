@@ -41,9 +41,10 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 			if(this.practiceBases!=null) return this.practiceBases;
 			if(this.practiceBaseAndStudents==null) return null;
 			this.practiceBases=new ArrayList<PracticeBase>();
-			for(ListOfPracticeBaseAndStudents.Pair p:this.getPracticeBaseAndStudents().getList())
-				if(p.getPracticeBase()!=null)
-					this.practiceBases.add(p.getPracticeBase());
+			for(ListOfPracticeBaseAndStudents.RegionPair rp:this.getPracticeBaseAndStudents().getList())
+				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair p:rp.getList())
+					if(p.getPracticeBase()!=null)
+						this.practiceBases.add(p.getPracticeBase());
 			return this.practiceBases;
 		}
 	private List<Major> majors;
@@ -63,7 +64,7 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 		}
 	
 
-	static public final String SessionListKey="RegionArrangement_RegionAndPracticeBases"; 
+	static public final String SessionListKey="StudentArrangeIntoPracticeBase_list"; 
 	
 	public StudentArrangeIntoPracticeBase(){
 		super();
@@ -74,9 +75,10 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 	private void setupCheckBox(){
 		this.checkBox=null;
 		if(this.practiceBaseAndStudents!=null){
-			int len=0;
-			for(ListOfPracticeBaseAndStudents.Pair p:this.practiceBaseAndStudents.getList())
-				len=Math.max(len,p.getStudents().size());
+			int len=this.practiceBaseAndStudents.getUndistributedStudents().size();
+			for(ListOfPracticeBaseAndStudents.RegionPair rp:this.practiceBaseAndStudents.getList())
+				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair p:rp.getList())
+					len=Math.max(len,p.getSize());
 			this.checkBox=new boolean[len];
 		}
 	}
@@ -96,8 +98,8 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 			return Manager.tips("专业("+this.majorName+")不存在！",e,NONE);
 		}
 		try {
-			this.practiceBaseAndStudents=new ListOfPracticeBaseAndStudents(this.getAnnual().getYear(),
-					major,/*minPlanNumber*/1);
+			this.practiceBaseAndStudents=new ListOfPracticeBaseAndStudents(
+					this.getAnnual().getYear(),major,/*minPlanNumber*/1);
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 			return Manager.tips("数据库开小差去了！",e,NONE);
 		}
@@ -122,7 +124,8 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 		if(this.practiceBaseName==null || this.practiceBaseName.isEmpty())
 			return Manager.tips("请选择一个实习基地！",
 					display());
-		ListOfPracticeBaseAndStudents.Pair pair=this.practiceBaseAndStudents.get(this.practiceBaseName);
+		ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair=
+				this.practiceBaseAndStudents.get(this.practiceBaseName);
 		if(pair==null || pair.getPlan()==null)
 			return Manager.tips("基地("+this.practiceBaseName+")没有("+this.majorName+")专业派遣计划！",
 					display());
@@ -132,14 +135,13 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 		if(!flag)
 			return Manager.tips("请至少选择一个实习生分配到实习基地！",
 					display());
-		ListOfPracticeBaseAndStudents.Pair nullPair=this.practiceBaseAndStudents.get((PracticeBase)null);
 		List<Student> tmp=new ArrayList<Student>();
 		StringBuilder sb=new StringBuilder();
 		StringBuilder error=new StringBuilder();
-		for(int i=0;i<nullPair.getStudents().size();i++){
+		for(int i=0;i<this.practiceBaseAndStudents.getUndistributedStudents().size();i++){
 			if(checkBox[i]){
 				//选中了
-				Student stu=nullPair.getStudents().get(i);
+				Student stu=this.practiceBaseAndStudents.getUndistributedStudents().get(i);
 				if(stu==null||stu.getName()==null)
 					continue;
 				try{
@@ -149,7 +151,7 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 						stu.update();
 					}
 				}catch(SQLException | IllegalArgumentException e){
-					e.printStackTrace();
+					System.err.println(e.toString());
 					if(error.length()>0) error.append('\n');
 					error.append(stu.getName()+"("+e.getMessage()+")");
 					continue;
@@ -161,7 +163,7 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 		}
 		for(Student s:tmp) {
 			pair.getStudents().add(s);
-			nullPair.getStudents().remove(s);
+			this.practiceBaseAndStudents.getUndistributedStudents().remove(s);
 		}
 		Manager.tips((sb.length()>0?(sb.toString()+" 已经分配到基地("+this.practiceBaseName+")！"):"")+
 				(error.length()>0?("\n\n错误信息：\n"+error.toString()):""));
@@ -184,16 +186,17 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 		if(!flag)
 			return Manager.tips("请至少选择一个实习生来移除！",
 					display());
-		ListOfPracticeBaseAndStudents.Pair deletePair=this.practiceBaseAndStudents.get(this.practiceBaseName);
-		if(deletePair==null)
+		ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair=
+				this.practiceBaseAndStudents.get(this.practiceBaseName);
+		if(pair==null)
 			return Manager.tips("选中了一个不存在的实习基地（"+this.practiceBaseName+"）！",
 					display());
 		List<Student> tmp=new ArrayList<Student>();
 		StringBuilder sb=new StringBuilder();
-		for(int i=0;i<deletePair.getStudents().size();i++){
+		for(int i=0;i<pair.getStudents().size();i++){
 			if(checkBox[i]){
 				//选中了
-				Student stu=deletePair.getStudents().get(i);
+				Student stu=pair.getStudents().get(i);
 				if(stu==null||stu.getName()==null)
 					continue;
 				try{
@@ -209,7 +212,7 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 			}
 		}
 		for(Student s:tmp)
-			deletePair.getStudents().remove(s);
+			pair.getStudents().remove(s);
 		Manager.tips((sb.length()>0?(sb.toString()+" 已经从实习基地("+this.practiceBaseName+")移出！"):"error"));
 		Manager.removeSession(SessionListKey);
 		return display();

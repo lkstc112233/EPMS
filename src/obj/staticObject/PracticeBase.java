@@ -85,7 +85,7 @@ public class PracticeBase extends Base implements Base.ListableWithNoSave{
 		if(!this.getHx() && stu.getHxyx())
 			throw new IllegalArgumentException("实习学校("+this.getName()+")拒绝接收想回生源地实习的学生！");
 		if(this.getHx() && stu.getHxyx()) try {
-			if(new City(this.getCity()).getProvince().equals(stu.getProvince()))
+			if(!new City(this.getCity()).getProvince().equals(stu.getProvince()))
 				throw new IllegalArgumentException("实习学校("+this.getName()+")位于"+this.getCity()+"拒绝接收生源地"+stu.getProvince()+"的学生！");
 		}catch(IllegalArgumentException | SQLException e) {
 			throw new IllegalArgumentException(e.getMessage());

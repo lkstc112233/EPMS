@@ -22,8 +22,9 @@
 				listKey="name" listValue="subject"
 				theme="simple" cssClass="title_button" style="margin-bottom:2px;"
 				onchange="window.location.href=window.location.href.substring(0,(
-				window.location.href.indexOf('?')<0?window.location.length:window.location.href.indexOf('?'))
-				)+'?majorName='+this.value"
+				window.location.href.lastIndexOf('/')<0?window.location.length:window.location.href.lastIndexOf('/'))
+				)+'/function_StudentArrangeIntoPracticeBase_display.action?majorName='
+				+this.value"
 				/>
 				实习生到实习基地（<s:property value="annual.year" />）
 			</div>
@@ -34,21 +35,106 @@
 	</tbody></table>
 	
 	
-	<table width="80%"><tbody>
 	<% boolean[] StudentFieldDisplay=new boolean[]{
 			true,true,true,true,true,
 			false,false,false,
 			true,true,true,true,
-			false,false,false,}; %>
-	<s:iterator value="practiceBaseAndStudents.list" var="__Row" status="__Status">
-		<!-- ########### 大区信息 ########### -->
-		<tr><td colspan="100">
-			<s:if test="#__Row.practiceBase == null">
+			false,false,false,};
+		int i; %>
+		
+	<!-- ###### 未分配实习生 ###### -->
+	<table width="80%"><tbody>
+		<s:if test="practiceBaseAndStudents.undistributedStudents.size() == 0">
+			<tr><td colspan="100">
+				<div class="listHeader" style="width:80%;background:linear-gradient(to right,#00f500,rgba(0,0,0,0));border:0;
+				color:red;font-size:16px;">
+					实习生已分配完毕！
+				</div>
+			</td></tr>
+		</s:if><s:else>
+			<tr><td colspan="100">
 				<div class="listHeader" style="width:80%;background:linear-gradient(to right,gold,rgba(0,0,0,0));border:0;
 				color:red;font-size:16px;">
 					未分配实习基地的实习生
 				</div>
-			</s:if><s:else>
+			</td></tr>
+			<!-- 表头 --><tr class="wtableHeader">
+				<td style="width:25px;">选择</td>
+				<td style="width:13px;">序号</td>
+				<% i=0; %>
+				<s:iterator value="student.fields" var="__opField" status="__opFieldStatus">
+					<% if(StudentFieldDisplay[i++]){ %>
+					<td style="word-wrap:break-word;word-break:break-all;">
+					<% }else{ %>
+					<td style="word-wrap:break-word;word-break:break-all;display:none;">
+					<% } %>
+						<s:property value="#__opField.description"/>
+						<s:if test="#__opField.notNull == true">
+					*
+						</s:if>
+					</td>
+				</s:iterator>
+				<td style="word-wrap:break-word;word-break:break-all;">
+					性别
+				</td>
+			</tr>
+			<s:form action="function_StudentArrangeIntoPracticeBase_execute" method="post" theme="simple">
+				<s:iterator value="practiceBaseAndStudents.undistributedStudents" var="__studentRow" status="__studentStatus">
+				<tr class="wtableContent">
+					<!-- 选择 --><td style="width:5px;padding:0;border:0;">
+						<s:checkbox name="checkBox[%{#__studentStatus.index}]" id="%{#__Status.index}_%{#__studentStatus.index}"
+						theme="simple"
+						style="width:100%;height:100%;margin:0;"/>
+					</td>
+					<!-- 序号 --><td style="width:13px;">
+						<s:property value="%{#__studentStatus.count}" />
+					</td>
+					<!-- 内容 --><% i=0; %>
+					<s:iterator value="%{#__studentRow.fieldsValue}" var="__Col">
+						<% if(StudentFieldDisplay[i++]){ %>
+						<td style="word-wrap:break-word;word-break:break-all;">
+						<% }else{ %>
+						<td style="word-wrap:break-word;word-break:break-all;display:none;">
+						<% } %>
+							<s:property value="#__Col" />
+						</td>
+					</s:iterator>
+					<!-- 性别 --><td style="width:55px;">
+						<s:property value="#__studentRow.sex" />
+					</td>
+				</tr></s:iterator>
+				<tr class="wtableContent">
+					<td colspan="100" style="border-bottom:#000 solid 3px;border-top: double;height:30px">
+						将选中实习生分配至实习基地：
+						<s:select list="practiceBases"
+						listKey="name" listValue="description"
+						headerKey="" headerValue="-无-"
+						name="practiceBaseName" />
+						<s:submit value="放入" cssClass="buttonInline"
+						style="padding-top:0;height:auto;" theme="simple"/>
+					</td>
+				</tr>
+				<s:hidden name="majorName" value="%{majorName}" theme="simple" />
+			</s:form>
+		</s:else>
+		<tr><td height="45px" colspan="100" valign="top" /></tr>
+	</tbody></table>
+	<!-- ###### 已分配实习生 ###### -->
+	<table width="80%"><tbody>
+	<s:iterator value="practiceBaseAndStudents.list" var="__rpRow" status="__rpStatus">
+	<s:iterator value="#__rpRow.list" var="__Row" status="__Status">
+		<tr>
+			<s:if test="#__Status.index == 0">
+				<% obj.annualTable.ListOfPracticeBaseAndStudents.RegionPair rp=(obj.annualTable.ListOfPracticeBaseAndStudents.RegionPair)
+					request.getAttribute("__rpRow");
+				pageContext.setAttribute("_rowspan",
+						rp.getAllStudentsCount()+rp.getSize()*3-1); %>
+				<td rowspan="${_rowspan}" class="listHeader"
+				style="width:30px;background:#0071bc;text-indent:0px;text-align:center;" >
+					<s:property value="#__rpRow.region.name" />
+				</td>
+			</s:if>
+			<td colspan="100">
 				<div class="listHeader" style="width:80%;background:linear-gradient(to right,#0071bc,rgba(0,0,0,0));border:0;">
 					<s:property value="#__Row.practiceBase.name" />
 					<span style="font-size:12px;margin-left:20px;">
@@ -90,88 +176,27 @@
 						</div>
 					</s:else>
 				</div>
-			</s:else>
-		</td></tr>
-		<!-- ########### 表头 ########### -->
-		<s:if test="#__Row.practiceBase == null">
-			<tr class="wtableHeader">
-				<td style="width:13px;">选择</td>
-				<td style="width:13px;">序号</td>
-				<% int i=0; %>
-				<s:iterator value="student.fields" var="__opField" status="__opFieldStatus">
-					<% if(StudentFieldDisplay[i++]){ %>
-					<td style="word-wrap:break-word;word-break:break-all;">
-					<% }else{ %>
-					<td style="word-wrap:break-word;word-break:break-all;display:none;">
-					<% } %>
-						<s:property value="#__opField.description"/>
-						<s:if test="#__opField.notNull == true">
-						*
-						</s:if>
-					</td>
-				</s:iterator>
-				<td style="word-wrap:break-word;word-break:break-all;">
-					性别
-				</td>
-			</tr>
-		</s:if>
-		<!-- ########### 实习基地列表 ########### -->
-		<s:if test="#__Row.practiceBase == null">
-			<s:form action="function_StudentArrangeIntoPracticeBase_execute" method="post" theme="simple">
-				<s:iterator value="#__Row.students" var="__studentRow" status="__studentStatus">
+			</td>
+		</tr>
+		<s:form action="function_StudentArrangeIntoPracticeBase_delete" method="post" theme="simple">
+			<s:if test="#__Row.students.size() == 0">
 				<tr class="wtableContent">
-					<!-- 选择 -->
-					<td style="width:13px;">
-						<s:checkbox name="checkBox[%{#__studentStatus.index}]" id="%{#__Status.index}_%{#__studentStatus.index}"/>
-					</td>
-					<!-- 序号 -->
-					<td style="width:13px;">
-						<s:property value="%{#__studentStatus.count}" />
-					</td>
-					<!-- 内容 -->
-					<% int i=0; %>
-					<s:iterator value="%{#__studentRow.fieldsValue}" var="__Col">
-						<% if(StudentFieldDisplay[i++]){ %>
-						<td style="word-wrap:break-word;word-break:break-all;">
-						<% }else{ %>
-						<td style="word-wrap:break-word;word-break:break-all;display:none;">
-						<% } %>
-							<s:property value="#__Col" />
-						</td>
-					</s:iterator>
-					<!-- 性别 -->
-					<td style="word-wrap:break-word;word-break:break-all;">
-						<s:property value="#__studentRow.sex" />
-					</td>
-				</tr></s:iterator>
-				<tr class="wtableContent">
-					<td colspan="100" style="border-bottom:#000 solid 3px;border-top: double;height:30px">
-						将选中实习生分配至实习基地：
-						<s:select list="practiceBases"
-						listKey="name" listValue="description"
-						headerKey="" headerValue="-无-"
-						name="practiceBaseName" />
-						<s:submit value="放入" cssClass="buttonInline"
-						style="padding-top:0;height:auto;" theme="simple"/>
+					<td colspan="100" style="border-bottom:#000 solid 3px;border-top: double;height:30px">	
+						尚未分配实习学生！
 					</td>
 				</tr>
-				<tr><td height="45px" width="100%" colspan="100" valign="top" /></tr>
-				<s:hidden name="majorName" value="%{majorName}" theme="simple" />
-			</s:form>
-		</s:if><s:else>
-			<s:form action="function_StudentArrangeIntoPracticeBase_delete" method="post" theme="simple">
+			</s:if><s:else>
 				<s:iterator value="#__Row.students" var="__studentRow" status="__studentStatus">
 				<tr class="wtableContent">
-					<!-- 选择 -->
-					<td style="width:13px;">
-						<s:checkbox name="checkBox[%{#__studentStatus.index}]" id="%{#__Status.index}_%{#__studentStatus.index}"/>
+					<!-- 选择 --><td style="width:25px;padding:0;border:0">
+						<s:checkbox name="checkBox[%{#__studentStatus.index}]" id="%{#__Status.index}_%{#__studentStatus.index}"
+						theme="simple"
+						style="width:100%;height:100%;margin:0;" />
 					</td>
-					<!-- 序号 -->
-					<td style="width:13px;">
+					<!-- 序号 --><td style="width:13px;">
 						<s:property value="%{#__studentStatus.count}" />
 					</td>
-					<!-- 内容 -->
-					<% int i=0; %>
+					<!-- 内容 --><% i=0; %>
 					<s:iterator value="%{#__studentRow.fieldsValue}" var="__Col">
 						<% if(StudentFieldDisplay[i++]){ %>
 						<td style="word-wrap:break-word;word-break:break-all;">
@@ -181,6 +206,9 @@
 							<s:property value="#__Col" />
 						</td>
 					</s:iterator>
+					<!-- 性别 --><td style="width:20px;">
+						<s:property value="#__studentRow.sex" />
+					</td>
 				</tr></s:iterator>
 				<tr class="wtableContent">
 					<td colspan="100" style="border-bottom:#000 solid 3px;border-top: double;height:30px">	
@@ -190,10 +218,11 @@
 						style="padding-top:0;height:auto;" theme="simple"/>
 					</td>
 				</tr>
-				<tr><td height="35px" width="100%" colspan="100" valign="top" /></tr>
-				<s:hidden name="majorName" value="%{majorName}" theme="simple" />
-			</s:form>
-		</s:else>
+			</s:else>
+			<tr><td height="35px" colspan="100" valign="top" /></tr>
+			<s:hidden name="majorName" value="%{majorName}" theme="simple" />
+		</s:form>
+	</s:iterator>
 	</s:iterator>
 	</tbody></table>
 	

@@ -30,14 +30,15 @@ public class Major extends Base{
 		super();
 	}
 	
-	@Override
-	public String getDescription() {
-		return this.getSubject();
-	}
-	
 	public Major(String name) throws IllegalArgumentException, SQLException{
 		super();
 		this.setName(name);
 		this.load();
+	}
+	
+
+	@Override
+	public String getDescription() {
+		return name;
 	}
 }

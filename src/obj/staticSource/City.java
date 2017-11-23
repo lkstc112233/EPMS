@@ -11,7 +11,7 @@ public class City extends Base{
 	
 	@SQLField(value="城市名称",weight=1,isKey=true,notNull=true)
 	private String name;
-	@SQLField(value="所属省份",weight=10,isKey=true,notNull=true,source="Province.name")
+	@SQLField(value="所属省份",weight=10,notNull=true,source="Province.name")
 	private String province;
 
 	public String getName(){return this.name;}
