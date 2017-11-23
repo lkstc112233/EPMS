@@ -51,6 +51,35 @@
 			</s:if><s:else>
 				<div class="listHeader" style="width:80%;background:linear-gradient(to right,#0071bc,rgba(0,0,0,0));border:0;">
 					<s:property value="#__Row.practiceBase.name" />
+					<span style="font-size:12px;margin-left:20px;">
+						<s:if test="#__Row.practiceBase.hx">
+							回生源地实习基地
+						</s:if><s:else>
+							北京及周边实习基地
+						</s:else>
+					</span>
+					<span style="font-size:12px;margin-left:30px;">
+						<s:if test="#__Row.plan.refuseSex != null || #__Row.plan.refuseNation != null || #__Row.practiceBase.refuseNation != null">
+							不接收：&nbsp;
+						</s:if>
+					</span>
+					<span style="font-size:12px;margin-left:0px;word-wrap: break-word;word-break: break-all;color:white;">
+						<s:if test="#__Row.plan.refuseSex != null">
+							性别(<s:property value="#__Row.plan.refuseSex" />)
+						</s:if>
+						<s:if test="#__Row.plan.refuseNation != null">
+							<s:if test="#__Row.plan.refuseSex != null">
+								、
+							</s:if>
+							<s:property value="#__Row.plan.refuseNation" />
+						</s:if>
+						<s:if test="#__Row.practiceBase.refuseNation != null">
+							<s:if test="#__Row.plan.refuseSex != null && #__Row.plan.refuseNation == null">
+								、
+							</s:if>
+							<s:property value="#__Row.practiceBase.refuseNation" />
+						</s:if>
+					</span>
 					<s:if test="#__Row.size < #__Row.plan.number">
 						<div class="right" style="color:red;font-size:16px;">
 							人数:<s:property value="#__Row.size"/>/<s:property value="#__Row.plan.number"/>
@@ -81,6 +110,9 @@
 						</s:if>
 					</td>
 				</s:iterator>
+				<td style="word-wrap:break-word;word-break:break-all;">
+					性别
+				</td>
 			</tr>
 		</s:if>
 		<!-- ########### 实习基地列表 ########### -->
@@ -107,6 +139,10 @@
 							<s:property value="#__Col" />
 						</td>
 					</s:iterator>
+					<!-- 性别 -->
+					<td style="word-wrap:break-word;word-break:break-all;">
+						<s:property value="#__studentRow.sex" />
+					</td>
 				</tr></s:iterator>
 				<tr class="wtableContent">
 					<td colspan="100" style="border-bottom:#000 solid 3px;border-top: double;height:30px">

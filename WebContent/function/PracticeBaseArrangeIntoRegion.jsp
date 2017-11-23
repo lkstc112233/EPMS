@@ -28,7 +28,7 @@
 	
 	<table width="80%"><tbody>
 	<% boolean[] PracticeBaseFieldDisplay=new boolean[]{
-			false,true,true,true,
+			false,true,true,true,true,
 			false,true,
 			false,false,false,}; %>
 	<s:iterator value="regionAndPracticeBase.list" var="__Row" status="__Status">

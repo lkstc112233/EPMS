@@ -171,7 +171,7 @@
 									<s:if test="fieldsDisplay[#__PartStatus.index][#__opFieldStatus.index] == false">
 									<td></td>
 									</s:if><s:else>
-										<td style="padding:0;">
+										<td style="padding:0;white-space: nowrap;">
 											<s:if test="#__opField.source == null">
 												<s:textfield
 												name="search.result[%{#__Status.index}][%{#__PartStatus.index}].%{#__opField.name}"
@@ -202,7 +202,9 @@
 								<s:if test="fieldsDisplay[#__PartStatus.index][#__opFieldStatus.index] == false">
 								<td></td>
 								</s:if><s:else>
-									<td><s:property value="#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]" /></td>
+									<td style="white-space: nowrap;">
+										<s:property value="#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]" />
+									</td>
 								</s:else>
 							</s:iterator>
 						</s:else>

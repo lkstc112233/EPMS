@@ -163,7 +163,7 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 			pair.getStudents().add(s);
 			nullPair.getStudents().remove(s);
 		}
-		Manager.tips(sb.toString()+" 已经分配到基地("+this.practiceBaseName+")！"+
+		Manager.tips((sb.length()>0?(sb.toString()+" 已经分配到基地("+this.practiceBaseName+")！"):"")+
 				(error.length()>0?("\n\n错误信息：\n"+error.toString()):""));
 		Manager.removeSession(SessionListKey);
 		return display();
@@ -210,7 +210,7 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 		}
 		for(Student s:tmp)
 			deletePair.getStudents().remove(s);
-		Manager.tips(sb.toString()+" 已经从实习基地("+this.practiceBaseName+")移出！");
+		Manager.tips((sb.length()>0?(sb.toString()+" 已经从实习基地("+this.practiceBaseName+")移出！"):"error"));
 		Manager.removeSession(SessionListKey);
 		return display();
 	}
