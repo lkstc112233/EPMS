@@ -206,7 +206,7 @@ public abstract class Base {
 			for(Field f:this.getFields()) if(!f.isKey())
 				f.set(this,rs.getObject(f.getName()));
 		}
-		if(num==0) throw new SQLException("未查询到值！");
+	//	if(num==0) throw new SQLException("未查询到值！");
 		return num;
 	}
 	

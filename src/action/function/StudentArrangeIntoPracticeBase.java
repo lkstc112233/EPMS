@@ -42,7 +42,8 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 			if(this.practiceBaseAndStudents==null) return null;
 			this.practiceBases=new ArrayList<PracticeBase>();
 			for(ListOfPracticeBaseAndStudents.Pair p:this.getPracticeBaseAndStudents().getList())
-				this.practiceBases.add(p.getPracticeBase());
+				if(p.getPracticeBase()!=null)
+					this.practiceBases.add(p.getPracticeBase());
 			return this.practiceBases;
 		}
 	private List<Major> majors;
