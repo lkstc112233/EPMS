@@ -42,7 +42,8 @@
 			<s:iterator value="search.param.list" var="__Part" status="__PartStatus">
 				<% pageContext.setAttribute("_colspan",obj.Field.getFields(((obj.JoinParam.Part)request.getAttribute("__Part")).getClazz()).length+2); %>
 				<td colspan="${_colspan}">
-					<div class="listHeader"><div class="listHeaderLeft">
+					<div class="listHeader" style="width:80%;background:linear-gradient(to right,#0071bc,rgba(0,0,0,0));border:0;">
+					<div class="listHeaderLeft">
 						<s:property value="#__Part.SQLTableName" />
 					</div></div>
 				</td>
