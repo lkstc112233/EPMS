@@ -183,4 +183,12 @@ public class Restraint{
 	}public Restraint(Field f,Object v){
 		this(new Part(f,v),(Field)null);
 	}
+	
+	public Restraint(Field f[],Object[] v,Field[] order) {
+		this(new Part[Math.min(f.length,v.length)],order);
+		for(int i=0;i<this.where.length;i++)
+			this.where[i]=new Part(f[i],v[i]);
+	}public Restraint(Field f[],Object[] v){
+		this(f,v,(Field[])null);
+	}
 }
