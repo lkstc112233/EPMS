@@ -27,27 +27,31 @@ public class Region extends AnnualBase{
 
 
 	public String getName() {return name;}
-	public void setName(String name) {this.name = name==null||name.isEmpty()?null:name;}
+	public void setName(String a) {this.name=Field.s2S(a);}
 	public String getPracticeBase() {return practiceBase;}
-	public void setPracticeBase(String practiceBase) {this.practiceBase = practiceBase==null||practiceBase.isEmpty()?null:practiceBase;}
+	public void setPracticeBase(String a) {this.practiceBase=Field.s2S(a);}
 	public String getLeaderId() {return leaderId;}
-	public void setLeaderId(String leaderId) {this.leaderId = leaderId==null||leaderId.isEmpty()?null:leaderId;}
+	public void setLeaderId(String a) {this.leaderId=Field.s2S(a);}
 	public Timestamp getEnterPracticeBaseTime() {return enterPracticeBaseTime;}
 	public void setEnterPracticeBaseTime(Timestamp enterPracticeBaseTime) {this.enterPracticeBaseTime = enterPracticeBaseTime;}
+	public void setEnterPracticeBaseTime(String a) {this.enterPracticeBaseTime=Field.s2TS(a);}
 	public String getEnterPracticeBasePlace() {return enterPracticeBasePlace;}
 	public void setEnterPracticeBasePlace(String enterPracticeBasePlace) {this.enterPracticeBasePlace = enterPracticeBasePlace;}
 	public Timestamp getMobilizationTime() {return mobilizationTime;}
 	public void setMobilizationTime(Timestamp mobilizationTime) {this.mobilizationTime = mobilizationTime;}
+	public void setMobilizationTime(String a) {this.mobilizationTime=Field.s2TS(a);}
 	public String getMobilizationPlace() {return mobilizationPlace;}
 	public void setMobilizationPlace(String mobilizationPlace) {this.mobilizationPlace=mobilizationPlace;}
 	public String getRemark() {return remark;}
 	public void setRemark(String remark) {this.remark = remark;}
 
 	
+	public Region() {
+		super();
+	}
 	
-	static public Region LoadOneRegionByName(String regionName) throws SQLException, IllegalArgumentException, IllegalAccessException{
-		Region r=new Region();
-		r.setName(regionName);
+	
+	static public Region LoadOneRegionByPracticeBaseName(String practiceBaseName,int year) throws SQLException, IllegalArgumentException, IllegalAccessException{
 		StringBuilder sb=new StringBuilder();
 		sb.append("SELECT ");
 		boolean first=true;
@@ -58,10 +62,41 @@ public class Region extends AnnualBase{
 		}
 		sb.append(" FROM ");
 		sb.append(Base.getSQLTableName(Region.class));
-		sb.append(" WHERE name = ? LIMIT 1");
+		sb.append(" WHERE practiceBase = ? AND year = ?");
+		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
+		pst.setObject(1,practiceBaseName);
+		pst.setObject(2,year);
+		ResultSet res=pst.executeQuery();
+		Region r=new Region();
+		r.setPracticeBase(practiceBaseName);
+		while(res.next()){
+			for(Field f:Field.getFields(Region.class))
+				f.set(r,res.getObject(f.getName()));
+			return r;
+		}
+		return null;
+	}
+	
+	
+	
+	static public Region LoadOneRegionByName(String regionName,int year) throws SQLException, IllegalArgumentException, IllegalAccessException{
+		StringBuilder sb=new StringBuilder();
+		sb.append("SELECT ");
+		boolean first=true;
+		for(Field f:Field.getFields(Region.class)){
+			if(first) first=false;
+			else sb.append(" , ");
+			sb.append(f.getName());
+		}
+		sb.append(" FROM ");
+		sb.append(Base.getSQLTableName(Region.class));
+		sb.append(" WHERE name = ? AND year = ? LIMIT 1");
 		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
 		pst.setObject(1,regionName);
+		pst.setObject(2,year);
 		ResultSet res=pst.executeQuery();
+		Region r=new Region();
+		r.setName(regionName);
 		while(res.next()){
 			for(Field f:Field.getFields(Region.class))
 				f.set(r,res.getObject(f.getName()));

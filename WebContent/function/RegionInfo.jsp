@@ -17,7 +17,7 @@
 	<table class="wtable"><tbody>
 		<tr><td colspan="100">
 			<div class="listHeader">
-				大区（<s:property value="region.name" />）
+				实习大区（<s:property value="region.name" />）
 			</div>
 		</td></tr>
 		<s:form action="function_RegionInfo_execute" method="post" cssClass="myform">
@@ -26,10 +26,12 @@
 				value="%{region.name}"/>
 			</td></tr>
 			<tr><td>
-				<s:select label="总领队老师" list="innerPersons"
+				<s:select label="总领队老师"
+				list="innerPersons"
 				listKey="id" listValue="description"
 				headerKey="" headerValue="-无-"
-				name="region.leaderId" />
+				name="region.leaderId"
+				value="%{region.leaderId}" />
 			</td></tr>
 			<tr><td>
 				<s:textfield label="入校时间" name="region.enterPracticeBaseTime" />
@@ -50,6 +52,7 @@
 			<tr><td>
 				<s:hidden name="region.year" value="%{annual.year}" />
 				<s:hidden name="region.name" value="%{region.name}" />
+				<s:hidden name="region.orderId" value="%{region.orderId}" />
 				<s:submit value="提交修改" cssClass="button"/>
 			</td></tr>
 			<s:token />

@@ -65,7 +65,7 @@ public class RegionInfo extends ActionSupport{
 					NONE);
 		String regionName=region.getName();
 		try {
-			region=Region.LoadOneRegionByName(regionName);
+			region=Region.LoadOneRegionByName(regionName,this.getAnnual().getYear());
 		} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
 			return Manager.tips("服务器开了点小差！",
 					NONE);
