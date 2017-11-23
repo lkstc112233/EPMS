@@ -59,7 +59,7 @@ public class Plan extends AnnualBase {
 		if(this.getRefuseSex()!=null && this.getRefuseSex().contains(stu.getSex()))
 			throw new IllegalArgumentException("实习学校("+this.getPracticeBase()+")拒绝接收性别("+stu.getSex()+")的学生！");
 		if(this.getRefuseNation()!=null && this.getRefuseNation().contains(stu.getNation()))
-			throw new IllegalArgumentException("实习学校("+this.getPracticeBase()+")拒绝接收民族("+stu.getNation()+")的学生！");
+			throw new IllegalArgumentException("规划中实习学校("+this.getPracticeBase()+")拒绝接收民族("+stu.getNation()+")的学生！");
 		return true;
 	}
 	

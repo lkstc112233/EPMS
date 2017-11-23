@@ -142,7 +142,8 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 				if(stu==null||stu.getName()==null)
 					continue;
 				try{
-					if(pair.getPlan().check(stu,pair.getStudents().size()+tmp.size())){
+					if(pair.getPracticeBase().check(stu) &&
+							pair.getPlan().check(stu,pair.getStudents().size()+tmp.size())){
 						stu.setPracticeBase(this.practiceBaseName);
 						stu.update();
 					}
@@ -162,7 +163,7 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 			nullPair.getStudents().remove(s);
 		}
 		Manager.tips(sb.toString()+" 已经分配到基地("+this.practiceBaseName+")！"+
-				(error.length()>0?("\n错误信息："+error.toString()):""));
+				(error.length()>0?("\n\n错误信息：\n"+error.toString()):""));
 		Manager.removeSession(SessionListKey);
 		return display();
 	}

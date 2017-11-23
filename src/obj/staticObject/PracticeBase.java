@@ -3,6 +3,7 @@ package obj.staticObject;
 import java.sql.SQLException;
 
 import obj.*;
+import obj.annualTable.Student;
 
 @SQLTable("PracticeBase")
 public class PracticeBase extends Base implements Base.ListableWithNoSave{
@@ -61,6 +62,20 @@ public class PracticeBase extends Base implements Base.ListableWithNoSave{
 		this.load();
 	}
 	
+	
+
+	/**
+	 * 检查当前Plan是否能放入该学生，不能放入时抛出IllegalArgumentException
+	 * 能放入时返回true
+	 * 该函数不会返回false，只会抛出异常
+	 */
+	public boolean check(Student stu) throws IllegalArgumentException{
+		if(stu==null)
+			throw new IllegalArgumentException("检测学生为空！");
+		if(this.getRefuseNation()!=null && this.getRefuseNation().contains(stu.getNation()))
+			throw new IllegalArgumentException("实习学校("+this.getName()+")拒绝接收民族("+stu.getNation()+")的学生！");
+		return true;
+	}
 	
 		
 }
