@@ -70,8 +70,9 @@ public class POI implements SQLIO{
 				cell.setCellType(CellType.STRING);
 				cell.setCellValue(r==0?f.getName():
 					r==1?(f.getDescription()+(f.notNull()?"[必须]":"")):
-						(r==2?f.getPs():
-							"")
+					//	(r==2?f.getPs():
+							""
+					//	)
 						);
 				cell.setCellStyle(r<rmax-1 ? styleTitle : styleContent);
 				System.out.print(cell.getStringCellValue()+"\t");
