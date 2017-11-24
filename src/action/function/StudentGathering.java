@@ -2,15 +2,16 @@ package action.function;
 
 import action.Manager;
 import obj.*;
+import obj.annualTable.Student;
 
-public class StudentImport extends action.TableOperationAction{
+public class StudentGathering extends action.TableOperationAction{
 	private static final long serialVersionUID = 8833385464572061925L;
 
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
 	
 	
-	public StudentImport(){
+	public StudentGathering(){
 		super();
 	}
 	
@@ -23,6 +24,18 @@ public class StudentImport extends action.TableOperationAction{
 				this.getAnnual().getYear(),
 				role==token.Role.jwc ? null : new obj.staticSource.School(user.getSchool())
 						));
+	}
+	@Override
+	protected Field[] refuseDisplayField() {
+		return Field.getFields(Student.class,
+			//	"year",
+			//	"id","name","mobile","email",
+				"major","practiceBase",
+			//	"sfzh","zzmm","province","nation",
+			//	"hxyx"
+				"recommend","teacherId",
+				"outstandingType","outstandingMaterial"
+				);
 	}
 	
 }

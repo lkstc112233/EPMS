@@ -3,7 +3,7 @@ package action.sudo;
 import obj.*;
 import obj.restraint.AllRestraint;
 
-public class TableOperation extends action.TableOperation2Action{
+public class TableOperation extends action.TableOperationAction{
 	private static final long serialVersionUID = 8833385464572061925L;
 
 	//可变tableName
