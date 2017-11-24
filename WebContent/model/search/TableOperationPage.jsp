@@ -110,14 +110,14 @@
 										<s:if test="#__opField.source == null">
 											<s:textfield name="operateBase.%{#__opField.name}"
 											value="%{operateBase.fieldsValue[#__opFieldStatus.index]}"
-											style="text-align:center;border:0px;height:100%;width:100%" theme="simple" />
+											style="text-align:center;height:100%;width:100%" theme="simple" />
 										</s:if><s:else>
 											<s:select list="%{#__opField.sourceList}"
 											listKey="key" listValue="value"
 											headerKey="" headerValue="无"
 											name="operateBase.%{#__opField.name}"
 											value="%{operateBase.fieldsValue[#__opFieldStatus.index]}"
-											style="text-align:center;border:0px;height:100%" theme="simple" />
+											style="text-align:center;height:100%;width:-webkit-fill-available;" theme="simple" />
 										</s:else>
 									</td>
 								</s:else>
@@ -184,7 +184,7 @@
 												name="search.result[%{#__Status.index}][%{#__PartStatus.index}].%{#__opField.name}"
 												value="%{#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]}"
 												headerKey="" headerValue="无"
-												style="text-align:center;border:0px;height:100%;" theme="simple" />
+												style="text-align:center;border:0px;height:100%;width:-webkit-fill-available;" theme="simple" />
 											</s:else>
 										</td>
 									</s:else>

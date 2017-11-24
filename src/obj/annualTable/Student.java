@@ -25,7 +25,7 @@ public class Student extends AnnualBase{
 	private String province;
 	@SQLField(value="民族",weight=18,notNull=true,source="Nation.name")
 	private String nation;
-	@SQLField(value="回生源地",weight=19,ps="是否希望回生源地进行教育实习")
+	@SQLField(value="回生源地实习意向",weight=19,ps="是否希望回生源地进行教育实习")
 	private boolean hxyx=true;
 	@SQLField(value="推荐为组长",weight=20,notNull=true,ps="只代表部院系推荐意见")
 	private boolean recommend=false;
@@ -37,25 +37,25 @@ public class Student extends AnnualBase{
 	private byte[] outstandingMaterial;
 	
 	public String getId() {return id;}
-	public void setId(String id) {this.id = id==null||id.isEmpty()?null:id;}
+	public void setId(String a) {this.id=Field.s2S(a);}
 	public String getName() {return name;}
-	public void setName(String name) {this.name = name;}
+	public void setName(String name) {this.name=name;}
 	public String getMobile() {return mobile;}
 	public void setMobile(String mobile) {this.mobile = mobile;}
 	public String getEmail() {return email;}
 	public void setEmail(String email) {this.email = email;}
 	public String getMajor() {return major;}
-	public void setMajor(String major) {this.major = major==null||major.isEmpty()?null:major;}
+	public void setMajor(String a) {this.major=Field.s2S(a);}
 	public String getPracticeBase() {return practiceBase;}
-	public void setPracticeBase(String practiceBase) {this.practiceBase = practiceBase==null||practiceBase.isEmpty()?null:practiceBase;}
+	public void setPracticeBase(String a) {this.practiceBase=Field.s2S(a);}
 	public String getSfzh() {return sfzh;}
 	public void setSfzh(String sfzh) {this.sfzh = sfzh;}
 	public String getZzmm() {return zzmm;}
-	public void setZzmm(String zzmm) {this.zzmm = zzmm==null||zzmm.isEmpty()?null:zzmm;}
+	public void setZzmm(String a) {this.zzmm=Field.s2S(a);}
 	public String getProvince() {return province;}
-	public void setProvince(String province) {this.province = province==null||province.isEmpty()?null:province;}
+	public void setProvince(String a) {this.province=Field.s2S(a);}
 	public String getNation() {return nation;}
-	public void setNation(String nation) {this.nation = nation==null|nation.isEmpty()?null:nation;}
+	public void setNation(String a) {this.nation=Field.s2S(a);}
 	public boolean getHxyx() {return hxyx;}
 	public void setHxyx(boolean a) {this.hxyx = a;}
 	public void setHxyx(String a){this.hxyx=Field.s2b(a,true);}
@@ -63,9 +63,9 @@ public class Student extends AnnualBase{
 	public void setRecommend(boolean a) {this.recommend = a;}
 	public void setRecommend(String a){this.recommend=Field.s2b(a,false);}
 	public String getTeacherId() {return teacherId;}
-	public void setTeacherId(String teacherId) {this.teacherId = teacherId==null||teacherId.isEmpty()?null:teacherId;}
+	public void setTeacherId(String a) {this.teacherId=Field.s2S(a);}
 	public String getOutstandingType() {return outstandingType;}
-	public void setOutstandingType(String outstandingType) {this.outstandingType = outstandingType==null||outstandingType.isEmpty()?null:outstandingType;}
+	public void setOutstandingType(String a) {this.outstandingType=Field.s2S(a);}
 	public byte[] getOutstandingMaterial() {return outstandingMaterial;}
 	public void setOutstandingMaterial(byte[] outstandingMaterial) {this.outstandingMaterial = outstandingMaterial==null||outstandingMaterial.length<=0?null:outstandingMaterial;}
 	public void setOutstandingMaterial(String outstandingMaterial) {this.outstandingMaterial = outstandingMaterial==null||outstandingMaterial.isEmpty()?null:outstandingMaterial.getBytes();}
