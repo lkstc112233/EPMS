@@ -137,6 +137,7 @@ public class Region extends AnnualBase{
 		int parameterIndex=1;
 		for(Field f:this.getFields()){
 			if(f.getName().equals("practiceBase")) continue;
+			if(f.getName().equals("studentGroupLeaderId")) continue;
 			pst.setObject(parameterIndex++,f.get(region));
 		}
 		pst.setObject(parameterIndex++,this.getYear());
