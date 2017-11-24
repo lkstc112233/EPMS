@@ -3,7 +3,7 @@ package action.function;
 import action.Manager;
 import obj.*;
 
-public class PlanDesign extends action.TableOperationAction{
+public class PlanDesign extends action.TableOperation2Action{
 	private static final long serialVersionUID = 8833385464572061925L;
 
 	private action.Annual annual=new action.Annual();

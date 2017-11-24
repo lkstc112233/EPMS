@@ -1,22 +1,22 @@
-package action.function;
+package action;
 
 import action.Manager;
 import obj.*;
 
-public class PracticeBaseImport extends action.TableOperation2Action{
+public class DefaultAction extends action.TableOperationAction{
 	private static final long serialVersionUID = 8833385464572061925L;
 
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
 	
 	
-	public PracticeBaseImport(){
+	public DefaultAction(){
 		super();
 	}
 	
 	@Override
 	protected Search createSearch() throws Exception {
-		JoinParam param=new JoinParam(obj.staticObject.PracticeBase.class);
+		JoinParam param=new JoinParam(obj.staticObject.InnerPerson.class);
 		obj.staticObject.InnerPerson user=Manager.getUser();
 		token.Role role=token.Role.getRole(user);
 		return new Search(param,new obj.restraint.YearAndSchoolAndMajorRestraint(param,3,

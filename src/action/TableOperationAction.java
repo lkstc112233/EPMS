@@ -12,7 +12,7 @@ import com.opensymphony.xwork2.ActionSupport;
 
 import obj.*;
 
-public abstract class TableOperationAction extends ActionSupport{
+abstract class TableOperationAction extends ActionSupport{
 	private static final long serialVersionUID = 5998268336475528662L;
 
 	static public final String SessionSearchKey="TableOperationAction_Search";
