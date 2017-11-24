@@ -50,7 +50,7 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 	private List<Major> majors;
 		public List<Major> getMajors(){
 			if(this.majors!=null) return this.majors;
-			Role role=Role.getRoleByInnerPerson(Manager.getUser());
+			Role role=Role.getRole(Manager.getUser());
 			if(role==null) return null;
 			try{
 				if(role==Role.jwc)

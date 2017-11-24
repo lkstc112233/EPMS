@@ -33,7 +33,7 @@ public class ActionInterceptor extends AbstractInterceptor{
 		<!-- 其他名称均可访问 --> */
 		StringBuilder errorMsg=null;
 		if(actionName.startsWith("function")){
-			Role role=Role.getRoleByInnerPerson(user);
+			Role role=Role.getRole(user);
 			//function
 			List<ACCESS> as=null;
 			try{
@@ -64,7 +64,7 @@ public class ActionInterceptor extends AbstractInterceptor{
 		}else if(actionName.startsWith("sudo")){
 			//sudo
 			//只有教务处可以访问
-			Role role=Role.getRoleByInnerPerson(user);
+			Role role=Role.getRole(user);
 			if(role!=Role.jwc)
 				errorMsg=new StringBuilder(Role.jwc.getName());
 		}else{

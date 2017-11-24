@@ -32,7 +32,7 @@ public class MenuAction extends ActionSupport{
 		InnerPerson user=Manager.getUser();
 		if(user==null)
 			return LOGIN;
-		Role role=Role.getRoleByInnerPerson(user);
+		Role role=Role.getRole(user);
 		try {
 			//当setupIfEmpty为false时会实际调用join联合查询
 			this.times=Time.listTime(role,this.getAnnual().getYear(),/*setupIfEmpty*/false);
@@ -43,7 +43,7 @@ public class MenuAction extends ActionSupport{
 		}
 		Manager.clearSession();
 		Manager.setUser(user);
-		String res=Role.getRoleByInnerPerson(Manager.getUser()).toString();
+		String res=Role.getRole(Manager.getUser()).toString();
 		System.out.println(">> MenuAction:execute <"+res);
 		return res;
 	}

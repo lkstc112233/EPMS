@@ -56,7 +56,7 @@ public class TimeManager extends ActionSupport{
 	
 	public String display(){
 		System.out.println(">> TimeManagerAction:display > year="+this.getAnnual().getYear());
-		Role role=Role.getRoleByInnerPerson(Manager.getUser());
+		Role role=Role.getRole(Manager.getUser());
 		try {
 			times=Time.listTime(role,this.getAnnual().getYear(),/*setupIfEmpty*/true);
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
