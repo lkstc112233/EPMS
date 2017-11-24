@@ -12,6 +12,8 @@ public class Region extends AnnualBase{
 	private String name;
 	@SQLField(value="实习基地",weight=2,isKey=true,notNull=true,source="PracticeBase.name")
 	private String practiceBase;
+	@SQLField(value="学生大组长学号",weight=3,source="Student.id")
+	private String studentGroupLeaderId;
 	@SQLField(value="总领队工号",weight=10,source="InnerPerson.id")
 	private String leaderId;
 	@SQLField(value="入校时间",weight=11)
@@ -30,6 +32,8 @@ public class Region extends AnnualBase{
 	public void setName(String a) {this.name=Field.s2S(a);}
 	public String getPracticeBase() {return practiceBase;}
 	public void setPracticeBase(String a) {this.practiceBase=Field.s2S(a);}
+	public String getStudentGroupLeaderId() {return studentGroupLeaderId;}
+	public void setStudentGroupLeaderId(String a) {this.studentGroupLeaderId=Field.s2S(a);}
 	public String getLeaderId() {return leaderId;}
 	public void setLeaderId(String a) {this.leaderId=Field.s2S(a);}
 	public Timestamp getEnterPracticeBaseTime() {return enterPracticeBaseTime;}
@@ -121,6 +125,7 @@ public class Region extends AnnualBase{
 		boolean first=true;
 		for(Field f:this.getFields()){
 			if(f.getName().equals("practiceBase")) continue;
+			if(f.getName().equals("studentGroupLeaderId")) continue;
 			if(first) first=false;
 			else sb.append(" , ");
 			sb.append(f.getName());

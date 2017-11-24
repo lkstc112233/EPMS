@@ -26,12 +26,14 @@ public class Student extends AnnualBase{
 	@SQLField(value="民族",weight=18,notNull=true,source="Nation.name")
 	private String nation;
 	@SQLField(value="回生源地",weight=19,ps="是否希望回生源地进行教育实习")
-	private Boolean hxyx=true;
-	@SQLField(value="指导老师工号",weight=20,source="InnerPerson.id",ps="指导老师需要属于校内人员列表")
+	private boolean hxyx=true;
+	@SQLField(value="推荐为组长",weight=20,notNull=true,ps="只代表部院系推荐意见")
+	private boolean recommend=false;
+	@SQLField(value="指导老师工号",weight=100,source="InnerPerson.id",ps="指导老师需要属于校内人员列表")
 	private String teacherId;
-	@SQLField(value="优秀实习生类别",weight=21,autoInit=true,source="Outstanding.type")
+	@SQLField(value="优秀实习生类别",weight=101,autoInit=true,source="Outstanding.type")
 	private String outstandingType;
-	@SQLField(value="优秀实习生材料",weight=22,autoInit=true,ps="二进制储存")
+	@SQLField(value="优秀实习生材料",weight=102,autoInit=true,ps="二进制储存")
 	private byte[] outstandingMaterial;
 	
 	public String getId() {return id;}
@@ -54,8 +56,12 @@ public class Student extends AnnualBase{
 	public void setProvince(String province) {this.province = province==null||province.isEmpty()?null:province;}
 	public String getNation() {return nation;}
 	public void setNation(String nation) {this.nation = nation==null|nation.isEmpty()?null:nation;}
-	public Boolean getHxyx() {return hxyx;}
-	public void setHxyx(Boolean hxyx) {this.hxyx = hxyx;}	public void setHxyx(String hxyx){this.hxyx=Boolean.valueOf(hxyx);}
+	public boolean getHxyx() {return hxyx;}
+	public void setHxyx(boolean a) {this.hxyx = a;}
+	public void setHxyx(String a){this.hxyx=Field.s2b(a,true);}
+	public boolean getRecommend() {return recommend;}
+	public void setRecommend(boolean a) {this.recommend = a;}
+	public void setRecommend(String a){this.recommend=Field.s2b(a,false);}
 	public String getTeacherId() {return teacherId;}
 	public void setTeacherId(String teacherId) {this.teacherId = teacherId==null||teacherId.isEmpty()?null:teacherId;}
 	public String getOutstandingType() {return outstandingType;}
