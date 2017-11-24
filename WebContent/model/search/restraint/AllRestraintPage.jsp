@@ -61,7 +61,8 @@
 			&nbsp;
 		</td></tr>
 		<tr><td colspan="100" style="width:20%;border:0;">
-			<s:submit value="查询" cssClass="title_button" style="width:20%" />
+			<s:submit value="查询" theme="simple"
+			style="width:20%;background: white;border: double 6px #0071bc;font-weight: 600;height: 40px;"/>
 		</td></tr>
 	</s:form></tbody></table>
 	

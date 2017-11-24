@@ -28,7 +28,8 @@
 				</jsp:include>
 			<% }else{ %>
 				<s:form action="%{#request.actionName}_execute" method="post" theme="simple">
-					<s:submit value="查询" cssClass="title_button" theme="simple" style="width:20%"/>
+					<s:submit value="查询" theme="simple"
+					style="width:20%;background: white;border: double 6px #0071bc;font-weight: 600;height: 40px;"/>
 				</s:form>
 			<% } %>
 		</td></tr>
