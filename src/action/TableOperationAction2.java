@@ -6,12 +6,13 @@ import java.util.*;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
 
 import obj.*;
 
-public abstract class TableOperationAction extends ActionSupport{
+public abstract class TableOperationAction2 extends ActionSupport{
 	private static final long serialVersionUID = 5998268336475528662L;
 
 	static public final String SessionSearchKey="TableOperationAction_Search";
@@ -26,7 +27,6 @@ public abstract class TableOperationAction extends ActionSupport{
 	
 	public Search getSearch(){return this.search;}
 	public Integer[] getChoose(){return this.choose;}
-	public boolean[][] getFieldsDisplay(){return this.fieldsDisplay;}
 	public Base getOperateBase(){return this.operateBase;}
 	public Field[] getAllSelectFields(){
 		int len=0;
@@ -41,7 +41,7 @@ public abstract class TableOperationAction extends ActionSupport{
 	}
 
 
-	public TableOperationAction(){
+	public TableOperationAction2(){
 		super();
 		this.setup();
 	}
@@ -97,11 +97,11 @@ public abstract class TableOperationAction extends ActionSupport{
 				this.fieldsDisplay[i]=new boolean[Field.getFields(part.getClazz()).length];
 				int j=0;
 				for(Field f2:Field.getFields(part.getClazz())){
-					this.fieldsDisplay[i][j]=true;
+					this.fieldsDisplay[i][j]=false;
 					Field[] tmp=this.refuseDisplayField();
 					if(tmp!=null) for(Field f:tmp) {
 						if(f!=null && f2.getClazz().equals(f.getClazz()) && f2.equals(f)){
-							this.fieldsDisplay[i][j]=false;
+							this.fieldsDisplay[i][j]=true;
 							break;
 						}
 					}
@@ -298,27 +298,16 @@ public abstract class TableOperationAction extends ActionSupport{
 	 */
 	private String downloadFileName;
 		public void setDownloadFileName(String a){
-			this.downloadFileName=a;
 			try{this.downloadFileName=new String(a.getBytes("gb2312"), "iso8859-1");
 			}catch(UnsupportedEncodingException e){
 				e.printStackTrace();
 				this.downloadFileName=a;
-			}//*/
+			}
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private OutputStream downloadOutputStream=null;
 	protected void downloadByIO(SQLIO io,Class<? extends Base> clazz,OutputStream stream) throws IOException{
-		int i=0;
-		for(JoinParam.Part part:this.search.getParam().getList()) {
-			if(part.getClazz().equals(clazz)) break;
-			i++;
-		}
-		List<Field> tmp=new ArrayList<Field>();
-		int j=0;for(Field f:Field.getFields(clazz)) {
-			if(this.fieldsDisplay[i][j++])
-				tmp.add(f);
-		}
-		io.getModelExcel(clazz,tmp,stream);
+		io.getModelExcel(clazz,Field.getFields(clazz),stream);
 	}
 	public String download(){//下载模板
 		System.out.println(">> TableOperationAction:download > tableName="+this.fileTableName);
@@ -350,11 +339,11 @@ public abstract class TableOperationAction extends ActionSupport{
 		}
 		this.downloadOutputStream=null;
 		ByteArrayInputStream in=new ByteArrayInputStream(data);
-	/*	try {
+		try {
 			ServletActionContext.getResponse().setHeader("Content-Disposition","attachment;downloadFileName="+java.net.URLEncoder.encode(this.downloadFileName, "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-		}//*/
+		}
 		return in;
 	}
 	
