@@ -60,11 +60,11 @@
 						<ul class="listContent">
 							<li>
 								<span class="time">	<!-- 模板下载 -->
-									[<a href="<s:url action='%{#request.actionName}_download'/>?tableName=<s:property value='tableName'/>">
+									[<a href="<s:url action='%{#request.actionName}_download'/>?fileTableName=<s:property value='#__Part.SQLTableName'/>">
 									down</a>]
 								</span>
 								<s:form action="%{#request.actionName}_upload" method="post" theme="simple" enctype="multipart/form-data">
-									<s:hidden name="tableName" value="%{tableName}" />
+									<s:hidden name="fileTableName" value="%{tableName}" />
 									新增
 									<s:file label="上传数据" theme="simple" name="uploadFile" class="buttonInline"/>
 									<s:submit value="上传" cssClass="buttonInline"/>
@@ -81,12 +81,15 @@
 			<s:iterator value="search.param.list" var="__Part" status="__PartStatus">
 				<td colspan="2" style="border:0;">操作</td>
 				<s:iterator value="#__Part.fields" var="__Field" status="__FieldStatus">
-					<td style="border:0;">
-						<s:property value="#__Field.description"/>
-						<s:if test="#__Field.notNull == true">
-						*
-						</s:if>
-					</td>
+					<s:if test="fieldsDisplay[#__PartStatus.index][#__FieldStatus.index] == false">
+					</s:if><s:else>
+						<td style="border:0;">
+							<s:property value="#__Field.description"/>
+							<s:if test="#__Field.notNull == true">
+							*
+							</s:if>
+						</td>
+					</s:else>
 				</s:iterator>
 			</s:iterator>
 		</tr>
@@ -104,7 +107,6 @@
 							</td>
 							<s:iterator value="operateBase.fields" var="__opField" status="__opFieldStatus">
 								<s:if test="fieldsDisplay[#__PartStatus.index][#__opFieldStatus.index] == false">
-								<td style="border:0;">&nbsp;</td>
 								</s:if><s:else>
 									<td style="border:0;padding:0;">
 										<s:if test="#__opField.source == null">
@@ -170,7 +172,6 @@
 								</td>
 								<s:iterator value="#__Row[#__PartStatus.index].fields" var="__opField" status="__opFieldStatus">
 									<s:if test="fieldsDisplay[#__PartStatus.index][#__opFieldStatus.index] == false">
-									<td></td>
 									</s:if><s:else>
 										<td style="padding:0;white-space: nowrap;background:white;">
 											<s:if test="#__opField.source == null">
@@ -201,7 +202,6 @@
 							</td>
 							<s:iterator value="%{#__Row[#__PartStatus.index].fields}" var="__opField" status="__opFieldStatus">
 								<s:if test="fieldsDisplay[#__PartStatus.index][#__opFieldStatus.index] == false">
-								<td></td>
 								</s:if><s:else>
 									<td style="white-space: nowrap;">
 										<s:property value="#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]" />
