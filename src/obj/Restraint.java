@@ -23,6 +23,7 @@ public class Restraint{
 			if(this==Equal) return a.equals(b);
 			//TODO SQL Like
 			if(this==Like) return a.equals(b);
+			if(this==NotLike) return !a.equals(b);
 			return false;
 		}
 	}
@@ -55,6 +56,7 @@ public class Restraint{
 			if(this.type.checkBase(this.field.get(b),value)) return true;
 			if(setIfFalse){
 		//TODO	if(this.type==Type.Equal)
+				if(this.type!=Type.NotLike)
 					this.field.set(b,this.value);
 			}
 			return false;

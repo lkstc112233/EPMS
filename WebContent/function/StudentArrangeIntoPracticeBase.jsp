@@ -81,10 +81,9 @@
 			<s:form action="function_StudentArrangeIntoPracticeBase_execute" method="post" theme="simple">
 				<s:iterator value="practiceBaseAndStudents.undistributedStudents" var="__studentRow" status="__studentStatus">
 				<tr class="wtableContent">
-					<!-- 选择 --><td style="width:5px;padding:0;border:0;">
+					<!-- 选择 --><td style="width:13px;padding:0;border:0;">
 						<s:checkbox name="checkBox[%{#__studentStatus.index}]" id="%{#__Status.index}_%{#__studentStatus.index}"
-						theme="simple"
-						style="width:100%;height:100%;margin:0;"/>
+						style="width:100%;height:100%;margin:0;" theme="simple" />
 					</td>
 					<!-- 序号 --><td style="width:13px;">
 						<s:property value="%{#__studentStatus.count}" />
@@ -188,10 +187,9 @@
 			</s:if><s:else>
 				<s:iterator value="#__Row.students" var="__studentRow" status="__studentStatus">
 				<tr class="wtableContent">
-					<!-- 选择 --><td style="width:25px;padding:0;border:0">
+					<!-- 选择 --><td style="width:13px;padding:0;border:0">
 						<s:checkbox name="checkBox[%{#__studentStatus.index}]" id="%{#__Status.index}_%{#__studentStatus.index}"
-						theme="simple"
-						style="width:100%;height:100%;margin:0;" />
+						style="width:100%;height:100%;margin:0;" theme="simple" />
 					</td>
 					<!-- 序号 --><td style="width:13px;">
 						<s:property value="%{#__studentStatus.count}" />

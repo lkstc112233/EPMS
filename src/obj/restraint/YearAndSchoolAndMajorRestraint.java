@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 import obj.*;
+import obj.staticObject.InnerPerson;
 import obj.staticSource.Major;
 import obj.staticSource.School;
 
@@ -28,11 +29,14 @@ public class YearAndSchoolAndMajorRestraint extends HardRestraint{
 		List<Field> yearFields=new ArrayList<Field>();
 		List<Field> schoolFields=new ArrayList<Field>();
 		List<Field> majorFields=new ArrayList<Field>();
+		List<Field> nameFields=school==null?null:new ArrayList<Field>();
 		for(JoinParam.Part p:param.getList()){
 			for(Field f:Field.getFields(p.getClazz())){
 				if(f.getName().equals("year"))
 					yearFields.add(f);
-				else if(this.majors!=null){// which means 'school!=null'
+				else if(nameFields!=null && f.getName().equals("name"))
+					nameFields.add(f);
+				else if(f.source()!=null && this.majors!=null){// which means 'school!=null'
 					Class<? extends Base> sourceClazz=f.source().getClazz();
 					if(sourceClazz.equals(School.class))
 						schoolFields.add(f);
@@ -44,6 +48,9 @@ public class YearAndSchoolAndMajorRestraint extends HardRestraint{
 		List<Restraint.Part> hps=new ArrayList<Restraint.Part>();
 		for(Field f:yearFields)
 			hps.add(new Restraint.Part(f,year));
+		if(nameFields!=null)
+			for(Field f:nameFields)
+				hps.add(new Restraint.Part(f,Restraint.Type.NotLike,InnerPerson.UndefinedName));
 		for(Field f:schoolFields)
 			hps.add(new Restraint.Part(f,school.getName()));
 		if(this.majors!=null){// which means 'school!=null'

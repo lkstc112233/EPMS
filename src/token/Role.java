@@ -42,7 +42,7 @@ public enum Role{
 			return null;
 		if(inner.getOffice()==null || inner.getOffice().isEmpty())
 			return null;
-		boolean isSchool=inner.getSchool().equals("教务处");
+		boolean isSchool=!inner.getSchool().equals("教务处");
 		if(inner.getOffice().contains("教育实习联系人"))
 			return isSchool ? Role.lxr : Role.jwc;
 		else if(inner.getOffice().contains("教学院长"))
