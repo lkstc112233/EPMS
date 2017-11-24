@@ -9,12 +9,15 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import obj.restraint.BaseRestraint;
 
 public interface SQLIO{
-	
+
 	/**
 	 * 获取模板文件 
 	 * @return OutputStream
 	 */
-	public void getModelExcel(Class<? extends Base> clazz,OutputStream out) throws IOException ;
+	public void getModelExcel(Class<? extends Base> clazz,
+			Field[] displayFields,
+			OutputStream out) throws IOException ;
+	
 	
 	/**
 	 * 在输入流中按照标签读取excel表格内容，形成T的列表

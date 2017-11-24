@@ -12,7 +12,7 @@ import com.opensymphony.xwork2.ActionSupport;
 
 import obj.*;
 
-abstract class TableOperationAction extends ActionSupport{
+public abstract class TableOperationAction extends ActionSupport{
 	private static final long serialVersionUID = 5998268336475528662L;
 
 	static public final String SessionSearchKey="TableOperationAction_Search";
@@ -280,6 +280,9 @@ abstract class TableOperationAction extends ActionSupport{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private OutputStream downloadOutputStream=null;
+	protected void downloadByIO(SQLIO io,Class<? extends Base> clazz,OutputStream stream) throws IOException{
+		io.getModelExcel(clazz,Field.getFields(clazz),stream);
+	}
 	public String download(){//下载模板
 		System.out.println(">> TableOperationAction:download > tableName="+this.fileTableName);
 		Class<? extends Base> clazz=Base.getClassForName(this.fileTableName);
@@ -290,7 +293,7 @@ abstract class TableOperationAction extends ActionSupport{
 		System.out.println(">> TableOperationAction:download > downloadFielName="+this.getDownloadFileName());
 		downloadOutputStream=new ByteArrayOutputStream();
 		try{
-			Base.io().getModelExcel(clazz,downloadOutputStream);
+			this.downloadByIO(Base.io(),clazz,downloadOutputStream);
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
 			downloadOutputStream=null;

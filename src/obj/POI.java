@@ -42,7 +42,9 @@ public class POI implements SQLIO{
 	}
 
 	@Override
-	public void getModelExcel(Class<? extends Base> clazz,OutputStream out) throws IOException {
+	public void getModelExcel(Class<? extends Base> clazz,
+			Field[] displayFields,
+			OutputStream out) throws IOException {
 		//创建excel工作簿
 		Workbook wb=null;
 		try{
@@ -62,7 +64,7 @@ public class POI implements SQLIO{
 			Row row=st.createRow(r);
 			row.setHeight((short)-1);
 			int i=-1;
-			for(Field f:Field.getFields(clazz)) if(!f.autoInit()){
+			for(Field f:displayFields) if(!f.autoInit()){
 				Cell cell=row.createCell(++i);
 				cell.setCellType(CellType.STRING);
 				cell.setCellValue(r==0?f.getName():
