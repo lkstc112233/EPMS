@@ -34,16 +34,17 @@ public class POI implements SQLIO{
 	
 	private int getTitleRowCounts(Class<? extends Base> clazz){
 		int rmax=3;//略过Ps行
-		for(Field f:Field.getFields(clazz)) if(!f.autoInit()){
+	/*	for(Field f:Field.getFields(clazz)) if(!f.autoInit()){
 			if(f.getPs()!=null && !f.getPs().isEmpty()){
 				rmax++;break;//不略过Ps行
 			}
-		}return rmax;
+		}//*/
+		return rmax;
 	}
 
 	@Override
 	public void getModelExcel(Class<? extends Base> clazz,
-			Field[] displayFields,
+			Collection<Field> displayFields,
 			OutputStream out) throws IOException {
 		//创建excel工作簿
 		Workbook wb=null;

@@ -15,7 +15,7 @@ public interface SQLIO{
 	 * @return OutputStream
 	 */
 	public void getModelExcel(Class<? extends Base> clazz,
-			Field[] displayFields,
+			Collection<Field> displayFields,
 			OutputStream out) throws IOException ;
 	
 	
