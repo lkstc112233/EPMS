@@ -22,10 +22,8 @@ public class ACCESS extends Base{
 	private Timestamp time2;
 	@SQLField(value="学生权限",weight=13)
 	private boolean xs;
-	@SQLField(value="教学院长权限",weight=14)
-	private boolean jxyz;
-	@SQLField(value="教务员权限",weight=15)
-	private boolean jwy;
+	@SQLField(value="教育实习联系人权限",weight=14)
+	private boolean lxr;
 	@SQLField(value="教师权限",weight=16)
 	private boolean js;
 	@SQLField(value="教务处权限",weight=17)
@@ -59,12 +57,9 @@ public class ACCESS extends Base{
 	public boolean getXs() {return xs;}
 	public void setXs(boolean xs) {this.xs = xs;}
 	public void setXs(String a){this.xs=Field.s2b(a,false);}
-	public boolean getJxyz() {return jxyz;}
-	public void setJxyz(boolean jxyz) {this.jxyz = jxyz;}
-	public void setJxyz(String a){this.jxyz=Field.s2b(a,false);}
-	public boolean getJwy() {return jwy;}
-	public void setJwy(boolean jwy) {this.jwy = jwy;}
-	public void setJwy(String a){this.jwy=Field.s2b(a,false);}
+	public boolean getLxr() {return lxr;}
+	public void setLxr(boolean lxr) {this.lxr = lxr;}
+	public void setLxr(String a){this.lxr=Field.s2b(a,false);}
 	public boolean getJs() {return js;}
 	public void setJs(boolean js) {this.js = js;}
 	public void setJs(String a){this.js=Field.s2b(a,false);}
