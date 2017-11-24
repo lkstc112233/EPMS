@@ -3,17 +3,21 @@ package action.function;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.opensymphony.xwork2.ActionSupport;
+
 import action.Manager;
 import obj.*;
 import obj.annualTable.*;
 import obj.staticObject.InnerPerson;
 import obj.staticObject.PracticeBase;
-import obj.staticSource.School;
-import token.Role;
 
-public class RegionLeaderAndSupervisorArrangement extends action.FunctionAction{
+public class RegionLeaderAndSupervisorArrangement extends ActionSupport{
 	private static final long serialVersionUID = 8833385464572061925L;
 
+	private action.Annual annual=new action.Annual();
+	public action.Annual getAnnual(){return this.annual;}
+	
+	
 	private ListOfRegionAndPracticeBases regionAndPracticeBase;
 	private Supervise[][][] supervises;
 	private InnerPerson[] innerPersonLeaders;
@@ -138,47 +142,6 @@ public class RegionLeaderAndSupervisorArrangement extends action.FunctionAction{
 		return Manager.tips("修改"+(ok?"成功":"失败")+"！"
 				+(error.length()>0?("\n"+error.toString()):""),
 				display());
-	}
-	
-	
-	
-	@Override
-	public int checkProgress(School school) {
-		if(school==null || school.getName()==null ||school.getName().isEmpty())
-			return ProgressError_null;
-	//	if(school.getName().equals(Role.jwc.getName()))
-	//		return ProgressMin;
-		try {
-			JoinParam param=new JoinParam(Region.class)
-					.append(JoinParam.Type.InnerJoin,
-							PracticeBase.class,
-							Field.getField(Region.class,"practiceBase"),
-							Field.getField(PracticeBase.class,"name"),
-							Field.getField(Region.class,"year"),
-							this.getAnnual().getYear())
-					.append(JoinParam.Type.LeftJoin,
-							Supervise.class,
-							Field.getField(Supervise.class,"practiceBase"),
-							Field.getField(PracticeBase.class,"name"),
-							Field.getField(Supervise.class,"year"),
-							this.getAnnual().getYear())
-					.append(JoinParam.Type.LeftJoin,
-							InnerPerson.class,
-							Field.getField(Supervise.class,"supervisorId"),
-							Field.getField(InnerPerson.class,"id"));
-			List<Base[]> tmp=null;
-			if(school.getName().equals(Role.jwc.getName()))
-				tmp=Base.list(param,new Restraint(Field.getField(InnerPerson.class,"name"),Restraint.Type.Like,InnerPerson.UndefinedName));
-			else
-				tmp=Base.list(param);
-			if(tmp.size()>0)
-				return ProgressMin;
-			else
-				return ProgressMax;
-		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
-			e.printStackTrace();
-		}
-		return ProgressError_SQL;
 	}
 
 	

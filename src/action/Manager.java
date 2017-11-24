@@ -58,14 +58,14 @@ public class Manager {
 	}
 	
 	static private final String userToken="inner";
-	static private final String userRoleToken="role";
+//	static private final String userRoleToken="role";
 	static public InnerPerson getUser(){
 		return Manager.loadSession(InnerPerson.class,userToken);}
 	static public void setUser(InnerPerson inner){
 		Manager.saveSession(userToken,inner);
-		try{
-			Manager.saveSession(userRoleToken,token.Role.getRole(inner));
-		}catch(Exception e){Manager.removeSession(userRoleToken);}
+//		try{
+//			Manager.saveSession(userRoleToken,Role.getRole(inner));
+//		}catch(Exception e){Manager.removeSession(userRoleToken);}
 	}
 	static public void removeUser(){
 		Manager.removeSession(userToken);}

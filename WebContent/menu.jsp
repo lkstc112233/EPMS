@@ -82,12 +82,8 @@
 							</s:else>
 						</span>
 						<a href='<s:url action="function_%{#__tableRow.actionClass}_display"/>' onclick="this.href=this.href+'?annual.year='+document.getElementById('annualYear').value">
-							<s:property value="#__tableRow.project" />
+							<s:property value="%{#__tableRow.project}" />
 						</a>
-						<span style="padding-left:20px;">
-							<s:property value="progress[#__status.index]" />
-							%
-						</span>
 					</li>  
 				</ul></td>
 			</tr>
