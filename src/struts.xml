@@ -62,10 +62,10 @@
 		<!--动作：menu配置-->
 		<action name="menu" class="action.login.MenuAction" method="execute">
 			<result name="jwc">		menu.jsp</result>
-			<result name="jwy">		menu.jsp</result>
-			<result name="jxyz">	menu.jsp</result>
+			<result name="lxr">		menu.jsp</result>
 			<result name="ld">		menu.jsp</result>
 			<result name="js">		menu.jsp</result>
+			<result name="xs">		menu.jsp</result>
 			<result> login.jsp</result>
 		</action>
 		

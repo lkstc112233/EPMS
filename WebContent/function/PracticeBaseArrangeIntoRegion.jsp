@@ -73,8 +73,9 @@
 				<s:iterator value="#__Row.practiceBases" var="__pbsRow" status="__pbsStatus">
 				<tr class="wtableContent">
 					<!-- 选择 -->
-					<td style="width:13px;">
-						<s:checkbox name="checkBox[%{#__pbsStatus.index}]" id="%{#__Status.index}_%{#__pbsStatus.index}"/>
+					<td style="width:13px;width:0;padding:0;">
+						<s:checkbox name="checkBox[%{#__pbsStatus.index}]" id="%{#__Status.index}_%{#__pbsStatus.index}"
+						style="width:100%;height:100%;margin:0;" theme="simple" />
 					</td>
 					<!-- 序号 -->
 					<td style="width:13px;">
@@ -108,8 +109,9 @@
 				<s:iterator value="#__Row.practiceBases" var="__pbsRow" status="__pbsStatus">
 				<tr class="wtableContent">
 					<!-- 选择 -->
-					<td style="width:13px;">
-						<s:checkbox name="checkBox[%{#__pbsStatus.index}]" id="%{#__Status.index}_%{#__pbsStatus.index}"/>
+					<td style="width:13px;padding:0;border:0;">
+						<s:checkbox name="checkBox[%{#__pbsStatus.index}]" id="%{#__Status.index}_%{#__pbsStatus.index}"
+						style="width:100%;height:100%;margin:0;" theme="simple" />
 					</td>
 					<!-- 序号 -->
 					<td style="width:13px;">
