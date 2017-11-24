@@ -3,23 +3,19 @@ package action.function;
 import java.sql.*;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 import action.Manager;
 import obj.*;
 import obj.annualTable.*;
 import obj.staticObject.PracticeBase;
 import obj.staticSource.Major;
+import obj.staticSource.School;
 import token.Role;
 
 /**
  * 导入免费师范生数据
  */
-public class StudentArrangeIntoPracticeBase extends ActionSupport{
+public class StudentArrangeIntoPracticeBase extends action.FunctionAction{
 	private static final long serialVersionUID = 5998268336475528662L;
-
-	private action.Annual annual=new action.Annual();
-	public action.Annual getAnnual(){return this.annual;}
 	
 	private String majorName="汉语言文学（师范）";
 	private boolean[] checkBox;
@@ -216,6 +212,36 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 		Manager.tips((sb.length()>0?(sb.toString()+" 已经从实习基地("+this.practiceBaseName+")移出！"):"error"));
 		Manager.removeSession(SessionListKey);
 		return display();
+	}
+	
+	
+	
+	
+	
+	@Override
+	public int checkProgress(School school) {
+		if(school==null || school.getName()==null ||school.getName().isEmpty())
+			return ProgressError_null;
+	//	if(school.getName().equals(Role.jwc.getName()))
+	//		return ProgressMin;
+		int a=0,b=0;
+		try {
+			for(Major major:Base.list(Major.class,new Restraint(
+				Field.getField(Major.class,"school"),school.getName()))) {
+				for(Student stu:Base.list(Student.class,new Restraint(
+						Field.getFields(Student.class,"year","major"),
+						new Object[] {this.getAnnual().getYear(),major.getName()}))){
+					if(stu.getPracticeBase()==null || stu.getPracticeBase().isEmpty())
+						a++;
+					b++;
+				}
+			}
+		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
+			e.printStackTrace();
+			return ProgressError_SQL;
+		}
+		return a<=0?ProgressMax:
+			(b-a)*(ProgressMax-ProgressMin)/b;
 	}
 	
 	

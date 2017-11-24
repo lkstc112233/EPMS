@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.opensymphony.xwork2.ActionSupport;
 
+import action.FunctionAction;
 import action.Manager;
 import obj.annualTable.Time;
 import obj.staticObject.InnerPerson;
@@ -17,9 +18,12 @@ public class MenuAction extends ActionSupport{
 	public action.Annual getAnnual(){return this.annual;}
 	
 	private List<Time> times=new ArrayList<Time>();
+	private List<Integer> progress=new ArrayList<Integer>();
 	
 	public List<Time> getTimes(){return times;}
 	public void setTimes(List<Time> times){this.times=times;}
+	public List<Integer> getProgress(){return this.progress;}
+	
 
 	public MenuAction(){
 		super();
@@ -43,6 +47,26 @@ public class MenuAction extends ActionSupport{
 		}
 		Manager.clearSession();
 		Manager.setUser(user);
+		try {
+			obj.staticSource.School school=new obj.staticSource.School(Manager.getUser().getSchool());
+			for(Time t:times) {
+				int res=FunctionAction.ProgressMin;
+				try {
+					Class<?> clazz=Class.forName("action.function."+t.getActionClass());
+					if(FunctionAction.class.isAssignableFrom(clazz)) {
+						FunctionAction fa=(FunctionAction)clazz.newInstance();
+						res=fa.checkProgress(school);
+						System.out.println(">> "+t.getActionClass()+" >Progress>> "+res);
+					}
+				}catch(ClassNotFoundException e) {
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+				this.progress.add(Math.max(FunctionAction.ProgressMin,Math.min(res,FunctionAction.ProgressMax)));
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 		String res=Role.getRole(Manager.getUser()).toString();
 		System.out.println(">> MenuAction:execute <"+res);
 		return res;
