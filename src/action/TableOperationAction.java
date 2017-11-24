@@ -8,9 +8,11 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.struts2.ServletActionContext;
 
+import com.opensymphony.xwork2.ActionSupport;
+
 import obj.*;
 
-abstract class TableOperationAction extends FunctionAction{
+abstract class TableOperationAction extends ActionSupport{
 	private static final long serialVersionUID = 5998268336475528662L;
 
 	static public final String SessionSearchKey="TableOperationAction_Search";

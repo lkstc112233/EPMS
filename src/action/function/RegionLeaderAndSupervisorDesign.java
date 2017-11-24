@@ -3,15 +3,20 @@ package action.function;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.opensymphony.xwork2.ActionSupport;
+
 import action.Manager;
 import obj.*;
 import obj.annualTable.*;
 import obj.staticObject.InnerPerson;
 import obj.staticObject.PracticeBase;
-import obj.staticSource.School;
 
-public class RegionLeaderAndSupervisorDesign extends action.FunctionAction{
+public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 	private static final long serialVersionUID = 8833385464572061925L;
+
+	private action.Annual annual=new action.Annual();
+	public action.Annual getAnnual(){return this.annual;}
+	
 	
 	private ListOfRegionAndPracticeBases regionAndPracticeBase;
 	private Supervise[][][] supervises;
@@ -110,15 +115,6 @@ public class RegionLeaderAndSupervisorDesign extends action.FunctionAction{
 		return Manager.tips("修改"+(ok?"成功":"失败")+"！"
 				+(error.length()>0?("\n"+error.toString()):""),
 				display());
-	}
-	
-	
-	
-	@Override
-	public int checkProgress(School school) {
-		if(school==null || school.getName()==null ||school.getName().isEmpty())
-			return ProgressError_null;
-		return ProgressMin;
 	}
 
 	

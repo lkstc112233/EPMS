@@ -3,14 +3,19 @@ package action.function;
 import java.sql.SQLException;
 import java.util.*;
 
+import com.opensymphony.xwork2.ActionSupport;
+
 import action.Manager;
 import obj.*;
 import obj.annualTable.*;
 import obj.staticSource.Major;
-import obj.staticSource.School;
 
-public class PlanAllDesign extends action.FunctionAction{
+public class PlanAllDesign extends ActionSupport{
 	private static final long serialVersionUID = 8833385464572061925L;
+
+	private action.Annual annual=new action.Annual();
+	public action.Annual getAnnual(){return this.annual;}
+	
 	
 	private List<Major> majors;
 	private ListOfRegionAndPracticeBases regionAndPracticeBase;
@@ -131,16 +136,6 @@ public class PlanAllDesign extends action.FunctionAction{
 		else
 			return Manager.tips("修改成功！",
 					display());
-	}
-	
-	
-	
-	
-	@Override
-	public int checkProgress(School school) {
-		if(school==null || school.getName()==null ||school.getName().isEmpty())
-			return ProgressError_null;
-		return ProgressMin;
 	}
 
 	

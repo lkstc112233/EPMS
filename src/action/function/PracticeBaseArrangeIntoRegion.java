@@ -3,13 +3,17 @@ package action.function;
 import java.sql.*;
 import java.util.*;
 
+import com.opensymphony.xwork2.ActionSupport;
+
 import action.Manager;
 import obj.annualTable.*;
 import obj.staticObject.PracticeBase;
-import obj.staticSource.School;
 
-public class PracticeBaseArrangeIntoRegion extends action.FunctionAction{
+public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 	private static final long serialVersionUID = 5998268336475528662L;
+
+	private action.Annual annual=new action.Annual();
+	public action.Annual getAnnual(){return this.annual;}
 
 	private boolean[] checkBox;
 	private ListOfRegionAndPracticeBases regionAndPracticeBase;
@@ -104,7 +108,7 @@ public class PracticeBaseArrangeIntoRegion extends action.FunctionAction{
 				sb.append(pb.getName());
 			}
 		}
-		Manager.tips((sb.length()>0?(sb.toString()+" 已经添加到大区("+this.regionName+")！"):"")+
+		Manager.tips(sb.toString()+" 已经添加到大区("+this.regionName+")！"+
 			(error.length()>0?("\n\n错误信息：\n"+error.toString()):""));
 		Manager.removeSession(SessionListKey);
 		return display();
@@ -159,16 +163,6 @@ public class PracticeBaseArrangeIntoRegion extends action.FunctionAction{
 		Manager.tips(sb.toString()+" 已经从大区("+this.regionName+")移除！");
 		Manager.removeSession(SessionListKey);
 		return display();
-	}
-	
-	
-	
-	
-	@Override
-	public int checkProgress(School school) {
-		if(school==null || school.getName()==null ||school.getName().isEmpty())
-			return ProgressError_null;
-		return ProgressMin;
 	}
 	
 	
