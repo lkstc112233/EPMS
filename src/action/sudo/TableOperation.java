@@ -2,6 +2,7 @@ package action.sudo;
 
 import obj.*;
 import obj.restraint.AllRestraint;
+import obj.staticSource.School;
 
 public class TableOperation extends action.TableOperation2Action{
 	private static final long serialVersionUID = 8833385464572061925L;
@@ -40,6 +41,12 @@ public class TableOperation extends action.TableOperation2Action{
 		System.out.println(">> TableOperation:createSearch > tableName="+this.tableName);
 		JoinParam param=new JoinParam(Base.getClassForName(this.tableName));
 		return new Search(param,new AllRestraint(param,3));
+	}
+	
+	
+	@Override
+	public int checkProgress(School school) {
+		return ProgressMin;
 	}
 	
 }

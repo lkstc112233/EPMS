@@ -3,18 +3,13 @@ package action.function;
 import java.sql.*;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 import action.Manager;
 import obj.annualTable.Region;
 import obj.staticObject.InnerPerson;
+import obj.staticSource.School;
 
-public class RegionInfo extends ActionSupport{
+public class RegionInfo extends action.FunctionAction{
 	private static final long serialVersionUID = 5998268336475528662L;
-
-	private action.Annual annual=new action.Annual();
-	public action.Annual getAnnual(){return this.annual;}
-
 	
 	private Region region;
 	private List<InnerPerson> innerPersons;
@@ -76,6 +71,12 @@ public class RegionInfo extends ActionSupport{
 		System.out.println(">> RegionInfo:display > region="+this.region);
 		System.out.println(">> RegionInfo:display <NONE");
 		return NONE;
+	}
+	
+	
+	@Override
+	public int checkProgress(School school) {
+		return ProgressMax;
 	}
 	
 	
