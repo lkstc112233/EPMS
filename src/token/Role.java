@@ -1,6 +1,5 @@
 package token;
 
-import java.sql.SQLException;
 import java.util.*;
 
 import obj.*;
@@ -32,32 +31,23 @@ public enum Role{
 		return res;
 	}
 	
-	static public Role getRole(Object b) {
+	static public Role getRole(Base b) {
 		if(b==null) return null;
-		if(b instanceof InnerPerson || b instanceof String) {
-			try {
-				b=new InnerOffice((b instanceof InnerPerson)?((InnerPerson)b).getOffice():b.toString());
-			}catch(IllegalArgumentException | SQLException e) {
-				return null;
-			}
-		}
-		if(b instanceof InnerOffice) {
-			InnerOffice x=(InnerOffice)b;
-			if(x.getIsSchool()) {
-				//属于部院系分支
-				if(x.getName().contains(Role.lxr.getName()))//[(免费师范生/普通师范生)"教育实习联系人"]
-					return Role.lxr;
-				return Role.js;
-			}
-			if(x.getName().equals(Role.jwc.getName()))
-				return Role.jwc;
-			if(x.getName().equals(Role.ld.getName()))
-				return Role.ld;
-			return null;
-		}
 		if(b instanceof Student)
 			return Role.xs;
-		return null;
-		
+		if(!(b instanceof InnerPerson))
+			return null;
+		InnerPerson inner=(InnerPerson)b;
+		if(inner.getSchool()==null || inner.getSchool().isEmpty())
+			return null;
+		if(inner.getOffice()==null || inner.getOffice().isEmpty())
+			return null;
+		boolean isSchool=inner.getSchool().equals("教务处");
+		if(inner.getOffice().contains("教育实习联系人"))
+			return isSchool ? Role.lxr : Role.jwc;
+		else if(inner.getOffice().contains("教学院长"))
+			return isSchool ? Role.js : Role.ld;
+		else
+			return isSchool ? Role.xs : null;
 	}
 }
