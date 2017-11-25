@@ -10,6 +10,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import com.opensymphony.xwork2.ActionSupport;
 
 import obj.*;
+import obj.restraint.BaseRestraint;
 
 public abstract class TableOperationAction extends ActionSupport{
 	private static final long serialVersionUID = 5998268336475528662L;
@@ -243,6 +244,20 @@ public abstract class TableOperationAction extends ActionSupport{
 	private File uploadFile=null;			public File getUploadFile(){return uploadFile;}public void setUploadFile(File uploadFile){this.uploadFile=uploadFile;}
 	private String uploadFileContentType;	public String getUploadFileContentType(){return this.uploadFileContentType;}public void setUploadFileContentType(String a){this.uploadFileContentType=a;}
 	private String uploadFileFileName;	public String getUploadFileFileName(){return this.uploadFileFileName;}public void setUploadFileFileName(String a){this.uploadFileFileName=a;}
+	protected List<? extends Base> uploadByIO(SQLIO io,Class<? extends Base> clazz,
+			InputStream stream,List<Integer> error,BaseRestraint restraint) throws IOException, EncryptedDocumentException, InvalidFormatException, InstantiationException, IllegalAccessException{
+		int i=0;
+		for(JoinParam.Part part:this.search.getParam().getList()) {
+			if(part.getClazz().equals(clazz)) break;
+			i++;
+		}
+		List<Field> tmp=new ArrayList<Field>();
+		int j=0;for(Field f:Field.getFields(clazz)) {
+			if(this.fieldsDisplay[i][j++])
+				tmp.add(f);
+		}
+		return io.readExcel(clazz,tmp,stream,error,restraint);
+	}
 	public String upload(){//上传文件
 		System.out.println(">> TableOperationAction:upload > uploadFileContentType="+this.getUploadFileContentType());
 		System.out.println(">> TableOperationAction:upload > uploadFileFileName="+this.getUploadFileFileName());
@@ -254,7 +269,7 @@ public abstract class TableOperationAction extends ActionSupport{
 		List<? extends Base> content=null;
 		List<Integer> errorIndex=new ArrayList<Integer>();
 		try(FileInputStream in=new FileInputStream(this.getUploadFile());){
-			content=Base.io().readExcel(clazz,in,errorIndex,this.getSearch().getBaseRestraint());
+			content=this.uploadByIO(Base.io(),clazz,in,errorIndex,this.getSearch().getBaseRestraint());
 		}
 		catch(IOException e){
 			return Manager.tips("文件错误！",e,display());

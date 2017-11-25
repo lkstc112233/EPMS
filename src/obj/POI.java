@@ -90,7 +90,7 @@ public class POI implements SQLIO{
 
 	@Override
 	public <T extends Base>
-	List<T> readExcel(Class<T> clazz,InputStream in,List<Integer> error,BaseRestraint restraint) throws IOException, EncryptedDocumentException, InvalidFormatException, InstantiationException, IllegalAccessException{
+	List<T> readExcel(Class<T> clazz,Collection<Field> displayFields,InputStream in,List<Integer> error,BaseRestraint restraint) throws IOException, EncryptedDocumentException, InvalidFormatException, InstantiationException, IllegalAccessException{
 		List<T> res=new ArrayList<T>();
 		Map<Short,Field> fsMap=new HashMap<Short,Field>();
 		try(Workbook wb=new XSSFWorkbook(in);){
@@ -107,7 +107,7 @@ public class POI implements SQLIO{
 						c.setCellType(CellType.STRING);
 						String fieldName=c.getStringCellValue();
 						Field field=Field.getField(clazz,fieldName);
-						if(field!=null)
+						if(field!=null && displayFields.contains(field))
 							fsMap.put(i,field);
 					}
 				}else{//对应Content
