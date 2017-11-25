@@ -6,11 +6,11 @@ import java.util.*;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
 
 import obj.*;
+import obj.restraint.BaseRestraint;
 
 public abstract class TableOperationAction2 extends ActionSupport{
 	private static final long serialVersionUID = 5998268336475528662L;
@@ -27,6 +27,7 @@ public abstract class TableOperationAction2 extends ActionSupport{
 	
 	public Search getSearch(){return this.search;}
 	public Integer[] getChoose(){return this.choose;}
+	public boolean[][] getFieldsDisplay(){return this.fieldsDisplay;}
 	public Base getOperateBase(){return this.operateBase;}
 	public Field[] getAllSelectFields(){
 		int len=0;
@@ -97,11 +98,11 @@ public abstract class TableOperationAction2 extends ActionSupport{
 				this.fieldsDisplay[i]=new boolean[Field.getFields(part.getClazz()).length];
 				int j=0;
 				for(Field f2:Field.getFields(part.getClazz())){
-					this.fieldsDisplay[i][j]=false;
+					this.fieldsDisplay[i][j]=true;
 					Field[] tmp=this.refuseDisplayField();
 					if(tmp!=null) for(Field f:tmp) {
 						if(f!=null && f2.getClazz().equals(f.getClazz()) && f2.equals(f)){
-							this.fieldsDisplay[i][j]=true;
+							this.fieldsDisplay[i][j]=false;
 							break;
 						}
 					}
@@ -243,6 +244,20 @@ public abstract class TableOperationAction2 extends ActionSupport{
 	private File uploadFile=null;			public File getUploadFile(){return uploadFile;}public void setUploadFile(File uploadFile){this.uploadFile=uploadFile;}
 	private String uploadFileContentType;	public String getUploadFileContentType(){return this.uploadFileContentType;}public void setUploadFileContentType(String a){this.uploadFileContentType=a;}
 	private String uploadFileFileName;	public String getUploadFileFileName(){return this.uploadFileFileName;}public void setUploadFileFileName(String a){this.uploadFileFileName=a;}
+	protected List<? extends Base> uploadByIO(SQLIO io,Class<? extends Base> clazz,
+			InputStream stream,List<Integer> error,BaseRestraint restraint) throws IOException, EncryptedDocumentException, InvalidFormatException, InstantiationException, IllegalAccessException{
+		int i=0;
+		for(JoinParam.Part part:this.search.getParam().getList()) {
+			if(part.getClazz().equals(clazz)) break;
+			i++;
+		}
+		List<Field> tmp=new ArrayList<Field>();
+		int j=0;for(Field f:Field.getFields(clazz)) {
+			if(this.fieldsDisplay[i][j++])
+				tmp.add(f);
+		}
+		return io.readExcel(clazz,tmp,stream,error,restraint);
+	}
 	public String upload(){//上传文件
 		System.out.println(">> TableOperationAction:upload > uploadFileContentType="+this.getUploadFileContentType());
 		System.out.println(">> TableOperationAction:upload > uploadFileFileName="+this.getUploadFileFileName());
@@ -254,7 +269,7 @@ public abstract class TableOperationAction2 extends ActionSupport{
 		List<? extends Base> content=null;
 		List<Integer> errorIndex=new ArrayList<Integer>();
 		try(FileInputStream in=new FileInputStream(this.getUploadFile());){
-			content=Base.io().readExcel(clazz,in,errorIndex,this.getSearch().getBaseRestraint());
+			content=this.uploadByIO(Base.io(),clazz,in,errorIndex,this.getSearch().getBaseRestraint());
 		}
 		catch(IOException e){
 			return Manager.tips("文件错误！",e,display());
@@ -298,16 +313,27 @@ public abstract class TableOperationAction2 extends ActionSupport{
 	 */
 	private String downloadFileName;
 		public void setDownloadFileName(String a){
+			this.downloadFileName=a;
 			try{this.downloadFileName=new String(a.getBytes("gb2312"), "iso8859-1");
 			}catch(UnsupportedEncodingException e){
 				e.printStackTrace();
 				this.downloadFileName=a;
-			}
+			}//*/
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private OutputStream downloadOutputStream=null;
 	protected void downloadByIO(SQLIO io,Class<? extends Base> clazz,OutputStream stream) throws IOException{
-		io.getModelExcel(clazz,Field.getFields(clazz),stream);
+		int i=0;
+		for(JoinParam.Part part:this.search.getParam().getList()) {
+			if(part.getClazz().equals(clazz)) break;
+			i++;
+		}
+		List<Field> tmp=new ArrayList<Field>();
+		int j=0;for(Field f:Field.getFields(clazz)) {
+			if(this.fieldsDisplay[i][j++])
+				tmp.add(f);
+		}
+		io.getModelExcel(clazz,tmp,stream);
 	}
 	public String download(){//下载模板
 		System.out.println(">> TableOperationAction:download > tableName="+this.fileTableName);
@@ -339,11 +365,11 @@ public abstract class TableOperationAction2 extends ActionSupport{
 		}
 		this.downloadOutputStream=null;
 		ByteArrayInputStream in=new ByteArrayInputStream(data);
-		try {
+	/*	try {
 			ServletActionContext.getResponse().setHeader("Content-Disposition","attachment;downloadFileName="+java.net.URLEncoder.encode(this.downloadFileName, "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-		}
+		}//*/
 		return in;
 	}
 	
