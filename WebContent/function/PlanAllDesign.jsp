@@ -33,6 +33,7 @@
 				<s:iterator value="majors" var="__majorCol">
 					<td style="width:5%;"><s:property value="#__majorCol.subject" /></td>
 				</s:iterator>
+				<td>备注</td>
 			</tr>
 			<s:iterator value="regionAndPracticeBase.list" var="__regionRow" status="__regionStatus">
 			<s:iterator value="#__regionRow.practiceBases" var="__practiceBaseRow" status="__practiceBaseStatus">
@@ -54,6 +55,9 @@
 								value="%{numbers[#__majorStatus.index][#__regionStatus.index][#__practiceBaseStatus.index]}" />
 						</td>
 					</s:iterator>
+					<!-- 备注 --><td>
+						<s:textarea name="#__practiceBaseRow.remark" value="%{#__practiceBaseRow.remark}" />
+					</td>
 				</tr>
 			</s:iterator></s:iterator>
 		</tbody></table>

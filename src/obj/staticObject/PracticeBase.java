@@ -30,6 +30,8 @@ public class PracticeBase extends Base implements Base.ListableWithNoSave{
 	private String zh;
 	@SQLField(value="税务识别码",weight=15,ps="2017年7月1日起实施")
 	private String swsbm;
+	@SQLField(value="备注",weight=1001,ps="文本储存")
+	private String remark;
 
 	public String getName(){return name;}
 	public void setName(String a){this.name=a;}
@@ -50,6 +52,8 @@ public class PracticeBase extends Base implements Base.ListableWithNoSave{
 	public void setZh(String zh) {this.zh = zh;}
 	public String getSwsbm() {return swsbm;}
 	public void setSwsbm(String swsbm) {this.swsbm = swsbm;}
+	public String getRemark() {return remark;}
+	public void setRemark(String remark) {this.remark = remark;}
 
 	
 	@Override

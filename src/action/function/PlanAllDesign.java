@@ -8,6 +8,7 @@ import com.opensymphony.xwork2.ActionSupport;
 import action.Manager;
 import obj.*;
 import obj.annualTable.*;
+import obj.staticObject.PracticeBase;
 import obj.staticSource.Major;
 
 public class PlanAllDesign extends ActionSupport{
@@ -98,7 +99,10 @@ public class PlanAllDesign extends ActionSupport{
 						num=Integer.valueOf(this.numbers[i][j][k]);
 					}catch(NumberFormatException e){
 						e.printStackTrace();
-						error.append("\n("+i+","+j+","+k+")"+e.getMessage());
+						error.append("\n("+this.getMajors().get(i)+","+
+						this.regionAndPracticeBase.getList().get(j).getRegion().getDescription()+","+
+						this.regionAndPracticeBase.getList().get(j).getPracticeBases().get(k).getDescription()+
+						")"+e.getMessage());
 						continue;
 					}
 					if(num<0) num=0;
@@ -110,7 +114,7 @@ public class PlanAllDesign extends ActionSupport{
 						if(p.existAndLoad()){
 							if(num==0)
 								p.delete();
-							else{
+							else if(p.getNumber()!=num){
 								p.setNumber(num);
 								p.update();
 							}
@@ -121,17 +125,28 @@ public class PlanAllDesign extends ActionSupport{
 						ok=true;
 					} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
 						e.printStackTrace();
-						error.append("\n("+i+","+j+","+k+")"+e.getMessage());
+						error.append("\n("+this.getMajors().get(i)+","+
+						this.regionAndPracticeBase.getList().get(j).getRegion().getDescription()+","+
+						this.regionAndPracticeBase.getList().get(j).getPracticeBases().get(k).getDescription()+
+						")"+e.getMessage());
 						continue;
 					}
 				}
 			}
 		}
+		for(ListOfRegionAndPracticeBases.Pair pair:this.regionAndPracticeBase.getList()) {
+			for(PracticeBase pb:pair.getPracticeBases()) try {
+				pb.update();
+			}catch(IllegalArgumentException | SQLException e) {
+				e.printStackTrace();
+				error.append("\n"+pb.getDescription()+"备注修改失败！("+e.getMessage()+")");
+			}
+		}
 		if(!ok)
-			return Manager.tips("修改失败！失败条目:"+error.toString(),
+			return Manager.tips("修改失败！\n\n失败条目:"+error.toString(),
 					display());
 		else if(error.length()>0)
-			return Manager.tips("修改成功！\n失败条目:"+error.toString(),
+			return Manager.tips("修改成功！\n\n失败条目:"+error.toString(),
 					display());
 		else
 			return Manager.tips("修改成功！",
