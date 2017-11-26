@@ -4,7 +4,6 @@ import java.sql.SQLException;
 
 import obj.*;
 import obj.annualTable.Student;
-import obj.staticSource.City;
 
 @SQLTable("PracticeBase")
 public class PracticeBase extends Base implements Base.ListableWithNoSave{
@@ -14,8 +13,8 @@ public class PracticeBase extends Base implements Base.ListableWithNoSave{
 	
 	@SQLField(value="实习基地名称",weight=1,isKey=true,notNull=true)
 	private String name;
-	@SQLField(value="所处城市",weight=2,notNull=true,source="City.name")
-	private String city;
+	@SQLField(value="所处城市",weight=2,notNull=true,source="Province.name")
+	private String province;
 	@SQLField(value="回生源地实习大区",weight=3,notNull=true)
 	private boolean hx;
 	@SQLField(value="拒绝接收的民族",weight=10,ps="('汉族'),('蒙古族'),('回族'),('东乡族'),('维吾尔族'),('哈萨克族'),('土家族'),('藏族'),('壮族'),...")
@@ -35,8 +34,8 @@ public class PracticeBase extends Base implements Base.ListableWithNoSave{
 
 	public String getName(){return name;}
 	public void setName(String a){this.name=a;}
-	public String getCity(){return city==null||city.isEmpty()?null:city;}
-	public void setCity(String a){this.city=a;}
+	public String getProvince(){return province==null||province.isEmpty()?null:province;}
+	public void setProvince(String a){this.province=a;}
 	public boolean getHx() {return this.hx;}
 	public void setHx(boolean a) {this.hx=a;}
 	public void setHx(String a) {this.hx=Field.s2b(a,false);}
@@ -88,12 +87,9 @@ public class PracticeBase extends Base implements Base.ListableWithNoSave{
 			throw new IllegalArgumentException("实习学校("+this.getName()+")拒绝接收不想回生源地实习的学生！");
 		if(!this.getHx() && stu.getHxyx())
 			throw new IllegalArgumentException("实习学校("+this.getName()+")拒绝接收想回生源地实习的学生！");
-		if(this.getHx() && stu.getHxyx()) try {
-			if(!new City(this.getCity()).getProvince().equals(stu.getProvince()))
-				throw new IllegalArgumentException("实习学校("+this.getName()+")位于"+this.getCity()+"拒绝接收生源地"+stu.getProvince()+"的学生！");
-		}catch(IllegalArgumentException | SQLException e) {
-			throw new IllegalArgumentException(e.getMessage());
-		}
+		if(this.getHx() && stu.getHxyx())
+			if(!this.getProvince().equals(stu.getProvince()))
+				throw new IllegalArgumentException("实习学校("+this.getName()+")位于"+this.getProvince()+"拒绝接收生源地"+stu.getProvince()+"的学生！");
 		return true;
 	}
 	

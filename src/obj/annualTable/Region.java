@@ -153,10 +153,10 @@ public class Region extends AnnualBase{
 		for(Base[] bs:tmp) if(bs!=null && bs.length>=2 && bs[0]!=null){
 			PracticeBase p=(PracticeBase)bs[0];
 			if(pb.getHx() ^ p.getHx())
-				throw new IllegalArgumentException("与("+p.getDescription()+")回生源地规划不同!");
+				throw new IllegalArgumentException("与\""+p.getDescription()+"\"回生源地规划不同!");
 			if(pb.getHx()) {
-				if(!pb.getCity().equals(p.getCity()))
-					throw new IllegalArgumentException("与("+p.getDescription()+")所属地区不同!");
+				if(!pb.getProvince().equals(p.getProvince()))
+					throw new IllegalArgumentException("与\""+p.getDescription()+"\"所属地区不同!");
 			}
 		}
 		return true;
