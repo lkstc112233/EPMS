@@ -3,6 +3,21 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags" %>
     
+<% //跳转到当前操作的条目,choose[0]表示块index、choose[1]表示行号
+Object tmp=pageContext.findAttribute("choose");
+Integer x=null;
+if(tmp!=null){
+	if(tmp instanceof Integer[])
+		x=((Integer[])tmp)[1];
+	else if(tmp instanceof Integer)
+		x=(Integer)tmp;
+}
+if(x!=null){ %>
+	<script>
+		location.href="#choose<%=x%>";
+	</script>
+<% } %>
+	
 	
 <div class="bag">
 	<% request.setAttribute("actionName",request.getParameter("actionName"));%>
@@ -142,10 +157,13 @@
 				这里会显示结果集
 			</td></tr>
 		</s:if><s:else>
+			<% int i=0; %>
 			<s:iterator value="search.result" var="__Row" status="__Status">
 				<tr class="wtableContent">
 					<td style="width:13px;">
 						<s:property value="%{#__Status.count}" />
+						<% pageContext.setAttribute("_id",String.format("choose%d",i++)); %>
+						<div id="${_id}"></div>
 					</td>
 					<s:iterator value="search.param.list" var="__Part" status="__PartStatus">
 						<td style="width:27px;">
