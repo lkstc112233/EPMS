@@ -245,7 +245,7 @@ public abstract class TableOperationAction extends ActionSupport{
 	private String uploadFileContentType;	public String getUploadFileContentType(){return this.uploadFileContentType;}public void setUploadFileContentType(String a){this.uploadFileContentType=a;}
 	private String uploadFileFileName;	public String getUploadFileFileName(){return this.uploadFileFileName;}public void setUploadFileFileName(String a){this.uploadFileFileName=a;}
 	protected List<? extends Base> uploadByIO(SQLIO io,Class<? extends Base> clazz,
-			InputStream stream,List<Integer> error,BaseRestraint restraint) throws IOException, EncryptedDocumentException, InvalidFormatException, InstantiationException, IllegalAccessException{
+			InputStream stream,List<String> error,BaseRestraint restraint) throws IOException, EncryptedDocumentException, InvalidFormatException, InstantiationException, IllegalAccessException{
 		int i=0;
 		for(JoinParam.Part part:this.search.getParam().getList()) {
 			if(part.getClazz().equals(clazz)) break;
@@ -267,9 +267,9 @@ public abstract class TableOperationAction extends ActionSupport{
 		if(this.getUploadFile()==null)
 			return Manager.tips("上传了空文件！",display());
 		List<? extends Base> content=null;
-		List<Integer> errorIndex=new ArrayList<Integer>();
+		List<String> error=new ArrayList<String>();
 		try(FileInputStream in=new FileInputStream(this.getUploadFile());){
-			content=this.uploadByIO(Base.io(),clazz,in,errorIndex,this.getSearch().getBaseRestraint());
+			content=this.uploadByIO(Base.io(),clazz,in,error,this.getSearch().getBaseRestraint());
 		}
 		catch(IOException e){
 			return Manager.tips("文件错误！",e,display());
@@ -288,21 +288,23 @@ public abstract class TableOperationAction extends ActionSupport{
 			return Manager.tips("文件为空！",display());
 		for(int i=0;i<content.size();i++) try{
 			Base b=content.get(i);
-			if(b.exist())
+			if(b==null) continue;
+			if(b.exist()) {
 				b.update();
-			else
+				error.set(i,"更新成功!");
+			}else {
 				b.create();
+				error.set(i,"添加成功!");
+			}
 		}catch (IllegalArgumentException | IllegalAccessException | SQLException | InstantiationException e) {
 			e.printStackTrace();
-			errorIndex.add(i);
+			error.set(i,"出错!("+e.getMessage()+")");
 		}
-		if(!errorIndex.isEmpty()){
-			StringBuilder error=new StringBuilder("上传失败序号：");
-			for(int i:errorIndex){
-				error.append(i);
-				error.append(';');
-			}
-			return Manager.tips(error.toString(),display());
+		if(!error.isEmpty()){
+			StringBuilder errorMsg=new StringBuilder("上传情况：\n\n");
+			for(int i=0;i<error.size();i++)
+				errorMsg.append("Row["+i+"]:"+error.get(i)+"\n");
+			return Manager.tips(errorMsg.toString(),display());
 		}
 		Manager.tips("上传成功！");
 		return display();
