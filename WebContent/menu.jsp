@@ -45,8 +45,8 @@
 						<s:select id="annualYear" name="annual.year" cssClass="title_button" style="width:120px;margin-bottom:2px;"
 						list="{'2016','2017','2018','2019','2020','2021'}" theme="simple"
 						onchange="window.location.href=window.location.href.substring(0,(
-						window.location.href.indexOf('?')<0?window.location.length:window.location.href.indexOf('?'))
-						)+'?annual.year='+this.value"/>
+						window.location.href.lastIndexOf('/')<0?window.location.length:window.location.href.lastIndexOf('/'))
+						)+'/menu.action?annual.year='+this.value"/>
 					</div>
 				</div>
 			</td>
