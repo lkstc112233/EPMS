@@ -87,7 +87,7 @@ public class RegionLeaderAndSupervisorArrangement extends ActionSupport{
 			else
 				this.innerPersons=Base.list(InnerPerson.class,new Restraint(new Restraint.Part[]{
 						new Restraint.Part(Field.getField(InnerPerson.class,"school"),Manager.getUser().getSchool()),
-						new Restraint.Part(Field.getField(InnerPerson.class,"name"),Restraint.Type.NotLike,InnerPerson.UndefinedName)
+				//		new Restraint.Part(Field.getField(InnerPerson.class,"name"),Restraint.Type.NotLike,InnerPerson.UndefinedName)
 						}));
 		}catch(SQLException | IllegalArgumentException | InstantiationException e){
 			return Manager.tips("数据库读取校内人员列表失败！",e,NONE);
