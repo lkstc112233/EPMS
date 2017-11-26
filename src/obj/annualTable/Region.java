@@ -1,9 +1,11 @@
 package obj.annualTable;
 
 import java.sql.*;
+import java.util.List;
 
 import persistence.DB;
 import obj.*;
+import obj.staticObject.PracticeBase;
 
 @SQLTable("Region")
 public class Region extends AnnualBase{
@@ -109,6 +111,56 @@ public class Region extends AnnualBase{
 		return null;
 	}
 	
+	
+	
+	/**
+	 * 需要检查当前大区包含的实习基地是否和新加入的实习基地有冲突<br/>
+	 * 冲突是指：<br/>
+	 * 1. 实习基地hx属性不一致（一个大区不能既包含回乡实习基地又包含北京附近实习基地）<br/>
+	 * 2. 实习基地hx均为true时，province不一致（一个大区是回乡实习基地大区时，必须在同一省份）<br/>
+	 */
+	@Override
+	public void create() throws IllegalArgumentException, SQLException, IllegalAccessException{
+		if(!this.checkNotNullField())
+			throw new IllegalArgumentException("The notNull fields are not completed!");
+		PracticeBase pb=new PracticeBase(this.getPracticeBase());
+		if(this.checkPracticeBase(pb))
+			super.create();
+	}
+	/**
+	 * 检查实习基地是否能放入当前大区<br/>
+	 * 检查当前大区包含的实习基地是否和新加入的实习基地有冲突<br/>
+	 * 冲突是指：<br/>
+	 * 1. 实习基地hx属性不一致（一个大区不能既包含回乡实习基地又包含北京附近实习基地）<br/>
+	 * 2. 实习基地hx均为true时，province不一致（一个大区是回乡实习基地大区时，必须在同一省份）<br/>
+	 * @return 只会返回true
+	 * @throws IllegalArgumentException 错误信息
+	 */
+	public boolean checkPracticeBase(PracticeBase pb) throws IllegalArgumentException{
+		if(pb==null) throw new IllegalArgumentException("实习基地为空！");
+		List<Base[]> tmp;
+		try {
+			tmp = Base.list(new JoinParam(PracticeBase.class)
+					.append(JoinParam.Type.InnerJoin,Region.class,
+							Field.getField(Region.class,"practiceBase"),
+							Field.getField(PracticeBase.class,"name"),
+							Field.getField(Region.class,"year"),
+							this.getYear())
+					);
+		} catch (InstantiationException | SQLException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+		for(Base[] bs:tmp) if(bs!=null && bs.length>=2 && bs[0]!=null){
+			PracticeBase p=(PracticeBase)bs[0];
+			if(pb.getHx() ^ p.getHx())
+				throw new IllegalArgumentException("与("+p.getDescription()+")回生源地规划不同!");
+			if(pb.getHx()) {
+				if(!pb.getCity().equals(p.getCity()))
+					throw new IllegalArgumentException("与("+p.getDescription()+")所属地区不同!");
+			}
+		}
+		return true;
+	}
 	
 	/**
 	 * 需要同时修改所有该大区内容（包括year）
