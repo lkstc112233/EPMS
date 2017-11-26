@@ -68,7 +68,6 @@
 						<s:if test="innerPersonSupervisors[#__typeStatus.index][#__regionStatus.index][#__practiceBaseStatus.index].isSameSchool">
 							<s:select list="innerPersons"
 									listKey="id" listValue="name"
-									headerKey="" headerValue="-未定-"
 									name="supervises[%{#__typeStatus.index}][%{#__regionStatus.index}][%{#__practiceBaseStatus.index}].supervisorId"
 									value="%{supervises[#__typeStatus.index][#__regionStatus.index][#__practiceBaseStatus.index].supervisorId}"
 									style="text-align:center;width:100%;height:100%;border:0;" theme="simple"/>

@@ -61,10 +61,10 @@
 							<li>
 								<span class="time">	<!-- 模板下载 -->
 									[<a href="<s:url action='%{#request.actionName}_download'/>?fileTableName=<s:property value='#__Part.SQLTableName'/>">
-									down</a>]
+									模板</a>]
 								</span>
 								<s:form action="%{#request.actionName}_upload" method="post" theme="simple" enctype="multipart/form-data">
-									<s:hidden name="fileTableName" value="%{tableName}" />
+									<s:hidden name="fileTableName" value="%{#__Part.SQLTableName}" />
 									新增
 									<s:file label="上传数据" theme="simple" name="uploadFile" class="buttonInline"/>
 									<s:submit value="上传" cssClass="buttonInline"/>

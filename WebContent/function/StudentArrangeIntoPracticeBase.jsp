@@ -39,7 +39,7 @@
 			true,true,true,true,true,
 			false,false,false,
 			true,true,true,true,
-			false,false,false,};
+			false,false,false,false};
 		int i; %>
 		
 	<!-- ###### 未分配实习生 ###### -->
