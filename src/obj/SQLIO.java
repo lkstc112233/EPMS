@@ -37,7 +37,7 @@ public interface SQLIO{
 	List<T> readExcel(Class<T> clazz,
 			Collection<Field> displayFields,
 			InputStream in,
-			List<Integer> error,
+			List<String> error,
 			BaseRestraint restraint)
 			throws IOException, EncryptedDocumentException, InvalidFormatException, InstantiationException, IllegalAccessException;
 	

@@ -90,7 +90,7 @@ public class POI implements SQLIO{
 
 	@Override
 	public <T extends Base>
-	List<T> readExcel(Class<T> clazz,Collection<Field> displayFields,InputStream in,List<Integer> error,BaseRestraint restraint) throws IOException, EncryptedDocumentException, InvalidFormatException, InstantiationException, IllegalAccessException{
+	List<T> readExcel(Class<T> clazz,Collection<Field> displayFields,InputStream in,List<String> error,BaseRestraint restraint) throws IOException, EncryptedDocumentException, InvalidFormatException, InstantiationException, IllegalAccessException{
 		List<T> res=new ArrayList<T>();
 		Map<Short,Field> fsMap=new HashMap<Short,Field>();
 		try(Workbook wb=new XSSFWorkbook(in);){
@@ -113,9 +113,13 @@ public class POI implements SQLIO{
 				}else{//对应Content
 					T t=clazz.newInstance();
 					if(t!=null) for(Map.Entry<Short,Field> entry:fsMap.entrySet()){
-						Cell c=row.getCell(entry.getKey());
-						c.setCellType(CellType.STRING);
-						String fieldValue=c.getStringCellValue();
+						Cell c=null;
+						try{c=row.getCell(entry.getKey());
+							c.setCellType(CellType.STRING);
+						}catch(Exception e) {
+							c=null;
+						}
+						String fieldValue=c==null?null:c.getStringCellValue();
 						Field field=entry.getValue();
 						try {
 							field.setBySetter(t,fieldValue);
@@ -125,12 +129,17 @@ public class POI implements SQLIO{
 							break;
 						}
 					}
-					if(t==null || t.checkNotNullField()
-							|| restraint!=null&& !restraint.checkBase(t,false)){
-						 if(error!=null)
-							 error.add(row.getRowNum());
-					}else
-						res.add(t);
+					String msg="读取成功!";
+					if(t==null || !t.checkNotNullField()) {
+						msg="字段不全!";
+						t=null;
+					}else if(restraint!=null&& !restraint.checkBase(t,false)){
+						msg="字段有误!";
+						t=null;
+					}
+					if(error!=null)
+						error.add(msg);
+					res.add(t);
 				}
 			}
 		}
