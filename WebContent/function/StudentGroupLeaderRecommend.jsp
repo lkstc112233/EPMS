@@ -26,7 +26,7 @@
 				)+'/function_StudentGroupLeaderRecommend_display.action?majorName='
 				+this.value"
 				/>
-				专业推荐实习生大组长&nbsp;及&nbsp;指定指导老师
+				专业指定指导老师&nbsp;及&nbsp;推荐实习生大组长
 				（<s:property value="annual.year" />）
 			</div>
 		</td></tr>
