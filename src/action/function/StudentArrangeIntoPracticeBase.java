@@ -70,6 +70,8 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 		super();
 		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudents.class,SessionListKey);
 		this.setupCheckBox();
+		if(this.getMajors()!=null && !this.getMajors().isEmpty())
+			this.setMajorName(this.getMajors().get(0).getName());
 	}
 
 	private void setupCheckBox(){
