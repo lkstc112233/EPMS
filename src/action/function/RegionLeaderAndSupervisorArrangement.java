@@ -10,6 +10,7 @@ import obj.*;
 import obj.annualTable.*;
 import obj.staticObject.InnerPerson;
 import obj.staticObject.PracticeBase;
+import token.Role;
 
 public class RegionLeaderAndSupervisorArrangement extends ActionSupport{
 	private static final long serialVersionUID = 8833385464572061925L;
@@ -79,7 +80,7 @@ public class RegionLeaderAndSupervisorArrangement extends ActionSupport{
 	
 	public String display(){
 		try{
-			if(Manager.getUser().getSchool().equals("教务处"))
+			if(Manager.getUser().getSchool().equals(Role.jwc.getName()))
 				this.innerPersons=InnerPerson.list(InnerPerson.class
 					//	,new Restraint(Field.getField(InnerPerson.class,"name"),Restraint.Type.NotLike,InnerPerson.UndefinedName)
 					//	注意教务处人员可以在该处修正各类学科规划（各部院系未定人员）
