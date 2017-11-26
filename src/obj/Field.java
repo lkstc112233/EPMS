@@ -95,18 +95,18 @@ public class Field implements Comparable<Field>{
 		boolean string=false;
 		try {
 			m=b.getClass().getMethod(methodName,value.getClass());
-		} catch (NoSuchMethodException | SecurityException e) {
+		} catch (NoSuchMethodException | SecurityException | NullPointerException e) {
 			try{
 				m=b.getClass().getMethod(methodName,String.class);
 				string=true;
-			} catch (NoSuchMethodException | SecurityException ee) {
+			} catch (NoSuchMethodException | SecurityException | NullPointerException ee) {
 				try{
 					m=b.getClass().getMethod(methodName,Object.class);
 				} catch (NoSuchMethodException | SecurityException eee) {
 				}
 			}
 		}if(m==null) throw new NoSuchMethodException("Cannot find the method with name\""+methodName+"\"");
-		m.invoke(b,string?String.valueOf(value):value);
+		m.invoke(b,(string&&value!=null)?String.valueOf(value):value);
 		return b;
 	}
 	@Override
