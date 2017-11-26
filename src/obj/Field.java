@@ -179,7 +179,10 @@ public class Field implements Comparable<Field>{
 		}return null;
 	}
 	
-	
+
+	static public String o2S(Object a){
+		return Field.s2S(a==null?null:a.toString());
+	}
 	static public String s2S(String a){
 		return a==null||a.isEmpty()?null:a;
 	}
