@@ -3,21 +3,6 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags" %>
     
-<% //跳转到当前操作的条目,choose[0]表示块index、choose[1]表示行号
-Object tmp=pageContext.findAttribute("choose");
-Integer x=null;
-if(tmp!=null){
-	if(tmp instanceof Integer[])
-		x=((Integer[])tmp)[1];
-	else if(tmp instanceof Integer)
-		x=(Integer)tmp;
-}
-if(x!=null){ %>
-	<script>
-		location.href="#choose<%=x%>";
-	</script>
-<% } %>
-	
 	
 <div class="bag">
 	<% request.setAttribute("actionName",request.getParameter("actionName"));%>
@@ -163,7 +148,8 @@ if(x!=null){ %>
 					<td style="width:13px;">
 						<s:property value="%{#__Status.count}" />
 						<% pageContext.setAttribute("_id",String.format("choose%d",i++)); %>
-						<div id="${_id}"></div>
+						<div id="${_id}">
+						</div>
 					</td>
 					<s:iterator value="search.param.list" var="__Part" status="__PartStatus">
 						<td style="width:27px;">
@@ -232,6 +218,29 @@ if(x!=null){ %>
 			</s:iterator>
 		</s:else>
 	</tbody></table></div>
+	
+	
+	
+	
+	
+	
+	
+<% //跳转到当前操作的条目,choose[0]表示块index、choose[1]表示行号
+Object tmp=pageContext.findAttribute("choose");
+Integer x=null;
+if(tmp!=null){
+	if(tmp instanceof Integer[])
+		x=((Integer[])tmp)[1];
+	else if(tmp instanceof Integer)
+		x=(Integer)tmp;
+}
+if(x!=null){ %>
+	<script>
+		var jumpX=document.getElementById("choose<%=x%>");
+		if(jumpX!=null)
+			jumpX.scrollIntoView();
+	</script>
+<% } %>
 	
 	
 </div>
