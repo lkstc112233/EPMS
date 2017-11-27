@@ -1,16 +1,23 @@
 package action.function;
 
-import java.sql.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.opensymphony.xwork2.ActionSupport;
 
 import action.Manager;
-import obj.*;
+import obj.Base;
+import obj.Field;
+import obj.JoinParam;
+import obj.SQLIO;
 import obj.annualTable.*;
-import obj.staticObject.InnerPerson;
-import obj.staticSource.Major;
-import token.Role;
+import obj.staticObject.PracticeBase;
 
 /**
  * 导出实习生名单
@@ -21,9 +28,9 @@ public class ExportStudentList extends ActionSupport{
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
 	
-	private ListOfPracticeBaseAndStudentsAndPlan practiceBaseAndStudents;
+	private ListOfPracticeBaseAndStudents practiceBaseAndStudents;
 	
-	public ListOfPracticeBaseAndStudentsAndPlan getPracticeBaseAndStudents(){return this.practiceBaseAndStudents;}
+	public ListOfPracticeBaseAndStudents getPracticeBaseAndStudents(){return this.practiceBaseAndStudents;}
 	
 	//记忆化部件
 	public Student getStudent(){return new Student();}
@@ -33,135 +40,96 @@ public class ExportStudentList extends ActionSupport{
 	
 	public ExportStudentList(){
 		super();
-		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudentsAndPlan.class,SessionListKey);
-		if(this.getMajors()!=null && !this.getMajors().isEmpty())
-			this.setMajorName(this.getMajors().get(0).getName());
+		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudents.class,SessionListKey);
 	}
 
+	private String jumpURL="function_Export_display.action";
+		public String getJumpURL() {return this.jumpURL;}
+		public void setJumpURL(String a) {this.jumpURL=a;}
 
-	
-	/**
-	 * 用于显示
-	 */
-	public String display(){
-		System.out.println(">> RegionArrangement:display > year="+this.getAnnual().getYear()+",majorName="+majorName);
-		this.practiceBaseAndStudents=null;
-		Major major=null;
-		try{
-			major=new Major(this.majorName);
-		}catch(IllegalArgumentException | SQLException e){
-			return Manager.tips("专业("+this.majorName+")不存在！",e,NONE);
-		}
-		try {
-			this.practiceBaseAndStudents=new ListOfPracticeBaseAndStudentsAndPlan(
-					this.getAnnual().getYear(),major,/*minPlanNumber*/1);
-		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
-			return Manager.tips("数据库开小差去了！",e,NONE);
-		}
-		if(this.getInnerPersons()==null)
-			return Manager.tips("读取实习基地列表失败!",NONE);
-		if(this.getMajors()==null)
-			return Manager.tips("读取实习专业列表失败!",NONE);
-		Manager.saveSession(SessionListKey,this.practiceBaseAndStudents);
-		System.out.println(">> RegionArrangement:display <NONE");
-		return NONE;
-	}
-	
-	/**
-	 * 用于推荐大组长和设置指导老师
-	 */
 	@Override
 	public String execute(){
-		if(this.practiceBaseAndStudents==null)
-			return display();
-		System.out.println(">> RegionArrangement:execute > choose= ["+this.choose[0]+","+this.choose[1]+","+this.choose[2]+"]");
-		ListOfPracticeBaseAndStudentsAndPlan.RegionPair.PracticeBasePair pair=
-				this.practiceBaseAndStudents.get(this.choose[0]);//choose[0]是基地名称
-		if(pair==null)
-			return Manager.tips("请选择正确的实习基地！",
-					display());
-		//StudenGroupLeaderRecommend:execute
-		Manager.removeSession(SessionListKey);
-		if(this.choose[2]==null || this.choose[2].isEmpty()) { 
-			//推荐大组长：choose[1]学生
-			boolean ok=false;
-			for(Student stu:pair.getStudents()) if(stu.getId().equals(this.choose[1])) {
-				ok=true;
-				break;
-			}
-			if(!ok) 
-				return Manager.tips("基地("+this.choose[0]+")没有学生学号为("+this.choose[1]+")!",
-						display());
-			StringBuilder error=new StringBuilder();
-			for(Student stu:pair.getStudents()) {
-				boolean flag=stu.getId().equals(this.choose[1]);
-				if(stu.getRecommend()==flag) continue;
-				stu.setRecommend(flag);
-				if(error.length()>0) error.append('\n');
-				try {
-					stu.update();
-					error.append(stu.getName()+"推荐状态变更成功!");
-				}catch(SQLException | IllegalArgumentException e) {
-					e.printStackTrace();
-					error.append(stu.getName()+"推荐状态变更失败!("+e.getMessage()+")");
-				}
-			}
-			return Manager.tips(error.toString(),
-					display());
-		}else if(this.choose[1]==null || this.choose[1].isEmpty()) {
-			//设置基地所有学生指导老师：choose[2]老师
-			InnerPerson teacher=null;
-			try {
-				teacher=new InnerPerson(this.choose[2]);
-			}catch(SQLException | IllegalArgumentException e) {
-				return Manager.tips("指导教师输入错误!",e,display());
-			}
-			StringBuilder error=new StringBuilder();
-			for(Student stu:pair.getStudents()) {
-				if(teacher.getId().equals(stu.getTeacherId())) continue;
-				stu.setTeacherId(teacher.getId());
-				if(error.length()>0) error.append('\n');
-				try {
-					stu.update();
-					error.append(stu.getName()+"设置指导老师成功!");
-				}catch(SQLException | IllegalArgumentException e) {
-					e.printStackTrace();
-					error.append(stu.getName()+"设置指导老师失败!("+e.getMessage()+")");
-				}
-			}
-			return Manager.tips(error.toString(),
-					display());
-		}else {
-			//设置某学生指导老师：choose[1]学生,choose[2]老师
-			InnerPerson teacher=null;
-			try {
-				teacher=new InnerPerson(this.choose[2]);
-			}catch(SQLException | IllegalArgumentException e) {
-				return Manager.tips("指导教师输入错误!",e,display());
-			}
-			Student opStudent=null;
-			for(Student stu:pair.getStudents()) if(stu.getId().equals(this.choose[1])) {
-				opStudent=stu;
-				break;
-			}
-			if(opStudent==null)
-				return Manager.tips("基地("+this.choose[0]+")没有学生学号为("+this.choose[1]+")!",
-						display());
-			if(teacher.getId().equals(opStudent.getTeacherId()))
-				return Manager.tips(opStudent.getName()+"指导教师没有变化!",
-						display());
-			opStudent.setTeacherId(teacher.getId());
-			try {
-				opStudent.update();
-			}catch(SQLException | IllegalArgumentException e) {
-				return Manager.tips(opStudent.getName()+"设置指导老师失败!",
-						e,display());
-			}
-			return Manager.tips(opStudent.getName()+"指导老师设置为"+teacher.getDescription(),
-					display());
-		}
+		return Manager.tips("该项目不可用!","jump");
 	}
 	
 	
 	
+	private String practiceBaseName;
+		public void setPracticeBaseName(String a) {this.practiceBaseName=Field.s2S(a);}
+		public String getPracticeBaseName() {return this.practiceBaseName;}
+	private String majorName;
+		public void setMajorName(String a){this.majorName=Field.s2S(a);}
+		public String getMajorName(){return majorName;}
+	
+
+	/*
+	 * 下载模板
+	 */
+	private String downloadFileName;
+		public void setDownloadFileName(String a){
+			this.downloadFileName=a;
+			try{this.downloadFileName=new String(a.getBytes("gb2312"), "iso8859-1");
+			}catch(UnsupportedEncodingException e){
+				e.printStackTrace();
+				this.downloadFileName=a;
+			}//*/
+		}
+		public String getDownloadFileName(){return this.downloadFileName;}
+	private OutputStream downloadOutputStream=null;
+	protected void downloadByIO(SQLIO io,PracticeBase pb,List<Student> students,OutputStream stream) throws IOException{
+		//TODO 下载实习生名单
+		io.getModelExcel(clazz,tmp,stream);
+	}
+	public String download(){//下载模板
+		System.out.println(">> TableOperationAction:download > practiceBaseName="+this.practiceBaseName);
+		if(this.practiceBaseAndStudents==null)
+			return Manager.tips("该项目未初始化!","jump");
+		ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair=
+				this.practiceBaseAndStudents.get(this.practiceBaseName);
+		if(pair==null)
+			return Manager.tips("实习基地名称有误!","jump");
+		List<Student> students=new ArrayList<Student>();
+		if(this.majorName==null||this.majorName.isEmpty())
+			students.addAll(pair.getStudents());
+		else for(Student stu:pair.getStudents())
+			if(this.majorName.equals(stu.getMajor()))
+				students.add(stu);
+		this.setDownloadFileName(String.format(
+				"%d年%s免费师范生教育实习学生名单%s.xlsx",
+				this.getAnnual().getYear(),pair.getPracticeBase().getName(),
+				(majorName==null||majorName.isEmpty())?"":("("+this.majorName+")")
+						));//设置下载文件名称
+		System.out.println(">> TableOperationAction:download > downloadFielName="+this.getDownloadFileName());
+		downloadOutputStream=new ByteArrayOutputStream();
+		try{
+			this.downloadByIO(Base.io(),pair.getPracticeBase(),students,downloadOutputStream);
+			this.downloadOutputStream.flush();
+		}catch(IOException e){
+			downloadOutputStream=null;
+			return Manager.tips("服务器开小差去了，暂时无法下载！",e,"jump");
+		}
+		System.out.println(">> TableOperationAction:download <downloadAttachment");
+		return "downloadAttachment";
+	}
+	public InputStream getDownloadAttachment(){//实际上获取的输出流，使用getter获取的downloadAttachment
+		if(downloadOutputStream==null) return null;
+		System.out.println(">> TableOperationAction:downloadAttachment > ");
+		byte[] data=((ByteArrayOutputStream)downloadOutputStream).toByteArray();
+		try {
+			this.downloadOutputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		this.downloadOutputStream=null;
+		ByteArrayInputStream in=new ByteArrayInputStream(data);
+	/*	try {
+			ServletActionContext.getResponse().setHeader("Content-Disposition","attachment;downloadFileName="+java.net.URLEncoder.encode(this.downloadFileName, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}//*/
+		return in;
+	}
+	
+
+
 }

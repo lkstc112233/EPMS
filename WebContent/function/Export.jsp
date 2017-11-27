@@ -77,6 +77,14 @@
 					<span style="font-size:12px;margin-left:20px;">
 						<s:property value="#__Row.size"/>人
 					</span>
+					<span style="font-size:12px;margin-left:30px;">
+						<s:form action="function_Export_download" method="post" theme="simple">
+							<s:hidden name="jumpURL" value="function_Export_display.action" theme="simple"/>
+							<s:hidden name="practiceBaseName" value="%{#__Row.practiceBase.name}" theme="simple"/>
+							<s:submit value="下载实习生名单" theme="simple"
+							style="width:auto;background:white;border:double 3px #0071bc;font-weight:600;height:25px;"/>
+						</s:form>
+					</span>
 				</div>
 			</td>
 		</tr>

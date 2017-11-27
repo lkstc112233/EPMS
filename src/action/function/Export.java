@@ -23,9 +23,9 @@ public class Export extends ActionSupport{
 	public action.Annual getAnnual(){return this.annual;}
 
 
-	public void setMajorName(String a){this.majorName=Field.s2S(a);}
-	public String getMajorName(){return majorName;}
 	private String majorName="汉语言文学（师范）";
+		public void setMajorName(String a){this.majorName=Field.s2S(a);}
+		public String getMajorName(){return majorName;}
 	private ListOfPracticeBaseAndStudents practiceBaseAndStudents;
 	
 	public ListOfPracticeBaseAndStudents getPracticeBaseAndStudents(){return this.practiceBaseAndStudents;}
