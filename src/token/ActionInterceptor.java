@@ -36,9 +36,10 @@ public class ActionInterceptor extends AbstractInterceptor{
 			Role role=Role.getRole(user);
 			//function
 			List<ACCESS> as=null;
+			String[] an=actionName.split("_",3);
 			try{
-				as=Base.list(ACCESS.class,new Restraint(Field.getField(ACCESS.class,"actionClass"),actionName));
-			}catch(IllegalArgumentException|InstantiationException|SQLException e){
+				as=Base.list(ACCESS.class,new Restraint(Field.getField(ACCESS.class,"actionClass"),an[1]));
+			}catch(IllegalArgumentException|InstantiationException|SQLException|NullPointerException|IndexOutOfBoundsException e){
 				return Manager.tips("数据库错误!",
 						e,"error");
 			}

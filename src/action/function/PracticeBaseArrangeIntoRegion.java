@@ -108,7 +108,7 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 				sb.append(pb.getName());
 			}
 		}
-		Manager.tips(sb.toString()+" 已经添加到大区("+this.regionName+")！"+
+		Manager.tips((sb.length()>0?(sb.toString()+" 已经添加到大区("+this.regionName+")！"):"")+
 			(error.length()>0?("\n\n错误信息：\n"+error.toString()):""));
 		Manager.removeSession(SessionListKey);
 		return display();

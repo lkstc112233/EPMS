@@ -30,7 +30,7 @@
 	<% boolean[] PracticeBaseFieldDisplay=new boolean[]{
 			false,true,true,true,true,
 			false,true,
-			false,false,false,}; %>
+			false,false,false,true}; %>
 	<s:iterator value="regionAndPracticeBase.list" var="__Row" status="__Status">
 		<!-- ########### 大区信息 ########### -->
 		<tr><td colspan="100">
