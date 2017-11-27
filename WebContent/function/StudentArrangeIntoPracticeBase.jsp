@@ -81,7 +81,7 @@
 			<s:form action="function_StudentArrangeIntoPracticeBase_execute" method="post" theme="simple">
 				<s:iterator value="practiceBaseAndStudents.undistributedStudents" var="__studentRow" status="__studentStatus">
 				<tr class="wtableContent">
-					<!-- 选择 --><td style="width:13px;padding:0;border:0;">
+					<!-- 选择 --><td style="width:25px;padding:0;border:0;">
 						<s:checkbox name="checkBox[%{#__studentStatus.index}]" id="%{#__Status.index}_%{#__studentStatus.index}"
 						style="width:100%;height:100%;margin:0;" theme="simple" />
 					</td>
@@ -124,7 +124,7 @@
 	<s:iterator value="#__rpRow.list" var="__Row" status="__Status">
 		<tr>
 			<s:if test="#__Status.index == 0">
-				<% obj.annualTable.ListOfPracticeBaseAndStudents.RegionPair rp=(obj.annualTable.ListOfPracticeBaseAndStudents.RegionPair)
+				<% obj.annualTable.ListOfPracticeBaseAndStudentsAndPlan.RegionPair rp=(obj.annualTable.ListOfPracticeBaseAndStudentsAndPlan.RegionPair)
 					request.getAttribute("__rpRow");
 				pageContext.setAttribute("_rowspan",
 						rp.getAllStudentsCount()+rp.getSize()*3-1); %>
@@ -187,7 +187,7 @@
 			</s:if><s:else>
 				<s:iterator value="#__Row.students" var="__studentRow" status="__studentStatus">
 				<tr class="wtableContent">
-					<!-- 选择 --><td style="width:13px;padding:0;border:0">
+					<!-- 选择 --><td style="width:25px;padding:0;border:0">
 						<s:checkbox name="checkBox[%{#__studentStatus.index}]" id="%{#__Status.index}_%{#__studentStatus.index}"
 						style="width:100%;height:100%;margin:0;" theme="simple" />
 					</td>

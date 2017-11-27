@@ -88,7 +88,7 @@
 							<s:hidden name="choose[0]" value="%{#__Row.practiceBase.name}" theme="simple" />
 							<s:hidden name="choose[1]" value="" theme="simple" />
 							<s:submit value="为该基地所有学生设置指导老师" cssClass="buttonInline"
-							style="" theme="simple" />
+							style="vertical-align:initial;" theme="simple" />
 						</s:form>
 					</div>
 				</div>
