@@ -112,7 +112,13 @@ public class Region extends AnnualBase{
 	}
 	
 	
-	
+	public Boolean getHX() {
+		try {
+			return new PracticeBase(this.getPracticeBase()).getHx();
+		}catch(SQLException | IllegalArgumentException | NullPointerException e) {
+			e.printStackTrace();
+		}return null;
+	}
 	/**
 	 * 需要检查当前大区包含的实习基地是否和新加入的实习基地有冲突<br/>
 	 * 冲突是指：<br/>
@@ -144,8 +150,8 @@ public class Region extends AnnualBase{
 					.append(JoinParam.Type.InnerJoin,Region.class,
 							Field.getField(Region.class,"practiceBase"),
 							Field.getField(PracticeBase.class,"name"),
-							Field.getField(Region.class,"year"),
-							this.getYear())
+							Field.getFields(Region.class,"year","name"),
+							new Object[] {this.getYear(),this.getName()})
 					);
 		} catch (InstantiationException | SQLException e) {
 			throw new IllegalArgumentException(e.getMessage());
