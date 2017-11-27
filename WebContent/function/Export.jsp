@@ -20,13 +20,13 @@
 			<div class="listHeader">
 				<s:select id="MajorName" name="majorName" list="majors"
 				listKey="name" listValue="subject"
-				theme="simple" cssClass="title_button" style="margin-bottom:2px;"
+				theme="simple" cssClass="title_button" style="margin-bottom:2px;width:auto;"
 				onchange="window.location.href=window.location.href.substring(0,(
 				window.location.href.lastIndexOf('/')<0?window.location.length:window.location.href.lastIndexOf('/'))
-				)+'/function_StudentGroupLeaderRecommend_display.action?majorName='
+				)+'/function_Export_display.action?majorName='
 				+this.value"
 				/>
-				专业指定指导老师&nbsp;及&nbsp;推荐实习生大组长
+				实习生名单
 				（<s:property value="annual.year" />）
 			</div>
 		</td></tr>
@@ -37,8 +37,8 @@
 	
 	
 	<% boolean[] StudentFieldDisplay=new boolean[]{
-			false,true,true,false,false,
-			false,false,false,
+			false,true,true,true,true,
+			true,false,false,
 			true,true,true,false,
 			false,false,false,false};
 		int i; %>
@@ -77,20 +77,6 @@
 					<span style="font-size:12px;margin-left:20px;">
 						<s:property value="#__Row.size"/>人
 					</span>
-					<div class="right" style="color:black;">
-						<s:form action="function_StudentGroupLeaderRecommend_execute" method="post" theme="simple">
-							<s:select name="choose[2]"
-							list="innerPersons"
-							listKey="id" listValue="description"
-							headerKey="" headerValue="-未定-"
-							style="margin-top:7px;height:21px;" theme="simple" />
-							<s:hidden name="majorName" value="%{majorName}" theme="simple" />
-							<s:hidden name="choose[0]" value="%{#__Row.practiceBase.name}" theme="simple" />
-							<s:hidden name="choose[1]" value="" theme="simple" />
-							<s:submit value="为该基地所有学生设置指导老师" cssClass="buttonInline"
-							style="vertical-align:initial;" theme="simple" />
-						</s:form>
-					</div>
 				</div>
 			</td>
 		</tr>
@@ -116,7 +102,7 @@
 				指导老师
 			</td>
 			<td style="white-space:nowrap;">
-				推荐大组长
+				学生大组长
 			</td>
 		</tr>
 		<s:iterator value="#__Row.students" var="__studentRow" status="__studentStatus">
@@ -148,33 +134,21 @@
 			<!-- 性别 --><td style="width:20px;">
 				<s:property value="#__studentRow.sex" />
 			</td>
-			<!-- 指导老师 --><td style="width:175px;padding:0;border:0;">
-				<s:form action="function_StudentGroupLeaderRecommend_execute" method="post" theme="simple">
-					<s:hidden name="majorName" value="%{majorName}" theme="simple" />
-					<s:hidden name="choose[0]" value="%{#__Row.practiceBase.name}" theme="simple" />
-					<s:hidden name="choose[1]" value="%{#__studentRow.id}" theme="simple" />
-					<s:select name="choose[2]" list="innerPersons"
-					listKey="id" listValue="description"
-					headerKey="" headerValue="-未定-"
-					value="%{#__studentRow.teacherId}"
-					style="width:auto;height:30px" theme="simple" />
-					<s:submit value="设置"
-					style="margin:0;background:white;width:auto;" theme="simple" />
-				</s:form>
+			<!-- 指导老师 --><td style="width:145px;padding:0;">
+				<s:select list="innerPersons"
+				listKey="id" listValue="description"
+				headerKey="" headerValue="-未定-"
+				value="%{#__studentRow.teacherId}"
+				disabled="true"
+				style="width:100%;height:30px;border:0;background:#00000000;color:black;font-size:14px;" theme="simple" />
 			</td>
 			<!-- 推荐大组长 --><td style="width:36px;padding:0;border:0">
 				<s:if test="#__studentRow.recommend"><!-- 已推荐 -->
 					<s:submit value="✔"
 						style="padding:0;margin:0;border:3px black double;background:gold;width:30px;height:30px;font-size:30px;line-height:5px;" theme="simple" />
 				</s:if><s:else><!-- 未推荐 -->
-					<s:form action="function_StudentGroupLeaderRecommend_execute" method="post" theme="simple">
-						<s:hidden name="majorName" value="%{majorName}" theme="simple" />
-						<s:hidden name="choose[0]" value="%{#__Row.practiceBase.name}" theme="simple" />
-						<s:hidden name="choose[1]" value="%{#__studentRow.id}" theme="simple" />
-						<s:hidden name="choose[2]" value="" theme="simple" />
-						<s:submit value=" "
+					<s:submit value=" "
 						style="padding:0;margin:0;border:3px black double;background:white;width:30px;height:30px;" theme="simple" />
-					</s:form>
 				</s:else>
 			</td>
 		</tr></s:iterator>

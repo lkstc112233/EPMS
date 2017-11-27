@@ -6,7 +6,7 @@ import java.util.*;
 import obj.*;
 import obj.staticObject.PracticeBase;
 import obj.staticSource.*;
-import obj.annualTable.ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair;
+import obj.annualTable.ListOfPracticeBaseAndStudentsAndPlan.RegionPair.PracticeBasePair;
 import obj.annualTable.Student;
 
 /**
@@ -20,7 +20,7 @@ import obj.annualTable.Student;
  *  {[PracticeBase...].....[PracticeBase...]}<br/>
  *  {[(Student......)].....[(Student.......)]}<br/>
  */
-public class ListOfPracticeBaseAndStudents{
+public class ListOfPracticeBaseAndStudentsAndPlan{
 	static public class RegionPair{
 		private Region region;
 		private List<PracticeBasePair> list=new ArrayList<PracticeBasePair>();
@@ -37,10 +37,12 @@ public class ListOfPracticeBaseAndStudents{
 		static public class PracticeBasePair{
 			private PracticeBase practiceBase;
 			private List<Student> students=new ArrayList<Student>();
+			private Plan plan;
 				public int getSize(){return this.students.size();}
 				public PracticeBase getPracticeBase(){return this.practiceBase;}
 				public List<Student> getStudents(){return this.students;}
-			public PracticeBasePair(PracticeBase pb){this.practiceBase=pb;}
+				public Plan getPlan(){return plan;}
+			public PracticeBasePair(PracticeBase pb,Plan p){this.practiceBase=pb;this.plan=p;}
 		}	
 	}
 	private List<RegionPair> list=new ArrayList<RegionPair>();
@@ -52,37 +54,52 @@ public class ListOfPracticeBaseAndStudents{
 	/**
 	 * 不包含Region=null的子树
 	 */
-	public ListOfPracticeBaseAndStudents(int year,Major major) throws IllegalArgumentException, InstantiationException, SQLException{
+	public ListOfPracticeBaseAndStudentsAndPlan(int year,Major major,int minPlanNumber) throws IllegalArgumentException, InstantiationException, SQLException{
 		if(major==null||major.getName()==null||major.getName().isEmpty())
-			major=null;
+			throw new IllegalArgumentException("Major can NOT be null or empty!");
+		//未分配实习基地的
+		for(Student stu:Base.list(Student.class,new Restraint(
+				Field.getFields(Student.class,"year","major"),
+				new Object[] {year,major.getName()}))){
+			if(stu.getPracticeBase()==null || stu.getPracticeBase().isEmpty())
+				this.undistributedStudents.add(stu);
+		}
 		//已分配实习基地的
 		List<Base[]> tmp=Base.list(
 				new JoinParam(Student.class)
-				.append(JoinParam.Type.InnerJoin,
+				.append(JoinParam.Type.RightJoin,
+						Plan.class,
+						Field.getFields(Student.class,"practiceBase","major","year"),
+						Field.getFields(Plan.class,"practiceBase","major","year"),
+						Field.getFields(Student.class,"major","year"),//Where子句不同
+						new Object[]{major.getName(),year})
+				.append(JoinParam.Type.LeftJoin,
 						PracticeBase.class,
-						Field.getField(Student.class,"practiceBase"),
-						Field.getField(PracticeBase.class,"name"),
-						Field.getField(Student.class,"year"),
-						year)
+						Field.getField(Plan.class,"practiceBase"),
+						Field.getField(PracticeBase.class,"name"))
 				.append(JoinParam.Type.LeftJoin,
 						Region.class,
 						Field.getField(Region.class,"practiceBase"),
-						Field.getField(PracticeBase.class,"name"),
-						Field.getField(Region.class,"year"),
-						year),
-				major==null ? new Restraint(Field.getField(Student.class,"id"))
-						: new Restraint(Field.getField(Student.class,"major"),major.getName(),
-								Field.getField(Student.class,"id"))
+						Field.getField(PracticeBase.class,"name")
+						),
+				new Restraint(Field.getField(Plan.class,"major"),//Where子句不同
+						major.getName(),
+						Field.getField(Student.class,"id"))
 				);
 		for(Base[] bs:tmp){
-			if(bs!=null && bs.length>=3){
+			if(bs!=null && bs.length>=4){
 				Student stu=null;
+				Plan plan=null;
 				PracticeBase pb=null;
 				Region region=null;
 				if(bs[0]!=null) stu=(Student)bs[0];
-				if(bs[1]!=null) pb=(PracticeBase)bs[1];
-				if(bs[2]!=null && pb!=null) region=(Region)bs[2];
-				this.put(region,pb,stu);
+				if(bs[1]!=null){
+					plan=(Plan)bs[1];
+					if(plan.getNumber()<minPlanNumber) plan=null;
+				}
+				if(bs[2]!=null && plan!=null) pb=(PracticeBase)bs[2];
+				if(bs[3]!=null && pb!=null) region=(Region)bs[3];
+				this.put(region,pb,plan,stu);
 			}
 		}
 	}
@@ -107,21 +124,25 @@ public class ListOfPracticeBaseAndStudents{
 			}
 		return null;
 	}
-	public void put(Region region,PracticeBase pb,Student stu) throws IllegalArgumentException, InstantiationException, SQLException {
-		if(region==null || pb==null)
+	public void put(Region region,PracticeBase pb,Plan plan,Student stu) throws IllegalArgumentException, InstantiationException, SQLException {
+	//	System.out.println(region+"\n\t"+pb+"\n\t"+plan+"\n\t"+stu);
+		if(region==null || pb==null || plan==null) {
+	//		if(!this.undistributedStudents.contains(stu))
+	//			this.undistributedStudents.add(stu);
 			return;
+		}
 		PracticeBasePair tmp=this.get(pb);
 		if(tmp==null){//需要新增一个PracticeBasePair
 			for(RegionPair rp:this.list) {
 				if(rp.getRegion().getName()!=null && rp.getRegion().getName().equals(region.getName())) {
-					rp.getList().add(tmp=new PracticeBasePair(pb));
+					rp.getList().add(tmp=new PracticeBasePair(pb,plan));
 					break;
 				}
 			}
 			if(tmp==null) {
 				//需要新增一个RegionPair
 				RegionPair rp=new RegionPair(region);
-				rp.getList().add(tmp=new PracticeBasePair(pb));
+				rp.getList().add(tmp=new PracticeBasePair(pb,plan));
 				this.list.add(rp);
 			}
 		}

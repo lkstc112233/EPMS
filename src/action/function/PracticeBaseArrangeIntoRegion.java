@@ -9,6 +9,9 @@ import action.Manager;
 import obj.annualTable.*;
 import obj.staticObject.PracticeBase;
 
+/**
+ * 分配实习基地到大区
+ */
 public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 	private static final long serialVersionUID = 5998268336475528662L;
 

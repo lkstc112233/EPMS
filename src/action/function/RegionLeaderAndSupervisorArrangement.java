@@ -12,6 +12,9 @@ import obj.staticObject.InnerPerson;
 import obj.staticObject.PracticeBase;
 import token.Role;
 
+/**
+ * 指定总领队和督导老师
+ */
 public class RegionLeaderAndSupervisorArrangement extends ActionSupport{
 	private static final long serialVersionUID = 8833385464572061925L;
 
@@ -28,7 +31,7 @@ public class RegionLeaderAndSupervisorArrangement extends ActionSupport{
 
 	public ListOfRegionAndPracticeBases getRegionAndPracticeBase(){return this.regionAndPracticeBase;}
 	public Supervise[][][] getSupervises(){return this.supervises;}
-	public int[] getSuperviseTypeList(){return Supervise.getTypesList();}
+	public int[] getSuperviseTypeList(){return Supervise.getTypeList();}
 	public InnerPerson[] getInnerPersonLeaders(){return this.innerPersonLeaders;}
 	public InnerPerson[][][] getInnerPersonSupervisors(){return this.innerPersonSupervisors;}
 	public String getUserSchool(){return Manager.getUser().getSchool();}

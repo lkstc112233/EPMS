@@ -9,6 +9,9 @@ import action.Manager;
 import obj.annualTable.Region;
 import obj.staticObject.InnerPerson;
 
+/**
+ * 大区信息
+ */
 public class RegionInfo extends ActionSupport{
 	private static final long serialVersionUID = 5998268336475528662L;
 

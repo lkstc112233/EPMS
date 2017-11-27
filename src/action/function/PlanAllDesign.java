@@ -11,6 +11,9 @@ import obj.annualTable.*;
 import obj.staticObject.PracticeBase;
 import obj.staticSource.Major;
 
+/**
+ * 全面确定派遣计划
+ */
 public class PlanAllDesign extends ActionSupport{
 	private static final long serialVersionUID = 8833385464572061925L;
 

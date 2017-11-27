@@ -7,72 +7,33 @@ import com.opensymphony.xwork2.ActionSupport;
 
 import action.Manager;
 import obj.*;
-import obj.annualTable.Student;
-import obj.annualTable.ListOfPracticeBaseAndStudents;
+import obj.annualTable.*;
 import obj.staticObject.InnerPerson;
 import obj.staticSource.Major;
 import token.Role;
 
 /**
- * 确定实习生大组长和指导教师
+ * 导出实习生名单
  */
-public class StudentGroupLeaderRecommend extends ActionSupport{
-	private static final long serialVersionUID = 5998268336475528662L;
+public class ExportStudentList extends ActionSupport{
+	private static final long serialVersionUID = 3677055466118899859L;
 
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
 	
+	private ListOfPracticeBaseAndStudentsAndPlan practiceBaseAndStudents;
 	
-	private String majorName="汉语言文学（师范）";
-	private ListOfPracticeBaseAndStudents practiceBaseAndStudents;
-	private String[] choose=new String[]{null,null,null};//[0]基地,[1]学生Id,[2]老师Id
-	
-	public void setMajorName(String a){this.majorName=Field.s2S(a);}
-	public String getMajorName(){return majorName;}
-	public String[] getChoose(){return this.choose;}
-	public ListOfPracticeBaseAndStudents getPracticeBaseAndStudents(){return this.practiceBaseAndStudents;}
+	public ListOfPracticeBaseAndStudentsAndPlan getPracticeBaseAndStudents(){return this.practiceBaseAndStudents;}
 	
 	//记忆化部件
 	public Student getStudent(){return new Student();}
-	private List<InnerPerson> innerPersons;
-		public List<InnerPerson> getInnerPersons(){
-			if(this.innerPersons!=null) return this.innerPersons;
-			try {
-				if(Manager.getUser().getSchool().equals(Role.jwc.getName()))
-					return this.innerPersons=InnerPerson.list(InnerPerson.class
-							,new Restraint(Field.getField(InnerPerson.class,"name"),Restraint.Type.NotLike,InnerPerson.UndefinedName)
-							);
-				else
-					return this.innerPersons=Base.list(InnerPerson.class,new Restraint(new Restraint.Part[]{
-							new Restraint.Part(Field.getField(InnerPerson.class,"school"),Manager.getUser().getSchool()),
-							new Restraint.Part(Field.getField(InnerPerson.class,"name"),Restraint.Type.NotLike,InnerPerson.UndefinedName)
-							}));
-			}catch(SQLException | IllegalArgumentException | InstantiationException e) {
-				e.printStackTrace();
-			}return this.innerPersons=null;
-		}
-	private List<Major> majors;
-		public List<Major> getMajors(){
-			if(this.majors!=null) return this.majors;
-			Role role=Role.getRole(Manager.getUser());
-			if(role==null) return null;
-			try{
-				if(role==Role.jwc)
-					return this.majors=Base.list(Major.class);
-				else
-					return this.majors=Base.list(Major.class,
-							new Restraint(Field.getField(Major.class,"school"),Manager.getUser().getSchool()));
-			}catch(SQLException | IllegalArgumentException | InstantiationException e) {
-				e.printStackTrace();
-			}return this.majors=null;
-		}
 	
 
 	static public final String SessionListKey="StudentArrangeIntoPracticeBase_list"; 
 	
-	public StudentGroupLeaderRecommend(){
+	public ExportStudentList(){
 		super();
-		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudents.class,SessionListKey);
+		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudentsAndPlan.class,SessionListKey);
 		if(this.getMajors()!=null && !this.getMajors().isEmpty())
 			this.setMajorName(this.getMajors().get(0).getName());
 	}
@@ -83,7 +44,7 @@ public class StudentGroupLeaderRecommend extends ActionSupport{
 	 * 用于显示
 	 */
 	public String display(){
-		System.out.println(">> StudentGroupLeaderRecommend:display > year="+this.getAnnual().getYear()+",majorName="+majorName);
+		System.out.println(">> RegionArrangement:display > year="+this.getAnnual().getYear()+",majorName="+majorName);
 		this.practiceBaseAndStudents=null;
 		Major major=null;
 		try{
@@ -92,17 +53,17 @@ public class StudentGroupLeaderRecommend extends ActionSupport{
 			return Manager.tips("专业("+this.majorName+")不存在！",e,NONE);
 		}
 		try {
-			this.practiceBaseAndStudents=new ListOfPracticeBaseAndStudents(
-					this.getAnnual().getYear(),major);
+			this.practiceBaseAndStudents=new ListOfPracticeBaseAndStudentsAndPlan(
+					this.getAnnual().getYear(),major,/*minPlanNumber*/1);
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 			return Manager.tips("数据库开小差去了！",e,NONE);
 		}
 		if(this.getInnerPersons()==null)
-			return Manager.tips("读取校内教师列表失败!",NONE);
+			return Manager.tips("读取实习基地列表失败!",NONE);
 		if(this.getMajors()==null)
 			return Manager.tips("读取实习专业列表失败!",NONE);
 		Manager.saveSession(SessionListKey,this.practiceBaseAndStudents);
-		System.out.println(">> StudentGroupLeaderRecommend:display <NONE");
+		System.out.println(">> RegionArrangement:display <NONE");
 		return NONE;
 	}
 	
@@ -113,8 +74,8 @@ public class StudentGroupLeaderRecommend extends ActionSupport{
 	public String execute(){
 		if(this.practiceBaseAndStudents==null)
 			return display();
-		System.out.println(">> StudentGroupLeaderRecommend:execute > choose= ["+this.choose[0]+","+this.choose[1]+","+this.choose[2]+"]");
-		ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair=
+		System.out.println(">> RegionArrangement:execute > choose= ["+this.choose[0]+","+this.choose[1]+","+this.choose[2]+"]");
+		ListOfPracticeBaseAndStudentsAndPlan.RegionPair.PracticeBasePair pair=
 				this.practiceBaseAndStudents.get(this.choose[0]);//choose[0]是基地名称
 		if(pair==null)
 			return Manager.tips("请选择正确的实习基地！",

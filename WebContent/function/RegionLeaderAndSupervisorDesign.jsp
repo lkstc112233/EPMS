@@ -23,6 +23,15 @@
 		<tr><td colspan="100" style="width:20%;border:0;height:25px;">
 			&nbsp;
 		</td></tr>
+		<tr><td colspan="100" style="width:20%;border:0;height:25px;text-align:center;">
+			<s:form action="function_RegionLeaderAndSupervisorDesign_create" method="post" theme="simple">
+				<s:submit value="自动设置空白部分" theme="simple"
+				style="width:20%;background: white;border: double 6px #0071bc;font-weight: 600;height: 40px;"/>
+			</s:form>
+		</td></tr>
+		<tr><td colspan="100" style="width:20%;border:0;height:25px;">
+			&nbsp;
+		</td></tr>
 	</tbody></table>
 	
 	
@@ -32,9 +41,9 @@
 				<td style="width:3%;">大区</td>
 				<td>基地名称</td>
 				<td>总领队老师</td>
-				<td>入校督导老师</td>
-				<td>中期督导老师</td>
-				<td>返校督导老师</td>
+				<s:iterator value="superviseTypeNameList" var="__typeName">
+					<td><s:property value="#__typeName" /></td>
+				</s:iterator>
 			</tr>
 			<s:iterator value="regionAndPracticeBase.list" var="__regionRow" status="__regionStatus">
 			<s:iterator value="#__regionRow.practiceBases" var="__practiceBaseRow" status="__practiceBaseStatus">
@@ -60,20 +69,22 @@
 						</td>
 					</s:if>
 					<!-- 督导 -->
-					<s:iterator value="superviseTypeList" status="__typeStatus"><td style="padding:0;">
-						<s:select list="innerPersons"
-								listKey="id" listValue="name"
-								headerKey="" headerValue="-无-"
-								name="supervises[%{#__typeStatus.index}][%{#__regionStatus.index}][%{#__practiceBaseStatus.index}].supervisorId"
-								value="%{supervises[#__typeStatus.index][#__regionStatus.index][#__practiceBaseStatus.index].supervisorId}"
-								style="text-align:center;width:100%;height:100%;border:0;" theme="simple"/>
-					</td></s:iterator>
+					<s:iterator value="superviseTypeList" status="__typeStatus">
+						<td style="padding:0;">
+							<s:select list="innerPersons"
+									listKey="id" listValue="name"
+									headerKey="" headerValue="-无-"
+									name="supervises[%{#__typeStatus.index}][%{#__regionStatus.index}][%{#__practiceBaseStatus.index}].supervisorId"
+									value="%{supervises[#__typeStatus.index][#__regionStatus.index][#__practiceBaseStatus.index].supervisorId}"
+									style="text-align:center;width:100%;height:100%;border:0;" theme="simple"/>
+						</td>
+					</s:iterator>
 				</tr>
 			</s:iterator></s:iterator>
 		</tbody></table>
 		<table width="300px"><tbody>
 			<tr><td>
-				&nbsp;<s:submit value="提交修改" cssClass="button"/>
+				<s:submit value="提交修改" cssClass="button"/>
 			</td></tr>
 		</tbody></table>
 	</s:form>
