@@ -138,7 +138,7 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 		}
 	}
 	/**
-	 * 自动填充空白的总领队和学科学科规划
+	 * 自动填充空白的总领队和督导学科规划
 	 */
 	public String create() {
 		for(ListOfRegionAndPracticeBases.Pair pair:this.regionAndPracticeBase.getList()){
