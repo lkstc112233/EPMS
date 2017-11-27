@@ -7,19 +7,21 @@ import com.opensymphony.xwork2.ActionSupport;
 
 import action.Manager;
 import obj.*;
-import obj.annualTable.*;
+import obj.annualTable.Student;
+import obj.annualTable.ListOfPracticeBaseAndStudents;
 import obj.staticObject.InnerPerson;
 import obj.staticSource.Major;
 import token.Role;
 
 /**
- * 导入免费师范生数据
+ * 确定实习生大组长和指导教师
  */
 public class StudentGroupLeaderRecommend extends ActionSupport{
 	private static final long serialVersionUID = 5998268336475528662L;
 
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
+	
 	
 	private String majorName="汉语言文学（师范）";
 	private ListOfPracticeBaseAndStudents practiceBaseAndStudents;
@@ -81,7 +83,7 @@ public class StudentGroupLeaderRecommend extends ActionSupport{
 	 * 用于显示
 	 */
 	public String display(){
-		System.out.println(">> RegionArrangement:display > year="+this.getAnnual().getYear()+",majorName="+majorName);
+		System.out.println(">> StudentGroupLeaderRecommend:display > year="+this.getAnnual().getYear()+",majorName="+majorName);
 		this.practiceBaseAndStudents=null;
 		Major major=null;
 		try{
@@ -91,16 +93,16 @@ public class StudentGroupLeaderRecommend extends ActionSupport{
 		}
 		try {
 			this.practiceBaseAndStudents=new ListOfPracticeBaseAndStudents(
-					this.getAnnual().getYear(),major,/*minPlanNumber*/1);
+					this.getAnnual().getYear(),major);
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 			return Manager.tips("数据库开小差去了！",e,NONE);
 		}
 		if(this.getInnerPersons()==null)
-			return Manager.tips("读取实习基地列表失败!",NONE);
+			return Manager.tips("读取校内教师列表失败!",NONE);
 		if(this.getMajors()==null)
 			return Manager.tips("读取实习专业列表失败!",NONE);
 		Manager.saveSession(SessionListKey,this.practiceBaseAndStudents);
-		System.out.println(">> RegionArrangement:display <NONE");
+		System.out.println(">> StudentGroupLeaderRecommend:display <NONE");
 		return NONE;
 	}
 	
@@ -111,7 +113,7 @@ public class StudentGroupLeaderRecommend extends ActionSupport{
 	public String execute(){
 		if(this.practiceBaseAndStudents==null)
 			return display();
-		System.out.println(">> RegionArrangement:execute > choose= ["+this.choose[0]+","+this.choose[1]+","+this.choose[2]+"]");
+		System.out.println(">> StudentGroupLeaderRecommend:execute > choose= ["+this.choose[0]+","+this.choose[1]+","+this.choose[2]+"]");
 		ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair=
 				this.practiceBaseAndStudents.get(this.choose[0]);//choose[0]是基地名称
 		if(pair==null)

@@ -13,6 +13,9 @@ import obj.staticSource.Major;
 import obj.staticSource.School;
 import token.Role;
 
+/**
+ * 实习总领队和督导任务学科规划
+ */
 public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 	private static final long serialVersionUID = 8833385464572061925L;
 

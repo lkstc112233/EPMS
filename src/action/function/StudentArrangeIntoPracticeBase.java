@@ -13,7 +13,7 @@ import obj.staticSource.Major;
 import token.Role;
 
 /**
- * 导入免费师范生数据
+ * 安排学生到实习基地
  */
 public class StudentArrangeIntoPracticeBase extends ActionSupport{
 	private static final long serialVersionUID = 5998268336475528662L;
@@ -23,14 +23,14 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 	
 	private String majorName="汉语言文学（师范）";
 	private boolean[] checkBox;
-	private ListOfPracticeBaseAndStudents practiceBaseAndStudents;
+	private ListOfPracticeBaseAndStudentsAndPlan practiceBaseAndStudents;
 	private String practiceBaseName;
 	
 	public void setMajorName(String a){this.majorName=Field.s2S(a);}
 	public String getMajorName(){return majorName;}
 	public void setCheckBox(boolean[] a){this.checkBox=a;}
 	public boolean[] getCheckBox(){return this.checkBox;}
-	public ListOfPracticeBaseAndStudents getPracticeBaseAndStudents(){return this.practiceBaseAndStudents;}
+	public ListOfPracticeBaseAndStudentsAndPlan getPracticeBaseAndStudents(){return this.practiceBaseAndStudents;}
 	public String getPracticeBaseName(){return this.practiceBaseName;}
 	public void setPracticeBaseName(String a){this.practiceBaseName=a;}
 	
@@ -41,8 +41,8 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 			if(this.practiceBases!=null) return this.practiceBases;
 			if(this.practiceBaseAndStudents==null) return null;
 			this.practiceBases=new ArrayList<PracticeBase>();
-			for(ListOfPracticeBaseAndStudents.RegionPair rp:this.getPracticeBaseAndStudents().getList())
-				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair p:rp.getList())
+			for(ListOfPracticeBaseAndStudentsAndPlan.RegionPair rp:this.getPracticeBaseAndStudents().getList())
+				for(ListOfPracticeBaseAndStudentsAndPlan.RegionPair.PracticeBasePair p:rp.getList())
 					if(p.getPracticeBase()!=null)
 						this.practiceBases.add(p.getPracticeBase());
 			return this.practiceBases;
@@ -68,7 +68,7 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 	
 	public StudentArrangeIntoPracticeBase(){
 		super();
-		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudents.class,SessionListKey);
+		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudentsAndPlan.class,SessionListKey);
 		this.setupCheckBox();
 		if(this.getMajors()!=null && !this.getMajors().isEmpty())
 			this.setMajorName(this.getMajors().get(0).getName());
@@ -78,8 +78,8 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 		this.checkBox=null;
 		if(this.practiceBaseAndStudents!=null){
 			int len=this.practiceBaseAndStudents.getUndistributedStudents().size();
-			for(ListOfPracticeBaseAndStudents.RegionPair rp:this.practiceBaseAndStudents.getList())
-				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair p:rp.getList())
+			for(ListOfPracticeBaseAndStudentsAndPlan.RegionPair rp:this.practiceBaseAndStudents.getList())
+				for(ListOfPracticeBaseAndStudentsAndPlan.RegionPair.PracticeBasePair p:rp.getList())
 					len=Math.max(len,p.getSize());
 			this.checkBox=new boolean[len];
 		}
@@ -100,7 +100,7 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 			return Manager.tips("专业("+this.majorName+")不存在！",e,NONE);
 		}
 		try {
-			this.practiceBaseAndStudents=new ListOfPracticeBaseAndStudents(
+			this.practiceBaseAndStudents=new ListOfPracticeBaseAndStudentsAndPlan(
 					this.getAnnual().getYear(),major,/*minPlanNumber*/1);
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 			return Manager.tips("数据库开小差去了！",e,NONE);
@@ -126,7 +126,7 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 		if(this.practiceBaseName==null || this.practiceBaseName.isEmpty())
 			return Manager.tips("请选择一个实习基地！",
 					display());
-		ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair=
+		ListOfPracticeBaseAndStudentsAndPlan.RegionPair.PracticeBasePair pair=
 				this.practiceBaseAndStudents.get(this.practiceBaseName);
 		if(pair==null || pair.getPlan()==null)
 			return Manager.tips("基地("+this.practiceBaseName+")没有("+this.majorName+")专业派遣计划！",
@@ -188,7 +188,7 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 		if(!flag)
 			return Manager.tips("请至少选择一个实习生来移除！",
 					display());
-		ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair=
+		ListOfPracticeBaseAndStudentsAndPlan.RegionPair.PracticeBasePair pair=
 				this.practiceBaseAndStudents.get(this.practiceBaseName);
 		if(pair==null)
 			return Manager.tips("选中了一个不存在的实习基地（"+this.practiceBaseName+"）！",
