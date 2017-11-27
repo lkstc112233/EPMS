@@ -28,7 +28,7 @@ public class RegionLeaderAndSupervisorArrangement extends ActionSupport{
 
 	public ListOfRegionAndPracticeBases getRegionAndPracticeBase(){return this.regionAndPracticeBase;}
 	public Supervise[][][] getSupervises(){return this.supervises;}
-	public int[] getSuperviseTypeList(){return Supervise.getTypesList();}
+	public int[] getSuperviseTypeList(){return Supervise.getTypeList();}
 	public InnerPerson[] getInnerPersonLeaders(){return this.innerPersonLeaders;}
 	public InnerPerson[][][] getInnerPersonSupervisors(){return this.innerPersonSupervisors;}
 	public String getUserSchool(){return Manager.getUser().getSchool();}
