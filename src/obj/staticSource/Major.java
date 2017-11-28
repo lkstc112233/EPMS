@@ -25,13 +25,18 @@ public class Major extends Base{
 	public String getSchool(){return this.school;}
 	public void setSchool(String a){this.school=Field.s2S(a);}
 	
-	
+
 	public Major() {
 		super();
 	}
-	
-	public Major(String name) throws IllegalArgumentException, SQLException{
-		super();
+	public Major(String name) throws IllegalArgumentException, SQLException {
+		this();
+		try{
+			for(Major a:Base.list(Major.class)) if(a.getName().equals(name)) {
+				a.copyTo(this);
+				return;
+			}
+		}catch(Exception e) {}
 		this.setName(name);
 		this.load();
 	}

@@ -47,14 +47,22 @@ public class InnerPerson extends Base implements Base.ListableWithNoSave{
 	
 	static public final String UndefinedName="%未定%";
 	
-	
-	public InnerPerson(){
+
+	public InnerPerson() {
 		super();
 	}
-	public InnerPerson(String id) throws IllegalArgumentException, SQLException{
+	public InnerPerson(String id) throws IllegalArgumentException, SQLException {
+		this();
+		try{
+			for(InnerPerson a:Base.list(InnerPerson.class)) if(a.getId().equals(id)) {
+				a.copyTo(this);
+				return;
+			}
+		}catch(Exception e) {}
 		this.setId(id);
 		this.load();
 	}
+	
 	
 	public boolean checkPassword(){
 		StringBuilder sb=new StringBuilder();

@@ -66,7 +66,13 @@ public class PracticeBase extends Base implements Base.ListableWithNoSave{
 		super();
 	}
 	public PracticeBase(String name) throws IllegalArgumentException, SQLException {
-		super();
+		this();
+		try {
+			for(PracticeBase a:Base.list(PracticeBase.class)) if(a.getName().equals(name)){
+				a.copyTo(this);
+				return;
+			}
+		}catch(Exception e) {}
 		this.setName(name);
 		this.load();
 	}

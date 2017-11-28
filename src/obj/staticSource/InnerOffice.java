@@ -21,7 +21,13 @@ public class InnerOffice extends Base{
 		super();
 	}
 	public InnerOffice(String name) throws IllegalArgumentException, SQLException {
-		super();
+		this();
+		try{
+			for(InnerOffice a:Base.list(InnerOffice.class)) if(a.getName().equals(name)) {
+				a.copyTo(this);
+				return;
+			}
+		}catch(Exception e) {}
 		this.setName(name);
 		this.load();
 	}

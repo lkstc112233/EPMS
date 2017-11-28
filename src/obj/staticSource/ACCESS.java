@@ -71,6 +71,23 @@ public class ACCESS extends Base{
 	public void setLd(String a){this.ld=Field.s2b(a,false);}
 	
 	
+	public ACCESS() {
+		super();
+	}
+	public ACCESS(String project) throws IllegalArgumentException, SQLException {
+		this();
+		try{
+			for(ACCESS a:Base.list(ACCESS.class)) if(a.getProject().equals(project)) {
+				a.copyTo(this);
+				return;
+			}
+		}catch(Exception e) {}
+		this.setProject(project);
+		this.load();
+	}
+	
+	
+	
 	static public ACCESS getFromTime(Time t) throws SQLException, IllegalArgumentException, IllegalAccessException{
 		if(t==null) return null;
 		ACCESS a=new ACCESS();

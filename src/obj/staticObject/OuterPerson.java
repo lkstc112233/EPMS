@@ -1,6 +1,8 @@
 package obj.staticObject;
 
 
+import java.sql.SQLException;
+
 import obj.*;
 
 @SQLTable("OuterPerson")
@@ -34,6 +36,23 @@ public class OuterPerson extends Base implements Base.ListableWithNoSave{
 	public void setMobile(String a){this.mobile=a;}
 	public String getEmail(){return email;}	
 	public void setEmail(String a){this.email=a;}
+	
+	
+
+	public OuterPerson() {
+		super();
+	}
+	public OuterPerson(String name) throws IllegalArgumentException, SQLException {
+		this();
+		try{
+			for(OuterPerson a:Base.list(OuterPerson.class)) if(a.getName().equals(name)) {
+				a.copyTo(this);
+				return;
+			}
+		}catch(Exception e) {}
+		this.setName(name);
+		this.load();
+	}
 	
 	
 	

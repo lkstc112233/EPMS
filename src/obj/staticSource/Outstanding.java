@@ -1,5 +1,7 @@
 package obj.staticSource;
 
+import java.sql.SQLException;
+
 import obj.*;
 
 @SQLTable("Outstanding")
@@ -12,6 +14,22 @@ public class Outstanding extends Base{
 	
 	public String getType(){return this.type;}
 	public void setType(String a){this.type=Field.s2S(a);}
+	
+	
+	public Outstanding() {
+		super();
+	}
+	public Outstanding(String type) throws IllegalArgumentException, SQLException {
+		this();
+		try{
+			for(Outstanding a:Base.list(Outstanding.class)) if(a.getType().equals(type)) {
+				a.copyTo(this);
+				return;
+			}
+		}catch(Exception e) {}
+		this.setType(type);
+		this.load();
+	}
 	
 	
 	@Override

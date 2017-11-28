@@ -1,5 +1,7 @@
 package obj.staticSource;
 
+import java.sql.SQLException;
+
 import obj.*;
 
 @SQLTable("School")
@@ -13,12 +15,19 @@ public class School extends Base{
 	public String getName(){return this.name;}
 	public void setName(String a){this.name=Field.s2S(a);}
 	
-	public School(String name){
-		super();
-		this.setName(name);
-	}
 	public School(){
 		super();
+	}
+	public School(String name) throws IllegalArgumentException, SQLException{
+		this();
+		try{
+			for(School a:Base.list(School.class)) if(a.getName().equals(name)) {
+				a.copyTo(this);
+				return;
+			}
+		}catch(Exception e) {}
+		this.setName(name);
+		this.load();
 	}
 	
 	@Override
