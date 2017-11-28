@@ -148,7 +148,14 @@ public abstract class Base {
 		}
 		return true;
 	}
-
+	private final int HashBase=7;
+	@Override
+	public int hashCode() {
+		int res=0,base=1;
+		for(Field f:this.getFields()) if(f.isKey())
+			res+=f.get(this).hashCode()*(base*=HashBase);
+		return res;
+	}
 
 	
 	
