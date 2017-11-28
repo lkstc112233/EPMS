@@ -180,6 +180,11 @@ public class Field implements Comparable<Field>{
 	}
 	
 
+	static public String o2s(Object a,String defaultResult,String boolTrue,String boolFalse){
+		if(a==null) return defaultResult;
+		if(a instanceof Boolean) return ((Boolean)a)?boolTrue:boolFalse;
+		return Field.o2S(a);
+	}
 	static public String o2S(Object a){
 		return Field.s2S(a==null?null:a.toString());
 	}

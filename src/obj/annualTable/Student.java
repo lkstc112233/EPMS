@@ -27,7 +27,7 @@ public class Student extends AnnualBase{
 	private String nation;
 	@SQLField(value="回生源地实习意向",weight=19,ps="是否希望回生源地进行教育实习")
 	private boolean hxyx=true;
-	@SQLField(value="推荐为组长",weight=20,ps="只代表部院系推荐意见")
+	@SQLField(value="学科小组长",weight=20,ps="只代表部院系推荐意见")
 	private boolean recommend=false;
 	@SQLField(value="指导老师工号",weight=100,source="InnerPerson.id",ps="指导老师需要属于校内人员列表")
 	private String teacherId;
