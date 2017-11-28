@@ -66,19 +66,21 @@
 			</s:if>
 			<td colspan="100">
 				<div class="listHeader" style="width:80%;background:linear-gradient(to right,#0071bc,rgba(0,0,0,0));border:0;">
-					<s:property value="#__Row.practiceBase.name" />
-					<span style="font-size:12px;margin-left:20px;">
+					<span style="float:left;">
+						<s:property value="#__Row.practiceBase.name" />
+					</span>
+					<span style="float:left;font-size:12px;margin-left:20px;">
 						<s:if test="#__Row.practiceBase.hx">
 							回生源地实习基地
 						</s:if><s:else>
 							北京及周边实习基地
 						</s:else>
 					</span>
-					<span style="font-size:12px;margin-left:20px;">
+					<span style="float:left;font-size:12px;margin-left:20px;">
 						<s:property value="#__Row.size"/>人
 					</span>
-					<span style="font-size:12px;margin-left:30px;">
-						<s:form action="function_Export_download" method="post" theme="simple">
+					<span style="float:left;font-size:12px;margin-left:30px;margin-top:5px;">
+						<s:form action="function_ExportStudentList_download" method="post" theme="simple">
 							<s:hidden name="jumpURL" value="function_Export_display.action" theme="simple"/>
 							<s:hidden name="practiceBaseName" value="%{#__Row.practiceBase.name}" theme="simple"/>
 							<s:submit value="下载实习生名单" theme="simple"
