@@ -12,10 +12,9 @@ import java.util.List;
 import com.opensymphony.xwork2.ActionSupport;
 
 import action.Manager;
+import action.SpecialIO;
 import obj.Base;
 import obj.Field;
-import obj.JoinParam;
-import obj.SQLIO;
 import obj.annualTable.*;
 import obj.staticObject.PracticeBase;
 
@@ -36,7 +35,7 @@ public class ExportStudentList extends ActionSupport{
 	public Student getStudent(){return new Student();}
 	
 
-	static public final String SessionListKey="StudentArrangeIntoPracticeBase_list"; 
+	static public final String SessionListKey=Export.SessionListKey; 
 	
 	public ExportStudentList(){
 		super();
@@ -76,9 +75,8 @@ public class ExportStudentList extends ActionSupport{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private OutputStream downloadOutputStream=null;
-	protected void downloadByIO(SQLIO io,PracticeBase pb,List<Student> students,OutputStream stream) throws IOException{
-		//TODO 下载实习生名单
-		io.getModelExcel(clazz,tmp,stream);
+	protected String downloadByIO(SpecialIO io,int year,PracticeBase pb,List<Student> students,String majorName,OutputStream stream) throws IOException{
+		return io.createStudentList(year,pb,students,majorName,stream);
 	}
 	public String download(){//下载模板
 		System.out.println(">> TableOperationAction:download > practiceBaseName="+this.practiceBaseName);
@@ -89,20 +87,18 @@ public class ExportStudentList extends ActionSupport{
 		if(pair==null)
 			return Manager.tips("实习基地名称有误!","jump");
 		List<Student> students=new ArrayList<Student>();
-		if(this.majorName==null||this.majorName.isEmpty())
+		if(this.majorName==null||this.majorName.isEmpty()) {
 			students.addAll(pair.getStudents());
-		else for(Student stu:pair.getStudents())
+			this.majorName=null;
+		}else for(Student stu:pair.getStudents())
 			if(this.majorName.equals(stu.getMajor()))
 				students.add(stu);
-		this.setDownloadFileName(String.format(
-				"%d年%s免费师范生教育实习学生名单%s.xlsx",
-				this.getAnnual().getYear(),pair.getPracticeBase().getName(),
-				(majorName==null||majorName.isEmpty())?"":("("+this.majorName+")")
-						));//设置下载文件名称
-		System.out.println(">> TableOperationAction:download > downloadFielName="+this.getDownloadFileName());
+		System.out.println(">> TableOperationAction:download > create download file.");
 		downloadOutputStream=new ByteArrayOutputStream();
 		try{
-			this.downloadByIO(Base.io(),pair.getPracticeBase(),students,downloadOutputStream);
+			String fileName=this.downloadByIO((SpecialIO)Base.io(),
+					this.getAnnual().getYear(),pair.getPracticeBase(),students,this.majorName,downloadOutputStream);
+			this.setDownloadFileName(fileName);//设置下载文件名称
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
 			downloadOutputStream=null;

@@ -13,10 +13,13 @@ public interface SpecialIO {
 	
 	/**
 	 * 实习生名单
+	 * @return 文件名称
 	 */
-	public abstract void createStudentList(
+	public abstract String createStudentList(
+			int year,
 			PracticeBase pb,
 			List<Student> students,
+			String majorName,
 			OutputStream stream)
 					throws IOException;
 	/**
