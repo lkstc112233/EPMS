@@ -21,7 +21,7 @@ import obj.staticObject.PracticeBase;
 /**
  * 导出实习生名单
  */
-public class ExportStudentList extends ActionSupport{
+public class ExportPracticeBaseConsultationLetter extends ActionSupport{
 	private static final long serialVersionUID = 3677055466118899859L;
 
 	private action.Annual annual=new action.Annual();
@@ -34,7 +34,7 @@ public class ExportStudentList extends ActionSupport{
 
 	static public final String SessionListKey=Export.SessionListKey; 
 	
-	public ExportStudentList(){
+	public ExportPracticeBaseConsultationLetter(){
 		super();
 		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudents.class,SessionListKey);
 	}
@@ -73,7 +73,7 @@ public class ExportStudentList extends ActionSupport{
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private OutputStream downloadOutputStream=null;
 	protected String downloadByIO(SpecialIO io,int year,PracticeBase pb,List<Student> students,String majorName,OutputStream stream) throws IOException{
-		return io.createStudentList(year,pb,students,majorName,stream);
+		return io.createPracticeBaseConsultationLetter(year,pb,students,majorName,stream);
 	}
 	public String download(){//下载模板
 		System.out.println(">> TableOperationAction:download > practiceBaseName="+this.practiceBaseName);
