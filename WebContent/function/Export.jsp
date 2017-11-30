@@ -65,7 +65,7 @@
 				</td>
 			</s:if>
 			<td colspan="100">
-				<div class="listHeader" style="width:80%;background:linear-gradient(to right,#0071bc,rgba(0,0,0,0));border:0;">
+				<div class="listHeader" style="width:100%;background:linear-gradient(to right,#0071bc,rgba(0,0,0,0));border:0;">
 					<span style="float:left;">
 						<s:property value="#__Row.practiceBase.name" />
 					</span>
@@ -79,7 +79,7 @@
 					<span style="float:left;font-size:12px;margin-left:20px;">
 						<s:property value="#__Row.size"/>人
 					</span>
-					<span style="float:left;font-size:12px;margin-left:30px;margin-top:5px;">
+					<span style="float:left;font-size:12px;margin-left:20px;margin-top:5px;">
 						<s:form action="function_ExportStudentList_download" method="post" theme="simple">
 							<s:hidden name="jumpURL" value="function_Export_display.action" theme="simple"/>
 							<s:hidden name="practiceBaseName" value="%{#__Row.practiceBase.name}" theme="simple"/>
@@ -88,7 +88,7 @@
 							style="width:auto;background:white;border:double 3px #0071bc;font-weight:600;height:25px;"/>
 						</s:form>
 					</span>
-					<span style="float:left;font-size:12px;margin-left:10px;margin-top:5px;">
+					<span style="float:left;font-size:12px;margin-left:5px;margin-top:5px;">
 						<s:form action="function_ExportPracticeBaseConsultationLetter_download" method="post" theme="simple">
 							<s:hidden name="jumpURL" value="function_Export_display.action" theme="simple"/>
 							<s:hidden name="practiceBaseName" value="%{#__Row.practiceBase.name}" theme="simple"/>

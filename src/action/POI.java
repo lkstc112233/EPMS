@@ -13,7 +13,9 @@ import obj.staticObject.*;
 import obj.restraint.BaseRestraint;
 
 public class POI implements SQLIO, SpecialIO{
-	
+
+	static public int LockMaxTry=10;
+	static public long LockTryWait=200;
 	static public String path;
 	static {
         System.out.println("++ POI:static > 开始加载POI模板文件");

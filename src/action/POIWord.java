@@ -3,6 +3,7 @@ package action;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.channels.*;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.*;
@@ -200,10 +201,33 @@ public class POIWord implements SpecialWordIO{
 			throw new IOException(e.getMessage());
 		}
 		param.put("jwcManager",sb.toString());
-		try(InputStream in=new FileInputStream(POI.path+modelFileName);
-				XWPFDocument doc=this.getModel(in,param);){
+		try(FileInputStream in=new FileInputStream(POI.path+modelFileName);){
+			FileChannel channel=in.getChannel();
+			FileLock lock=null;
+			for(int i=0;i<POI.LockMaxTry;i++) try{
+				lock=channel.tryLock(0L,Long.MAX_VALUE,true);
+				if(lock!=null) break;
+				try{Thread.sleep(POI.LockTryWait);//共享锁
+				}catch(InterruptedException e){}
+		//	}catch(OverlappingFileLockException e) {
+			}catch(Exception e) {
+				e.printStackTrace();
+				break;
+			}
+			if(lock==null)
+				throw new IOException("模板文件被占用，无法读取!");
+			XWPFDocument doc;
+			try{
+				doc=this.getModel(in,param);
+			}catch(IOException e){
+				throw e;
+			}finally{
+				if(lock.isValid())
+					lock.release();
+			}
 			debug(doc,name);
 			doc.write(out);
+			doc.close();
 		}
 		return name+".docx";
 	}
