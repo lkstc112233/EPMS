@@ -11,10 +11,11 @@ public interface SpecialWordIO {
 	/**
 	 * 商洽函
 	 */
-	public abstract String createPracticeBaseFile(
+	public abstract String createPracticeBaseConsultationLetter(
 			int year,
 			PracticeBase pb,
 			List<Student> students,
+			String majorName,
 			OutputStream stream)
 					throws IOException;
 	
