@@ -13,7 +13,7 @@ import obj.staticObject.PracticeBase;
 /**
  * 导出实习生名单
  */
-public class ExportPracticeBaseConsultationLetter extends ActionSupport{
+public class ExportAllPracticeBaseConsultationLetter extends ActionSupport{
 	private static final long serialVersionUID = 3677055466118899859L;
 
 	private action.Annual annual=new action.Annual();
@@ -26,7 +26,7 @@ public class ExportPracticeBaseConsultationLetter extends ActionSupport{
 
 	static public final String SessionListKey=Export.SessionListKey; 
 	
-	public ExportPracticeBaseConsultationLetter(){
+	public ExportAllPracticeBaseConsultationLetter(){
 		super();
 		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudents.class,SessionListKey);
 	}
@@ -42,9 +42,6 @@ public class ExportPracticeBaseConsultationLetter extends ActionSupport{
 	
 	
 	
-	private String practiceBaseName;
-		public void setPracticeBaseName(String a) {this.practiceBaseName=Field.s2S(a);}
-		public String getPracticeBaseName() {return this.practiceBaseName;}
 	private String majorName;
 		public void setMajorName(String a){this.majorName=Field.s2S(a);}
 		public String getMajorName(){return majorName;}
@@ -68,32 +65,45 @@ public class ExportPracticeBaseConsultationLetter extends ActionSupport{
 		return io.createPracticeBaseConsultationLetter(year,pb,students,majorName,stream);
 	}
 	public String download(){//下载模板
-		System.out.println(">> ExportPracticeBaseConsultationLetter:download > practiceBaseName="+this.practiceBaseName);
 		if(this.practiceBaseAndStudents==null)
 			return Manager.tips("该项目未初始化!","jump");
-		ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair=
-				this.practiceBaseAndStudents.get(this.practiceBaseName);
-		if(pair==null)
-			return Manager.tips("实习基地名称有误!","jump");
-		List<Student> students=new ArrayList<Student>();
-		if(this.majorName==null||this.majorName.isEmpty()) {
-			students.addAll(pair.getStudents());
-			this.majorName=null;
-		}else for(Student stu:pair.getStudents())
-			if(this.majorName.equals(stu.getMajor()))
-				students.add(stu);
-		System.out.println(">> ExportPracticeBaseConsultationLetter:download > create download file.");
-		downloadOutputStream=new ByteArrayOutputStream();
-		try{
-			String fileName=this.downloadByIO((SpecialIO)Base.io(),
-					this.getAnnual().getYear(),pair.getPracticeBase(),students,this.majorName,downloadOutputStream);
-			this.setDownloadFileName(fileName);//设置下载文件名称
-			this.downloadOutputStream.flush();
-		}catch(IOException e){
-			downloadOutputStream=null;
-			return Manager.tips("服务器开小差去了，暂时无法下载！",e,"jump");
+		//设置下载文件名称
+		String fileName=String.format("%d年免费师范生教育实习商洽函.zip",
+				this.getAnnual().getYear(),majorName);
+		this.setDownloadFileName(fileName);
+		//准备文件内容
+		Map<String,OutputStream> files=new HashMap<String,OutputStream>();
+		for(ListOfPracticeBaseAndStudents.RegionPair rp:this.practiceBaseAndStudents.getList()) {
+			for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
+				PracticeBase pb=pair.getPracticeBase();
+				System.out.println(">> ExportAllPracticeBaseConsultationLetter:download > practiceBaseName="+pb.getName());
+				List<Student> students=new ArrayList<Student>();
+				if(this.majorName==null||this.majorName.isEmpty()) {
+					students.addAll(pair.getStudents());
+					this.majorName=null;
+				}else for(Student stu:pair.getStudents())
+					if(this.majorName.equals(stu.getMajor()))
+						students.add(stu);
+				System.out.println(">> ExportAllPracticeBaseConsultationLetter:download > create download file.");
+				OutputStream out=new ByteArrayOutputStream();
+				try{
+					String name=this.downloadByIO((SpecialIO)Base.io(),
+							this.getAnnual().getYear(),pair.getPracticeBase(),students,this.majorName,out);
+					files.put(name,out);
+				}catch(IOException e){
+					downloadOutputStream=null;
+					return Manager.tips("创建文件失败，暂时无法下载！",e,"jump");
+				}
+			}
 		}
-		System.out.println(">> ExportPracticeBaseConsultationLetter:download <downloadAttachment");
+		try{
+			this.downloadOutputStream=IOHelper.ZIP(files);
+			this.downloadOutputStream.flush();
+		} catch (IOException e) {
+			this.downloadOutputStream=null;
+			return Manager.tips("压缩文件失败，暂时无法下载！",e,"jump");
+		}
+		System.out.println(">> ExportAllPracticeBaseConsultationLetter:download <downloadAttachment");
 		return "downloadAttachment";
 	}
 	public InputStream getDownloadAttachment(){//实际上获取的输出流，使用getter获取的downloadAttachment

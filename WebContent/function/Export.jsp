@@ -33,6 +33,29 @@
 		<tr><td colspan="100" style="width:20%;border:0;height:25px;">
 			&nbsp;
 		</td></tr>
+		<tr><td colspan="100" style="text-align:center;">
+			<s:if test="majorName == allMajors.name">
+			</s:if>
+			<span style="float:left;margin-left:50px;">
+			<s:form action="function_ExportAllStudentList_download" method="post" theme="simple">
+				<s:hidden name="jumpURL" value="function_Export_display.action" theme="simple"/>
+				<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
+				<s:submit value="下载所有实习生名单" theme="simple"
+				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
+			</s:form>
+			</span>
+			<span style="float:left;margin-left:20px;">
+			<s:form action="function_ExportAllPracticeBaseConsultationLetter_download" method="post" theme="simple">
+				<s:hidden name="jumpURL" value="function_Export_display.action" theme="simple"/>
+				<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
+				<s:submit value="下载所有商洽函" theme="simple"
+				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
+			</s:form>
+			</span>
+		</td></tr>
+		<tr><td colspan="100" style="width:20%;border:0;height:25px;">
+			&nbsp;
+		</td></tr>
 	</tbody></table>
 	
 	
