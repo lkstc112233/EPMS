@@ -191,6 +191,9 @@ public class Field implements Comparable<Field>{
 	static public String s2S(String a){
 		return a==null||a.isEmpty()?null:a;
 	}
+	static public String s2s(String a,String defaultResult){
+		return a==null||a.isEmpty()?defaultResult:a;
+	}
 	static public int s2i(String a,int defaultResult){
 		Integer res=s2I(a);
 		return res==null?defaultResult:res;
@@ -199,6 +202,18 @@ public class Field implements Comparable<Field>{
 		if(a==null||a.isEmpty()) return null;
 		try{
 			return Integer.valueOf(a);
+		}catch(Exception e){
+			e.printStackTrace();
+		}return null;
+	}
+	static public float s2f(String a,float defaultResult){
+		Float res=s2F(a);
+		return res==null?defaultResult:res;
+	}
+	static public Float s2F(String a){
+		if(a==null||a.isEmpty()) return null;
+		try{
+			return Float.valueOf(a);
 		}catch(Exception e){
 			e.printStackTrace();
 		}return null;
