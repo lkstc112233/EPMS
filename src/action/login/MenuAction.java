@@ -20,6 +20,7 @@ public class MenuAction extends ActionSupport{
 	
 	public List<Time> getTimes(){return times;}
 	public void setTimes(List<Time> times){this.times=times;}
+	public String getJysx() {return Manager.jysx;}
 
 	public MenuAction(){
 		super();
