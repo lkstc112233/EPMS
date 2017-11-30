@@ -1,13 +1,19 @@
 package action;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.*;
 
 import com.opensymphony.xwork2.ActionContext;
 
+import obj.Base;
+import obj.Field;
+import obj.Restraint;
 import obj.staticObject.InnerPerson;
+import token.Role;
 
 public class Manager {
-	
+	static public final String jysx="教育实习";
 
 	static public void saveSession(String key,Object value){
 		if(value==null) Manager.removeSession(key);
@@ -98,4 +104,31 @@ public class Manager {
 		return false;
 	}
 	
+	
+	static public int getNowTimeMonth() {
+		return Calendar.getInstance().get(Calendar.MONTH)+1;
+	}static public int getNowTimeDay() {
+		return Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+	}static public int getNowTimeYear() {
+		return Calendar.getInstance().get(Calendar.YEAR);
+	}static public int getNowTimeDayOfWeek() {
+		return Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+	}
+	static public int getTimeMonth(Date date) {
+		Calendar c=Calendar.getInstance();c.setTime(date);return c.get(Calendar.MONTH)+1;
+	}static public int getTimeDay(Date date) {
+		Calendar c=Calendar.getInstance();c.setTime(date);return c.get(Calendar.DAY_OF_MONTH);
+	}static public int getTimeYear(Date date) {
+		Calendar c=Calendar.getInstance();c.setTime(date);return c.get(Calendar.YEAR);
+	}static public int getTimeDayOfWeek(Date date) {
+		Calendar c=Calendar.getInstance();c.setTime(date);return c.get(Calendar.DAY_OF_WEEK);
+	}
+	
+	
+	static List<InnerPerson> getManagerInnerPersons() throws IllegalArgumentException, InstantiationException, SQLException {
+		return Base.list(InnerPerson.class,new Restraint(new Restraint.Part[] {
+				new Restraint.Part(Field.getField(InnerPerson.class,"office"),Restraint.Type.Like,"%"+Role.lxr.getName()+"%"),
+				new Restraint.Part(Field.getField(InnerPerson.class,"school"),Role.jwc.getName())
+		}));
+	}
 }
