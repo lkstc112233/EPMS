@@ -81,9 +81,13 @@
 								&nbsp;
 							</s:else>
 						</span>
-						<a href='<s:url action="function_%{#__tableRow.actionClass}_display"/>' onclick="this.href=this.href+'?annual.year='+document.getElementById('annualYear').value">
+						<s:if test="jysx.equals(#__tableRow.project)">
 							<s:property value="%{#__tableRow.project}" />
-						</a>
+						</s:if><s:else>
+							<a href='<s:url action="function_%{#__tableRow.actionClass}_display"/>' onclick="this.href=this.href+'?annual.year='+document.getElementById('annualYear').value">
+								<s:property value="%{#__tableRow.project}" />
+							</a>
+						</s:else>
 					</li>  
 				</ul></td>
 			</tr>
