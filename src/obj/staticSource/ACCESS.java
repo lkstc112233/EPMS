@@ -35,7 +35,7 @@ public class ACCESS extends Base{
 	public String getProject() {return project;}
 	public void setProject(String a) {this.project=Field.s2S(a);}
 	public String getActionClass(){return this.actionClass;}
-	public void setActionClass(String a){this.actionClass=Field.s2S(a);}
+	public void setActionClass(String a){this.actionClass=Field.s2s(a,"");}
 	public Timestamp getTime1() {return time1;}
 	public void setTime1(String a){
 		this.time1=Field.s2TS(a);

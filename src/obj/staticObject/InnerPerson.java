@@ -34,7 +34,7 @@ public class InnerPerson extends Base implements Base.ListableWithNoSave{
 	public String getName(){return name;}
 	public void setName(String a){this.name=a;}
 	public String getOffice(){return office;}
-	public void setOffice(String a){this.office=Field.s2S(a);}
+	public void setOffice(String a){this.office=Field.s2s(a,"教师");}
 	public String getSchool(){return school;}
 	public void setSchool(String a){this.school=Field.s2S(a);}
 	public String getPhone(){return phone;}

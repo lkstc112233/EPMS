@@ -27,7 +27,7 @@ public class OuterPerson extends Base implements Base.ListableWithNoSave{
 	public String getName(){return name;}
 	public void setName(String a){this.name=a;}
 	public String getOffice(){return office;}
-	public void setOffice(String a){this.office=Field.s2S(a);}
+	public void setOffice(String a){this.office=Field.s2s(a,"其他");}
 	public String getPracticeBase(){return practiceBase;}
 	public void setPracticeBase(String a){this.practiceBase=Field.s2S(a);}
 	public String getPhone(){return phone;}

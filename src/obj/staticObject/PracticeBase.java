@@ -35,12 +35,12 @@ public class PracticeBase extends Base implements Base.ListableWithNoSave{
 	public String getName(){return name;}
 	public void setName(String a){this.name=a;}
 	public String getProvince(){return province==null||province.isEmpty()?null:province;}
-	public void setProvince(String a){this.province=a;}
+	public void setProvince(String a){this.province=Field.s2s(a,"");}
 	public boolean getHx() {return this.hx;}
 	public void setHx(boolean a) {this.hx=a;}
 	public void setHx(String a) {this.hx=Field.s2b(a,false);}
-	public String getRefuseNation(){return refuseNation;}
-	public void setRefuseNation(String a){this.refuseNation=a;}
+	public String getRefuseNation(){return refuseNation==null||refuseNation.isEmpty()?"":refuseNation;}
+	public void setRefuseNation(String a){this.refuseNation=Field.s2s(a,"");}
 	public String getAddress(){return address;}
 	public void setAddress(String a){this.address=a;}
 	public String getZhmc() {return zhmc;}

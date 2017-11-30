@@ -40,58 +40,50 @@ public class Supervise extends AnnualBase{
 		static public String[] getTypeNameList() {return Supervise.TypeNameList;}
 
 	public String getPracticeBase() {return practiceBase;}
-	public void setPracticeBase(String practiceBase) {this.practiceBase = practiceBase==null||practiceBase.isEmpty()?null:practiceBase;}
+	public void setPracticeBase(String a) {this.practiceBase=Field.s2S(a);}
 	public String getSupervisorId() {return supervisorId;}
-	public void setSupervisorId(String supervisorId) {this.supervisorId = supervisorId==null||supervisorId.isEmpty()?null:supervisorId;}
+	public void setSupervisorId(String a) {this.supervisorId=Field.s2S(a);}
 	public int getSuperviseType(){return this.superviseType;}
 	public void setSuperviseType(int a){this.superviseType=a;}
-	public void setSuperviseType(String a){try{this.superviseType=Integer.valueOf(a);}catch(NumberFormatException e){e.printStackTrace();}}
+	public void setSuperviseType(String a){this.superviseType=Field.s2i(a,0);}
 	public Timestamp getTime1() {return time1;}
 	public void setTime1(Timestamp time) {this.time1 = time;
 	Manager.RegularPeriod(time1,time2);}
-	public void setTime1(String s){
-		try{
-			this.time1=Timestamp.valueOf(s);
-			Manager.RegularPeriod(time1,time2);
-		}catch(IllegalArgumentException e){
-			this.time1=null;
-		}
+	public void setTime1(String a){
+		this.time1=Field.s2TS(a);
+		Manager.RegularPeriod(time1,time2);
 	}
 	public Timestamp getTime2() {return time2;}
 	public void setTime2(Timestamp time) {this.time2 = time;
 	Manager.RegularPeriod(time1,time2);}
-	public void setTime2(String s){
-		try{
-			this.time2=Timestamp.valueOf(s);
-			Manager.RegularPeriod(time1,time2);
-		}catch(IllegalArgumentException e){
-			this.time2=null;
-		}
+	public void setTime2(String a){
+		this.time2=Field.s2TS(a);
+		Manager.RegularPeriod(time1,time2);
 	}
 	public String getRemark() {return remark;}
 	public void setRemark(String remark) {this.remark = remark;}
 
 	public float getMoneyPlane() {return moneyPlane;}
 	public void setMoneyPlane(float a) {this.moneyPlane = a;}
-	public void setMoneyPlane(String a){try{this.moneyPlane=Float.parseFloat(a);}catch(NumberFormatException e){e.printStackTrace();}}
+	public void setMoneyPlane(String a){this.moneyPlane=Field.s2f(a,0);}
 	public float getMoneyBooking() {return moneyBooking;}
 	public void setMoneyBooking(float a) {this.moneyBooking = a;}
-	public void setMoneyBooking(String a){try{this.moneyBooking=Float.parseFloat(a);}catch(NumberFormatException e){e.printStackTrace();}}
+	public void setMoneyBooking(String a){this.moneyBooking=Field.s2f(a,0);}
 	public float getMoneyInsurance() {return moneyInsurance;}
 	public void setMoneyInsurance(float a) {this.moneyInsurance = a;}
-	public void setMoneyInsurance(String a){try{this.moneyInsurance=Float.parseFloat(a);}catch(NumberFormatException e){e.printStackTrace();}}
+	public void setMoneyInsurance(String a){this.moneyInsurance=Field.s2f(a,0);}
 	public float getMoneyTrain() {return moneyTrain;}
 	public void setMoneyTrain(float a) {this.moneyTrain = a;}
-	public void setMoneyTrain(String a){try{this.moneyTrain=Float.parseFloat(a);}catch(NumberFormatException e){e.printStackTrace();}}
+	public void setMoneyTrain(String a){this.moneyTrain=Field.s2f(a,0);}
 	public float getMoneyAccommodation() {return moneyAccommodation;}
 	public void setMoneyAccommodation(float a) {this.moneyAccommodation = a;}
-	public void setMoneyAccommodation(String a){try{this.moneyAccommodation=Float.parseFloat(a);}catch(NumberFormatException e){e.printStackTrace();}}
+	public void setMoneyAccommodation(String a){this.moneyAccommodation=Field.s2f(a,0);}
 	public int getMoneyAccommodationNum() {return moneyAccommodationNum;}
 	public void setMoneyAccommodationNum(int a) {this.moneyAccommodationNum = a;}
-	public void setMoneyAccommodationNum(String a){try{this.moneyAccommodationNum=Integer.parseInt(a);}catch(NumberFormatException e){e.printStackTrace();}}
+	public void setMoneyAccommodationNum(String a){this.moneyAccommodationNum=Field.s2i(a,0);}
 	public float getMoneyElse() {return moneyElse;}
 	public void setMoneyElse(float a) {this.moneyElse = a;}
-	public void setMoneyElse(String a){try{this.moneyElse=Float.parseFloat(a);}catch(NumberFormatException e){e.printStackTrace();}}
+	public void setMoneyElse(String a){this.moneyElse=Field.s2f(a,0);}
 
 
 

@@ -63,9 +63,9 @@ public class Student extends AnnualBase{
 	public void setRecommend(boolean a) {this.recommend = a;}
 	public void setRecommend(String a){this.recommend=Field.s2b(a,false);}
 	public String getTeacherId() {return teacherId;}
-	public void setTeacherId(String a) {this.teacherId=Field.s2S(a);}
+	public void setTeacherId(String a) {this.teacherId=Field.s2s(a,null);}
 	public String getOutstandingType() {return outstandingType;}
-	public void setOutstandingType(String a) {this.outstandingType=Field.s2S(a);}
+	public void setOutstandingType(String a) {this.outstandingType=Field.s2s(a,null);}
 	public byte[] getOutstandingMaterial() {return outstandingMaterial;}
 	public void setOutstandingMaterial(byte[] outstandingMaterial) {this.outstandingMaterial = outstandingMaterial==null||outstandingMaterial.length<=0?null:outstandingMaterial;}
 	public void setOutstandingMaterial(String outstandingMaterial) {this.outstandingMaterial = outstandingMaterial==null||outstandingMaterial.isEmpty()?null:outstandingMaterial.getBytes();}

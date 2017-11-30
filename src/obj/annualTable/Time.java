@@ -23,30 +23,20 @@ public class Time extends AnnualBase{
 	public int getId(){return id;}
 	public void setId(int id){this.id=id;}
 	public String getProject() {return project;}
-	public void setProject(String project) {
-		this.project = project;
-	}
+	public void setProject(String project) {this.project = project;}
 	public Timestamp getTime1() {return time1;}
 	public void setTime1(Timestamp time) {this.time1 = time;
 	Manager.RegularPeriod(time1,time2);}
-	public void setTime1(String s){
-		try{
-			this.time1=Timestamp.valueOf(s);
-			Manager.RegularPeriod(time1,time2);
-		}catch(IllegalArgumentException e){
-			this.time1=null;
-		}
+	public void setTime1(String a){
+		this.time1=Field.s2TS(a);
+		Manager.RegularPeriod(time1,time2);
 	}
 	public Timestamp getTime2() {return time2;}
 	public void setTime2(Timestamp time) {this.time2 = time;
 	Manager.RegularPeriod(time1,time2);}
-	public void setTime2(String s){
-		try{
-			this.time2=Timestamp.valueOf(s);
-			Manager.RegularPeriod(time1,time2);
-		}catch(IllegalArgumentException e){
-			this.time2=null;
-		}
+	public void setTime2(String a){
+		this.time2=Field.s2TS(a);
+		Manager.RegularPeriod(time1,time2);
 	}
 	public String getActionClass(){
 		try{

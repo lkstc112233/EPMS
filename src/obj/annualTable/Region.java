@@ -42,7 +42,7 @@ public class Region extends AnnualBase{
 	public void setEnterPracticeBaseTime(Timestamp enterPracticeBaseTime) {this.enterPracticeBaseTime = enterPracticeBaseTime;}
 	public void setEnterPracticeBaseTime(String a) {this.enterPracticeBaseTime=Field.s2TS(a);}
 	public String getEnterPracticeBasePlace() {return enterPracticeBasePlace;}
-	public void setEnterPracticeBasePlace(String enterPracticeBasePlace) {this.enterPracticeBasePlace = enterPracticeBasePlace;}
+	public void setEnterPracticeBasePlace(String a) {this.enterPracticeBasePlace=Field.s2S(a);}
 	public Timestamp getMobilizationTime() {return mobilizationTime;}
 	public void setMobilizationTime(Timestamp mobilizationTime) {this.mobilizationTime = mobilizationTime;}
 	public void setMobilizationTime(String a) {this.mobilizationTime=Field.s2TS(a);}

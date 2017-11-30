@@ -23,14 +23,14 @@ public class Plan extends AnnualBase {
 	public String getPracticeBase() {return practiceBase;}
 	public void setPracticeBase(String practiceBase) {this.practiceBase = practiceBase==null||practiceBase.isEmpty()?null:practiceBase;}
 	public String getMajor() {return major;}
-	public void setMajor(String major) {this.major = major==null||major.isEmpty()?null:major;}
+	public void setMajor(String a) {this.major=Field.s2S(a);}
 	public int getNumber() {return number;}
 	public void setNumber(int number) {this.number = number;}
 	public void setNumber(String a){this.number=Field.s2i(a,0);}
-	public String getRefuseNation() {return refuseNation;}
-	public void setRefuseNation(String refuseNation) {this.refuseNation = refuseNation==null||refuseNation.isEmpty()?null:refuseNation;}
-	public String getRefuseSex() {return refuseSex;}
-	public void setRefuseSex(String refuseSex) {this.refuseSex = refuseSex==null||refuseSex.isEmpty()?null:refuseSex;}
+	public String getRefuseNation() {return refuseNation==null||refuseNation.isEmpty()?"":refuseNation;}
+	public void setRefuseNation(String a) {this.refuseNation=Field.s2s(a,"");}
+	public String getRefuseSex() {return refuseSex==null||refuseSex.isEmpty()?"":refuseSex;}
+	public void setRefuseSex(String a) {this.refuseSex=Field.s2s(a,"");}
 	public boolean isMedia() {return media;}
 	public void setMedia(boolean media) {this.media = media;}
 	public void setMedia(String a){this.media=Field.s2b(a,false);}
