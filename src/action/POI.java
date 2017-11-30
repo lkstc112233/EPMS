@@ -19,9 +19,10 @@ public class POI implements SQLIO, SpecialIO{
         System.out.println("++ POI:static > 开始加载POI模板文件");
 		try {
 			path=(POI.class.getClassLoader().getResource("").toURI()).getPath();
-			path=path.substring(0,path.lastIndexOf("\\"));
-			path=path.substring(0,path.lastIndexOf("\\"));
-			path=path+"\\Documents";
+			path=path.substring(0,path.lastIndexOf("/"));
+			path=path.substring(0,path.lastIndexOf("/"));
+			path=path.substring(0,path.lastIndexOf("/"));
+			path=path+"/model/Document/";
 			
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
@@ -37,11 +38,6 @@ public class POI implements SQLIO, SpecialIO{
 		return excel.createStudentList(year, pb, students, majorName, stream);
 	}
 	@Override
-	public String createPracticeBaseFile(int year,PracticeBase pb, List<Student> students, OutputStream stream)
-			throws IOException {
-		return word.createPracticeBaseFile(year, pb, students, stream);
-	}
-	@Override
 	public String getModelExcel(Class<? extends Base> clazz, Collection<Field> displayFields, OutputStream out)
 			throws IOException {
 		return ((SQLIO)excel).getModelExcel(clazz, displayFields, out);
@@ -51,6 +47,11 @@ public class POI implements SQLIO, SpecialIO{
 			List<String> error, BaseRestraint restraint) throws IOException, EncryptedDocumentException,
 			InvalidFormatException, InstantiationException, IllegalAccessException {
 		return ((SQLIO)excel).readExcel(clazz, displayFields, in, error, restraint);
+	}
+	@Override
+	public String createPracticeBaseConsultationLetter(int year, PracticeBase pb, List<Student> students,
+			String majorName, OutputStream stream) throws IOException {
+		return word.createPracticeBaseConsultationLetter(year, pb, students, majorName, stream);
 	}
 	
 	
