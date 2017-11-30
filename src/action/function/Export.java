@@ -23,7 +23,7 @@ public class Export extends ActionSupport{
 	public action.Annual getAnnual(){return this.annual;}
 
 
-	private String majorName="汉语言文学（师范）";
+	private String majorName=this.getAllMajors().getName();
 		public void setMajorName(String a){this.majorName=Field.s2S(a);}
 		public String getMajorName(){return majorName;}
 	private ListOfPracticeBaseAndStudents practiceBaseAndStudents;
@@ -34,14 +34,15 @@ public class Export extends ActionSupport{
 	public Student getStudent(){return new Student();}
 	private List<Major> majors;
 		private Major allMajors=null;
+		public Major getAllMajors() {if(allMajors==null){allMajors=new Major();allMajors.setSubject("所有专业");}return this.allMajors;}
 		public List<Major> getMajors(){
-			if(allMajors==null){allMajors=new Major();allMajors.setSubject("所有专业");}
+			this.getAllMajors();
 			if(this.majors!=null) return this.majors;
 			Role role=Role.getRole(Manager.getUser());
 			if(role==null) return null;
 			try{
 				this.majors=new ArrayList<Major>();
-				this.majors.add(allMajors);
+				this.majors.add(this.getAllMajors());
 				if(role==Role.jwc)
 					this.majors.addAll(Base.list(Major.class));
 				else
