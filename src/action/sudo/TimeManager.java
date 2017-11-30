@@ -51,7 +51,7 @@ public class TimeManager extends ActionSupport{
 						e,NONE);
 			}
 		}
-		return SUCCESS;
+		return Manager.tips("修改成功!",SUCCESS);
 	}
 	
 	public String display(){
