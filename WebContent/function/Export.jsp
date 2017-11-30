@@ -83,7 +83,17 @@
 						<s:form action="function_ExportStudentList_download" method="post" theme="simple">
 							<s:hidden name="jumpURL" value="function_Export_display.action" theme="simple"/>
 							<s:hidden name="practiceBaseName" value="%{#__Row.practiceBase.name}" theme="simple"/>
+							<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
 							<s:submit value="下载实习生名单" theme="simple"
+							style="width:auto;background:white;border:double 3px #0071bc;font-weight:600;height:25px;"/>
+						</s:form>
+					</span>
+					<span style="float:left;font-size:12px;margin-left:10px;margin-top:5px;">
+						<s:form action="function_ExportPracticeBaseConsultationLetter_download" method="post" theme="simple">
+							<s:hidden name="jumpURL" value="function_Export_display.action" theme="simple"/>
+							<s:hidden name="practiceBaseName" value="%{#__Row.practiceBase.name}" theme="simple"/>
+							<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
+							<s:submit value="下载商洽函" theme="simple"
 							style="width:auto;background:white;border:double 3px #0071bc;font-weight:600;height:25px;"/>
 						</s:form>
 					</span>
