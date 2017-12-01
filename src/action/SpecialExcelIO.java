@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import obj.annualTable.ListOfPracticeBaseAndStudents;
 import obj.annualTable.Student;
 import obj.staticObject.PracticeBase;
 
@@ -26,6 +27,11 @@ public interface SpecialExcelIO {
 	/**
 	 * 布局规划
 	 */
+	public abstract String createPlanDesign(
+			int year,
+			ListOfPracticeBaseAndStudents list,
+			OutputStream stream)
+					throws IOException;
 	
 	
 	

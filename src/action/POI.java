@@ -55,6 +55,11 @@ public class POI implements SQLIO, SpecialIO{
 			String majorName, OutputStream stream) throws IOException {
 		return word.createPracticeBaseConsultationLetter(year, pb, students, majorName, stream);
 	}
+	@Override
+	public String createPlanDesign(int year, ListOfPracticeBaseAndStudents list, OutputStream stream)
+			throws IOException {
+		return excel.createPlanDesign(year, list, stream);
+	}
 	
 	
 	
