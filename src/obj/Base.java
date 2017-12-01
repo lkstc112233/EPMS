@@ -7,7 +7,7 @@ import action.POI;
 import persistence.DB;
 
 @SuppressWarnings("unchecked")
-public abstract class Base {
+public abstract class Base extends Object implements Comparable<Base>, Cloneable{
 	protected Base(){
 		
 	}
@@ -156,7 +156,33 @@ public abstract class Base {
 			res+=f.get(this).hashCode()*(base*=HashBase);
 		return res;
 	}
-
+	@Override
+	public int compareTo(Base b) {
+		for(Field f:this.getFields()) {
+			Object o=f.get(this);
+			Object o2=f.get(b);
+			if(o==null)
+				if(o2==null) continue;
+				else return -1;
+			@SuppressWarnings("rawtypes")
+			int cmp=(o instanceof Comparable)?
+					((Comparable)o).compareTo(o2):
+						Integer.compare(o.hashCode(),o2.hashCode());
+			if(cmp!=0) return cmp;
+			else continue;
+		}
+		return 0;
+	}
+	@Override
+	public Base clone() {
+		try{
+			Base res=this.getClass().newInstance();
+			this.copyTo(res);
+			return res;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 	
 	
 	//=============================================================
