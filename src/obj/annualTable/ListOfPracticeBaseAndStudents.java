@@ -21,7 +21,7 @@ import obj.annualTable.Student;
  *  {[(Student......)].....[(Student.......)]}<br/>
  */
 public class ListOfPracticeBaseAndStudents{
-	static public class RegionPair{
+	static public class RegionPair implements Comparable<RegionPair>{
 		private Region region;
 		private List<PracticeBasePair> list=new ArrayList<PracticeBasePair>();
 			public Region getRegion() {return this.region;}
@@ -41,13 +41,24 @@ public class ListOfPracticeBaseAndStudents{
 				public PracticeBase getPracticeBase(){return this.practiceBase;}
 				public List<Student> getStudents(){return this.students;}
 			public PracticeBasePair(PracticeBase pb){this.practiceBase=pb;}
+		}
+		@Override
+		public int compareTo(RegionPair o) {
+			if(o==null) return 1;
+			boolean hx=this.list.get(0).practiceBase.getHx();
+			boolean hx2=o.list.get(0).practiceBase.getHx();
+			if(hx && !hx2) return 1;
+			if(!hx && hx2) return -1;
+			if(hx && hx2)
+				return this.region.compareTo(o.region);
+			else
+				return this.list.get(0).practiceBase.getProvince()
+						.compareTo(o.list.get(0).practiceBase.getProvince());
 		}	
 	}
 	private List<RegionPair> list=new ArrayList<RegionPair>();
 		public List<RegionPair> getList(){return list;}
 		public int getSize(){return list.size();}
-	private List<Student> undistributedStudents=new ArrayList<Student>();
-		public List<Student> getUndistributedStudents(){return this.undistributedStudents;}
 	
 	/**
 	 * 不包含Region=null的子树
@@ -85,6 +96,7 @@ public class ListOfPracticeBaseAndStudents{
 				this.put(region,pb,stu);
 			}
 		}
+		Collections.sort(this.list);
 	}
 	
 	public PracticeBasePair get(String practiceBaseName){
