@@ -14,7 +14,6 @@ public interface SpecialWordIO {
 	public abstract String createPracticeBaseConsultationLetter(
 			int year,
 			PracticeBase pb,
-			List<Student> students,
 			String majorName,
 			OutputStream stream)
 					throws IOException;

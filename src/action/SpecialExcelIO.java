@@ -2,10 +2,8 @@ package action;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 import obj.annualTable.ListOfPracticeBaseAndStudents;
-import obj.annualTable.Student;
 import obj.staticObject.PracticeBase;
 
 public interface SpecialExcelIO {
@@ -19,7 +17,6 @@ public interface SpecialExcelIO {
 	public abstract String createStudentList(
 			int year,
 			PracticeBase pb,
-			List<Student> students,
 			String majorName,
 			OutputStream stream)
 					throws IOException;
@@ -32,6 +29,23 @@ public interface SpecialExcelIO {
 			ListOfPracticeBaseAndStudents list,
 			OutputStream stream)
 					throws IOException;
+	
+	/**
+	 * 指导教师列表
+	 */
+	public abstract String createTeacherList(
+			int year,
+			OutputStream stream)
+					throws IOException;
+
+	/**
+	 * 督导任务表
+	 */
+	public abstract String createSuperviseList(
+			int year,
+			OutputStream stream)
+					throws IOException;
+	
 	
 	
 	
