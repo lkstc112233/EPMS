@@ -118,7 +118,8 @@ public class Field implements Comparable<Field>{
 	}
 	@Override
 	public int compareTo(Field f){
-		int cmp=Integer.compare(this.getWeigth(),f==null?Integer.MIN_VALUE:f.getWeigth());
+		if(f==null) return 1;
+		int cmp=Integer.compare(this.getWeigth(),f.getWeigth());
 		if(cmp!=0) return cmp;
 		return Integer.compare(this.field.hashCode(),f.field.hashCode());
 	}
@@ -184,6 +185,9 @@ public class Field implements Comparable<Field>{
 		if(a==null) return defaultResult;
 		if(a instanceof Boolean) return ((Boolean)a)?boolTrue:boolFalse;
 		return Field.o2S(a);
+	}
+	static public String o2s(Object a,String defaultResult){
+		return Field.o2s(a, defaultResult, "true", "false");
 	}
 	static public String o2S(Object a){
 		return Field.s2S(a==null?null:a.toString());
