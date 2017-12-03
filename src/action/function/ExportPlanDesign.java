@@ -1,14 +1,12 @@
 package action.function;
 
 import java.io.*;
-import java.util.*;
 
 import com.opensymphony.xwork2.ActionSupport;
 
 import action.*;
 import obj.*;
 import obj.annualTable.*;
-import obj.staticObject.PracticeBase;
 
 /**
  * 导出实习生名单

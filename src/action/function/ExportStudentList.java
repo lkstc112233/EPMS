@@ -64,8 +64,8 @@ public class ExportStudentList extends ActionSupport{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private ByteArrayOutputStream downloadOutputStream=null;
-	protected String downloadByIO(SpecialIO io,int year,PracticeBase pb,List<Student> students,String majorName,OutputStream stream) throws IOException{
-		return io.createStudentList(year,pb,students,majorName,stream);
+	protected String downloadByIO(SpecialIO io,int year,PracticeBase pb,String majorName,OutputStream stream) throws IOException{
+		return io.createStudentList(year,pb,majorName,stream);
 	}
 	public String download(){//下载模板
 		System.out.println(">> ExportStudentList:download > practiceBaseName="+this.practiceBaseName);
@@ -75,18 +75,11 @@ public class ExportStudentList extends ActionSupport{
 				this.practiceBaseAndStudents.get(this.practiceBaseName);
 		if(pair==null)
 			return Manager.tips("实习基地名称有误!","jump");
-		List<Student> students=new ArrayList<Student>();
-		if(this.majorName==null||this.majorName.isEmpty()) {
-			students.addAll(pair.getStudents());
-			this.majorName=null;
-		}else for(Student stu:pair.getStudents())
-			if(this.majorName.equals(stu.getMajor()))
-				students.add(stu);
 		System.out.println(">> ExportStudentList:download > create download file.");
 		this.downloadOutputStream=new ByteArrayOutputStream();
 		try{
 			String fileName=this.downloadByIO((SpecialIO)Base.io(),
-					this.getAnnual().getYear(),pair.getPracticeBase(),students,this.majorName,downloadOutputStream);
+					this.getAnnual().getYear(),pair.getPracticeBase(),this.majorName,downloadOutputStream);
 			this.setDownloadFileName(fileName);//设置下载文件名称
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
