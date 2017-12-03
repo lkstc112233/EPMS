@@ -12,6 +12,7 @@ import org.apache.poi.xwpf.usermodel.*;
 
 import obj.Base;
 import obj.Field;
+import obj.Pair;
 import obj.Restraint;
 import obj.annualTable.*;
 import obj.staticObject.*;
@@ -141,10 +142,25 @@ public class POIWord implements SpecialWordIO{
 	public String createPracticeBaseConsultationLetter(
 			int year,
 			PracticeBase pb,
-			List<Student> students,
 			String majorName,
 			OutputStream out) throws IOException
 	{
+		Map<Major,List<Student>> list=new TreeMap<Major,List<Student>>();
+		Restraint restraint=majorName==null?new Restraint(Field.getField(Student.class,"year"),year)
+				:new Restraint(Field.getFields(Student.class,"year","major"),new Object[]{year,majorName});
+		try{
+			for(Student stu:Base.list(Student.class,restraint)) try{
+				Major m=new Major(stu.getMajor());
+				if(!list.containsKey(m))
+					list.put(m,new ArrayList<Student>());
+				list.get(m).add(stu);
+			}catch(IllegalArgumentException | SQLException e) {
+				System.err.println(stu.getName()+"没有指导老师！("+stu.toString()+")");
+			}
+		}catch(IllegalArgumentException | SQLException | InstantiationException e) {
+			System.err.println("读取实习生列表失败！");
+		}
+		//start
 		String name=String.format("%d年[%s]%s免费师范生教育实习商洽函",
 				year,pb.getName(),
 				majorName==null?"":("("+majorName+")"));
@@ -154,36 +170,21 @@ public class POIWord implements SpecialWordIO{
 		param.put("year",String.valueOf(year));
 		param.put("month",String.valueOf(Manager.getNowTimeMonth()));
 		param.put("day",String.valueOf(Manager.getNowTimeDay()));
+		param.put("practiceBaseName",pb.getName());
 		try{
 			Time a=Base.list(Time.class,new Restraint(Field.getField(Time.class,"project"),Restraint.Type.Equal,Manager.jysx)).get(0);
 			param.put("endMonth",String.valueOf(Manager.getTimeMonth(a.getTime2())));
 			param.put("endDay",String.valueOf(Manager.getTimeDay(a.getTime2())));
-			param.put("practiceBaseName",pb.getName());
 		}catch(IllegalArgumentException|InstantiationException|SQLException e) {
 			throw new IOException(e.getMessage());
 		}
 		StringBuilder sb=new StringBuilder();
-		List<Major> majors=new ArrayList<Major>();
-		try {
-			majors.addAll(Base.list(Major.class));
-		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
-			throw new IOException(e.getMessage());
-		}
-		Collections.sort(majors,new Comparator<Major>() {
-			public int compare(Major a,Major b) {
-				int cmp=a.getSchool().compareTo(b.getSchool());
-				return cmp==0?(a.getName().compareTo(b.getName())):cmp;
-			}
-		});
 		int cnt=0;
-		for(Major major:majors) {
-			int num=0;
-			for(Student s:students) if(s.getMajor().equals(major.getName()))
-				num++;
-			if(num<=0) continue;
+		for(Map.Entry<Major,List<Student>> entry:list.entrySet()){
+			if(entry.getValue().isEmpty()) continue;
 			if(sb.length()>0) sb.append("、");
-			sb.append(major.getSubject()+num+"人");
-			cnt+=num;
+			sb.append(entry.getKey().getSubject()+entry.getValue().size()+"人");
+			cnt+=entry.getValue().size();
 		}
 		param.put("studentCountList",sb.toString());
 		param.put("studentCount",String.valueOf(cnt));
