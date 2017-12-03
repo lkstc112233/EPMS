@@ -8,6 +8,7 @@ import obj.staticObject.PracticeBase;
 import obj.staticSource.*;
 import obj.annualTable.ListOfPracticeBaseAndStudentsAndPlan.RegionPair.PracticeBasePair;
 import obj.annualTable.Student;
+import obj.annualTable.ListOfPracticeBaseAndStudents.RegionPair;
 
 /**
  * there is a '<code>list</code>' which contains an '<code>ArrayList</code>'
@@ -21,7 +22,7 @@ import obj.annualTable.Student;
  *  {[(Student......)].....[(Student.......)]}<br/>
  */
 public class ListOfPracticeBaseAndStudentsAndPlan{
-	static public class RegionPair{
+	static public class RegionPair implements Comparable<RegionPair>{
 		private Region region;
 		private List<PracticeBasePair> list=new ArrayList<PracticeBasePair>();
 			public Region getRegion() {return this.region;}
@@ -43,6 +44,22 @@ public class ListOfPracticeBaseAndStudentsAndPlan{
 				public List<Student> getStudents(){return this.students;}
 				public Plan getPlan(){return plan;}
 			public PracticeBasePair(PracticeBase pb,Plan p){this.practiceBase=pb;this.plan=p;}
+		}	
+		@Override
+		public int compareTo(RegionPair o) {
+			if(o==null) return 1;
+			if(region==null && o.region!=null) return -1;
+			if(region!=null && o.region==null) return 1;
+			if(region==null && o.region==null) return 0;
+			boolean hx=this.list.get(0).practiceBase.getHx();
+			boolean hx2=o.list.get(0).practiceBase.getHx();
+			if(hx && !hx2) return 1;
+			if(!hx && hx2) return -1;
+			if(hx && hx2)
+				return this.region.compareTo(o.region);
+			else
+				return this.list.get(0).practiceBase.getProvince()
+						.compareTo(o.list.get(0).practiceBase.getProvince());
 		}	
 	}
 	private List<RegionPair> list=new ArrayList<RegionPair>();
@@ -102,6 +119,7 @@ public class ListOfPracticeBaseAndStudentsAndPlan{
 				this.put(region,pb,plan,stu);
 			}
 		}
+		Collections.sort(this.list);
 	}
 	
 	public PracticeBasePair get(String practiceBaseName){
