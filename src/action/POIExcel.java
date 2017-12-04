@@ -20,7 +20,7 @@ import obj.staticSource.*;
 public class POIExcel implements SQLIO, SpecialExcelIO{
 
 	static final public short HeightRatio=20;
-	static final public short WidthRatio=512;
+	static final public short WidthRatio=275;
 	static public void setHeight(Row row,int x) {
 		if(row!=null) row.setHeight((short)(x<0?-1:(x*HeightRatio)));
 	}
@@ -31,7 +31,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 		CellStyle res=wb.createCellStyle();
 		if(bg!=null){
 			res.setFillForegroundColor(bg);	//设置背景色
-			res.setFillPattern(CellStyle.SOLID_FOREGROUND);	//设置背景填充方式
+			res.setFillPattern(FillPatternType.SOLID_FOREGROUND);	//设置背景填充方式
 		}
 		res.setBorderBottom(border);	//边框
 		res.setBorderLeft(border);	//边框
@@ -172,8 +172,9 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			throw new IOException("未找到实习基地所在大区!("+e.getMessage()+")");
 		}
 		Map<Major,Pair<Set<InnerPerson>,List<Student>>> list=new TreeMap<Major,Pair<Set<InnerPerson>,List<Student>>>();
-		Restraint restraint=majorName==null?new Restraint(Field.getField(Student.class,"year"),year)
-				:new Restraint(Field.getFields(Student.class,"year","major"),new Object[]{year,majorName});
+		Restraint restraint = majorName==null ?
+				new Restraint(Field.getFields(Student.class,"year","practiceBase"),new Object[] {year,pb.getName()})
+				:new Restraint(Field.getFields(Student.class,"year","practiceBase","major"),new Object[]{year,pb.getName(),majorName});
 		try{
 			for(Student stu:Base.list(Student.class,restraint)) try{
 				Major m=new Major(stu.getMajor());
@@ -296,12 +297,6 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 			throw new IOException(e.getMessage());
 		}
-		Collections.sort(majors,new Comparator<Major>() {
-			public int compare(Major a,Major b) {
-				int cmp=a.getSchool().compareTo(b.getSchool());
-				return cmp==0?(a.getName().compareTo(b.getName())):cmp;
-			}
-		});
 		List<Major> tmp=new ArrayList<Major>();
 		for(int i=0;i<majors.size();i++) {
 			Major m=null;
@@ -315,8 +310,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 				}if(m!=null) break;
 			}if(m!=null) tmp.add(m);
 		}
-		for(Major m:tmp)
-			majors.remove(m);
+		majors=tmp;
 		int[] numbers=new int[majors.size()];
 		int[] hxNumber=new int[majors.size()];
 		int allNumber=0;
@@ -325,11 +319,11 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			numbers[i]=0;
 			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
 				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
-					if(pair.getPracticeBase().getHx())
-						hxNumber[i]+=pair.getStudents().size();
+					boolean hx=pair.getPracticeBase().getHx();
 					for(Student stu:pair.getStudents()) {
 						if(majors.get(i).getName().equals(stu.getMajor())) {
 							numbers[i]++;
+							if(hx) hxNumber[i]++;
 						}
 					}
 				}
@@ -346,7 +340,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			CellStyle styleBigTitle=POIExcel.getCellStyle(wb,"宋体",18,true,HorizontalAlignment.CENTER,BorderStyle.NONE,false,null);
 		//	CellStyle styleSmallTitle=POIExcel.getCellStyle(wb,"宋体",12,true,HorizontalAlignment.CENTER,BorderStyle.NONE,false);
 			CellStyle styleBigSum=POIExcel.getCellStyle(wb,"宋体",10,true,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,IndexedColors.CORAL.getIndex());
-			CellStyle styleSmallSum=POIExcel.getCellStyle(wb,"宋体",10,true,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,IndexedColors.ROSE.getIndex());
+			CellStyle styleSmallSum=POIExcel.getCellStyle(wb,"宋体",10,true,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,IndexedColors.LIGHT_YELLOW.getIndex());
 			CellStyle styleTitle=POIExcel.getCellStyle(wb,"宋体",10,true,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,null);
 			CellStyle styleContent=POIExcel.getCellStyle(wb,"宋体",10,false,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,null);
 			//设置列数
@@ -370,9 +364,9 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 				cell.setCellType(CellType.STRING);
 				cell.setCellValue(i==0?"实习大区":i==1?"序号":
 					i==2?"实习基地名称":i==3?"接收人数":
-						i<column-1?majors.get(i-3).getSubject():
+						i<column-1?majors.get(i-4).getSubject():
 							"指导老师");
-				setWidth(st,i,i==0?4:i==1?2:
+				setWidth(st,i,i==0?4:i==1?3:
 					i==2?26:i==3?5:
 						i<column-1?4:46);
 				cell.setCellStyle(styleTitle);
@@ -382,7 +376,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			setHeight(row,30);
 			for(int i=0;i<column;i++) {
 				cell=row.createCell(i);
-				cell.setCellType(CellType.STRING);
+			//	cell.setCellType(CellType.STRING);
 				cell.setCellStyle(styleTitle);
 				if(i<3) {
 					if(i==2) st.addMergedRegion(new CellRangeAddress(r,r,0,2));
@@ -392,15 +386,16 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 					st.addMergedRegion(new CellRangeAddress(r-1,r,i,i));
 					continue;
 				}
-				cell.setCellValue(i<3?("本科生学生人数"+allNumber+"人"):
-					i==3?String.valueOf(allNumber):
-						String.valueOf(numbers[i-3]));
+				if(i<3)
+					cell.setCellValue("本科生学生人数"+allNumber+"人");
+				else
+					cell.setCellValue(i==3?allNumber:numbers[i-4]);
 			}
 			r++;
 			/*第四行开始每个专业实习生列表*/
 			String gProvince=null;
 			boolean gHx=false;
-			int gCnt=0;
+			int gCnt=1;
 			int gNumber[]=new int[majors.size()];
 			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
 				PracticeBase pb=rp.getList().get(0).getPracticeBase();
@@ -420,41 +415,44 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 							num+=gNumber[i];
 						for(int i=0;i<column;i++) {
 							cell=row.createCell(i);
-							cell.setCellType(CellType.STRING);
+						//	cell.setCellType(CellType.STRING);
 							cell.setCellStyle(styleSmallSum);
 							if(i<3) {
 								if(i==2) st.addMergedRegion(new CellRangeAddress(r,r,0,2));
 								if(i>0) continue;
 							}
-							cell.setCellValue(i<3?(gProvince+"小计"):
-										i==3?String.valueOf(num):
-											i<column-1?String.valueOf(gNumber[i-3]):
-												"");
+							if(i<3)
+								cell.setCellValue(gProvince+"小计");
+							else if(i==3)
+								cell.setCellValue(num);
+							else if(i<column-1)
+								cell.setCellValue(gNumber[i-4]);
 						}
 						r++;
-					}else if(statu==2){
+					}
+					if(statu==2){
 						//不回乡变为回乡实习大区，进行不回乡汇总
 						row=st.createRow(r);
 						setHeight(row,-1);
 						for(int i=0;i<column;i++) {
 							cell=row.createCell(i);
-							cell.setCellType(CellType.STRING);
+						//	cell.setCellType(CellType.STRING);
 							cell.setCellStyle(styleBigSum);
 							if(i<3) {
 								if(i==2) st.addMergedRegion(new CellRangeAddress(r,r,0,2));
 								if(i>0) continue;
 							}
-							cell.setCellValue(i<3?(gHx?"error":"北京及周边地区教育实习总计"):
-										i==3?String.valueOf(hxAllNumber):
-											i<column-1?String.valueOf(hxNumber[i-3]):
-												"");
+							if(i<3)
+								cell.setCellValue(gHx?"error":"北京及周边地区教育实习总计");
+							else if(i<column-1)
+								cell.setCellValue(i==3?(allNumber-hxAllNumber):(numbers[i-4]-hxNumber[i-4]));
 						}
 						r++;
 					}
 					//change the province
 					gHx=pb.getHx();
 					gProvince=pb.getProvince();
-					gCnt=0;
+					gCnt=1;
 					for(int i=0;i<gNumber.length;i++) gNumber[i]=0;
 				}
 				int rStart=r;
@@ -493,15 +491,21 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 					}
 					for(int i=0;i<column;i++) {
 						cell=row.createCell(i);
-						cell.setCellType(CellType.STRING);
+					//	cell.setCellType(CellType.STRING);
 						cell.setCellStyle(styleContent);
 						if(i==0 && r>rStart) continue;
-						cell.setCellValue(i==0?rp.getRegion().getName():
-							i==1?String.valueOf(gCnt):
-								i==2?pair.getPracticeBase().getName():
-									i==3?String.valueOf(pair.getStudents().size()):
-										i<column-1?String.valueOf(num[i-3]):
-											teachers.toString());
+						if(i==0)
+							cell.setCellValue(rp.getRegion().getName());
+						else if(i==1)
+							cell.setCellValue(gCnt);
+						else if(i==2)
+							cell.setCellValue(pair.getPracticeBase().getName());
+						else if(i==3)
+							cell.setCellValue(pair.getStudents().size());
+						else if(i>=column-1)
+							cell.setCellValue(teachers.toString());
+						else if(num[i-4]!=0)
+							cell.setCellValue(num[i-4]);
 					}
 					gCnt++;
 					r++;
@@ -514,16 +518,18 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			setHeight(row,-1);
 			for(int i=0;i<column;i++) {
 				cell=row.createCell(i);
-				cell.setCellType(CellType.STRING);
+			//	cell.setCellType(CellType.STRING);
 				cell.setCellStyle(styleBigSum);
 				if(i<3) {
 					if(i==2) st.addMergedRegion(new CellRangeAddress(r,r,0,2));
 					if(i>0) continue;
 				}
-				cell.setCellValue(i<3?"回生源地教育实习总计":
-							i==3?String.valueOf(allNumber-hxAllNumber):
-								i<column-1?String.valueOf(numbers[i-3]-hxNumber[i-3]):
-									"");
+				if(i<3)
+					cell.setCellValue("回生源地教育实习总计");
+				else if(i==3)
+					cell.setCellValue(hxAllNumber);
+				else if(i<column-1)
+					cell.setCellValue(hxNumber[i-4]);
 			}
 			r++;
 			//进行总汇总
@@ -531,16 +537,18 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			setHeight(row,-1);
 			for(int i=0;i<column;i++) {
 				cell=row.createCell(i);
-				cell.setCellType(CellType.STRING);
+			//	cell.setCellType(CellType.STRING);
 				cell.setCellStyle(styleTitle);
 				if(i<3) {
 					if(i==2) st.addMergedRegion(new CellRangeAddress(r,r,0,2));
 					if(i>0) continue;
 				}
-				cell.setCellValue(i<3?"总人数合计":
-							i==3?String.valueOf(allNumber):
-								i<column-1?String.valueOf(numbers[i-3]):
-									"");
+				if(i<3)
+					cell.setCellValue("总人数合计");
+				else if(i==3)
+					cell.setCellValue(allNumber);
+				else if(i<column-1)
+					cell.setCellValue(numbers[i-4]);
 			}
 			r++;
 			//列宽，第一个参数代表列id(从0开始),第2个参数代表宽度值  参考 ："2012-08-10"的宽度为2500
@@ -556,13 +564,13 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 	public String createTeacherList(int year, OutputStream out) throws IOException {
 		String name=String.format("%d年免费师范生教育实习指导教师名单",
 				year);
-		Map<Integer,List<InnerPerson>> teachers=new TreeMap<Integer,List<InnerPerson>>();
+		Map<Integer,Set<InnerPerson>> teachers=new TreeMap<Integer,Set<InnerPerson>>();
 		try{
 			for(Student stu:Base.list(Student.class,new Restraint(Field.getField(Student.class,"year"),year))) try{
 				InnerPerson t=new InnerPerson(stu.getTeacherId());
 				School s=new School(t.getSchool());
 				if(!teachers.containsKey(s.getOrderId()))
-					teachers.put(s.getOrderId(),new ArrayList<InnerPerson>());
+					teachers.put(s.getOrderId(),new HashSet<InnerPerson>());
 				teachers.get(s.getOrderId()).add(t);
 			}catch(IllegalArgumentException | SQLException e) {
 				System.err.println(stu.getName()+"没有指导老师！("+stu.toString()+")");
@@ -575,7 +583,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 				InnerPerson t=new InnerPerson(sup.getSupervisorId());
 				School s=new School(t.getSchool());
 				if(!teachers.containsKey(s.getOrderId()))
-					teachers.put(s.getOrderId(),new ArrayList<InnerPerson>());
+					teachers.put(s.getOrderId(),new HashSet<InnerPerson>());
 				teachers.get(s.getOrderId()).add(t);
 			}catch(IllegalArgumentException | SQLException e) {
 				System.err.println(sup.getPracticeBase()+"的"+Supervise.getTypeNameList()[sup.getSuperviseType()]+
@@ -616,24 +624,27 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			}
 			r++;
 			/*第三行开始每个院系指导教师列表*/
-			int cnt=0;
-			for(Map.Entry<Integer,List<InnerPerson>> entry:teachers.entrySet()) {
-				boolean first=true;
+			int cnt=1;
+			for(Map.Entry<Integer,Set<InnerPerson>> entry:teachers.entrySet()) {
 				for(InnerPerson t:entry.getValue()) {
 					/*学生内容*/row=st.createRow(r);
 					row.setHeight((short)-1);
+					boolean first=true;
 					for(int i=0;i<column;i++) {
 						cell=row.createCell(i);
 						cell.setCellType(CellType.STRING);
 						cell.setCellStyle(styleContent);
-						if(first) first=false;
+						if(first&&i==1) first=false;
 						else if(i==1) continue;
-						cell.setCellValue(i==0?String.valueOf(cnt++):
-							Field.o2s(fs[i-1].get(t),""));
+						if(i==0)
+							cell.setCellValue(cnt++);
+						else
+							cell.setCellValue(Field.o2s(fs[i-1].get(t),""));
 					}
 					r++;
 				}
-				st.addMergedRegion(new CellRangeAddress(r-entry.getValue().size(),r-1,1,1));
+				if(entry.getValue().size()>1)
+					st.addMergedRegion(new CellRangeAddress(r-entry.getValue().size(),r-1,1,1));
 			}
 			//列宽，第一个参数代表列id(从0开始),第2个参数代表宽度值  参考 ："2012-08-10"的宽度为2500
 	//		st.setColumnWidth(0,2500);
@@ -646,7 +657,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 	
 	
 	@Override
-	public String createSuperviseList(int year, OutputStream stream) throws IOException {
+	public String createSuperviseList(int year, OutputStream out) throws IOException {
 		String name=String.format("%d年免费师范生教育实习督导任务表",
 				year);
 		Map<Integer,List<InnerPerson>> teachers=new TreeMap<Integer,List<InnerPerson>>();
