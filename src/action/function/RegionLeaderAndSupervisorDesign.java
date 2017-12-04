@@ -2,6 +2,7 @@ package action.function;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.Map.Entry;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -11,7 +12,6 @@ import obj.annualTable.*;
 import obj.staticObject.*;
 import obj.staticSource.Major;
 import obj.staticSource.School;
-import token.Role;
 
 /**
  * 实习总领队和督导任务学科规划
@@ -137,7 +137,9 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 			if(stu==0 && p.stu==0) return Integer.compare(sup,p.sup);
 			if(stu==0) return -1;
 			if(p.stu==0) return 1;
-			return Double.compare(sup*1.0/stu,p.sup*1.0/p.stu);
+			int cmp=Double.compare(sup*1.0/stu,p.sup*1.0/p.stu);
+			if(cmp!=0) return cmp;
+			return Integer.compare(p.stu,stu);
 		}
 	}
 	/**
@@ -150,7 +152,7 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 				return Manager.tips("请先将总领队学科规划填充完毕！",
 						NONE);
 		}
-		Map<String,Integer> cnt_stu=new HashMap<String,Integer>();
+		Map<String,Pair> prepared=new HashMap<String,Pair>();
 		try {
 			for(Base[] tmp:Base.list(new JoinParam(Student.class)
 					.append(JoinParam.Type.LeftJoin,
@@ -159,16 +161,21 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 							Field.getField(Major.class,"name"),
 							Field.getField(Student.class,"year"),
 							this.getAnnual().getYear()))){
-				if(tmp!=null && tmp.length>=2 && tmp[0]!=null && tmp[1]!=null) {
+				if(tmp!=null && tmp.length>=2 && tmp[0]!=null && tmp[1]!=null) try{
 					Major m=(Major)tmp[1];
-					Integer old=cnt_stu.get(m.getSchool());
-					cnt_stu.put(m.getSchool(),1+(old==null?0:old));
+					if(!prepared.containsKey(m.getSchool()))
+						prepared.put(m.getSchool(),new Pair(new School(m.getSchool()),0,1));
+					else
+						prepared.get(m.getSchool()).stu++;
+				} catch (IllegalArgumentException | SQLException e) {
+					return Manager.tips("读取部院系列表失败!",e,NONE);
 				}
 			}
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 			return Manager.tips("读取实习生列表失败!",e,NONE);
 		}
-		Map<String,Integer> cnt_sup=new HashMap<String,Integer>();
+		if(prepared.isEmpty())
+			return Manager.tips("第一阶段读取部院系列表失败，已停止!",NONE);
 		int j=0;for(ListOfRegionAndPracticeBases.Pair pair:this.regionAndPracticeBase.getList()){
 			String leaderId=pair.getRegion().getLeaderId();
 			for(int type:this.getSuperviseTypeList()) {
@@ -182,31 +189,24 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 						else
 							sup.update();
 					}catch(SQLException | IllegalArgumentException | InstantiationException | IllegalAccessException e) {
-						return Manager.tips("第一阶段出现问题，已停止!",e,display());
+						return Manager.tips("第二阶段出现问题，已停止!",e,display());
 					}
 					//统计计数
 					if(sup.getSupervisorId()!=null && !sup.getSupervisorId().isEmpty()) try {
 						InnerPerson inner=new InnerPerson(sup.getSupervisorId());
-						Integer old=cnt_sup.get(inner.getSchool());
-						cnt_sup.put(inner.getSchool(),1+(old==null?0:old));
+						if(!prepared.containsKey(inner.getSchool()))
+							;//无学生的不管
+						else
+							prepared.get(inner.getSchool()).sup++;
 					}catch(SQLException | IllegalArgumentException e) {
-						return Manager.tips("第一阶段出现未知老师工号，已停止!",e,display());
+						return Manager.tips("第二阶段出现未知老师工号，已停止!",e,display());
 					}
 				}
 			}j++;
 		}
-		List<Pair> schools=new ArrayList<Pair>();
-		try {
-			for(School s:Base.list(School.class,new Restraint(Field.getField(School.class,"name"),Restraint.Type.NotLike,Role.jwc.getName()))){
-				Integer csup=cnt_sup.get(s.getName());
-				Integer cstu=cnt_stu.get(s.getName());
-				if(cstu==null || csup==null || cstu==0) continue;
-				schools.add(new Pair(s,csup,cstu));
-			}
-			if(schools.isEmpty()) return Manager.tips("第二阶段未选取到部院系，已停止!",display());
-		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
-			return Manager.tips("第二阶段读取部院系列表失败，已停止!",e,NONE);
-		}
+		List<Pair> preparedSchool=new ArrayList<Pair>();
+		for(Entry<String,Pair> entry:prepared.entrySet())
+			preparedSchool.add(entry.getValue());
 		StringBuilder error=new StringBuilder();
 		for(int i=1;i<this.getSuperviseTypeList().length-1;i++){
 			//不包含头尾督导
@@ -216,9 +216,9 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 					Supervise sup=this.getSupervises()[type][j][k];
 					PracticeBase pb=this.getRegionAndPracticeBase().getList().get(j).getPracticeBases().get(k);
 					if(sup.getSupervisorId()==null || sup.getSupervisorId().isEmpty()) {
-						Collections.sort(schools);
+						Collections.sort(preparedSchool);
 						Pair pair=null;
-						for(Pair p:schools) {
+						for(Pair p:preparedSchool) {
 							//检查当前实习基地pb是否有pair.school部院系的学生
 							//需要调用plan
 							List<Base[]> tmp=null;
@@ -262,7 +262,7 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 								sup.create();
 							else
 								sup.update();
-							pair.sup++;
+							pair.sup++;//TODO check: 排序内容是否更新？
 						}catch(SQLException | IllegalArgumentException | InstantiationException | IllegalAccessException e) {
 							e.printStackTrace(); 
 							error.append("\n"+pb.getDescription()+"没有合适的"+this.getSuperviseTypeNameList()[type]+"老师!("+e.getMessage()+")");
