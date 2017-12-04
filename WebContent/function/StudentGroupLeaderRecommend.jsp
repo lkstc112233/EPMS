@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>EPMS-<s:property value="#session.role.name" />-分配实习生到实习基地（<s:property value="annual.year" />年）</title>
+<title>EPMS-<s:property value="#session.role.name" />-专业指定指导老师及推荐实习生大组长（<s:property value="annual.year" />年）</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 

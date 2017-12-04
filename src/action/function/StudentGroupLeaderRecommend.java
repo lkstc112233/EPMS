@@ -120,7 +120,6 @@ public class StudentGroupLeaderRecommend extends ActionSupport{
 			return Manager.tips("请选择正确的实习基地！",
 					display());
 		//StudenGroupLeaderRecommend:execute
-		Manager.removeSession(SessionListKey);
 		if(this.choose[2]==null || this.choose[2].isEmpty()) { 
 			//推荐大组长：choose[1]学生
 			boolean ok=false;
