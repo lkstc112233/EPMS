@@ -10,10 +10,7 @@ import java.util.regex.*;
 
 import org.apache.poi.xwpf.usermodel.*;
 
-import obj.Base;
-import obj.Field;
-import obj.Pair;
-import obj.Restraint;
+import obj.*;
 import obj.annualTable.*;
 import obj.staticObject.*;
 import obj.staticSource.Major;
@@ -146,8 +143,9 @@ public class POIWord implements SpecialWordIO{
 			OutputStream out) throws IOException
 	{
 		Map<Major,List<Student>> list=new TreeMap<Major,List<Student>>();
-		Restraint restraint=majorName==null?new Restraint(Field.getField(Student.class,"year"),year)
-				:new Restraint(Field.getFields(Student.class,"year","major"),new Object[]{year,majorName});
+		Restraint restraint = majorName==null ?
+				new Restraint(Field.getFields(Student.class,"year","practiceBase"),new Object[] {year,pb.getName()})
+				:new Restraint(Field.getFields(Student.class,"year","practiceBase","major"),new Object[]{year,pb.getName(),majorName});
 		try{
 			for(Student stu:Base.list(Student.class,restraint)) try{
 				Major m=new Major(stu.getMajor());
