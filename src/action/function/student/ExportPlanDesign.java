@@ -1,19 +1,17 @@
-package action.function;
+package action.function.student;
 
 import java.io.*;
-import java.util.*;
 
 import com.opensymphony.xwork2.ActionSupport;
 
 import action.*;
 import obj.*;
 import obj.annualTable.*;
-import obj.staticObject.PracticeBase;
 
 /**
  * 导出实习生名单
  */
-public class ExportAllStudentList extends ActionSupport{
+public class ExportPlanDesign extends ActionSupport{
 	private static final long serialVersionUID = 3677055466118899859L;
 
 	private action.Annual annual=new action.Annual();
@@ -26,12 +24,12 @@ public class ExportAllStudentList extends ActionSupport{
 
 	static public final String SessionListKey=Export.SessionListKey; 
 	
-	public ExportAllStudentList(){
+	public ExportPlanDesign(){
 		super();
 		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudents.class,SessionListKey);
 	}
 
-	private String jumpURL="function_Export_display.action";
+	private String jumpURL=Export.ActionName;
 		public String getJumpURL() {return this.jumpURL;}
 		public void setJumpURL(String a) {this.jumpURL=a;}
 
@@ -39,13 +37,6 @@ public class ExportAllStudentList extends ActionSupport{
 	public String execute(){
 		return Manager.tips("该项目不可用!","jump");
 	}
-	
-	
-	
-	private String majorName;
-		public void setMajorName(String a){this.majorName=Field.s2S(a);}
-		public String getMajorName(){return majorName;}
-	
 
 	/*
 	 * 下载模板
@@ -61,41 +52,25 @@ public class ExportAllStudentList extends ActionSupport{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private ByteArrayOutputStream downloadOutputStream=null;
-	protected String downloadByIO(SpecialIO io,int year,PracticeBase pb,String majorName,OutputStream stream) throws IOException{
-		return io.createStudentList(year,pb,majorName,stream);
+	protected String downloadByIO(SpecialIO io,int year,ListOfPracticeBaseAndStudents list,OutputStream stream) throws IOException{
+		return io.createPlanDesign(year,list,stream);
 	}
 	public String download(){//下载模板
+		System.out.println(">> ExportStudentList:download >");
 		if(this.practiceBaseAndStudents==null)
 			return Manager.tips("该项目未初始化!","jump");
-		//设置下载文件名称
-		String fileName=String.format("%d年免费师范生教育实习学生名单.zip",
-				this.getAnnual().getYear(),majorName);
-		this.setDownloadFileName(fileName);
-		//准备文件内容
-		Map<String,OutputStream> files=new HashMap<String,OutputStream>();
-		for(ListOfPracticeBaseAndStudents.RegionPair rp:this.practiceBaseAndStudents.getList()) {
-			for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
-				PracticeBase pb=pair.getPracticeBase();
-				System.out.println(">> ExportAllStudentList:download > create download file. practiceBaseName="+pb.getName());
-				OutputStream out=new ByteArrayOutputStream();
-				try{
-					String name=this.downloadByIO((SpecialIO)Base.io(),
-							this.getAnnual().getYear(),pair.getPracticeBase(),this.majorName,out);
-					files.put(name,out);
-				}catch(IOException e){
-					downloadOutputStream=null;
-					return Manager.tips("创建文件失败，暂时无法下载！",e,"jump");
-				}
-			}
-		}
+		System.out.println(">> ExportStudentList:download > create download file.");
+		this.downloadOutputStream=new ByteArrayOutputStream();
 		try{
-			this.downloadOutputStream=IOHelper.ZIP(files);
+			String fileName=this.downloadByIO((SpecialIO)Base.io(),
+					this.getAnnual().getYear(),this.practiceBaseAndStudents,downloadOutputStream);
+			this.setDownloadFileName(fileName);//设置下载文件名称
 			this.downloadOutputStream.flush();
-		} catch (IOException e) {
+		}catch(IOException e){
 			this.downloadOutputStream=null;
-			return Manager.tips("压缩文件失败，暂时无法下载！",e,"jump");
+			return Manager.tips("服务器开小差去了，暂时无法下载！",e,"jump");
 		}
-		System.out.println(">> ExportAllStudentList:download <downloadAttachment");
+		System.out.println(">> ExportStudentList:download <downloadAttachment");
 		return "downloadAttachment";
 	}
 	public InputStream getDownloadAttachment(){//实际上获取的输出流，使用getter获取的downloadAttachment

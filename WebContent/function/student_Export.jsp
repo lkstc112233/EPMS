@@ -23,7 +23,7 @@
 				theme="simple" cssClass="title_button" style="margin-bottom:2px;width:auto;"
 				onchange="window.location.href=window.location.href.substring(0,(
 				window.location.href.lastIndexOf('/')<0?window.location.length:window.location.href.lastIndexOf('/'))
-				)+'/function_Export_display.action?majorName='
+				)+'/function_student_Export_display.action?majorName='
 				+this.value"
 				/>
 				实习生名单
@@ -37,31 +37,31 @@
 			<s:if test="majorName == allMajors.name">
 			</s:if>
 			<span style="float:left;margin-left:50px;">
-			<s:form action="function_ExportAllStudentList_download" method="post" theme="simple">
-				<s:hidden name="jumpURL" value="function_Export_display.action" theme="simple"/>
+			<s:form action="function_student_ExportAllStudentList_download" method="post" theme="simple">
+				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 				<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
 				<s:submit value="所有实习生名单" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>
 			</span>
 			<span style="float:left;margin-left:20px;">
-			<s:form action="function_ExportAllPracticeBaseConsultationLetter_download" method="post" theme="simple">
-				<s:hidden name="jumpURL" value="function_Export_display.action" theme="simple"/>
+			<s:form action="function_student_ExportAllPracticeBaseConsultationLetter_download" method="post" theme="simple">
+				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 				<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
 				<s:submit value="所有商洽函" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>
 			</span>
 			<span style="float:left;margin-left:20px;">
-			<s:form action="function_ExportPlanDesign_download" method="post" theme="simple">
-				<s:hidden name="jumpURL" value="function_Export_display.action" theme="simple"/>
+			<s:form action="function_student_ExportPlanDesign_download" method="post" theme="simple">
+				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 				<s:submit value="教育实习布局规划" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>
 			</span>
 			<span style="float:left;margin-left:20px;">
-			<s:form action="function_ExportTeacherList_download" method="post" theme="simple">
-				<s:hidden name="jumpURL" value="function_Export_display.action" theme="simple"/>
+			<s:form action="function_student_ExportTeacherList_download" method="post" theme="simple">
+				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 				<s:submit value="指导教师名单" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>
@@ -117,8 +117,8 @@
 						<s:property value="#__Row.size"/>人
 					</span>
 					<span style="float:left;font-size:12px;margin-left:20px;margin-top:5px;">
-						<s:form action="function_ExportStudentList_download" method="post" theme="simple">
-							<s:hidden name="jumpURL" value="function_Export_display.action" theme="simple"/>
+						<s:form action="function_student_ExportStudentList_download" method="post" theme="simple">
+							<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 							<s:hidden name="practiceBaseName" value="%{#__Row.practiceBase.name}" theme="simple"/>
 							<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
 							<s:submit value="下载实习生名单" theme="simple"
@@ -126,8 +126,8 @@
 						</s:form>
 					</span>
 					<span style="float:left;font-size:12px;margin-left:5px;margin-top:5px;">
-						<s:form action="function_ExportPracticeBaseConsultationLetter_download" method="post" theme="simple">
-							<s:hidden name="jumpURL" value="function_Export_display.action" theme="simple"/>
+						<s:form action="function_student_ExportPracticeBaseConsultationLetter_download" method="post" theme="simple">
+							<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 							<s:hidden name="practiceBaseName" value="%{#__Row.practiceBase.name}" theme="simple"/>
 							<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
 							<s:submit value="下载商洽函" theme="simple"

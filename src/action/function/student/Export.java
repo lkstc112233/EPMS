@@ -1,4 +1,4 @@
-package action.function;
+package action.function.student;
 
 import java.sql.*;
 import java.util.*;
@@ -73,7 +73,8 @@ public class Export extends ActionSupport{
 	}
 	
 
-	static public final String SessionListKey="Export_list"; 
+	static public final String SessionListKey="student_Export_list"; 
+	static public final String ActionName="function_student_Export_display.action";
 	
 	public Export(){
 		super();

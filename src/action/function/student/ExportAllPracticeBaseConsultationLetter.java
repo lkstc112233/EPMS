@@ -1,4 +1,4 @@
-package action.function;
+package action.function.student;
 
 import java.io.*;
 import java.util.*;
@@ -31,7 +31,7 @@ public class ExportAllPracticeBaseConsultationLetter extends ActionSupport{
 		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudents.class,SessionListKey);
 	}
 
-	private String jumpURL="function_Export_display.action";
+	private String jumpURL=Export.ActionName;
 		public String getJumpURL() {return this.jumpURL;}
 		public void setJumpURL(String a) {this.jumpURL=a;}
 
