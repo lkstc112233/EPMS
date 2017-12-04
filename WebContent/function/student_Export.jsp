@@ -197,7 +197,7 @@
 				headerKey="" headerValue="-未定-"
 				value="%{#__studentRow.teacherId}"
 				disabled="true"
-				style="width:100%;height:30px;border:0;background:#00000000;color:black;font-size:14px;" theme="simple" />
+				style="width:100%;height:100%;border:0;background:#00000000;color:black;font-size:14px;" theme="simple" />
 			</td>
 			<!-- 推荐大组长 --><td style="width:36px;padding:0;border:0">
 				<s:if test="#__studentRow.recommend"><!-- 已推荐 -->

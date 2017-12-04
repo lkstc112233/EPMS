@@ -1,5 +1,7 @@
 package obj.annualTable;
 
+import java.sql.SQLException;
+
 import obj.*;
 
 @SQLTable("Student")
@@ -73,6 +75,16 @@ public class Student extends AnnualBase{
 	@Override
 	public String getDescription() {
 		return this.getName()+"("+this.getId()+")";
+	}
+	
+	
+	public Student() {
+		super();
+	}
+	public Student(String id) throws IllegalArgumentException, SQLException {
+		super();
+		this.setId(id);
+		this.load();
 	}
 	
 	
