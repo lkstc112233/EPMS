@@ -2,9 +2,6 @@ package action;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
-
-import obj.annualTable.Student;
 import obj.staticObject.PracticeBase;
 
 public interface SpecialWordIO {

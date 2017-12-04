@@ -8,7 +8,6 @@ import obj.staticObject.PracticeBase;
 import obj.staticSource.*;
 import obj.annualTable.ListOfPracticeBaseAndStudentsAndPlan.RegionPair.PracticeBasePair;
 import obj.annualTable.Student;
-import obj.annualTable.ListOfPracticeBaseAndStudents.RegionPair;
 
 /**
  * there is a '<code>list</code>' which contains an '<code>ArrayList</code>'
