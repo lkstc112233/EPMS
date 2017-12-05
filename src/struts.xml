@@ -84,14 +84,16 @@
 			<allowed-methods> display,execute, </allowed-methods>
 		</action>
 		
+		
 		<!--动作：Table Operation配置-->
 		<!-- 第一个星号：sudo或function -->
-		<!-- 第二个星号：调用的Action类 -->
-		<!-- 第三个星号：调用的Method方法 -->
-		<action name="*_*_*" class="action.{1}.{2}" method="{3}">
+		<!-- 第二个星号：调用的Action类所在包 -->
+		<!-- 第三个星号：调用的Action类 -->
+		<!-- 第四个星号：调用的Method方法 -->
+		<action name="*_*_*_**" class="action.{1}.{2}.{3}" method="{4}">
 			<result name="back" type="redirect"> menu.action</result>	<!--用于timeout和back -->
-			<result name="none"> {1}/{2}.jsp</result>
-			<result> {1}/{2}.jsp</result>
+			<result name="none"> {1}/{2}_{3}.jsp</result>
+			<result> {1}/{2}_{3}.jsp</result>
 			<result name="input"> login.jsp </result>
 			<result name="downloadAttachment" type="stream">
 				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
@@ -106,15 +108,15 @@
 			<allowed-methods> display,execute,download,upload,update,delete,create, </allowed-methods>
 		</action>
 		
+		
 		<!--动作：Table Operation配置-->
 		<!-- 第一个星号：sudo或function -->
-		<!-- 第二个星号：调用的Action类所在包 -->
-		<!-- 第三个星号：调用的Action类 -->
-		<!-- 第四个星号：调用的Method方法 -->
-		<action name="*_*_*_*" class="action.{1}.{2}.{3}" method="{4}">
+		<!-- 第二个星号：调用的Action类 -->
+		<!-- 第三个星号：调用的Method方法 -->
+		<action name="*_*_*" class="action.{1}.{2}" method="{3}">
 			<result name="back" type="redirect"> menu.action</result>	<!--用于timeout和back -->
-			<result name="none"> {1}/{2}_{3}.jsp</result>
-			<result> {1}/{2}_{3}.jsp</result>
+			<result name="none"> {1}/{2}.jsp</result>
+			<result> {1}/{2}.jsp</result>
 			<result name="input"> login.jsp </result>
 			<result name="downloadAttachment" type="stream">
 				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
