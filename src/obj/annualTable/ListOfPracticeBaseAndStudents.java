@@ -35,12 +35,14 @@ public class ListOfPracticeBaseAndStudents{
 		public RegionPair(Region region) {this.region=region;}
 			
 		static public class PracticeBasePair{
+			private Region region;
 			private PracticeBase practiceBase;
 			private List<Student> students=new ArrayList<Student>();
 				public int getSize(){return this.students.size();}
+				public Region getRegion() {return this.region;}
 				public PracticeBase getPracticeBase(){return this.practiceBase;}
 				public List<Student> getStudents(){return this.students;}
-			public PracticeBasePair(PracticeBase pb){this.practiceBase=pb;}
+			public PracticeBasePair(Region r,PracticeBase pb){this.region=r;this.practiceBase=pb;}
 		}
 		@Override
 		public int compareTo(RegionPair o) {
@@ -126,14 +128,14 @@ public class ListOfPracticeBaseAndStudents{
 		if(tmp==null){//需要新增一个PracticeBasePair
 			for(RegionPair rp:this.list) {
 				if(rp.getRegion().getName()!=null && rp.getRegion().getName().equals(region.getName())) {
-					rp.getList().add(tmp=new PracticeBasePair(pb));
+					rp.getList().add(tmp=new PracticeBasePair(region,pb));
 					break;
 				}
 			}
 			if(tmp==null) {
 				//需要新增一个RegionPair
 				RegionPair rp=new RegionPair(region);
-				rp.getList().add(tmp=new PracticeBasePair(pb));
+				rp.getList().add(tmp=new PracticeBasePair(region,pb));
 				this.list.add(rp);
 			}
 		}
