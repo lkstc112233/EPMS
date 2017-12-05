@@ -25,7 +25,7 @@ public class StudentGroupLeader extends ActionSupport{
 
 
 	private ListOfPracticeBaseAndStudents practiceBaseAndStudents;
-	private String[] choose=new String[]{null,null};//[0]大区,[1]学生Id
+	private String[] choose=new String[]{null,null};//[0]基地,[1]学生Id
 	
 	public ListOfPracticeBaseAndStudents getPracticeBaseAndStudents(){return this.practiceBaseAndStudents;}
 	public String[] getChoose(){return this.choose;}
@@ -100,37 +100,29 @@ public class StudentGroupLeader extends ActionSupport{
 			return Manager.tips("数据库开小差去了!",
 					display());
 		System.out.println(">> StudentGroupLeaderRecommend:execute > choose= ["+this.choose[0]+","+this.choose[1]+"]");
-		ListOfPracticeBaseAndStudents.RegionPair choose_rp=null;
-		for(ListOfPracticeBaseAndStudents.RegionPair rp:this.practiceBaseAndStudents.getList()) {
-			if(rp.getRegion().getName().equals(this.choose[0])){//choose[0]是大区名称
-				choose_rp=rp;
-				break;
-			}
-		}
-		if(choose_rp==null)
-			return Manager.tips("请选择正确的实习大区！",
+		ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair choose_pair=
+				this.practiceBaseAndStudents.get(this.choose[0]);//choose[0]是大区名称
+		if(choose_pair==null)
+			return Manager.tips("请选择正确的实习基地！",
 					display());
 		//StudenGroupLeaderRecommend:execute
-		Manager.removeSession(SessionListKey);
 		//推荐大组长：choose[1]学生
 		Student pro=null;
-		for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:choose_rp.getList()) {
-			for(Student stu:pair.getStudents()) if(stu.getId().equals(this.choose[1])) {
-				pro=stu;
-				break;
-			}if(pro!=null) break;
+		for(Student stu:choose_pair.getStudents()) if(stu.getId().equals(this.choose[1])) {
+			pro=stu;
+			break;
 		}
 		if(pro==null)
-			return Manager.tips("大区("+this.choose[0]+")没有学生学号为("+this.choose[1]+")!",
+			return Manager.tips("基地("+this.choose[0]+")没有学生学号为("+this.choose[1]+")!",
 					display());
-		choose_rp.getRegion().setStudentGroupLeaderId(this.choose[1]);
+		choose_pair.getRegion().setStudentGroupLeaderId(this.choose[1]);
 		try {
-			choose_rp.getRegion().update();
+			choose_pair.getRegion().updateStudentGroupLeaderId();
 		}catch(SQLException | IllegalArgumentException e) {
-			return Manager.tips("大区("+choose_rp.getRegion().getDescription()+")学生大组长设置失败!",
+			return Manager.tips("基地("+choose_pair.getPracticeBase().getDescription()+")学生大组长设置失败!",
 					e,display());
 		}
-		return Manager.tips("大区("+choose_rp.getRegion().getDescription()+")学生大组长("+pro.getDescription()+")设置成功!",
+		return Manager.tips("基地("+choose_pair.getPracticeBase().getDescription()+")学生大组长("+pro.getDescription()+")设置成功!",
 				display());
 	}
 	
@@ -156,30 +148,31 @@ public class StudentGroupLeader extends ActionSupport{
 		if(prepared.isEmpty())
 			return Manager.tips("读取学生列表失败，已停止!",display());
 		for(ListOfPracticeBaseAndStudents.RegionPair rp:this.practiceBaseAndStudents.getList()){
-			String groupLeaderId=rp.getRegion().getStudentGroupLeaderId();
-			try {
-				Student stu=new Student(groupLeaderId);
-				//若学生不在的话则清空！
-				boolean flag=false;
-				if(prepared.containsKey(stu.getMajor())) {
-					for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
+			for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
+				String groupLeaderId=pair.getRegion().getStudentGroupLeaderId();
+				try {
+					Student stu=new Student(groupLeaderId);
+					//若学生不在的话则清空！
+					boolean flag=false;
+					if(prepared.containsKey(stu.getMajor())) {
 						for(Student s:pair.getStudents()) {
 							if(s.getId().equals(stu.getId())) {
 								flag=true;
-							}if(flag) break;
-						}if(flag) break;
+								break;
+							}
+						}
 					}
-				}
-				if(!flag) {
-					error.append("\n大区("+rp.getRegion().getDescription()+")原有学生大组长("+stu.getDescription()+")不存在该大区实习生名单中，已剔除!");
-					throw new IllegalArgumentException();
-				}
-				prepared.get(stu.getMajor()).gro++;
-			}catch(IllegalArgumentException | SQLException e) {
-				//无学生大组长
-				rp.getRegion().setStudentGroupLeaderId(null);
-				try{rp.getRegion().update();
-				}catch(IllegalArgumentException | SQLException e2) {
+					if(!flag) {
+						error.append("\n基地("+pair.getPracticeBase().getDescription()+")原有学生大组长("+stu.getDescription()+")不存在该大区实习生名单中，已剔除!");
+						throw new IllegalArgumentException();
+					}
+					prepared.get(stu.getMajor()).gro++;
+				}catch(IllegalArgumentException | SQLException e) {
+					//无学生大组长
+					pair.getRegion().setStudentGroupLeaderId(null);
+					try{pair.getRegion().update();
+					}catch(IllegalArgumentException | SQLException e2) {
+					}
 				}
 			}
 		}
@@ -187,35 +180,36 @@ public class StudentGroupLeader extends ActionSupport{
 		for(Entry<String,Pair> entry:prepared.entrySet())
 			preparedMajor.add(entry.getValue());
 		for(ListOfPracticeBaseAndStudents.RegionPair rp:this.practiceBaseAndStudents.getList()){
-			if(Field.s2S(rp.getRegion().getStudentGroupLeaderId())==null) {
-				//每个学院都一定会推荐学生的
-				Collections.sort(preparedMajor);
-				boolean ok=false;
-				for(Pair p:preparedMajor) {
-					Student gro=null;
-					for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()){
+			for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
+				if(Field.s2S(pair.getRegion().getStudentGroupLeaderId())==null) {
+					//每个学院都一定会推荐学生的
+					Collections.sort(preparedMajor);
+					boolean ok=false;
+					for(Pair p:preparedMajor) if(!pair.getStudents().isEmpty()){
+						Student gro=null;
 						for(Student s:pair.getStudents()) {
 							if(s.getRecommend() && p.major.getName().equals(s.getMajor())) {
 								gro=s;
-							}if(gro!=null) break;
-						}if(gro!=null) break;
-					}
-					if(gro==null)
-						error.append("\n专业("+p.major.getDescription()+")在大区("+rp.getRegion().getDescription()+")未推荐学生大组长!");
-					else {
-						rp.getRegion().setStudentGroupLeaderId(gro.getId());
-						try{
-							rp.getRegion().update();
-							p.gro++;//TODO check: 排序内容是否更新？
-							ok=true;
-							break;
-						}catch(IllegalArgumentException | SQLException e) {
-							error.append("\n大区("+rp.getRegion().getDescription()+")设定学生大组长("+gro.getDescription()+")时，数据库开小差去了!");
+								break;
+							}
+						}
+						if(gro==null)
+							error.append("\n专业("+p.major.getDescription()+")在基地("+pair.getPracticeBase().getDescription()+")未推荐学生大组长!");
+						else {
+							pair.getRegion().setStudentGroupLeaderId(gro.getId());
+							try{
+								pair.getRegion().updateStudentGroupLeaderId();
+								p.gro++;//TODO check: 排序内容是否更新？
+								ok=true;
+								break;
+							}catch(IllegalArgumentException | SQLException e) {
+								error.append("\n基地("+pair.getPracticeBase().getDescription()+")设定学生大组长("+gro.getDescription()+")时，数据库开小差去了!");
+							}
 						}
 					}
+					if(!ok)
+						error.append("\n基地("+pair.getPracticeBase().getDescription()+")未能成功设置学生大组长!");
 				}
-				if(!ok)
-					error.append("\n大区("+rp.getRegion().getDescription()+")未能成功设置学生大组长!");
 			}
 		}
 		return Manager.tips(error.length()<=0?"设定完毕！":

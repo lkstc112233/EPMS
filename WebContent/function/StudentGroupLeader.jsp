@@ -18,14 +18,6 @@
 	<table style="width:80%"><tbody>
 		<tr><td colspan="100">
 			<div class="listHeader">
-				<s:select id="MajorName" name="majorName" list="majors"
-				listKey="name" listValue="subject"
-				theme="simple" cssClass="title_button" style="margin-bottom:2px;"
-				onchange="window.location.href=window.location.href.substring(0,(
-				window.location.href.lastIndexOf('/')<0?window.location.length:window.location.href.lastIndexOf('/'))
-				)+'/function_StudentGroupLeaderRecommend_display.action?majorName='
-				+this.value"
-				/>
 				指定实习生大组长
 				（<s:property value="annual.year" />）
 			</div>
@@ -46,7 +38,7 @@
 	
 	<% boolean[] StudentFieldDisplay=new boolean[]{
 			false,true,true,false,false,
-			false,false,false,
+			true,false,false,
 			true,true,true,false,
 			false,false,false,false};
 		int i; %>
@@ -131,12 +123,12 @@
 				<% } %>
 			</td>
 			<!-- 学生大组长 --><td style="width:36px;padding:0;border:0">
-				<s:if test="#__studentRow.id == #__rpRow.region.studentGroupLeaderId"><!-- 已推荐 -->
+				<s:if test="#__studentRow.id == #__Row.region.studentGroupLeaderId"><!-- 已推荐 -->
 					<s:submit value="✔"
 						style="padding:0;margin:0;border:3px black double;background:gold;width:30px;height:30px;font-size:30px;line-height:5px;" theme="simple" />
 				</s:if><s:else><!-- 未推荐 -->
 					<s:form action="function_StudentGroupLeader_execute" method="post" theme="simple">
-						<s:hidden name="choose[0]" value="%{#__rpRow.region.name}" theme="simple" />
+						<s:hidden name="choose[0]" value="%{#__Row.practiceBase.name}" theme="simple" />
 						<s:hidden name="choose[1]" value="%{#__studentRow.id}" theme="simple" />
 						<s:submit value=" "
 						style="padding:0;margin:0;border:3px black double;background:white;width:30px;height:30px;" theme="simple" />
