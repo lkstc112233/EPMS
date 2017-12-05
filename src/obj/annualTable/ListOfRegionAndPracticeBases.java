@@ -13,13 +13,29 @@ import obj.staticObject.PracticeBase;
  *  which is an '<code>ArrayList</code>' with type'<code>PracticBase</code>'
  */
 public class ListOfRegionAndPracticeBases{
-	static public class Pair{
+	static public class Pair implements Comparable<Pair>{
 		private Region region;
 		private List<PracticeBase> practiceBases=new ArrayList<PracticeBase>();
 			public int getSize(){return this.practiceBases.size();}
 			public Region getRegion(){return this.region;}
 			public List<PracticeBase> getPracticeBases(){return this.practiceBases;}
 			public Pair(Region r){this.region=r;}
+		@Override
+		public int compareTo(Pair o) {
+			if(o==null) return 1;
+			if(region==null && o.region!=null) return -1;
+			if(region!=null && o.region==null) return 1;
+			if(region==null && o.region==null) return 0;
+			boolean hx=this.practiceBases.get(0).getHx();
+			boolean hx2=o.practiceBases.get(0).getHx();
+			if(hx && !hx2) return 1;
+			if(!hx && hx2) return -1;
+			if(hx && hx2)
+				return this.region.compareTo(o.region);
+			else
+				return this.practiceBases.get(0).getProvince()
+						.compareTo(o.practiceBases.get(0).getProvince());
+		}	
 	}
 	private List<Pair> list=new ArrayList<Pair>();
 		public List<Pair> getList(){return list;}
@@ -49,6 +65,7 @@ public class ListOfRegionAndPracticeBases{
 					this.put(r,pb);
 			}
 		}
+		Collections.sort(this.list);
 	}
 	
 	public int[] indexOf(String practiceBaseName){
