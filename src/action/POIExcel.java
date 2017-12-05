@@ -657,46 +657,19 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 	
 	
 	@Override
-	public String createSuperviseList(int year, OutputStream out) throws IOException {
+	public String createSuperviseList(int year,ListOfRegionAndPracticeBaseAndInnerPerson list, OutputStream out) throws IOException {
 		String name=String.format("%d年免费师范生教育实习督导任务表",
 				year);
-		Map<Integer,List<InnerPerson>> teachers=new TreeMap<Integer,List<InnerPerson>>();
-		try{
-			for(Student stu:Base.list(Student.class,new Restraint(Field.getField(Student.class,"year"),year))) try{
-				InnerPerson t=new InnerPerson(stu.getTeacherId());
-				School s=new School(t.getSchool());
-				if(!teachers.containsKey(s.getOrderId()))
-					teachers.put(s.getOrderId(),new ArrayList<InnerPerson>());
-				teachers.get(s.getOrderId()).add(t);
-			}catch(IllegalArgumentException | SQLException e) {
-				System.err.println(stu.getName()+"没有指导老师！("+stu.toString()+")");
-			}
-		}catch(IllegalArgumentException | SQLException | InstantiationException e) {
-			System.err.println("读取实习生列表失败！");
-		}
-		try{
-			for(Supervise sup:Base.list(Supervise.class,new Restraint(Field.getField(Supervise.class,"year"),year))) try{
-				InnerPerson t=new InnerPerson(sup.getSupervisorId());
-				School s=new School(t.getSchool());
-				if(!teachers.containsKey(s.getOrderId()))
-					teachers.put(s.getOrderId(),new ArrayList<InnerPerson>());
-				teachers.get(s.getOrderId()).add(t);
-			}catch(IllegalArgumentException | SQLException e) {
-				System.err.println(sup.getPracticeBase()+"的"+Supervise.getTypeNameList()[sup.getSuperviseType()]+
-						"没有督导老师！("+sup.toString()+")");
-			}
-		}catch(IllegalArgumentException | SQLException | InstantiationException e) {
-			System.err.println("读取督导老师列表失败！");
-		}
 		try(Workbook wb=new XSSFWorkbook();){
-			Sheet st=wb.createSheet("指导教师");
+			Sheet st=wb.createSheet("督导任务");
 			CellStyle styleBigTitle=POIExcel.getCellStyle(wb,"宋体",18,true,HorizontalAlignment.CENTER,BorderStyle.NONE,false,null);
 		//	CellStyle styleSmallTitle=POIExcel.getCellStyle(wb,"宋体",12,true,HorizontalAlignment.CENTER,BorderStyle.NONE,false,null);
-			CellStyle styleTitle=POIExcel.getCellStyle(wb,"宋体",10,true,HorizontalAlignment.CENTER,BorderStyle.NONE,false,null);
-			CellStyle styleContent=POIExcel.getCellStyle(wb,"宋体",10,false,HorizontalAlignment.CENTER,BorderStyle.HAIR,false,null);
+			CellStyle styleTitle=POIExcel.getCellStyle(wb,"宋体",10,true,HorizontalAlignment.CENTER,BorderStyle.NONE,true,null);
+			CellStyle styleContent=POIExcel.getCellStyle(wb,"宋体",10,false,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,null);
 			//设置列数
 			final Field[] fs=Field.getFields(InnerPerson.class,"school","name","id","mobile","email");
-			final int column=fs.length+1;
+			final int fs_cnt=4;
+			final int column=3+fs.length*fs_cnt;
 			Row row;
 			Cell cell;
 			int r=0;
@@ -704,44 +677,83 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			setHeight(row,40);
 			cell=row.createCell(0);
 			cell.setCellType(CellType.STRING);
-			cell.setCellValue(year+"年免费师范生教育实习指导教师名单");
+			cell.setCellValue(year+"年免费师范生教育实习督导任务表");
 			cell.setCellStyle(styleBigTitle);
 			for(int i=1;i<column;i++) row.createCell(i).setCellStyle(styleBigTitle);
 			st.addMergedRegion(new CellRangeAddress(r,r,0,column-1));
 			r++;
 			/*第二行列标签*/row=st.createRow(r);
-			setHeight(row,20);
+			setHeight(row,40);
 			for(int i=0;i<column;i++) {
 				cell=row.createCell(i);
 				cell.setCellType(CellType.STRING);
-				cell.setCellValue(i==0?"序号":
-					fs[i-1].getDescription());
+				cell.setCellValue(i==0?"实习大区":
+					i==1?"序号":
+						i==2?"实习基地名称":
+							fs[(i-3)%fs.length].getDescription());
+				setWidth(st,i,i==0?4:
+					i==1?3:
+						i==2?26:
+							((i-3)%fs.length)<2?5:
+								((i-3)%fs.length)==2?0:12);
 				cell.setCellStyle(styleTitle);
 			}
 			r++;
 			/*第三行开始每个院系指导教师列表*/
-			int cnt=0;
-			for(Map.Entry<Integer,List<InnerPerson>> entry:teachers.entrySet()) {
-				boolean first=true;
-				for(InnerPerson t:entry.getValue()) {
-					/*学生内容*/row=st.createRow(r);
-					row.setHeight((short)-1);
+			for(ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair rp:list.getList()) {
+				int gCnt=1;
+				int rStart=r;
+				int[] mergeR=new int[] {r,r,r,r};
+				String[] mergeId=new String[] {null,null,null,null};
+				boolean[] merge=new boolean[] {false,false,false,false};
+				for(ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair pair:rp.getList()) {
+					row=st.createRow(r);
+					setHeight(row,-1);
+					InnerPerson[] inner=new InnerPerson[] {pair.getLeader(),null,null,null};
+					for(int j=1;j<inner.length;j++) inner[j]=pair.getSupervisor()[j-1];
 					for(int i=0;i<column;i++) {
 						cell=row.createCell(i);
-						cell.setCellType(CellType.STRING);
+					//	cell.setCellType(CellType.STRING);
 						cell.setCellStyle(styleContent);
-						if(first) first=false;
-						else if(i==1) continue;
-						cell.setCellValue(i==0?String.valueOf(cnt++):
-							Field.o2s(fs[i-1].get(t),""));
+						if(i==0 && r>rStart) continue;
+						if(i==0)
+							cell.setCellValue(rp.getRegion().getName());
+						else if(i==1)
+							cell.setCellValue(gCnt);
+						else if(i==2)
+							cell.setCellValue(pair.getPracticeBase().getName());
+						else {
+							int j=(i-3)/fs.length%fs_cnt;
+							int k=(i-3)%fs.length;
+							if(k==0) {
+								if(gCnt==rp.getList().size() ||
+										(inner[j]!=null && mergeId[j]!=null && !mergeId[j].equals(inner[j].getId())))
+									merge[j]=true;
+							}
+							if(merge[j]) {
+								//merge the rows before here(mergeR[j]...mergeToR)
+								int mergeToR=(gCnt==rp.getList().size())?r:r-1;//最后一个
+								if(mergeToR>mergeR[j]) {
+									st.addMergedRegion(new CellRangeAddress(mergeR[j],mergeToR,i,i));
+								}
+							}else
+								cell.setCellValue(Field.o2s(fs[k].get(inner[j]),""));
+							if(k==fs.length-1) {
+								mergeId[j]=inner[j]==null?null:inner[j].getId();
+								mergeR[j]=r;
+							}
+						}
 					}
+					for(int j=0;j<merge.length;j++) merge[j]=false;
+					gCnt++;
 					r++;
 				}
-				st.addMergedRegion(new CellRangeAddress(r-entry.getValue().size(),r-1,1,1));
+				if(r-1>rStart)
+					st.addMergedRegion(new CellRangeAddress(rStart,r-1,0,0));
 			}
 			//列宽，第一个参数代表列id(从0开始),第2个参数代表宽度值  参考 ："2012-08-10"的宽度为2500
 	//		st.setColumnWidth(0,2500);
-			for(int i=0;i<column;i++) st.autoSizeColumn(i,true);
+	//		for(int i=0;i<column;i++) st.autoSizeColumn(i,true);
 			debug(wb,name);
 	        wb.write(out);
 		}

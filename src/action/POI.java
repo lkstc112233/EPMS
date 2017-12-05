@@ -65,10 +65,9 @@ public class POI implements SQLIO, SpecialIO{
 		return excel.createTeacherList(year, stream);
 	}
 	@Override
-	public String createSuperviseList(int year, OutputStream stream) throws IOException {
-		return excel.createTeacherList(year, stream);
+	public String createSuperviseList(int year,ListOfRegionAndPracticeBaseAndInnerPerson list, OutputStream stream) throws IOException {
+		return excel.createSuperviseList(year, list, stream);
 	}
-	
 	
 	
 	

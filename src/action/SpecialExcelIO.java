@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import obj.annualTable.ListOfPracticeBaseAndStudents;
+import obj.annualTable.ListOfRegionAndPracticeBaseAndInnerPerson;
 import obj.staticObject.PracticeBase;
 
 public interface SpecialExcelIO {
@@ -43,6 +44,7 @@ public interface SpecialExcelIO {
 	 */
 	public abstract String createSuperviseList(
 			int year,
+			ListOfRegionAndPracticeBaseAndInnerPerson list,
 			OutputStream stream)
 					throws IOException;
 	
