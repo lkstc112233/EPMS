@@ -62,6 +62,18 @@
 					</li>
 				</ul>
 			</td></tr>
+			<s:if test="times.isEmpty() == false">
+				<tr><td valign="top" colspan="100">
+					<ul class="listContent">
+						<li>
+							<span class="time">[All time]</span>
+							<a href='<s:url action="sudo_TimeReset_execute"/>' onclick="this.href=this.href+'?annual.year='+document.getElementById('annualYear').value">
+								重设今年项目
+							</a>
+						</li>
+					</ul>
+				</td></tr>
+			</s:if>
 		</s:if>
 		<s:iterator value="times" var="__tableRow" status="__status">
 			<tr>
