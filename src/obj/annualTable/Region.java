@@ -201,10 +201,28 @@ public class Region extends AnnualBase{
 		pst.setObject(parameterIndex++,this.getYear());
 		pst.setObject(parameterIndex++,this.getName());
 		int num=pst.executeUpdate();
-		System.out.println("+> Region:update(Base) > update "+num+" column!");
+		System.err.println("Region:update更新了"+num+"重值！("+pst.toString()+")");
 		region.copyTo(this);
 	}
 	
+	
+	public void updateStudentGroupLeaderId() throws SQLException {
+		StringBuilder sb=new StringBuilder();
+		sb.append("UPDATE ");
+		sb.append(this.getSQLTableName());
+		sb.append(" SET ");
+		sb.append("studentGroupLeaderId = ?");
+		sb.append(" WHERE ");
+		sb.append("year = ? AND name = ? AND practiceBase = ?");
+		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
+		int parameterIndex=1;
+		pst.setObject(parameterIndex++,this.getStudentGroupLeaderId());
+		pst.setObject(parameterIndex++,this.getYear());
+		pst.setObject(parameterIndex++,this.getName());
+		pst.setObject(parameterIndex++,this.getPracticeBase());
+		int num=pst.executeUpdate();
+		System.err.println("Region:update更新了"+num+"重值！("+pst.toString()+")");
+	}
 	
 	
 	
