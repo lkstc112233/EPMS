@@ -79,7 +79,6 @@
 			true,true,true,false,
 			false,false,false,false};
 		int i; %>
-	<% String majorName=obj.Field.o2S(pageContext.findAttribute("majorName")); %>
 		
 	<!-- ###### 已分配实习生 ###### -->
 	<table width="80%"><tbody>
