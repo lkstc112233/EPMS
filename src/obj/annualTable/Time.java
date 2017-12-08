@@ -48,6 +48,17 @@ public class Time extends AnnualBase{
 		}
 	}
 	
+	public Time() {
+		super();
+	}
+	public Time(int year,String project) throws IllegalArgumentException, SQLException {
+		super();
+		this.setYear(year);
+		this.setProject(project);
+		this.load();
+	}
+	
+	
 	
 	@SuppressWarnings("deprecation")
 	static public Time getFromACCESS(int year,ACCESS a) throws SQLException{

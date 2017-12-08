@@ -5,10 +5,13 @@ import java.sql.Timestamp;
 
 import action.Manager;
 import obj.*;
+import obj.annualTable.Supervise;
 import obj.annualTable.Time;
 
 @SQLTable("ACCESS")
 public class ACCESS extends Base{
+	static public final String jysx="教育实习";
+	static public final String[] supervise=Supervise.getTypeNameList();
 
 	@SQLField(value="顺序号",weight=0)
 	private int orderId=-1;	public void setOrderId(int a){this.orderId=a;}	public void setOrderId(String a) {this.orderId=Field.s2i(a,-1);}	public int getOrderId() {return this.orderId;}

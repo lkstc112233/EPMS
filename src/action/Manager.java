@@ -13,7 +13,6 @@ import obj.staticObject.InnerPerson;
 import token.Role;
 
 public class Manager {
-	static public final String jysx="教育实习";
 
 	static public void saveSession(String key,Object value){
 		if(value==null) Manager.removeSession(key);
