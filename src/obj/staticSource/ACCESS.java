@@ -10,8 +10,18 @@ import obj.annualTable.Time;
 
 @SQLTable("ACCESS")
 public class ACCESS extends Base{
-	static public final String jysx="教育实习";
+	static public final String[] specialACCESSNameList=new String[1+Supervise.getTypeNameList().length];
+	static {
+		int i=0;
+		specialACCESSNameList[i++]="教育实习";
+		for(String s:Supervise.getTypeNameList())
+			specialACCESSNameList[i++]=s;
+		
+	};
+	static public final String jysx=ACCESS.specialACCESSNameList[0];
 	static public final String[] supervise=Supervise.getTypeNameList();
+	
+	
 
 	@SQLField(value="顺序号",weight=0)
 	private int orderId=-1;	public void setOrderId(int a){this.orderId=a;}	public void setOrderId(String a) {this.orderId=Field.s2i(a,-1);}	public int getOrderId() {return this.orderId;}
