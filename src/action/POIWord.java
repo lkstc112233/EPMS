@@ -173,10 +173,96 @@ public class POIWord implements SpecialWordIO{
 		param.put("practiceBaseName",pb.getName());
 		try{
 			Time a=new Time(year,ACCESS.jysx);
-			param.put("startMonth",String.valueOf(Manager.getTimeMonth(a.getTime1())));
-			param.put("startDay",String.valueOf(Manager.getTimeDay(a.getTime1())));
-			param.put("endMonth",String.valueOf(Manager.getTimeMonth(a.getTime2())));
-			param.put("endDay",String.valueOf(Manager.getTimeDay(a.getTime2())));
+			param.put("startMonth",a.getTime1()==null?"null":String.valueOf(Manager.getTimeMonth(a.getTime1())));
+			param.put("startDay",a.getTime1()==null?"null":String.valueOf(Manager.getTimeDay(a.getTime1())));
+			param.put("endMonth",a.getTime2()==null?"null":String.valueOf(Manager.getTimeMonth(a.getTime2())));
+			param.put("endDay",a.getTime2()==null?"null":String.valueOf(Manager.getTimeDay(a.getTime2())));
+		}catch(IllegalArgumentException | SQLException e) {
+			throw new IOException(e.getMessage());
+		}
+		StringBuilder sb=new StringBuilder();
+		int cnt=0;
+		for(Map.Entry<Major,List<Student>> entry:list.entrySet()){
+			if(entry.getValue().isEmpty()) continue;
+			if(sb.length()>0) sb.append("、");
+			sb.append(entry.getKey().getSubject()+entry.getValue().size()+"人");
+			cnt+=entry.getValue().size();
+		}
+		param.put("studentCountList",sb.toString());
+		param.put("studentCount",String.valueOf(cnt));
+		sb=new StringBuilder();
+		try{for(InnerPerson inner:Manager.getManagerInnerPersons()) {
+			sb.append(inner.getName());
+			sb.append("  电话：");sb.append(inner.getPhone());
+			sb.append("  手机：");sb.append(inner.getMobile());
+			sb.append("  邮箱：");sb.append(inner.getEmail());
+			sb.append("\r\n");
+		}}catch(IllegalArgumentException|InstantiationException|SQLException e) {
+			throw new IOException(e.getMessage());
+		}
+		param.put("jwcManager",sb.toString());
+		try(FileInputStream in=new FileInputStream(POI.path+modelFileName);){
+			FileChannel channel=in.getChannel();
+			FileLock lock=null;
+			for(int i=0;i<POI.LockMaxTry;i++) try{
+				lock=channel.tryLock(0L,Long.MAX_VALUE,true);
+				if(lock!=null) break;
+				try{Thread.sleep(POI.LockTryWait);//共享锁
+				}catch(InterruptedException e){}
+		//	}catch(OverlappingFileLockException e) {
+			}catch(Exception e) {
+				e.printStackTrace();
+				break;
+			}
+			if(lock==null)
+				throw new IOException("模板文件被占用，无法读取!");
+			XWPFDocument doc;
+			try{
+				doc=this.getModel(in,param);
+			}catch(IOException e){
+				throw e;
+			}finally{
+				if(lock.isValid())
+					lock.release();
+			}
+			debug(doc,name);
+			doc.write(out);
+			doc.close();
+		}
+		return name+".docx";
+	}
+
+	@Override
+	public String createSupervisorMandate(int year,
+			ListOfRegionAndPracticeBaseAndInnerPerson list,
+			String supervisorId,
+			OutputStream out) throws IOException
+	{
+		InnerPerson inner;
+		try{
+			inner=new InnerPerson(supervisorId);
+		}catch(IllegalArgumentException | SQLException e) {
+			throw new IOException("服务器未找到！("+e.getMessage()+")");
+		}
+		//start
+		String name=String.format("%d年[%s]免费师范生教育实习督导任务书(%s)",
+				year,inner.getSchool(),inner.getName());
+		String modelFileName="免费师范生教育实习督导任务书.docx";
+		Map<String,Object> param=new HashMap<String,Object>();
+		param.put("grade",String.valueOf(year-3));
+		param.put("year",String.valueOf(year));
+		param.put("month",String.valueOf(Manager.getNowTimeMonth()));
+		param.put("day",String.valueOf(Manager.getNowTimeDay()));
+		param.put("supervisor",inner);
+		param.put("region",region);
+		try{
+			for(int i=0;i<ACCESS.supervise.length;i++) {
+				Time a=new Time(year,ACCESS.supervise[i]);
+				param.put("supervise"+i+"StartMonth",a.getTime1()==null?"null":String.valueOf(Manager.getTimeMonth(a.getTime1())));
+				param.put("supervise"+i+"StartDay",a.getTime1()==null?"null":String.valueOf(Manager.getTimeDay(a.getTime1())));
+				param.put("supervise"+i+"EndMonth",a.getTime2()==null?"null":String.valueOf(Manager.getTimeMonth(a.getTime2())));
+				param.put("supervise"+i+"EndDay",a.getTime2()==null?"null":String.valueOf(Manager.getTimeDay(a.getTime2())));
+			}
 		}catch(IllegalArgumentException|InstantiationException|SQLException e) {
 			throw new IOException(e.getMessage());
 		}

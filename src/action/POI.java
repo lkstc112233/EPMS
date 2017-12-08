@@ -68,6 +68,11 @@ public class POI implements SQLIO, SpecialIO{
 	public String createSuperviseList(int year,ListOfRegionAndPracticeBaseAndInnerPerson list, OutputStream stream) throws IOException {
 		return excel.createSuperviseList(year, list, stream);
 	}
+	@Override
+	public String createSupervisorMandate(int year, ListOfRegionAndPracticeBaseAndInnerPerson list, String supervisorId,
+			OutputStream stream) throws IOException {
+		return word.createSupervisorMandate(year, list, supervisorId, stream);
+	}
 	
 	
 	
