@@ -39,12 +39,6 @@ public class ExportAllSuperviseList extends ActionSupport{
 	}
 	
 	
-	
-	private String majorName;
-		public void setMajorName(String a){this.majorName=Field.s2S(a);}
-		public String getMajorName(){return majorName;}
-	
-
 	/*
 	 * 下载模板
 	 */
