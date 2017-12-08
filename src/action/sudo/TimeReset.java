@@ -11,12 +11,11 @@ import obj.annualTable.Time;
 
 public class TimeReset extends ActionSupport{
 	private static final long serialVersionUID = -2075656836784414352L;
-	static public final String SESSION_List="SQLOperation_List";
 
 	private action.Annual annual=new action.Annual();;
 	public action.Annual getAnnual(){return this.annual;}
 
-	private String jumpURL="menu.action";
+	private String jumpURL="sudo_TimeManager_display.action";
 		public String getJumpURL() {return this.jumpURL;}
 		public void setJumpURL(String a) {this.jumpURL=a;}
 
