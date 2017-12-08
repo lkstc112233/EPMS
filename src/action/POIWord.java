@@ -13,6 +13,7 @@ import org.apache.poi.xwpf.usermodel.*;
 import obj.*;
 import obj.annualTable.*;
 import obj.staticObject.*;
+import obj.staticSource.ACCESS;
 import obj.staticSource.Major;
 
 public class POIWord implements SpecialWordIO{
@@ -166,11 +167,14 @@ public class POIWord implements SpecialWordIO{
 		Map<String,String> param=new HashMap<String,String>();
 		param.put("grade",String.valueOf(year-3));
 		param.put("year",String.valueOf(year));
-		param.put("month",String.valueOf(Manager.getNowTimeMonth()));
-		param.put("day",String.valueOf(Manager.getNowTimeDay()));
+		param.put("nowYear",String.valueOf(Manager.getNowTimeYear()));
+		param.put("nowMonth",String.valueOf(Manager.getNowTimeMonth()));
+		param.put("nowDay",String.valueOf(Manager.getNowTimeDay()));
 		param.put("practiceBaseName",pb.getName());
 		try{
-			Time a=Base.list(Time.class,new Restraint(Field.getField(Time.class,"project"),Restraint.Type.Equal,Manager.jysx)).get(0);
+			Time a=new Time(year,ACCESS.jysx);
+			param.put("startMonth",String.valueOf(Manager.getTimeMonth(a.getTime1())));
+			param.put("startDay",String.valueOf(Manager.getTimeDay(a.getTime1())));
 			param.put("endMonth",String.valueOf(Manager.getTimeMonth(a.getTime2())));
 			param.put("endDay",String.valueOf(Manager.getTimeDay(a.getTime2())));
 		}catch(IllegalArgumentException|InstantiationException|SQLException e) {
@@ -189,12 +193,9 @@ public class POIWord implements SpecialWordIO{
 		sb=new StringBuilder();
 		try{for(InnerPerson inner:Manager.getManagerInnerPersons()) {
 			sb.append(inner.getName());
-			sb.append("  电话：");
-			sb.append(inner.getPhone());
-			sb.append("  手机：");
-			sb.append(inner.getMobile());
-			sb.append("  邮箱：");
-			sb.append(inner.getEmail());
+			sb.append("  电话：");sb.append(inner.getPhone());
+			sb.append("  手机：");sb.append(inner.getMobile());
+			sb.append("  邮箱：");sb.append(inner.getEmail());
 			sb.append("\r\n");
 		}}catch(IllegalArgumentException|InstantiationException|SQLException e) {
 			throw new IOException(e.getMessage());
