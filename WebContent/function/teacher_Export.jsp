@@ -87,9 +87,17 @@
 				<s:iterator value="#__pairRow.supervisor" var="__supervisor" status="__typeStatus">
 					<s:if test="schoolName == #__supervisor.school">
 						<td style="padding:0;background-color:lightyellow;font-weight:800;">
-							<s:property value="#__supervisor.name" />
+							<a href="<s:url action='function_teacher_ExportSupervisorMandate_display'/>?supervisorId=<s:property value='#__supervisor.id'/>">
+								<s:property value="#__supervisor.name" />
+							</a>
 						</td>
-					</s:if><s:else>
+					</s:if><s:elseif test="schoolName == '教务处'">
+						<td style="padding:0;background-color:white;">
+							<a href="<s:url action='function_teacher_ExportSupervisorMandate_display'/>?supervisorId=<s:property value='#__supervisor.id'/>">
+								<s:property value="#__supervisor.name" />
+							</a>
+						</td>
+					</s:elseif><s:else>
 						<td style="padding:0;background-color:white;">
 							<s:property value="#__supervisor.name" />
 						</td>
