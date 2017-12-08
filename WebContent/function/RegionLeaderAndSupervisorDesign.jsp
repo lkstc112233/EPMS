@@ -42,7 +42,7 @@
 				<td>基地名称</td>
 				<td>总领队老师</td>
 				<s:iterator value="superviseTypeNameList" var="__typeName">
-					<td><s:property value="#__typeName" /></td>
+					<td><s:property value="#__typeName" />老师</td>
 				</s:iterator>
 			</tr>
 			<s:iterator value="regionAndPracticeBase.list" var="__regionRow" status="__regionStatus">

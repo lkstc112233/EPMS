@@ -34,9 +34,9 @@ public class Supervise extends AnnualBase{
 	@SQLField(value="其他费用",weight=19,ps="小于100000")
 	private float moneyElse;
 	
-	static final int[] TypeList=new int[]{0,1,2};
+	static private final int[] TypeList=new int[]{0,1,2};
 		static public int[] getTypeList(){return Supervise.TypeList;}
-	static final String[] TypeNameList=new String[] {"入校督导老师","中期督导老师","返校督导老师"};
+	static private final String[] TypeNameList=new String[] {"入校督导","中期督导","返校督导"};
 		static public String[] getTypeNameList() {return Supervise.TypeNameList;}
 
 	public String getPracticeBase() {return practiceBase;}

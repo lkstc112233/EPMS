@@ -120,14 +120,14 @@ public class ListOfRegionAndPracticeBaseAndInnerPerson{
 		if(tmp==null){//需要新增一个PracticeBasePair
 			for(RegionPair rp:this.list) {
 				if(rp.getRegion().getName()!=null && rp.getRegion().getName().equals(region.getName())) {
-					rp.getList().add(tmp=new PracticeBasePair(region,pb,leader,new InnerPerson[Supervise.TypeList.length]));
+					rp.getList().add(tmp=new PracticeBasePair(region,pb,leader,new InnerPerson[Supervise.getTypeList().length]));
 					break;
 				}
 			}
 			if(tmp==null) {
 				//需要新增一个RegionPair
 				RegionPair rp=new RegionPair(region);
-				rp.getList().add(tmp=new PracticeBasePair(region,pb,leader,new InnerPerson[Supervise.TypeList.length]));
+				rp.getList().add(tmp=new PracticeBasePair(region,pb,leader,new InnerPerson[Supervise.getTypeList().length]));
 				this.list.add(rp);
 			}
 		}
