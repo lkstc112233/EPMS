@@ -667,9 +667,11 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			CellStyle styleTitle=POIExcel.getCellStyle(wb,"宋体",10,true,HorizontalAlignment.CENTER,BorderStyle.NONE,true,null);
 			CellStyle styleContent=POIExcel.getCellStyle(wb,"宋体",10,false,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,null);
 			//设置列数
-			final Field[] fs=Field.getFields(InnerPerson.class,"school","name","id","mobile","email");
-			final int fs_cnt=4;
-			final int column=3+fs.length*fs_cnt;
+			final Field[] fs=Field.getFields(InnerPerson.class,"name","id","mobile","email");
+			final int fs_len=1+fs.length;
+			final int fs_cnt=1+Supervise.getTypeList().length;
+			final int column=3+fs_len*fs_cnt;
+			//大区、序号、基地、（学院 + name/id/mobile/email）*（总领队1+督导次数3）
 			Row row;
 			Cell cell;
 			int r=0;
@@ -690,16 +692,17 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 				cell.setCellValue(i==0?"实习大区":
 					i==1?"序号":
 						i==2?"实习基地名称":
-							fs[(i-3)%fs.length].getDescription());
+							(i-3)%fs_len<1?"学院":
+								fs[(i-3)%fs_len].getDescription());
 				setWidth(st,i,i==0?4:
 					i==1?3:
 						i==2?26:
-							((i-3)%fs.length)<2?5:
-								((i-3)%fs.length)==2?0:12);
+							((i-3)%fs_len)<2?5:
+								((i-3)%fs_len)==2?0:12);
 				cell.setCellStyle(styleTitle);
 			}
 			r++;
-			/*第三行开始每个院系指导教师列表*/
+			/*第三行*/
 			for(ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair rp:list.getList()) {
 				int gCnt=1;
 				int rStart=r;
@@ -736,9 +739,17 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 								if(mergeToR>mergeR[j]) {
 									st.addMergedRegion(new CellRangeAddress(mergeR[j],mergeToR,i,i));
 								}
+							}else if(k<1) {
+								String schoolSubName="";
+								try {
+									schoolSubName=new School(inner[j].getSchool()).getSubName();
+								} catch (IllegalArgumentException | SQLException e) {
+									System.err.println(inner[j].getDescription()+"没有查找到所在院系！("+e.getMessage()+")");
+								}
+								cell.setCellValue(schoolSubName);
 							}else
-								cell.setCellValue(Field.o2s(fs[k].get(inner[j]),""));
-							if(k==fs.length-1) {
+								cell.setCellValue(Field.o2s(fs[k-1].get(inner[j]),""));
+							if(k==fs_len-1) {
 								mergeId[j]=inner[j]==null?null:inner[j].getId();
 								mergeR[j]=r;
 							}
