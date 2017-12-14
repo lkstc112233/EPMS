@@ -77,14 +77,14 @@ public class Field implements Comparable<Field>{
 		if(b==null) return null;
 		Object o=null;
 		try{o=field.get(b);}catch(IllegalAccessException e){e.printStackTrace();}
-		if(Field.nullValue(o))
-			this.set(b,o=null);
+	//	if(Field.nullValue(o))
+	//		this.set(b,o=null);
 		return o;
 	}
 	public Base set(Base b,Object value) throws IllegalArgumentException{
 		field.setAccessible(true);
 		if(b==null) return b;
-		if(Field.nullValue(value)) value=null;
+	//	if(Field.nullValue(value)) value=null;
 		try{field.set(b,value);
 		}catch(IllegalAccessException e){e.printStackTrace();}
 		return b;
