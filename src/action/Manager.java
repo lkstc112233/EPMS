@@ -13,7 +13,10 @@ import obj.staticObject.InnerPerson;
 import token.Role;
 
 public class Manager {
-
+	
+	/*=======================================================
+	 * 关于Session
+	 */
 	static public void saveSession(String key,Object value){
 		if(value==null) Manager.removeSession(key);
 		else ActionContext.getContext().getSession().put(key,value);
@@ -38,6 +41,9 @@ public class Manager {
 			Manager.saveSession(TipsName,errorTips);
 	}
 
+	/*=======================================================
+	 * 关于errorTips
+	 */
 	static private final String TipsName="errorTips";
 	static public void tips(String msg){
 		Manager.tips(msg,null,null);
@@ -61,7 +67,10 @@ public class Manager {
 		System.err.println("Tips>> return "+result);
 		return result;
 	}
-	
+
+	/*=======================================================
+	 * 关于user
+	 */
 	static private final String userToken="inner";
 	static private final String userRoleToken="role";
 	static public InnerPerson getUser(){
@@ -76,7 +85,10 @@ public class Manager {
 		Manager.removeSession(userToken);}
 	
 	
-	
+
+	/*=======================================================
+	 * 关于SQL
+	 */
 	static public final String SQLCheck_Success="OK";
 	static public String SQLCheck(String sql){
 		int cnt=0;
@@ -90,7 +102,10 @@ public class Manager {
 			return "不允许创建数据表";
 		return SQLCheck_Success;
 	}
-	
+
+	/*=======================================================
+	 * 关于time规整
+	 */
 	public static boolean RegularPeriod(Timestamp t1,Timestamp t2){
 		if(t2==null) return false;
 		if(t1==null){
@@ -103,7 +118,10 @@ public class Manager {
 		return false;
 	}
 	
-	
+
+	/*=======================================================
+	 * 关于时间
+	 */
 	static public int getNowTimeMonth() {
 		return Calendar.getInstance().get(Calendar.MONTH)+1;
 	}static public int getNowTimeDay() {
@@ -123,7 +141,10 @@ public class Manager {
 		Calendar c=Calendar.getInstance();c.setTime(date);return c.get(Calendar.DAY_OF_WEEK);
 	}
 	
-	
+
+	/*=======================================================
+	 * 关于ManagerList
+	 */
 	static List<InnerPerson> getManagerInnerPersons() throws IllegalArgumentException, InstantiationException, SQLException {
 		return Base.list(InnerPerson.class,new Restraint(new Restraint.Part[] {
 				new Restraint.Part(Field.getField(InnerPerson.class,"office"),Restraint.Type.Like,"%"+Role.lxr.getName()+"%"),
