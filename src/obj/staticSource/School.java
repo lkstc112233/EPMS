@@ -12,12 +12,12 @@ public class School extends Base{
 	@SQLField(value="学院名称",weight=1,isKey=true,notNull=true)
 	private String name;
 	@SQLField(value="简称",weight=10,notNull=true)
-	private String subName="";//TODO
+	private String subName="null";
 
 	public String getName(){return this.name;}
 	public void setName(String a){this.name=Field.s2S(a);}
 	public String getSubName(){return this.subName;}
-	public void setSubName(String a){this.subName=Field.s2S(a);}
+	public void setSubName(String a){this.subName=Field.s2s(a,"null");}
 	
 	public School(){
 		super();

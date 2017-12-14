@@ -28,7 +28,7 @@ public class ACCESS extends Base{
 	@SQLField(value="项目名称",weight=2,isKey=true,notNull=true)
 	private String project;
 	@SQLField(value="动作名称",weight=10)
-	private String actionClass="";
+	private String actionClass="null";
 	@SQLField(value="起始时间",weight=11)
 	private Timestamp time1;
 	@SQLField(value="终止时间",weight=12)
@@ -48,7 +48,7 @@ public class ACCESS extends Base{
 	public String getProject() {return project;}
 	public void setProject(String a) {this.project=Field.s2S(a);}
 	public String getActionClass(){return this.actionClass;}
-	public void setActionClass(String a){this.actionClass=Field.s2s(a,"");}
+	public void setActionClass(String a){this.actionClass=Field.s2s(a,"null");}
 	public Timestamp getTime1() {return time1;}
 	public void setTime1(String a){
 		this.time1=Field.s2TS(a);
