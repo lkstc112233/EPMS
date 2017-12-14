@@ -14,8 +14,8 @@ public class ACCESS extends Base{
 	static {
 		int i=0;
 		specialACCESSNameList[i++]="教育实习";
-		for(String s:Supervise.getTypeNameList())
-			specialACCESSNameList[i++]=s;
+		for(String superviseTypeName:Supervise.getTypeNameList())
+			specialACCESSNameList[i++]=superviseTypeName;
 		
 	};
 	static public final String jysx=ACCESS.specialACCESSNameList[0];
@@ -34,15 +34,15 @@ public class ACCESS extends Base{
 	@SQLField(value="终止时间",weight=12)
 	private Timestamp time2;
 	@SQLField(value="学生权限",weight=13)
-	private boolean xs;
+	private boolean xs=false;
 	@SQLField(value="教育实习联系人权限",weight=14)
-	private boolean lxr;
+	private boolean lxr=false;
 	@SQLField(value="教师权限",weight=16)
-	private boolean js;
+	private boolean js=false;
 	@SQLField(value="教务处权限",weight=17)
-	private boolean jwc;
+	private boolean jwc=true;
 	@SQLField(value="领导权限",weight=18)
-	private boolean ld;
+	private boolean ld=false;
 	
 	
 	public String getProject() {return project;}
