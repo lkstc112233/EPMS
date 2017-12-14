@@ -7,6 +7,8 @@ import com.opensymphony.xwork2.ActionSupport;
 import action.*;
 import obj.*;
 import obj.annualTable.*;
+import obj.annualTable.ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair;
+import obj.staticObject.InnerPerson;
 
 /**
  * 导出督导任务书
@@ -39,11 +41,14 @@ public class ExportSupervisorMandate extends ActionSupport{
 	}
 	
 	
-	
-	private String supervisorId;
-		public void setSupervisorId(String a) {this.supervisorId=Field.s2S(a);}
-		public String getSupervisorId() {return this.supervisorId;}
-	
+
+	private String practiceBaseName;
+		public void setPracticeBaseName(String a) {this.practiceBaseName=Field.s2S(a);}
+		public String getPracticeBaseName() {return this.practiceBaseName;}
+	private int superviseIndex;
+		public void setSuperviseIndex(String a) {this.superviseIndex=Field.s2i(a,-1);}
+		public int getSuperviseIndex() {return this.superviseIndex;}
+		
 
 	/*
 	 * 下载模板
@@ -59,18 +64,25 @@ public class ExportSupervisorMandate extends ActionSupport{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private ByteArrayOutputStream downloadOutputStream=null;
-	protected String downloadByIO(SpecialIO io,int year,ListOfRegionAndPracticeBaseAndInnerPerson list,String supervisorId,OutputStream stream) throws IOException{
-		return io.createSupervisorMandate(year,list,supervisorId,stream);
+	protected String downloadByIO(SpecialIO io,int year,InnerPerson supervisor,PracticeBasePair pair,int superviseIndex,OutputStream stream) throws IOException{
+		return io.createSupervisorMandate(year,supervisor,pair,superviseIndex,stream);
 	}
 	public String download(){//下载模板
-		System.out.println(">> ExportPracticeBaseConsultationLetter:download > supervisorId="+this.supervisorId);
+		System.out.println(">> ExportPracticeBaseConsultationLetter:download > practiceBaseName="+this.practiceBaseName+",superviseIndex="+this.superviseIndex);
 		if(this.regionAndPracticeBaseAndInnerPerson==null)
 			return Manager.tips("该项目未初始化!","jump");
+		ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair
+			pair=this.regionAndPracticeBaseAndInnerPerson.get(practiceBaseName);
+		if(pair==null)
+			return Manager.tips("实习基地名称不正确!","jump");
+		if(superviseIndex<0||superviseIndex>=pair.getSupervisor().length)
+			return Manager.tips("督导序号不正确","jump");
+		InnerPerson supervisor=pair.getSupervisor()[superviseIndex];
 		System.out.println(">> ExportPracticeBaseConsultationLetter:download > create download file.");
 		downloadOutputStream=new ByteArrayOutputStream();
 		try{
 			String fileName=this.downloadByIO((SpecialIO)Base.io(),
-					this.getAnnual().getYear(),this.regionAndPracticeBaseAndInnerPerson,this.supervisorId,downloadOutputStream);
+					this.getAnnual().getYear(),supervisor,pair,superviseIndex,downloadOutputStream);
 			this.setDownloadFileName(fileName);//设置下载文件名称
 			this.downloadOutputStream.flush();
 		}catch(IOException e){

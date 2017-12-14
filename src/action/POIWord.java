@@ -12,9 +12,11 @@ import org.apache.poi.xwpf.usermodel.*;
 
 import obj.*;
 import obj.annualTable.*;
+import obj.annualTable.ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair;
 import obj.staticObject.*;
 import obj.staticSource.ACCESS;
 import obj.staticSource.Major;
+import obj.staticSource.School;
 
 public class POIWord implements SpecialWordIO{
 	
@@ -80,6 +82,7 @@ public class POIWord implements SpecialWordIO{
 			if(o!=null) {
 				String newStr=o==null?"":o.toString();
 				//oldStr->newStr
+				//TODO newStr包含的\n需要被替换为多个Run
 				TextSegement seg=para.searchText(oldStr,new PositionInParagraph());
 				if(seg!=null) {
 					if(seg.getBeginRun()==seg.getEndRun()) {
@@ -234,59 +237,44 @@ public class POIWord implements SpecialWordIO{
 
 	@Override
 	public String createSupervisorMandate(int year,
-			ListOfRegionAndPracticeBaseAndInnerPerson list,
-			String supervisorId,
+			InnerPerson supervisor,
+			PracticeBasePair pair,
+			int superviseIndex,
 			OutputStream out) throws IOException
 	{
-		InnerPerson inner;
-		try{
-			inner=new InnerPerson(supervisorId);
-		}catch(IllegalArgumentException | SQLException e) {
-			throw new IOException("服务器未找到！("+e.getMessage()+")");
+		School school;
+		try{school=new School(supervisor.getSchool());
+		}catch (IllegalArgumentException | SQLException e){
+			throw new IOException(e.getMessage());
 		}
 		//start
-		String name=String.format("%d年[%s]免费师范生教育实习督导任务书(%s)",
-				year,inner.getSchool(),inner.getName());
+		String name=String.format("%d年[%s%s至%s%s]免费师范生教育实习督导任务书",
+				year,school.getSubName(),
+				supervisor.getName(),
+				Supervise.getTypeNameList()[superviseIndex],pair.getPracticeBase().getName());
 		String modelFileName="免费师范生教育实习督导任务书.docx";
 		Map<String,Object> param=new HashMap<String,Object>();
 		param.put("grade",String.valueOf(year-3));
 		param.put("year",String.valueOf(year));
-		param.put("month",String.valueOf(Manager.getNowTimeMonth()));
-		param.put("day",String.valueOf(Manager.getNowTimeDay()));
-		param.put("supervisor",inner);
-		param.put("region",region);
+		param.put("nowYear",String.valueOf(Manager.getNowTimeYear()));
+		param.put("nowMonth",String.valueOf(Manager.getNowTimeMonth()));
+		param.put("nowDay",String.valueOf(Manager.getNowTimeDay()));
+		param.put("supervisor",supervisor);
+		param.put("regionName",pair.getRegion().getName());
+		param.put("regionLeader",pair.getLeader());
+		param.put("practiceBase",pair.getPracticeBase());
+		param.put("superviseTypeName",Supervise.getTypeNameList()[superviseIndex]);
+		param.put("superviseTask",POI.loadTextFile("superviseTask_"+String.valueOf(
+				superviseIndex)+".txt"));
 		try{
-			for(int i=0;i<ACCESS.supervise.length;i++) {
-				Time a=new Time(year,ACCESS.supervise[i]);
-				param.put("supervise"+i+"StartMonth",a.getTime1()==null?"null":String.valueOf(Manager.getTimeMonth(a.getTime1())));
-				param.put("supervise"+i+"StartDay",a.getTime1()==null?"null":String.valueOf(Manager.getTimeDay(a.getTime1())));
-				param.put("supervise"+i+"EndMonth",a.getTime2()==null?"null":String.valueOf(Manager.getTimeMonth(a.getTime2())));
-				param.put("supervise"+i+"EndDay",a.getTime2()==null?"null":String.valueOf(Manager.getTimeDay(a.getTime2())));
-			}
-		}catch(IllegalArgumentException|InstantiationException|SQLException e) {
+			Time a=new Time(year,ACCESS.supervise[superviseIndex]);
+			param.put("supervise"+"StartMonth",a.getTime1()==null?"null":String.valueOf(Manager.getTimeMonth(a.getTime1())));
+			param.put("supervise"+"StartDay",a.getTime1()==null?"null":String.valueOf(Manager.getTimeDay(a.getTime1())));
+			param.put("supervise"+"EndMonth",a.getTime2()==null?"null":String.valueOf(Manager.getTimeMonth(a.getTime2())));
+			param.put("supervise"+"EndDay",a.getTime2()==null?"null":String.valueOf(Manager.getTimeDay(a.getTime2())));
+		}catch(IllegalArgumentException|SQLException e) {
 			throw new IOException(e.getMessage());
 		}
-		StringBuilder sb=new StringBuilder();
-		int cnt=0;
-		for(Map.Entry<Major,List<Student>> entry:list.entrySet()){
-			if(entry.getValue().isEmpty()) continue;
-			if(sb.length()>0) sb.append("、");
-			sb.append(entry.getKey().getSubject()+entry.getValue().size()+"人");
-			cnt+=entry.getValue().size();
-		}
-		param.put("studentCountList",sb.toString());
-		param.put("studentCount",String.valueOf(cnt));
-		sb=new StringBuilder();
-		try{for(InnerPerson inner:Manager.getManagerInnerPersons()) {
-			sb.append(inner.getName());
-			sb.append("  电话：");sb.append(inner.getPhone());
-			sb.append("  手机：");sb.append(inner.getMobile());
-			sb.append("  邮箱：");sb.append(inner.getEmail());
-			sb.append("\r\n");
-		}}catch(IllegalArgumentException|InstantiationException|SQLException e) {
-			throw new IOException(e.getMessage());
-		}
-		param.put("jwcManager",sb.toString());
 		try(FileInputStream in=new FileInputStream(POI.path+modelFileName);){
 			FileChannel channel=in.getChannel();
 			FileLock lock=null;
