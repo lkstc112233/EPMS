@@ -144,22 +144,25 @@
 						</s:else>
 					</span>
 					<span style="font-size:12px;margin-left:30px;">
-						<s:if test="#__Row.plan.refuseSex != null || #__Row.plan.refuseNation != null || #__Row.practiceBase.refuseNation != null">
+						<s:if test="(#__Row.plan.refuseSex!=null&&#__Row.plan.refuseSex.isEmpty()!=true)
+						 || (#__Row.plan.refuseNation!=null&&#__Row.plan.refuseNation.isEmpty()!=true)
+						 || (#__Row.practiceBase.refuseNation!=null&&#__Row.practiceBase.refuseNation.isEmpty()!=true)">
 							不接收：&nbsp;
 						</s:if>
 					</span>
 					<span style="font-size:12px;margin-left:0px;word-wrap: break-word;word-break: break-all;color:white;">
-						<s:if test="#__Row.plan.refuseSex != null">
+						<s:if test="(#__Row.plan.refuseSex!=null&&#__Row.plan.refuseSex.isEmpty()!=true)">
 							性别(<s:property value="#__Row.plan.refuseSex" />)
 						</s:if>
-						<s:if test="#__Row.plan.refuseNation != null">
-							<s:if test="#__Row.plan.refuseSex != null">
+						<s:if test="(#__Row.plan.refuseNation!=null&&#__Row.plan.refuseNation.isEmpty()!=true)">
+							<s:if test="(#__Row.plan.refuseSex!=null&&#__Row.plan.refuseSex.isEmpty()!=true)">
 								、
 							</s:if>
 							<s:property value="#__Row.plan.refuseNation" />
 						</s:if>
-						<s:if test="#__Row.practiceBase.refuseNation != null">
-							<s:if test="#__Row.plan.refuseSex != null && #__Row.plan.refuseNation == null">
+						<s:if test="(#__Row.practiceBase.refuseNation!=null&&#__Row.practiceBase.refuseNation.isEmpty()!=true)">
+							<s:if test="(#__Row.plan.refuseSex!=null&&#__Row.plan.refuseSex.isEmpty()!=true)
+							&& (#__Row.plan.refuseNation!=null&&#__Row.plan.refuseNation.isEmpty()!=true)">
 								、
 							</s:if>
 							<s:property value="#__Row.practiceBase.refuseNation" />
