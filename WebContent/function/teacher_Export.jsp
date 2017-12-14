@@ -87,13 +87,13 @@
 				<s:iterator value="#__pairRow.supervisor" var="__supervisor" status="__typeStatus">
 					<s:if test="schoolName == #__supervisor.school">
 						<td style="padding:0;background-color:lightyellow;font-weight:800;">
-							<a href="<s:url action='function_teacher_ExportSupervisorMandate_display'/>?supervisorId=<s:property value='#__supervisor.id'/>">
+							<a href="<s:url action='function_teacher_ExportSupervisorMandate_download'/>?superviseIndex=<s:property value='#__typeStatus.index'/>&practiceBaseName=<s:property value='#__pairRow.practiceBase.name'/>">
 								<s:property value="#__supervisor.name" />
 							</a>
 						</td>
 					</s:if><s:elseif test="schoolName == '教务处'">
 						<td style="padding:0;background-color:white;">
-							<a href="<s:url action='function_teacher_ExportSupervisorMandate_display'/>?supervisorId=<s:property value='#__supervisor.id'/>">
+							<a href="<s:url action='function_teacher_ExportSupervisorMandate_download'/>?superviseIndex=<s:property value='#__typeStatus.index'/>&practiceBaseName=<s:property value='#__pairRow.practiceBase.name'/>">
 								<s:property value="#__supervisor.name" />
 							</a>
 						</td>
