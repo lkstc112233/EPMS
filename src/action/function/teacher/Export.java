@@ -35,6 +35,7 @@ public class Export extends ActionSupport{
 	private List<School> schools;
 		public List<School> getSchools(){
 			if(this.schools!=null) return this.schools;
+			if(Manager.getUser()==null) return this.schools=null;
 			Role role=Role.getRole(Manager.getUser());
 			if(role==null) return null;
 			try{
@@ -57,6 +58,11 @@ public class Export extends ActionSupport{
 	public Export(){
 		super();
 		this.regionAndPracticeBaseAndInnerPerson=Manager.loadSession(ListOfRegionAndPracticeBaseAndInnerPerson.class, SessionListKey);
+		if(Manager.getUser()!=null) {
+			Role r=Role.getRole(Manager.getUser());
+			if(r!=null)
+				this.setSchoolName(r.getName());
+		}
 	}
 	
 	public String display(){
