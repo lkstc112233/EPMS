@@ -71,53 +71,51 @@ public class POIWord implements SpecialWordIO{
 			String s=oldStr.substring(2,oldStr.length()-1);
 			String ss[]=s.split("\\.");
 			Object o=param;
-			for(String a:ss)
+			for(String a:ss) if(o!=null)
 				o=getFromParam(o,a,s);
-			if(o!=null) {
-				String newStr=o==null?"":o.toString();
-				//oldStr->newStr
-				//TODO newStr包含的\n需要被替换为多个Run
-				TextSegement seg=para.searchText(oldStr,new PositionInParagraph());
-				if(seg!=null) {
-					if(seg.getBeginRun()==seg.getEndRun()) {
-						XWPFRun firstRun=runs.get(seg.getBeginRun());
-						String runText=firstRun.getText(firstRun.getTextPosition());
-						String replaced = runText.replace(oldStr,newStr);
+			String newStr=o==null?"":o.toString();
+			//oldStr->newStr
+			//TODO newStr包含的\n需要被替换为多个Run
+			TextSegement seg=para.searchText(oldStr,new PositionInParagraph());
+			if(seg!=null) {
+				if(seg.getBeginRun()==seg.getEndRun()) {
+					XWPFRun firstRun=runs.get(seg.getBeginRun());
+					String runText=firstRun.getText(firstRun.getTextPosition());
+					String replaced = runText.replace(oldStr,newStr);
 					/*	firstRun.setText(replaced,0);*/
-						firstRun.setText("",0);
-						String[] replacedSplit=replaced.split("\\n");
-						for(int i=0;i<replacedSplit.length;i++) {
-							XWPFRun run=para.insertNewRun(seg.getBeginRun()+i);
-							copyRun(run,firstRun);
-							run.setText(replacedSplit[i],0);
-							if(i<replacedSplit.length-1)
-								run.addBreak();
-						}
-					}else{//存在多个Run标签
-						StringBuilder sb=new StringBuilder();
-						for(int i=seg.getBeginRun();i<=seg.getEndRun();i++) {
-							XWPFRun run=runs.get(i);
-							sb.append(run.getText((run.getTextPosition())));
-						}
-						String connectedRuns=sb.toString();
-						String replaced=connectedRuns.replace(oldStr,newStr);
-						XWPFRun firstRun=runs.get(seg.getBeginRun());
+					firstRun.setText("",0);
+					String[] replacedSplit=replaced.split("\\n");
+					for(int i=0;i<replacedSplit.length;i++) {
+						XWPFRun run=para.insertNewRun(seg.getBeginRun()+i);
+						copyRun(run,firstRun);
+						run.setText(replacedSplit[i],0);
+						if(i<replacedSplit.length-1)
+							run.addBreak();
+					}
+				}else{//存在多个Run标签
+					StringBuilder sb=new StringBuilder();
+					for(int i=seg.getBeginRun();i<=seg.getEndRun();i++) {
+						XWPFRun run=runs.get(i);
+						sb.append(run.getText((run.getTextPosition())));
+					}
+					String connectedRuns=sb.toString();
+					String replaced=connectedRuns.replace(oldStr,newStr);
+					XWPFRun firstRun=runs.get(seg.getBeginRun());
 					/*	firstRun.setText(replaced,0);
 						for(int i=seg.getBeginRun()+1;i<=seg.getEndRun();i++) {
 							//删除后边的run标签
 						//	para.removeRun(i);
 							runs.get(i).setText("",0);
 						}*/
-						for(int i=seg.getBeginRun();i<=seg.getEndRun();i++)
-							runs.get(i).setText("",0);
-						String[] replacedSplit=replaced.split("\\n");
-						for(int i=0;i<replacedSplit.length;i++) {
-							XWPFRun run=para.insertNewRun(seg.getEndRun()+i);
-							copyRun(run,firstRun);
-							run.setText(replacedSplit[i],0);
-							if(i<replacedSplit.length-1)
-								run.addBreak();
-						}
+					for(int i=seg.getBeginRun();i<=seg.getEndRun();i++)
+						runs.get(i).setText("",0);
+					String[] replacedSplit=replaced.split("\\n");
+					for(int i=0;i<replacedSplit.length;i++) {
+						XWPFRun run=para.insertNewRun(seg.getEndRun()+i);
+						copyRun(run,firstRun);
+						run.setText(replacedSplit[i],0);
+						if(i<replacedSplit.length-1)
+							run.addBreak();
 					}
 				}
 			}
