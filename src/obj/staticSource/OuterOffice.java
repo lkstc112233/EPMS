@@ -35,4 +35,8 @@ public class OuterOffice extends Base{
 	public String getDescription() {
 		return this.name;
 	}
+	
+	public boolean isAvailable() {
+		return this.name!=null && !this.name.isEmpty() && !this.name.equals("其他");
+	}
 }
