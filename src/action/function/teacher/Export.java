@@ -58,11 +58,8 @@ public class Export extends ActionSupport{
 	public Export(){
 		super();
 		this.regionAndPracticeBaseAndInnerPerson=Manager.loadSession(ListOfRegionAndPracticeBaseAndInnerPerson.class, SessionListKey);
-		if(Manager.getUser()!=null) {
-			Role r=Role.getRole(Manager.getUser());
-			if(r!=null)
-				this.setSchoolName(r.getName());
-		}
+		if(Manager.getUser()!=null)
+			this.setSchoolName(Manager.getUser().getSchool());
 	}
 	
 	public String display(){
