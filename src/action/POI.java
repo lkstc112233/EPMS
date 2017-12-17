@@ -61,7 +61,7 @@ public class POI implements SQLIO, SpecialIO{
 				String tmp=null;
 				while((tmp=br.readLine())!=null) {
 					sb.append(tmp);
-					sb.append("\n\r");
+					sb.append("\n");
 				}
 			}catch(IOException e){
 				throw e;

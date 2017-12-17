@@ -44,35 +44,29 @@ public class POIWord implements SpecialWordIO{
 		}
 	}
 	
+	static private void copyRun(XWPFRun target,XWPFRun source) {
+		if(target==null || source==null) return;
+		target.setBold(source.isBold());
+		target.setCapitalized(source.isCapitalized());
+		target.setColor(source.getColor());
+		target.setDoubleStrikethrough(source.isDoubleStrikeThrough());
+		target.setEmbossed(source.isEmbossed());
+		target.setFontFamily(source.getFontFamily());
+		target.setFontSize(source.getFontSize());
+		target.setImprinted(source.isImprinted());
+		target.setItalic(source.isItalic());
+		target.setKerning(source.getKerning());
+		target.setShadow(source.isShadowed());
+		target.setSmallCaps(source.isSmallCaps());
+		target.setStrikeThrough(source.isStrikeThrough());
+		target.setUnderline(source.getUnderline());
+	}
 	static private void ReplaceInParagraph(XWPFParagraph para,Object param) throws IOException {
-	/*	for(XWPFRun run:para.getRuns()) {
-			String oldStr=run.getText(run.getTextPosition());
-			String newStr=oldStr;
-			Pattern pattern=Pattern.compile(regex);
-			Matcher matcher=pattern.matcher(oldStr);
-			while(matcher.find()) {
-				String oldFound=matcher.group();
-				String s=oldFound.substring(2,oldFound.length()-1);
-				String ss[]=s.split("\\.");
-				Object o=param;
-				for(String a:ss)
-					o=getFromParam(o,a,s);
-				String newFound=o==null?"":o.toString();
-				//oldFound->newFound
-				newStr=newStr.replaceFirst(oldFound,newFound);
-				System.out.println(String.format(
-						"[POIWord] '%s' -> '%s'.",
-						oldFound,newFound));
-			}
-		//	run.setText(newStr);
-			run.setText(newStr,run.getTextPosition());
-		}//*/
-		
 		String str=para.getText();
 		Pattern pattern=Pattern.compile(regex);
 		Matcher matcher=pattern.matcher(str);
-		List<XWPFRun> runs=para.getRuns();
 		while(matcher.find()) {
+			List<XWPFRun> runs=para.getRuns();
 			String oldStr=matcher.group();
 			String s=oldStr.substring(2,oldStr.length()-1);
 			String ss[]=s.split("\\.");
@@ -86,10 +80,19 @@ public class POIWord implements SpecialWordIO{
 				TextSegement seg=para.searchText(oldStr,new PositionInParagraph());
 				if(seg!=null) {
 					if(seg.getBeginRun()==seg.getEndRun()) {
-						XWPFRun run=runs.get(seg.getBeginRun());
-						String runText=run.getText(run.getTextPosition());
+						XWPFRun firstRun=runs.get(seg.getBeginRun());
+						String runText=firstRun.getText(firstRun.getTextPosition());
 						String replaced = runText.replace(oldStr,newStr);
-						run.setText(replaced,0);
+					/*	firstRun.setText(replaced,0);*/
+						firstRun.setText("",0);
+						String[] replacedSplit=replaced.split("\\n");
+						for(int i=0;i<replacedSplit.length;i++) {
+							XWPFRun run=para.insertNewRun(seg.getBeginRun()+i);
+							copyRun(run,firstRun);
+							run.setText(replacedSplit[i],0);
+							if(i<replacedSplit.length-1)
+								run.addBreak();
+						}
 					}else{//存在多个Run标签
 						StringBuilder sb=new StringBuilder();
 						for(int i=seg.getBeginRun();i<=seg.getEndRun();i++) {
@@ -99,11 +102,21 @@ public class POIWord implements SpecialWordIO{
 						String connectedRuns=sb.toString();
 						String replaced=connectedRuns.replace(oldStr,newStr);
 						XWPFRun firstRun=runs.get(seg.getBeginRun());
-						firstRun.setText(replaced,0);
+					/*	firstRun.setText(replaced,0);
 						for(int i=seg.getBeginRun()+1;i<=seg.getEndRun();i++) {
 							//删除后边的run标签
 						//	para.removeRun(i);
 							runs.get(i).setText("",0);
+						}*/
+						for(int i=seg.getBeginRun();i<=seg.getEndRun();i++)
+							runs.get(i).setText("",0);
+						String[] replacedSplit=replaced.split("\\n");
+						for(int i=0;i<replacedSplit.length;i++) {
+							XWPFRun run=para.insertNewRun(seg.getEndRun()+i);
+							copyRun(run,firstRun);
+							run.setText(replacedSplit[i],0);
+							if(i<replacedSplit.length-1)
+								run.addBreak();
 						}
 					}
 				}
@@ -248,7 +261,7 @@ public class POIWord implements SpecialWordIO{
 			throw new IOException(e.getMessage());
 		}
 		//start
-		String name=String.format("%d年[%s%s至%s%s]免费师范生教育实习督导任务书",
+		String name=String.format("%d年[%s%s%s至%s]免费师范生教育实习督导任务书",
 				year,school.getSubName(),
 				supervisor.getName(),
 				Supervise.getTypeNameList()[superviseIndex],pair.getPracticeBase().getName());
