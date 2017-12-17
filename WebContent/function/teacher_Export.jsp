@@ -49,31 +49,38 @@
 		</s:if>
 		<tr><td colspan="100" style="text-align:center;">
 			<table class="wtable" style="width:100%;"><tbody>
-			<tr class="wtableContent"><td colspan="1000" style="background:white">
-			<ul class="listContent"><li>
-				督导老师一览（点击下载该督导老师全部督导任务书）
+			<tr class="wtableHeader"><td style="border:double 6px #0071bc;">
+			<ul class="listContent"><li onclick="document.getElementById('Table_1').style.display=document.getElementById('Table_1').style.display.length<=0?'none':''"
+			style="font-size:15px;font-weight:700;background:inherit;">
+				督导老师一览&nbsp;
+				<span class="time">（点击下列按钮下载该督导老师全部督导任务书）</span>
 			</li></ul>
 			</td></tr>
+			</tbody></table>
+			<table class="wtable" style="width:100%;"><tbody style="display:;" id="Table_1">
 			<s:iterator value="supervisors" var="__schoolRow" status="__schoolStatus">
 				<s:if test="#__schoolRow.isEmpty() == false">
 					<tr class="wtableContent">
-						<td style="background:white;">
-							<s:property value="schools[#__schoolStatus.index].subName" />
-							:
+						<td style="background:white;text-align:left;font-size:15px;font-weight:700;width:150px;">
+							<s:property value="schools[#__schoolStatus.index].name" />
+							<span style="float:right;">
+							：
+							</span>
 						</td>
+						<td style="background:white;height:30px">
 						<s:iterator value="#__schoolRow" var="__supervisorRow">
-							<td style="background:white;height:30px">
 							<s:form action="function_teacher_ExportSupervisorAllMandate_download" method="post" theme="simple">
 								<s:hidden name="jumpURL" value="function_teacher_Export_display.action" theme="simple"/>
 								<s:hidden name="supervisorId" value="%{#__supervisorRow.id}" theme="simple"/>
 								<s:submit value="%{#__supervisorRow.name}" theme="simple"
+								style="float:left;margin-right:10px;"
 								/>
 							</s:form>
-							</td>
 						</s:iterator>
-						<td colspan="100" style="background:white;padding:0;LINE-HEIGHT:15px;color:#666;font-size:12px;align-text:right;">
-							[没有更多了]
 						</td>
+					<!--<td colspan="100" style="background:white;padding:0;color:#666;font-size:8px;align-text:right;">
+							[nobody else]
+						</td>-->
 					</tr>
 				</s:if>
 			</s:iterator>
@@ -84,15 +91,38 @@
 		</td></tr>
 	</tbody></table>
 	
-		
-	<table class="wtable" style="cellpadding:0;cellspacing:0;table-layout:fixed;"><tbody>
-		<tr class="wtableHeader">
+	
+	<table class="wtable"><tbody>
+	<tr class="wtableHeader"><td style="border:double 6px #0071bc;">
+	<ul class="listContent"><li onclick="document.getElementById('Table_2').style.display=document.getElementById('Table_2').style.display.length<=0?'none':''"
+	style="font-size:15px;font-weight:700;background:inherit;">
+		总领队及督导任务表&nbsp;
+		<span class="time">（点击大区或基地名称下载实习基地信息，点击督导老师姓名下载督导任务书）</span>
+		<span class="time">（点击大区或基地名称下载实习基地信息，点击督导老师姓名下载督导任务书）</span>
+	</li></ul>
+	</td></tr>
+	</tbody></table>
+	<table class="wtable" style="cellpadding:0;cellspacing:0;table-layout:fixed;"><tbody id="Table_2" style="display:;">
+		<tr class="wtableHeader" style="height:auto;">
 			<td style="width:3%;">大区</td>
-			<td>基地名称</td>
-			<td>总领队老师</td>
-			<td>入校督导老师</td>
-			<td>中期督导老师</td>
-			<td>返校督导老师</td>
+			<td>基地名称
+			<!--<span style="color:gray;font-weight:100;font-size:12px;float:right;">
+				点击下载该实习基地信息</span>-->
+			</td>
+			<td>总领队老师
+			</td>
+			<td>入校督导老师
+			<!--<span style="color:gray;font-weight:100;font-size:12px;float:right;">
+				点击下载督导任务书</span>-->
+			</td>
+			<td>中期督导老师
+			<!--<span style="color:gray;font-weight:100;font-size:12px;float:right;">
+				点击下载督导任务书</span>-->
+			</td>
+			<td>返校督导老师
+			<!--<span style="color:gray;font-weight:100;font-size:12px;float:right;">
+				点击下载督导任务书</span>-->
+			</td>
 		</tr>
 		<s:iterator value="regionAndPracticeBaseAndInnerPerson.list" var="__rpRow" status="__rpStatus">
 		<s:iterator value="#__rpRow.list" var="__pairRow" status="__pairStatus">
@@ -103,9 +133,24 @@
 						<s:property value="#__rpRow.region.name" />
 					</td>
 				</s:if>
-				<td style="width:160px;text-align:left;padding-left:10px;background-color:white;">
-					<s:property value="#__pairRow.practiceBase.name" />
-				</td>
+				<!-- 基地名称 -->
+				<s:if test="schoolName == #__supervisor.school">
+					<td style="padding:0;background-color:lightyellow;font-weight:800;">
+						<a href="<s:url action='function_teacher_ExportPracticeBaseInfomation_download'/>?practiceBaseName=<s:property value='#__pairRow.practiceBase.name'/>">
+							<s:property value="#__pairRow.practiceBase.name" />
+						</a>
+					</td>
+				</s:if><s:elseif test="schoolName == '教务处'">
+					<td style="padding:0;background-color:white;">
+						<a href="<s:url action='function_teacher_ExportPracticeBaseInfomation_download'/>?practiceBaseName=<s:property value='#__pairRow.practiceBase.name'/>">
+							<s:property value="#__pairRow.practiceBase.name" />
+						</a>
+					</td>
+				</s:elseif><s:else>
+					<td style="padding:0;background-color:white;">
+						<s:property value="#__pairRow.practiceBase.name" />
+					</td>
+				</s:else>
 				<!-- 总领队 -->
 				<s:if test="#__pairStatus.index == 0">
 					<s:if test="schoolName == #__pairRow.leader.school">
