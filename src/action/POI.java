@@ -112,6 +112,11 @@ public class POI implements SQLIO, SpecialIO{
 			OutputStream stream) throws IOException {
 		return word.createSupervisorMandate(year, supervisor, pair, superviseIndex, stream);
 	}
+
+	@Override
+	public String createPracticeBaseInfomation(int year, PracticeBase pb, OutputStream stream) throws IOException {
+		return word.createPracticeBaseInfomation(year, pb, stream);
+	}
 	
 	
 	

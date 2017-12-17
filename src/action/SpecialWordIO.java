@@ -28,5 +28,13 @@ public interface SpecialWordIO {
 			OutputStream stream)
 					throws IOException;
 	
-	
+	/**
+	 * 实习基地信息
+	 */
+	public abstract String createPracticeBaseInfomation(
+			int year,
+			PracticeBase pb,
+			OutputStream stream
+			)
+					throws IOException;
 }

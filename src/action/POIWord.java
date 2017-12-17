@@ -16,6 +16,7 @@ import obj.annualTable.ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.Prac
 import obj.staticObject.*;
 import obj.staticSource.ACCESS;
 import obj.staticSource.Major;
+import obj.staticSource.OuterOffice;
 import obj.staticSource.School;
 
 public class POIWord implements SpecialWordIO{
@@ -284,6 +285,74 @@ public class POIWord implements SpecialWordIO{
 			param.put("supervise"+"EndMonth",a.getTime2()==null?"null":String.valueOf(Manager.getTimeMonth(a.getTime2())));
 			param.put("supervise"+"EndDay",a.getTime2()==null?"null":String.valueOf(Manager.getTimeDay(a.getTime2())));
 		}catch(IllegalArgumentException|SQLException e) {
+			throw new IOException(e.getMessage());
+		}
+		try(FileInputStream in=new FileInputStream(POI.path+modelFileName);){
+			FileChannel channel=in.getChannel();
+			FileLock lock=null;
+			for(int i=0;i<POI.LockMaxTry;i++) try{
+				lock=channel.tryLock(0L,Long.MAX_VALUE,true);
+				if(lock!=null) break;
+				try{Thread.sleep(POI.LockTryWait);//共享锁
+				}catch(InterruptedException e){}
+		//	}catch(OverlappingFileLockException e) {
+			}catch(Exception e) {
+				e.printStackTrace();
+				break;
+			}
+			if(lock==null)
+				throw new IOException("模板文件被占用，无法读取!");
+			XWPFDocument doc;
+			try{
+				doc=this.getModel(in,param);
+			}catch(IOException e){
+				throw e;
+			}finally{
+				if(lock.isValid())
+					lock.release();
+			}
+			debug(doc,name);
+			doc.write(out);
+			doc.close();
+		}
+		return name+".docx";
+	}
+
+	@Override
+	public String createPracticeBaseInfomation(int year,
+			PracticeBase pb,
+			OutputStream out) throws IOException {
+		//start
+		String name=String.format("%d年免费师范生教育实习基地信息(%s)",
+				year,
+				pb.getName());
+		String modelFileName="免费师范生教育实习基地信息.docx";
+		Map<String,Object> param=new HashMap<String,Object>();
+		param.put("grade",String.valueOf(year-3));
+		param.put("year",String.valueOf(year));
+	//	param.put("nowYear",String.valueOf(Manager.getNowTimeYear()));
+	//	param.put("nowMonth",String.valueOf(Manager.getNowTimeMonth()));
+	//	param.put("nowDay",String.valueOf(Manager.getNowTimeDay()));
+		param.put("practiceBase",pb);
+		try {
+			int index=0;
+			for(OuterOffice office:Base.list(OuterOffice.class)) {
+				if(office.isAvailable()) {
+					OuterPerson outer=null;
+					for(OuterPerson o:Base.list(OuterPerson.class,new Restraint(
+							Field.getFields(OuterPerson.class,"practiceBase","office"),
+							new Object[] {pb.getName(),office.getName()}
+							))) {
+						outer=o;break;
+					}
+					if(outer==null) {
+						outer=new OuterPerson();
+						outer.setOffice(office.getName());
+					}
+					param.put(String.format("outer_%d",++index),outer);
+				}
+			}
+		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 			throw new IOException(e.getMessage());
 		}
 		try(FileInputStream in=new FileInputStream(POI.path+modelFileName);){
