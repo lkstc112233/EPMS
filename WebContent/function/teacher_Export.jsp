@@ -30,10 +30,10 @@
 				（<s:property value="annual.year" />）
 			</div>
 		</td></tr>
+		<tr><td colspan="100" style="width:20%;border:0;height:25px;">
+			&nbsp;
+		</td></tr>
 		<s:if test="schoolName == '教务处'">
-			<tr><td colspan="100" style="width:20%;border:0;height:25px;">
-				&nbsp;
-			</td></tr>
 			<tr><td colspan="100" style="text-align:center;">
 				<span style="float:left;margin-left:50px;">
 				<s:form action="function_teacher_ExportAllSuperviseList_download" method="post" theme="simple">
@@ -43,7 +43,42 @@
 				</s:form>
 				</span>
 			</td></tr>
+			<tr><td colspan="100" style="width:20%;border:0;height:25px;">
+				&nbsp;
+			</td></tr>
 		</s:if>
+		<tr><td colspan="100" style="text-align:center;">
+			<table class="wtable" style="width:100%;"><tbody>
+			<tr class="wtableContent"><td colspan="1000" style="background:white">
+			<ul class="listContent"><li>
+				督导老师一览（点击下载该督导老师全部督导任务书）
+			</li></ul>
+			</td></tr>
+			<s:iterator value="supervisors" var="__schoolRow" status="__schoolStatus">
+				<s:if test="#__schoolRow.isEmpty() == false">
+					<tr class="wtableContent">
+						<td style="background:white;">
+							<s:property value="schools[#__schoolStatus.index].subName" />
+							:
+						</td>
+						<s:iterator value="#__schoolRow" var="__supervisorRow">
+							<td style="background:white;height:30px">
+							<s:form action="function_teacher_ExportSupervisorAllMandate_download" method="post" theme="simple">
+								<s:hidden name="jumpURL" value="function_teacher_Export_display.action" theme="simple"/>
+								<s:hidden name="supervisorId" value="%{#__supervisorRow.id}" theme="simple"/>
+								<s:submit value="%{#__supervisorRow.name}" theme="simple"
+								/>
+							</s:form>
+							</td>
+						</s:iterator>
+						<td colspan="100" style="background:white;padding:0;LINE-HEIGHT:15px;color:#666;font-size:12px;align-text:right;">
+							[没有更多了]
+						</td>
+					</tr>
+				</s:if>
+			</s:iterator>
+			</tbody></table>
+		</td></tr>
 		<tr><td colspan="100" style="width:20%;border:0;height:25px;">
 			&nbsp;
 		</td></tr>

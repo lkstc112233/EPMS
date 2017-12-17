@@ -1,14 +1,14 @@
 package action.function.teacher;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import com.opensymphony.xwork2.ActionSupport;
 
 import action.Manager;
 import obj.*;
 import obj.annualTable.*;
+import obj.staticObject.InnerPerson;
 import obj.staticSource.School;
 import token.Role;
 
@@ -48,6 +48,28 @@ public class Export extends ActionSupport{
 			}catch(SQLException | IllegalArgumentException | InstantiationException e) {
 				e.printStackTrace();
 			}return this.schools=null;
+		}
+	private List<Set<InnerPerson>> supervisors;
+		public List<Set<InnerPerson>> getSupervisors(){
+			if(this.supervisors!=null) return this.supervisors;
+			if(Manager.getUser()==null) return this.supervisors=null;
+			if(this.getRegionAndPracticeBaseAndInnerPerson()==null) return this.supervisors=null;
+			Role role=Role.getRole(Manager.getUser());
+			if(role==null) return null;
+			this.supervisors=new ArrayList<Set<InnerPerson>>();
+			for(School school:this.getSchools()) {
+				Set<InnerPerson> tmp=new HashSet<InnerPerson>();
+				for(ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair rp:this.getRegionAndPracticeBaseAndInnerPerson().getList()) {
+					for(ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair pair:rp.getList()) {
+						for(InnerPerson inner:pair.getSupervisor()) {
+							if(inner!=null && school.getName().equals(inner.getSchool()))
+								tmp.add(inner);
+						}
+					}
+				}
+				this.supervisors.add(tmp);
+			}
+			return this.supervisors;
 		}
 	
 	
