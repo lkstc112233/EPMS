@@ -62,10 +62,17 @@
 						</td>
 						<s:iterator value="majors" status="__majorStatus">
 							<td style="width:20px;padding:0px;">
-								<s:textfield theme="simple"
-									style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;"
-									name="numbers[%{#__majorStatus.index}][%{#__regionStatus.index}][%{#__practiceBaseStatus.index}]"
-									value="%{numbers[#__majorStatus.index][#__regionStatus.index][#__practiceBaseStatus.index]}" />
+								<s:if test="numbers[#__majorStatus.index][#__regionStatus.index][#__practiceBaseStatus.index]==0">
+									<s:textfield theme="simple"
+										style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;"
+										name="numbers[%{#__majorStatus.index}][%{#__regionStatus.index}][%{#__practiceBaseStatus.index}]"
+										value="" />
+								</s:if><s:else>
+									<s:textfield theme="simple"
+										style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;"
+										name="numbers[%{#__majorStatus.index}][%{#__regionStatus.index}][%{#__practiceBaseStatus.index}]"
+										value="%{numbers[#__majorStatus.index][#__regionStatus.index][#__practiceBaseStatus.index]}" />
+								</s:else>
 							</td>
 						</s:iterator>
 						<!-- 备注 --><td style="padding:0px;">

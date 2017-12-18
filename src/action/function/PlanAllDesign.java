@@ -28,22 +28,21 @@ public class PlanAllDesign extends ActionSupport{
 	private Boolean[][] majorsRegionsCountsIsError;
 	private int lastNHxRegionIndex=-1;
 	private ListOfRegionAndPracticeBases regionAndPracticeBase;
-	private String[][][] numbers;
+	private int[][][] numbers;
 	static public final String SessionMajorsKey="PlanAllDesign_Majors";
 	static public final String SessionListKey="PlanAllDesign_List";
 
 	
 	public ListOfRegionAndPracticeBases getRegionAndPracticeBase(){return this.regionAndPracticeBase;}
-	public void setNumbers(String[][][] numbers){this.numbers=numbers;}
-	public String[][][] getNumbers(){
+	public int[][][] getNumbers(){
 		if(this.majors==null || this.regionAndPracticeBase==null)
 			return this.numbers=null;
 		if(this.numbers!=null) return this.numbers;
-		this.numbers=new String[this.majors.size()]
+		this.numbers=new int[this.majors.size()]
 				[this.regionAndPracticeBase.getList().size()][];
 		for(int i=0;i<this.majors.size();i++)
 			for(int j=0;j<this.regionAndPracticeBase.getList().size();j++)
-				this.numbers[i][j]=new String[this.regionAndPracticeBase.getList().get(j).getPracticeBases().size()];
+				this.numbers[i][j]=new int[this.regionAndPracticeBase.getList().get(j).getPracticeBases().size()];
 		Map<String,Integer> majorsMap=new HashMap<String,Integer>();
 		for(int i=0;i<this.majors.size();i++)
 			majorsMap.put(this.majors.get(i).getName(),i);
@@ -59,7 +58,7 @@ public class PlanAllDesign extends ActionSupport{
 			int[] index=this.regionAndPracticeBase.indexOf(p.getPracticeBase());
 			if(index!=null && index.length>=2)
 				this.numbers[majorsMap.get(p.getMajor())][index[0]][index[1]]=
-				p.getNumber()==0?"":String.valueOf(p.getNumber());
+				p.getNumber();
 		}
 		return this.numbers;
 	}
@@ -128,7 +127,7 @@ public class PlanAllDesign extends ActionSupport{
 				for(int j=0;j<this.majorsRegionsCountsIsError[i].length;j++) {
 					if(!this.getRegionAndPracticeBase().getList().get(j).getPracticeBases().get(0).getHx())
 						for(int k=0;k<this.getRegionAndPracticeBase().getList().get(j).getPracticeBases().size();k++)
-							cnt+=Field.s2i(this.getNumbers()[i][j][k],0);
+							cnt+=this.getNumbers()[i][j][k];
 				}
 				int CMP=Integer.compare(cnt,this.getMajorsNHxCounts()[i]);
 				//在计算回乡实习大区
@@ -137,7 +136,7 @@ public class PlanAllDesign extends ActionSupport{
 					int cmp=cnt=0;
 					if(pb.getHx()) {
 						for(int k=0;k<this.getRegionAndPracticeBase().getList().get(j).getPracticeBases().size();k++)
-							cnt+=Field.s2i(this.getNumbers()[i][j][k],0);
+							cnt+=this.getNumbers()[i][j][k];
 						cmp=Integer.compare(cnt,this.getMajorsRegionsHxCounts()[i][j]);
 					}else cmp=CMP;
 					this.majorsRegionsCountsIsError[i][j]=cmp==0?null:(cmp>0);
@@ -207,20 +206,7 @@ public class PlanAllDesign extends ActionSupport{
 		for(int i=0;i<this.numbers.length;i++){
 			for(int j=0;j<this.numbers[i].length;j++){
 				for(int k=0;k<this.numbers[i][j].length;k++){
-					if(this.numbers[i][j][k]==null)
-						continue;
-					int num;
-					try{
-						num=this.numbers[i][j][k].isEmpty()?0:
-							Integer.valueOf(this.numbers[i][j][k]);
-					}catch(NumberFormatException e){
-						e.printStackTrace();
-						error.append("\n("+this.getMajors().get(i)+","+
-						this.regionAndPracticeBase.getList().get(j).getRegion().getDescription()+","+
-						this.regionAndPracticeBase.getList().get(j).getPracticeBases().get(k).getDescription()+
-						")"+e.getMessage());
-						continue;
-					}
+					int num=this.numbers[i][j][k];
 					if(num<0) num=0;
 					Plan p=new Plan();
 					p.setYear(this.getAnnual().getYear());
