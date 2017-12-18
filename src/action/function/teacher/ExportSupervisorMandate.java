@@ -68,7 +68,7 @@ public class ExportSupervisorMandate extends ActionSupport{
 		return io.createSupervisorMandate(year,supervisor,pair,superviseIndex,stream);
 	}
 	public String download(){//下载模板
-		System.out.println(">> ExportPracticeBaseConsultationLetter:download > practiceBaseName="+this.practiceBaseName+",superviseIndex="+this.superviseIndex);
+		System.out.println(">> ExportSupervisorMandate:download > practiceBaseName="+this.practiceBaseName+",superviseIndex="+this.superviseIndex);
 		if(this.regionAndPracticeBaseAndInnerPerson==null)
 			return Manager.tips("该项目未初始化!","jump");
 		ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair
@@ -78,7 +78,7 @@ public class ExportSupervisorMandate extends ActionSupport{
 		if(superviseIndex<0||superviseIndex>=pair.getSupervisor().length)
 			return Manager.tips("督导序号不正确","jump");
 		InnerPerson supervisor=pair.getSupervisor()[superviseIndex];
-		System.out.println(">> ExportPracticeBaseConsultationLetter:download > create download file.");
+		System.out.println(">> ExportSupervisorMandate:download > create download file.");
 		downloadOutputStream=new ByteArrayOutputStream();
 		try{
 			String fileName=this.downloadByIO((SpecialIO)Base.io(),
@@ -89,7 +89,7 @@ public class ExportSupervisorMandate extends ActionSupport{
 			downloadOutputStream=null;
 			return Manager.tips("服务器开小差去了，暂时无法下载！",e,"jump");
 		}
-		System.out.println(">> ExportPracticeBaseConsultationLetter:download <downloadAttachment");
+		System.out.println(">> ExportSupervisorMandate:download <downloadAttachment");
 		return "downloadAttachment";
 	}
 	public InputStream getDownloadAttachment(){//实际上获取的输出流，使用getter获取的downloadAttachment

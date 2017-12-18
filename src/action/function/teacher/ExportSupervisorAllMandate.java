@@ -69,7 +69,7 @@ public class ExportSupervisorAllMandate extends ActionSupport{
 		return io.createSupervisorMandate(year,supervisor,pair,superviseIndex,stream);
 	}
 	public String download(){//下载模板
-		System.out.println(">> ExportPracticeBaseConsultationLetter:download > supervisorId="+this.supervisorId);
+		System.out.println(">> ExportSupervisorAllMandate:download > supervisorId="+this.supervisorId);
 		if(this.regionAndPracticeBaseAndInnerPerson==null)
 			return Manager.tips("该项目未初始化!","jump");
 		InnerPerson supervisor;
@@ -115,7 +115,7 @@ public class ExportSupervisorAllMandate extends ActionSupport{
 			this.downloadOutputStream=null;
 			return Manager.tips("压缩文件失败，暂时无法下载！",e,"jump");
 		}
-		System.out.println(">> ExportPracticeBaseConsultationLetter:download <downloadAttachment");
+		System.out.println(">> ExportSupervisorAllMandate:download <downloadAttachment");
 		return "downloadAttachment";
 	}
 	public InputStream getDownloadAttachment(){//实际上获取的输出流，使用getter获取的downloadAttachment

@@ -64,14 +64,14 @@ public class ExportPracticeBaseInfomation extends ActionSupport{
 		return io.createPracticeBaseInfomation(year,pb,stream);
 	}
 	public String download(){//下载模板
-		System.out.println(">> ExportPracticeBaseConsultationLetter:download > practiceBaseName="+this.practiceBaseName);
+		System.out.println(">> ExportPracticeBaseInfomation:download > practiceBaseName="+this.practiceBaseName);
 		if(this.regionAndPracticeBaseAndInnerPerson==null)
 			return Manager.tips("该项目未初始化!","jump");
 		ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair
 			pair=this.regionAndPracticeBaseAndInnerPerson.get(practiceBaseName);
 		if(pair==null)
 			return Manager.tips("实习基地名称不正确!","jump");
-		System.out.println(">> ExportPracticeBaseConsultationLetter:download > create download file.");
+		System.out.println(">> ExportPracticeBaseInfomation:download > create download file.");
 		downloadOutputStream=new ByteArrayOutputStream();
 		try{
 			String fileName=this.downloadByIO((SpecialIO)Base.io(),
@@ -82,7 +82,7 @@ public class ExportPracticeBaseInfomation extends ActionSupport{
 			downloadOutputStream=null;
 			return Manager.tips("服务器开小差去了，暂时无法下载！",e,"jump");
 		}
-		System.out.println(">> ExportPracticeBaseConsultationLetter:download <downloadAttachment");
+		System.out.println(">> ExportPracticeBaseInfomation:download <downloadAttachment");
 		return "downloadAttachment";
 	}
 	public InputStream getDownloadAttachment(){//实际上获取的输出流，使用getter获取的downloadAttachment

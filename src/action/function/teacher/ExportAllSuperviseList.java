@@ -59,7 +59,7 @@ public class ExportAllSuperviseList extends ActionSupport{
 	public String download(){//下载模板
 		if(this.regionAndPracticeBaseAndInnerPerson==null)
 			return Manager.tips("该项目未初始化!","jump");
-		System.out.println(">> ExportStudentList:download > create download file.");
+		System.out.println(">> ExportAllSuperviseList:download > create download file.");
 		this.downloadOutputStream=new ByteArrayOutputStream();
 		try{
 			String fileName=this.downloadByIO((SpecialIO)Base.io(),

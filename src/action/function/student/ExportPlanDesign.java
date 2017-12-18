@@ -56,10 +56,10 @@ public class ExportPlanDesign extends ActionSupport{
 		return io.createPlanDesign(year,list,stream);
 	}
 	public String download(){//下载模板
-		System.out.println(">> ExportStudentList:download >");
+		System.out.println(">> ExportPlanDesign:download >");
 		if(this.practiceBaseAndStudents==null)
 			return Manager.tips("该项目未初始化!","jump");
-		System.out.println(">> ExportStudentList:download > create download file.");
+		System.out.println(">> ExportPlanDesign:download > create download file.");
 		this.downloadOutputStream=new ByteArrayOutputStream();
 		try{
 			String fileName=this.downloadByIO((SpecialIO)Base.io(),
@@ -70,7 +70,7 @@ public class ExportPlanDesign extends ActionSupport{
 			this.downloadOutputStream=null;
 			return Manager.tips("服务器开小差去了，暂时无法下载！",e,"jump");
 		}
-		System.out.println(">> ExportStudentList:download <downloadAttachment");
+		System.out.println(">> ExportPlanDesign:download <downloadAttachment");
 		return "downloadAttachment";
 	}
 	public InputStream getDownloadAttachment(){//实际上获取的输出流，使用getter获取的downloadAttachment

@@ -50,8 +50,8 @@ public class ExportTeacherList extends ActionSupport{
 		return io.createTeacherList(year,stream);
 	}
 	public String download(){//下载模板
-		System.out.println(">> ExportStudentList:download >");
-		System.out.println(">> ExportStudentList:download > create download file.");
+		System.out.println(">> ExportTeacherList:download >");
+		System.out.println(">> ExportTeacherList:download > create download file.");
 		this.downloadOutputStream=new ByteArrayOutputStream();
 		try{
 			String fileName=this.downloadByIO((SpecialIO)Base.io(),
@@ -62,7 +62,7 @@ public class ExportTeacherList extends ActionSupport{
 			this.downloadOutputStream=null;
 			return Manager.tips("服务器开小差去了，暂时无法下载！",e,"jump");
 		}
-		System.out.println(">> ExportStudentList:download <downloadAttachment");
+		System.out.println(">> ExportTeacherList:download <downloadAttachment");
 		return "downloadAttachment";
 	}
 	public InputStream getDownloadAttachment(){//实际上获取的输出流，使用getter获取的downloadAttachment
