@@ -287,6 +287,85 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 		return name+".xlsx";//下载文件名称
 	}
 	
+	@Override
+	public String createStudentInsuranceList(int year,ListOfPracticeBaseAndStudents list, OutputStream out) throws IOException {
+		if(list==null) throw new IOException("学生列表为空!");
+		String name=String.format("%d年免费师范生教育实习投保确认单",
+				year);
+		try(Workbook wb=new XSSFWorkbook();){
+			Sheet st=wb.createSheet("投保确认单");
+			CellStyle styleBigTitle=POIExcel.getCellStyle(wb,"宋体",18,true,HorizontalAlignment.CENTER,BorderStyle.NONE,false,null);
+		//	CellStyle styleSmallTitle=POIExcel.getCellStyle(wb,"宋体",12,true,HorizontalAlignment.CENTER,BorderStyle.NONE,false,null);
+			CellStyle styleTitle=POIExcel.getCellStyle(wb,"宋体",10,true,HorizontalAlignment.CENTER,BorderStyle.NONE,false,null);
+			CellStyle styleContent=POIExcel.getCellStyle(wb,"宋体",10,false,HorizontalAlignment.CENTER,BorderStyle.HAIR,false,null);
+			//设置列数
+			final Field[] fs=Field.getFields(Student.class,"sfzh","name","nation");
+			final int column=1+fs.length+2;
+			Row row;
+			Cell cell;
+			int r=0;
+			/*第一行标题*/row=st.createRow(r);
+			setHeight(row,40);
+			cell=row.createCell(0);
+			cell.setCellType(CellType.STRING);
+			cell.setCellValue(year+"年免费师范生教育实习投保确认单");
+			cell.setCellStyle(styleBigTitle);
+			for(int i=1;i<column;i++) row.createCell(i).setCellStyle(styleBigTitle);
+			st.addMergedRegion(new CellRangeAddress(r,r,0,column-1));
+			r++;
+			/*第二行抬头*/row=st.createRow(r);
+			row.setHeight((short)-1);
+			for(int i=0;i<column;i++) {
+				cell=row.createCell(i);
+				cell.setCellType(CellType.STRING);
+				cell.setCellValue(i==0?"序号":
+					i<column-2?fs[i-1].getDescription():
+						i==column-2?"专业":"投保时间");
+				cell.setCellStyle(styleTitle);
+				setWidth(st,i,i==0?4:
+					i<column-2?-1:
+						i==column-2?6:20);
+			}
+			r++;
+			/*第三行开始每个专业实习生列表*/
+			String time[]=new String[] {
+					String.format("%4d.%d.%d-%4d.%d.%d",year,8,1,year,12,1),//回乡
+					String.format("%4d.%d.%d-%4d.%d.%d",year,9,1,year,12,1) //北京周边
+			};
+			int index=0;
+			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
+				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
+					for(Student s:pair.getStudents()) {
+						index++;
+						Major major;
+						try {
+							major = new Major(s.getMajor());
+						} catch (IllegalArgumentException | SQLException e) {
+							throw new IOException("专业读取失败！("+e.getMessage()+")");
+						}
+						/*学生内容*/row=st.createRow(r);
+						row.setHeight((short)-1);
+						for(int i=0;i<column;i++) {
+							cell=row.createCell(i);
+							//	cell.setCellType(CellType.STRING);
+							if(i==0)
+								cell.setCellValue(index);
+							else
+								cell.setCellValue(
+										i<column-2?Field.o2s(fs[i-1].get(s),""):
+											i==column-2?(major.getIsPE()?"体育":"非体育"):
+												time[pair.getPracticeBase().getHx()?0:1]);
+							cell.setCellStyle(styleContent);
+						}
+						r++;
+					}
+				}
+			}
+			debug(wb,name);
+	        wb.write(out);
+		}
+		return name+".xlsx";//下载文件名称
+	}
 	
 	@Override
 	public String createPlanDesign(int year, ListOfPracticeBaseAndStudents list, OutputStream out)

@@ -21,6 +21,15 @@ public interface SpecialExcelIO {
 			String majorName,
 			OutputStream stream)
 					throws IOException;
+
+	/**
+	 * 保单 
+	 */
+	public abstract String createStudentInsuranceList(
+			int year, 
+			ListOfPracticeBaseAndStudents list,
+			OutputStream stream)
+					throws IOException;
 	
 	/**
 	 * 布局规划
