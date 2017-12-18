@@ -31,7 +31,7 @@ public class Plan extends AnnualBase {
 	public void setRefuseNation(String a) {this.refuseNation=Field.s2s(a,"");}
 	public String getRefuseSex() {return refuseSex==null||refuseSex.isEmpty()?"":refuseSex;}
 	public void setRefuseSex(String a) {this.refuseSex=Field.s2s(a,"");}
-	public boolean isMedia() {return media;}
+	public boolean getMedia() {return media;}
 	public void setMedia(boolean media) {this.media = media;}
 	public void setMedia(String a){this.media=Field.s2b(a,false);}
 	public String getRemark() {return remark;}
