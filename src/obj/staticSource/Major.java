@@ -17,6 +17,8 @@ public class Major extends Base{
 	private String subject;
 	@SQLField(value="所属学院",weight=10,notNull=true,source="School.name")
 	private String school;
+	@SQLField(value="是否为体育类",weight=100,notNull=true)
+	private boolean isPE=false;
 
 	public String getName(){return this.name;}
 	public void setName(String a){this.name=Field.s2S(a);}
@@ -24,6 +26,9 @@ public class Major extends Base{
 	public void setSubject(String a){this.subject=Field.s2S(a);}
 	public String getSchool(){return this.school;}
 	public void setSchool(String a){this.school=Field.s2S(a);}
+	public boolean getIsPE() {return this.isPE;}
+	public void setIsPE(String a) {this.isPE=Field.s2b(a,false);}
+	public void setIsPE(boolean a) {this.isPE=a;}
 	
 
 	public Major() {
