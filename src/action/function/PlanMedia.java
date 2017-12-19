@@ -12,7 +12,7 @@ import obj.staticObject.PracticeBase;
 import obj.staticSource.Major;
 
 /**
- * 全面确定派遣计划
+ * 分配媒体设备
  */
 public class PlanMedia extends ActionSupport{
 	private static final long serialVersionUID = 8833385464572061925L;
@@ -22,7 +22,6 @@ public class PlanMedia extends ActionSupport{
 	
 	
 	private List<Major> majors;
-	private int[] majorsCounts;
 	private ListOfRegionAndPracticeBases regionAndPracticeBase;
 	private int[][][] numbers;
 	private boolean[][][] media;
@@ -92,6 +91,12 @@ public class PlanMedia extends ActionSupport{
 		}
 		return this.media;
 	}
+	public int getMediaCount() {
+		int ans=0;
+		for(int x:this.getMediaMajorCounts())
+			ans+=x;
+		return ans;
+	}
 	public int[] getMediaMajorCounts() {
 		if(this.getNumbers()==null) return this.mediaMajorCounts=null;
 		if(this.mediaMajorCounts!=null) return this.mediaMajorCounts;
@@ -126,20 +131,6 @@ public class PlanMedia extends ActionSupport{
 			this.majors=null;
 		}return this.majors;
 	}
-	public int[] getMajorsCounts() {
-		if(this.majorsCounts==null) try{
-			this.majorsCounts=new int[this.getMajors().size()];
-			int i=0;for(Major m:this.getMajors())
-				this.majorsCounts[i++]=Base.list(Student.class,new Restraint(
-						Field.getFields(Student.class,"year","major"),
-						new Object[]{this.getAnnual().getYear(),m.getName()}))
-						.size();
-			return this.majorsCounts;
-		}catch (SQLException | IllegalArgumentException | InstantiationException | NullPointerException e){
-			e.printStackTrace();
-			this.majorsCounts=null;
-		}return this.majorsCounts;
-	}
 	
 	
 	
@@ -163,8 +154,8 @@ public class PlanMedia extends ActionSupport{
 			return Manager.tips("数据库读取专业列表失败！",ERROR);
 		if(this.getNumbers()==null)
 			return Manager.tips("数据库读取布局规划失败！",ERROR);
-		if(this.getMajorsCounts()==null)
-			return Manager.tips("数据库读取专业实习生人数失败！",ERROR);
+		if(this.getMedia()==null)
+			return Manager.tips("数据库读取数字媒体设备规划失败！",ERROR);
 		if(this.regionAndPracticeBase!=null)
 			Manager.saveSession(SessionListKey,this.regionAndPracticeBase);
 		if(this.majors!=null)
@@ -177,63 +168,10 @@ public class PlanMedia extends ActionSupport{
 	 */
 	@Override
 	public String execute(){
-		boolean ok=false;
-		StringBuilder error=new StringBuilder();
+	//	StringBuilder error=new StringBuilder();
 		if(this.regionAndPracticeBase==null||this.numbers==null||this.majors==null)
 			return Manager.tips("该项目不可用!",display());
-		for(int i=0;i<this.numbers.length;i++){
-			for(int j=0;j<this.numbers[i].length;j++){
-				for(int k=0;k<this.numbers[i][j].length;k++){
-					int num=this.numbers[i][j][k];
-					if(num<0) num=0;
-					Plan p=new Plan();
-					p.setYear(this.getAnnual().getYear());
-					p.setMajor(this.majors.get(i).getName());
-					p.setPracticeBase(this.regionAndPracticeBase.getList().get(j).getPracticeBases().get(k).getName());
-					try {
-						if(p.existAndLoad()){
-							if(p.getNumber()!=num){
-								if(num==0)
-									p.delete();
-								else {
-									p.setNumber(num);
-									p.update();
-								}
-							}
-						}else if(num>0){
-							p.setNumber(num);
-							p.create();
-						}
-						ok=true;
-					} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
-						e.printStackTrace();
-						error.append("\n("+this.getMajors().get(i)+","+
-						this.regionAndPracticeBase.getList().get(j).getRegion().getDescription()+","+
-						this.regionAndPracticeBase.getList().get(j).getPracticeBases().get(k).getDescription()+
-						")"+e.getMessage());
-						continue;
-					}
-				}
-			}
-		}
-		for(ListOfRegionAndPracticeBases.Pair pair:this.regionAndPracticeBase.getList()) {
-			for(PracticeBase pb:pair.getPracticeBases()) try {
-				pb.update();
-				ok=true;
-			}catch(IllegalArgumentException | SQLException e) {
-				e.printStackTrace();
-				error.append("\n"+pb.getDescription()+"备注修改失败！("+e.getMessage()+")");
-			}
-		}
-		if(!ok)
-			return Manager.tips("修改失败！\n\n失败条目:"+error.toString(),
-					display());
-		else if(error.length()>0)
-			return Manager.tips("修改成功！\n\n失败条目:"+error.toString(),
-					display());
-		else
-			return Manager.tips("修改成功！",
-					display());
+		return Manager.tips("该项目不可用!",display());
 	}
 
 
