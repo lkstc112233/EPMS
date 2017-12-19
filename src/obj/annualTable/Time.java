@@ -10,10 +10,8 @@ import obj.staticSource.ACCESS;
 @SQLTable("Time")
 public class Time extends AnnualBase{
 
-	@SQLField(value="序号",weight=1,notNull=true)
+	@SQLField(value="序号",weight=1,isKey=true)
 	private int id;
-	@SQLField(value="项目名称",weight=2,isKey=true,notNull=true,source="ACCESS.project")
-	private String project;
 	@SQLField(value="起始时间",weight=11)
 	private Timestamp time1;
 	@SQLField(value="终止时间",weight=12)
@@ -22,8 +20,6 @@ public class Time extends AnnualBase{
 	
 	public int getId(){return id;}
 	public void setId(int id){this.id=id;}
-	public String getProject() {return project;}
-	public void setProject(String project) {this.project = project;}
 	public Timestamp getTime1() {return time1;}
 	public void setTime1(Timestamp time) {this.time1 = time;
 	Manager.RegularPeriod(time1,time2);}
@@ -51,10 +47,10 @@ public class Time extends AnnualBase{
 	public Time() {
 		super();
 	}
-	public Time(int year,String project) throws IllegalArgumentException, SQLException {
+	public Time(int year,int id) throws IllegalArgumentException, SQLException {
 		super();
 		this.setYear(year);
-		this.setProject(project);
+		this.setId(id);
 		this.load();
 	}
 	
@@ -64,8 +60,7 @@ public class Time extends AnnualBase{
 	static public Time getFromACCESS(int year,ACCESS a) throws SQLException{
 		if(a==null) return null;
 		Time t=new Time();
-		t.setId(a.getOrderId());
-		t.setProject(a.getProject());
+		t.setId(a.getId());
 		t.setYear(year);
 		if(a.getTime1()!=null){
 			Timestamp at=new Timestamp(a.getTime1().getTime());
@@ -86,7 +81,7 @@ public class Time extends AnnualBase{
 	
 	@Override
 	public String getDescription() {
-		return this.id+"_"+this.project;
+		return String.valueOf(this.id);
 	}
 	
 }

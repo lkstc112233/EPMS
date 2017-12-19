@@ -8,7 +8,6 @@ import com.opensymphony.xwork2.ActionSupport;
 import action.Manager;
 import obj.annualTable.Time;
 import obj.staticObject.InnerPerson;
-import obj.staticSource.ACCESS;
 import token.Role;
 
 public class MenuAction extends ActionSupport{
@@ -21,11 +20,6 @@ public class MenuAction extends ActionSupport{
 	
 	public List<Time> getTimes(){return times;}
 	public void setTimes(List<Time> times){this.times=times;}
-	public String[] getSpecialACCESSNameList() {return ACCESS.specialACCESSNameList;}
-	public boolean isSpecialACCESSName(String s) {
-		for(String str:this.getSpecialACCESSNameList()) if(s.equals(str)) return true;
-		return false;
-	}
 
 	public MenuAction(){
 		super();
