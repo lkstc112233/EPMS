@@ -37,8 +37,8 @@ public class Student extends AnnualBase{
 	private String outstandingType;
 	@SQLField(value="优秀实习生材料",weight=102,autoInit=true,ps="二进制储存")
 	private byte[] outstandingMaterial;
-	@SQLField(value="特殊调剂",weight=1000,ps="特殊调剂的学生不计入实习基地人数")
-	private boolean available=false;
+	@SQLField(value="特殊调剂",weight=1000,ps="0表示正常，1表示特殊调剂的学生不计入实习基地人数，-1表示特殊调剂的学生不计入部院系人数")
+	private int status=0;
 	
 	public String getId() {return id;}
 	public void setId(String a) {this.id=Field.s2S(a);}
@@ -73,9 +73,9 @@ public class Student extends AnnualBase{
 	public byte[] getOutstandingMaterial() {return outstandingMaterial;}
 	public void setOutstandingMaterial(byte[] outstandingMaterial) {this.outstandingMaterial = outstandingMaterial==null||outstandingMaterial.length<=0?null:outstandingMaterial;}
 	public void setOutstandingMaterial(String outstandingMaterial) {this.outstandingMaterial = outstandingMaterial==null||outstandingMaterial.isEmpty()?null:outstandingMaterial.getBytes();}
-	public boolean getAvailable() {return available;}
-	public void setAvailable(boolean a) {this.available = a;}
-	public void setAvailable(String a){this.available=Field.s2b(a,false);}
+	public int getStatus() {return status;}
+	public void setStatus(int a) {this.status = a;}
+	public void setStatus(String a){this.status=Field.s2i(a,0);}
 	
 	@Override
 	public String getDescription() {
@@ -86,8 +86,9 @@ public class Student extends AnnualBase{
 	public Student() {
 		super();
 	}
-	public Student(String id) throws IllegalArgumentException, SQLException {
+	public Student(int year,String id) throws IllegalArgumentException, SQLException {
 		super();
+		this.setYear(year);
 		this.setId(id);
 		this.load();
 	}
