@@ -38,7 +38,7 @@
 	<% boolean[] StudentFieldDisplay=new boolean[]{
 			false,true,true,true,true,
 			false,false,false,
-			true,true,true,true,
+			true,true,true,false,
 			false,false,false,false,false};
 		int i; %>
 		
@@ -75,6 +75,9 @@
 					</td>
 				</s:iterator>
 				<td style="word-wrap:break-word;word-break:break-all;">
+					是否回生源地实习
+				</td>
+				<td style="word-wrap:break-word;word-break:break-all;">
 					性别
 				</td>
 			</tr>
@@ -98,6 +101,13 @@
 							<s:property value="#__Col" />
 						</td>
 					</s:iterator>
+					<!-- 是否回生源地实习 --><td style="width:55px;font-size:30px;line-height:5px;">
+						<s:if test="#__studentRow.hxyx == true">
+							✔
+						</s:if><s:else>
+							✘
+						</s:else>
+					</td>
 					<!-- 性别 --><td style="width:55px;">
 						<s:property value="#__studentRow.sex" />
 					</td>

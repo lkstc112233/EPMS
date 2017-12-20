@@ -31,23 +31,22 @@
 			<td>基地名称</td>
 			<td>设备总计</td>
 			<s:iterator value="majors" var="__majorCol">
-				<td style="width:20px;"><s:property value="#__majorCol.subject" /></td>
+				<td style="width:28px;"><s:property value="#__majorCol.subject" /></td>
 			</s:iterator>
 		</tr>
 		<!-- ###总数量### -->
 		<tr class="wtableContent">
-			<td colspan="2" style="font-weight:900;background:rgba(255,234,46,0.5);">
+			<td colspan="2" style="font-weight:900;background:rgba(255,150,150,0.5);">
 				<s:property value="#__regionRow.region.name"/>数字媒体设备数量
 			</td>
-			<td style="font-weight:900;background:rgba(255,234,46,0.5);">
+			<td style="font-weight:900;background:rgba(255,150,150,0.5);">
 				<s:property value="mediaCount"/>
 			</td>
 			<s:iterator value="mediaMajorCounts" var="__count">
-				<td style="width:20px;padding:0px;font-weight:700;background:rgba(255,234,46,0.5);">
+				<td style="width:28px;padding:0px;font-weight:700;background:rgba(255,150,150,0.5);">
 					<s:property value="#__count" />
 				</td>
 			</s:iterator>
-			<td style="background:rgba(255,234,46,0.5);"></td>
 		</tr>
 		<!-- ###媒体设备规划### -->
 		<s:iterator value="regionAndPracticeBase.list" var="__regionRow" status="__regionStatus">
@@ -62,38 +61,41 @@
 					<td style="text-align:left;padding-left:10px;">
 						<s:property value="#__practiceBaseRow.name" />
 					</td>
-					<td>
+					<td style="font-weight:900;background:rgba(255,150,150,0.5);">
 						<s:property value="mediaPracticeBaseCounts[#__regionStatus.index][#__practiceBaseStatus.index]" />
 					</td>
 					<s:iterator value="majors" status="__majorStatus">
-						<td style="width:20px;padding:0px;">
-							<s:form action="function_PlanMedia_create" method="post" theme="simple">
-								<s:hidden name="clickIndex[0]" value="%{#__majorStatus.index}" />
-								<s:hidden name="clickIndex[1]" value="%{#__regionStatus.index}" />
-								<s:hidden name="clickIndex[2]" value="%{#__practiceBaseStatus.index}" />
-								<s:if test="numbers[#__majorStatus.index][#__regionStatus.index][#__practiceBaseStatus.index]==0">
-									<s:if test="media[#__majorStatus.index][#__regionStatus.index][#__practiceBaseStatus.index] == true">
-										<s:submit value="&nbsp;"
-										theme="simple"
-										style="width:100%;height:100%;" />
-									</s:if><s:else>
-										<s:submit value="&nbsp;"
-										theme="simple"
-										style="width:100%;height:100%;color:red;" />
-									</s:else>
+						<s:form action="function_PlanMedia_create" method="post" theme="simple">
+							<s:hidden name="clickIndex[0]" value="%{#__majorStatus.index}" />
+							<s:hidden name="clickIndex[1]" value="%{#__regionStatus.index}" />
+							<s:hidden name="clickIndex[2]" value="%{#__practiceBaseStatus.index}" />
+							<s:if test="numbers[#__majorStatus.index][#__regionStatus.index][#__practiceBaseStatus.index]==0">
+								<td>
+								</td>
+							</s:if><s:else>
+								<s:if test="media[#__majorStatus.index][#__regionStatus.index][#__practiceBaseStatus.index] == true">
+									<td style="padding:0;margin:0;
+										width:28px;height:28px;
+										background:rgba(255,150,150,0.5);;">
+										<s:submit value="%{numbers[#__majorStatus.index][#__regionStatus.index][#__practiceBaseStatus.index]}"
+										style="padding:0;margin:0;
+										width:100%;height:100%;
+										border:0;background:inherit;"
+										theme="simple" />
+									</td>
 								</s:if><s:else>
-									<s:if test="media[#__majorStatus.index][#__regionStatus.index][#__practiceBaseStatus.index] == true">
+									<td style="padding:0;margin:0;
+										width:28px;height:28px;
+										background:inherit;" >
 										<s:submit value="%{numbers[#__majorStatus.index][#__regionStatus.index][#__practiceBaseStatus.index]}"
-											theme="simple"
-											style="width:100%;height:100%;" />
-									</s:if><s:else>
-										<s:submit value="%{numbers[#__majorStatus.index][#__regionStatus.index][#__practiceBaseStatus.index]}"
-											theme="simple"
-											style="width:100%;height:100%;color:red;" />
-									</s:else>
+										style="padding:0;margin:0;
+										width:100%;height:100%;
+										border:0;background:inherit;"
+										theme="simple" />
+									</td>
 								</s:else>
-							</s:form>
-						</td>
+							</s:else>
+						</s:form>
 					</s:iterator>
 				</tr>
 			</s:iterator>
