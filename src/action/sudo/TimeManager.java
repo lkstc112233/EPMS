@@ -6,6 +6,8 @@ import java.util.*;
 import com.opensymphony.xwork2.ActionSupport;
 
 import action.Manager;
+import action.login.MenuAction;
+import obj.Pair;
 import obj.annualTable.Time;
 import obj.staticSource.ACCESS;
 import token.Role;
@@ -17,21 +19,25 @@ public class TimeManager extends ActionSupport{
 	public action.Annual getAnnual(){return this.annual;}
 	
 	
-	private List<Time> times=new ArrayList<Time>();
+	private List<Pair<Time,ACCESS>> times;
 
-	public List<Time> getTimes() {return times;}
-	public void setTimes(List<Time> times) {this.times = times;}
+	public List<Pair<Time,ACCESS>> getTimes() {return times;}
+	public void setTimes(List<Pair<Time,ACCESS>> times) {this.times=times;}
+
 	
+	static public final String SessionListKey=MenuAction.SessionListKey;
 	
+	@SuppressWarnings("unchecked")
 	public TimeManager() throws SQLException, NoSuchFieldException, SecurityException{
 		super();
+		this.setTimes(Manager.loadSession(List.class,SessionListKey));
 	}
 
 	@Override
 	public String execute(){
 		System.out.println(">> TimeManagerAction:execute > 开始上传修改数据到数据库Time表,year="+this.getAnnual().getYear());
 		for(int i=0;i<times.size();i++){
-			Time t=times.get(i);
+			Time t=times.get(i).getKey();
 			t.setYear(this.getAnnual().getYear());
 			try {
 				t.update();
@@ -42,7 +48,7 @@ public class TimeManager extends ActionSupport{
 		}
 		System.out.println(">> TimeManagerAction:execute > 开始上传修改数据到数据库ACCESS表");
 		for(int i=0;i<times.size();i++){
-			Time t=times.get(i);
+			Time t=times.get(i).getKey();
 			try {
 				ACCESS a=ACCESS.getFromTime(t);
 				a.update();
@@ -63,6 +69,7 @@ public class TimeManager extends ActionSupport{
 			return Manager.tips("出错了！",
 					e,ERROR);
 		}
+		Manager.saveSession(SessionListKey,times);
 		return NONE;
 	}
 
