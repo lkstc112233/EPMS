@@ -18,14 +18,16 @@ public class YearAndSchoolAndMajorRestraint extends HardRestraint{
 	private List<Major> majors;
 		public List<Major> getMajors(){return this.majors;}
 	
-	public YearAndSchoolAndMajorRestraint(JoinParam param,int orderFieldsCount,
-			int year,School school) throws IllegalArgumentException, InstantiationException, SQLException {
-		super(param,orderFieldsCount,null);
+
+	static public obj.Pair<List<Major>,List<Restraint.Part>>
+	CreateRestraintList(JoinParam param,
+				int year,School school) throws IllegalArgumentException, InstantiationException, SQLException {
+		List<Major> majors;	
 		if(school==null)
-			this.majors=null;// which means 'school!=null'
+			majors=null;// which means 'school!=null'
 		else
-			this.majors=Base.list(Major.class,new Restraint(
-				Field.getField(Major.class,"school"),school.getName()));
+			majors=Base.list(Major.class,new Restraint(
+					Field.getField(Major.class,"school"),school.getName()));
 		List<Field> yearFields=new ArrayList<Field>();
 		List<Field> schoolFields=new ArrayList<Field>();
 		List<Field> majorFields=new ArrayList<Field>();
@@ -36,7 +38,7 @@ public class YearAndSchoolAndMajorRestraint extends HardRestraint{
 					yearFields.add(f);
 				else if(nameFields!=null && f.getName().equals("name"))
 					nameFields.add(f);
-				else if(f.source()!=null && this.majors!=null){// which means 'school!=null'
+				else if(f.source()!=null && majors!=null){// which means 'school!=null'
 					Class<? extends Base> sourceClazz=f.source().getClazz();
 					if(sourceClazz.equals(School.class))
 						schoolFields.add(f);
@@ -53,14 +55,31 @@ public class YearAndSchoolAndMajorRestraint extends HardRestraint{
 				hps.add(new Restraint.Part(f,Restraint.Type.NotLike,InnerPerson.UndefinedName));
 		for(Field f:schoolFields)
 			hps.add(new Restraint.Part(f,school.getName()));
-		if(this.majors!=null){// which means 'school!=null'
-			String[] majorsName=new String[this.majors.size()];
-			for(int i=0;i<majorsName.length;i++) majorsName[i]=this.majors.get(i).getName();
+		if(majors!=null){// which means 'school!=null'
+			String[] majorsName=new String[majors.size()];
+			for(int i=0;i<majorsName.length;i++) majorsName[i]=majors.get(i).getName();
 			for(Field f:majorFields)
 				hps.add(new Restraint.OrPart(f,majorsName));
 		}
-		Restraint.Part[] hardPart=new Restraint.Part[hps.size()];
-		for(int i=0;i<hardPart.length;i++) hardPart[i]=hps.get(i);
+		return new obj.Pair<List<Major>,List<Restraint.Part>>(
+				majors,hps);
+	}
+	public YearAndSchoolAndMajorRestraint(JoinParam param,int orderFieldsCount,
+			obj.Pair<List<Major>,List<Restraint.Part>> p)throws IllegalArgumentException, InstantiationException, SQLException {
+		super(param,orderFieldsCount,null);
+		this.majors=p.getKey();
+		Restraint.Part[] hardPart=new Restraint.Part[p.getValue().size()];
+		for(int i=0;i<hardPart.length;i++) hardPart[i]=p.getValue().get(i);
+		super.setupHardPart(hardPart);
+	}
+	public YearAndSchoolAndMajorRestraint(JoinParam param,int orderFieldsCount,
+			int year,School school) throws IllegalArgumentException, InstantiationException, SQLException {
+		super(param,orderFieldsCount,null);
+		obj.Pair<List<Major>,List<Restraint.Part>> p=
+				CreateRestraintList(param,year,school);
+		this.majors=p.getKey();
+		Restraint.Part[] hardPart=new Restraint.Part[p.getValue().size()];
+		for(int i=0;i<hardPart.length;i++) hardPart[i]=p.getValue().get(i);
 		super.setupHardPart(hardPart);
 	}
 	
