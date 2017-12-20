@@ -151,7 +151,7 @@ public class StudentGroupLeader extends ActionSupport{
 			for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
 				String groupLeaderId=pair.getRegion().getStudentGroupLeaderId();
 				try {
-					Student stu=new Student(groupLeaderId);
+					Student stu=new Student(this.getAnnual().getYear(),groupLeaderId);
 					//若学生不在的话则清空！
 					boolean flag=false;
 					if(prepared.containsKey(stu.getMajor())) {
@@ -164,15 +164,14 @@ public class StudentGroupLeader extends ActionSupport{
 					}
 					if(!flag) {
 						error.append("\n基地("+pair.getPracticeBase().getDescription()+")原有学生大组长("+stu.getDescription()+")不存在该大区实习生名单中，已剔除!");
-						throw new IllegalArgumentException();
-					}
-					prepared.get(stu.getMajor()).gro++;
+						pair.getRegion().setStudentGroupLeaderId(null);
+						try{pair.getRegion().update();
+						}catch(IllegalArgumentException | SQLException e2) {
+						}
+					}else
+						prepared.get(stu.getMajor()).gro++;
 				}catch(IllegalArgumentException | SQLException e) {
-					//无学生大组长
-					pair.getRegion().setStudentGroupLeaderId(null);
-					try{pair.getRegion().update();
-					}catch(IllegalArgumentException | SQLException e2) {
-					}
+					return Manager.tips("服务器开小差去了，无法读取学生大组长！\n"+error.toString(),e,display());
 				}
 			}
 		}
@@ -193,8 +192,10 @@ public class StudentGroupLeader extends ActionSupport{
 								break;
 							}
 						}
-						if(gro==null)
-							error.append("\n专业("+p.major.getDescription()+")在基地("+pair.getPracticeBase().getDescription()+")未推荐学生大组长!");
+						if(gro==null) {
+							if(!pair.getStudents().isEmpty())
+								error.append("\n专业("+p.major.getDescription()+")在基地("+pair.getPracticeBase().getDescription()+")未推荐学生大组长!");
+						}
 						else {
 							pair.getRegion().setStudentGroupLeaderId(gro.getId());
 							try{
