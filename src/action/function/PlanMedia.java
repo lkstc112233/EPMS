@@ -176,6 +176,8 @@ public class PlanMedia extends ActionSupport{
 
 
 	private int clickIndex[]=new int[] {-1,-1,-1};
+		public int[] getClickIndex() {return this.clickIndex;}
+		public void setClickIndex(int[] clickIndex) {this.clickIndex=clickIndex;}
 	/**
 	 * 单击
 	 */
@@ -189,7 +191,8 @@ public class PlanMedia extends ActionSupport{
 			PracticeBase pb=this.regionAndPracticeBase.getList().get(clickIndex[1])
 					.getPracticeBases().get(clickIndex[2]);
 			if(this.numbers[clickIndex[0]][clickIndex[1]][clickIndex[2]]<=0)
-				return Manager.tips(major.getDescription()+"至"+pb.getDescription()+"无派遣计划!",NONE);
+				return Manager.tips(major.getDescription()+"至"+pb.getDescription()+"无派遣计划!",
+						display());
 			Plan p=new Plan();
 			p.setYear(this.getAnnual().getYear());
 			p.setMajor(major.getName());
@@ -200,7 +203,8 @@ public class PlanMedia extends ActionSupport{
 					p.update();
 				}
 			} catch (IllegalArgumentException | SQLException e) {
-				return Manager.tips("数据库开小差去了，修改失败!",e,NONE);
+				e.printStackTrace();
+				return Manager.tips("数据库开小差去了，修改失败!",display());
 			}
 		}catch(IndexOutOfBoundsException e) {
 			return Manager.tips("点击错误!",e,NONE);

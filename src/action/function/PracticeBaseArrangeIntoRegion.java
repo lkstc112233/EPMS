@@ -111,10 +111,10 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 				sb.append(pb.getName());
 			}
 		}
-		Manager.tips((sb.length()>0?(sb.toString()+" 已经添加到大区("+this.regionName+")！"):"")+
-			(error.length()>0?("\n\n错误信息：\n"+error.toString()):""));
 		Manager.removeSession(SessionListKey);
-		return display();
+		return Manager.tips((sb.length()>0?(sb.toString()+" 已经添加到大区("+this.regionName+")！"):"")+
+			(error.length()>0?("\n\n错误信息：\n"+error.toString()):""),
+			display());
 	}
 	
 	/**
@@ -163,9 +163,9 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 				sb.append(pb.getName());
 			}
 		}
-		Manager.tips(sb.toString()+" 已经从大区("+this.regionName+")移除！");
 		Manager.removeSession(SessionListKey);
-		return display();
+		return Manager.tips(sb.toString()+" 已经从大区("+this.regionName+")移除！",
+				display());
 	}
 	
 	
