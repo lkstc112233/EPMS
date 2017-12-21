@@ -19,6 +19,7 @@ public interface SpecialExcelIO {
 			int year,
 			PracticeBase pb,
 			String majorName,
+			int status,
 			OutputStream stream)
 					throws IOException;
 

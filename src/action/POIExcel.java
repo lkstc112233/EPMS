@@ -161,7 +161,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 	}
 	
 	@Override
-	public String createStudentList(int year,PracticeBase pb, String majorName, OutputStream out) throws IOException {
+	public String createStudentList(int year,PracticeBase pb, String majorName, int status, OutputStream out) throws IOException {
 		if(pb==null) throw new IOException("大区为空!");
 		if(majorName==null || majorName.isEmpty()) majorName=null;
 		Region region;
@@ -176,16 +176,20 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 				new Restraint(Field.getFields(Student.class,"year","practiceBase"),new Object[] {year,pb.getName()})
 				:new Restraint(Field.getFields(Student.class,"year","practiceBase","major"),new Object[]{year,pb.getName(),majorName});
 		try{
-			for(Student stu:Base.list(Student.class,restraint)) try{
-				Major m=new Major(stu.getMajor());
-				InnerPerson t=new InnerPerson(stu.getTeacherId());
-				if(!list.containsKey(m))
-					list.put(m,new Pair<Set<InnerPerson>,List<Student>>(new HashSet<InnerPerson>(),new ArrayList<Student>()));
-				Pair<Set<InnerPerson>,List<Student>> p=list.get(m);
-				p.getKey().add(t);
-				p.getValue().add(stu);
-			}catch(IllegalArgumentException | SQLException e) {
-				System.err.println(stu.getName()+"没有指导老师！("+stu.toString()+")");
+			for(Student stu:Base.list(Student.class,restraint)) {
+				if(stu.getStatus()==status || stu.getStatus()*status > 0) {
+					try{
+						Major m=new Major(stu.getMajor());
+						InnerPerson t=new InnerPerson(stu.getTeacherId());
+						if(!list.containsKey(m))
+							list.put(m,new Pair<Set<InnerPerson>,List<Student>>(new HashSet<InnerPerson>(),new ArrayList<Student>()));
+						Pair<Set<InnerPerson>,List<Student>> p=list.get(m);
+						p.getKey().add(t);
+						p.getValue().add(stu);
+					}catch(IllegalArgumentException | SQLException e) {
+						System.err.println(stu.getName()+"没有指导老师！("+stu.toString()+")");
+					}
+				}
 			}
 		}catch(IllegalArgumentException | SQLException | InstantiationException e) {
 			System.err.println("读取实习生列表失败！");

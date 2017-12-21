@@ -86,9 +86,9 @@ public class POI implements SQLIO, SpecialIO{
 	}
 
 	@Override
-	public String createStudentList(int year, PracticeBase pb, String majorName,
+	public String createStudentList(int year, PracticeBase pb, String majorName,int status,
 			OutputStream stream) throws IOException {
-		return excel.createStudentList(year, pb, majorName, stream);
+		return excel.createStudentList(year, pb, majorName, status, stream);
 	}
 	@Override
 	public String createStudentInsuranceList(int year, ListOfPracticeBaseAndStudents list, OutputStream stream) throws IOException {
