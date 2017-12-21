@@ -86,7 +86,7 @@ public class POI implements SQLIO, SpecialIO{
 	}
 
 	@Override
-	public String createStudentList(int year, PracticeBase pb, String majorName,int status,
+	public String createStudentList(int year, PracticeBase pb, String majorName,Integer status,
 			OutputStream stream) throws IOException {
 		return excel.createStudentList(year, pb, majorName, status, stream);
 	}
@@ -103,6 +103,11 @@ public class POI implements SQLIO, SpecialIO{
 	public String createPlanDesign(int year, ListOfPracticeBaseAndStudents list, OutputStream stream)
 			throws IOException {
 		return excel.createPlanDesign(year, list, stream);
+	}
+	@Override
+	public String createPlanMedia(int year, ListOfPracticeBaseAndStudents list, boolean[][][] media,
+			OutputStream stream) throws IOException {
+		return excel.createPlanMedia(year, list, media, stream);
 	}
 	@Override
 	public String createTeacherList(int year, OutputStream stream) throws IOException {
@@ -122,6 +127,7 @@ public class POI implements SQLIO, SpecialIO{
 	public String createPracticeBaseInfomation(int year, PracticeBase pb, OutputStream stream) throws IOException {
 		return word.createPracticeBaseInfomation(year, pb, stream);
 	}
+
 
 	
 	

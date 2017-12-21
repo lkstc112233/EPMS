@@ -40,6 +40,16 @@ public interface SpecialExcelIO {
 			ListOfPracticeBaseAndStudents list,
 			OutputStream stream)
 					throws IOException;
+
+	/**
+	 * 数字媒体设备规划
+	 */
+	public abstract String createPlanMedia(
+			int year,
+			ListOfPracticeBaseAndStudents list,
+			boolean[][][] media,
+			OutputStream stream)
+					throws IOException;
 	
 	/**
 	 * 指导教师列表
