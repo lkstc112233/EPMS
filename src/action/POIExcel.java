@@ -194,10 +194,11 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 		}catch(IllegalArgumentException | SQLException | InstantiationException e) {
 			System.err.println("读取实习生列表失败！");
 		}
-		String name=String.format("%d年[%s]%s免费师范生教育实习学生名单",
+		String name=String.format("%d年[%s]%s免费师范生教育实习学生名单%s",
 				year,pb.getName(),
-				majorName==null?"":("("+majorName+")")
-						);
+				(majorName==null?"":("("+majorName+")")),
+				(status==0?"":"(特殊调剂)")
+				);
 		try(Workbook wb=new XSSFWorkbook();){
 			Sheet st=wb.createSheet("学生名单");
 			CellStyle styleBigTitle=POIExcel.getCellStyle(wb,"宋体",18,true,HorizontalAlignment.CENTER,BorderStyle.NONE,false,null);
