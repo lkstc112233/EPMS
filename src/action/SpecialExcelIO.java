@@ -19,7 +19,7 @@ public interface SpecialExcelIO {
 			int year,
 			PracticeBase pb,
 			String majorName,
-			int status,
+			Integer status,
 			OutputStream stream)
 					throws IOException;
 
@@ -31,7 +31,7 @@ public interface SpecialExcelIO {
 			ListOfPracticeBaseAndStudents list,
 			OutputStream stream)
 					throws IOException;
-	
+
 	/**
 	 * 布局规划
 	 */
