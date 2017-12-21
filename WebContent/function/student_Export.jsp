@@ -40,7 +40,17 @@
 			<s:form action="function_student_ExportAllStudentList_download" method="post" theme="simple">
 				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 				<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
+				<s:hidden name="status" value="0" theme="simple"/>
 				<s:submit value="所有实习生名单" theme="simple"
+				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
+			</s:form>
+			</span>
+			<span style="float:left;margin-left:20px;">
+			<s:form action="function_student_ExportAllStudentList_download" method="post" theme="simple">
+				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
+				<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
+				<s:hidden name="status" value="1" theme="simple"/>
+				<s:submit value="特殊调剂实习生名单" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>
 			</span>
