@@ -63,8 +63,8 @@ public class ExportStudentList extends ActionSupport{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private ByteArrayOutputStream downloadOutputStream=null;
-	protected String downloadByIO(SpecialIO io,int year,PracticeBase pb,String majorName,OutputStream stream) throws IOException{
-		return io.createStudentList(year,pb,majorName,stream);
+	protected String downloadByIO(SpecialIO io,int year,PracticeBase pb,String majorName,int status,OutputStream stream) throws IOException{
+		return io.createStudentList(year,pb,majorName,status,stream);
 	}
 	public String download(){//下载模板
 		System.out.println(">> ExportStudentList:download > practiceBaseName="+this.practiceBaseName);
@@ -78,7 +78,9 @@ public class ExportStudentList extends ActionSupport{
 		this.downloadOutputStream=new ByteArrayOutputStream();
 		try{
 			String fileName=this.downloadByIO((SpecialIO)Base.io(),
-					this.getAnnual().getYear(),pair.getPracticeBase(),this.majorName,downloadOutputStream);
+					this.getAnnual().getYear(),pair.getPracticeBase(),this.majorName,
+					0,//status
+					downloadOutputStream);
 			this.setDownloadFileName(fileName);//设置下载文件名称
 			this.downloadOutputStream.flush();
 		}catch(IOException e){

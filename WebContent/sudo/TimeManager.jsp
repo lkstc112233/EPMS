@@ -36,26 +36,24 @@
 			<s:iterator value="times" var="__tableRow" status="__status">
 				<tr class="wtableContent">
 					<td style="width:10px">
-						<s:property value="%{#__tableRow.id}" />
-						<s:hidden name="times[%{#__status.index}].id"
-						value="%{id}" theme="simple"/>
+						<s:property value="%{#__tableRow.key.id}" />
+						<s:hidden name="times[%{#__status.index}].key.id"
+						value="%{#__tableRow.key.id}" theme="simple"/>
 					</td>
-					<td style="text-align:left;">
-						<s:property value="%{#__tableRow.project}" />
-						<s:hidden name="times[%{#__status.index}].project"
-						value="%{#__tableRow.project}"  theme="simple"/>
+					<td style="text-align:left;padding-left:10px;">
+						<s:property value="%{#__tableRow.value.project}" />
 					</td>
 					<td style="width:180px;padding:0;">
-						<s:textfield name="times[%{#__status.index}].time1" theme="simple" style="width:100%;height:100%;border:0;text-align:center;">
+						<s:textfield name="times[%{#__status.index}].key.time1" theme="simple" style="width:100%;height:100%;border:0;text-align:center;">
 							<s:param name="value">
-								<s:date name="%{#__tableRow.time1}" format="yyyy-MM-dd HH:mm:ss"/>
+								<s:date name="%{#__tableRow.key.time1}" format="yyyy-MM-dd HH:mm:ss"/>
 							</s:param>
 						</s:textfield>
 					</td>
 					<td style="width:180px;padding:0;">
-						<s:textfield name="times[%{#__status.index}].time2" theme="simple" style="width:100%;height:100%;border:0;text-align:center;">
+						<s:textfield name="times[%{#__status.index}].key.time2" theme="simple" style="width:100%;height:100%;border:0;text-align:center;">
 							<s:param name="value">
-								<s:date name="%{#__tableRow.time2}" format="yyyy-MM-dd HH:mm:ss"/>
+								<s:date name="%{#__tableRow.key.time2}" format="yyyy-MM-dd HH:mm:ss"/>
 							</s:param>
 						</s:textfield>
 					</td>

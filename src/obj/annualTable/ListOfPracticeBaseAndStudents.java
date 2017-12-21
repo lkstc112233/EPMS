@@ -100,7 +100,20 @@ public class ListOfPracticeBaseAndStudents{
 		}
 		Collections.sort(this.list);
 	}
-	
+
+	public int[] indexOf(String practiceBaseName){
+		int[] index=new int[]{-1,-1};
+		if(practiceBaseName==null || practiceBaseName.isEmpty()) return null;
+		for(index[0]=0;index[0]<this.list.size();index[0]++){
+			RegionPair rp=this.list.get(index[0]);
+			for(index[1]=0;index[1]<rp.getList().size();index[1]++){
+				PracticeBase pb=rp.getList().get(index[1]).practiceBase;
+				if(pb!=null && pb.getName()!=null && pb.getName().equals(practiceBaseName))
+					return index;
+			}
+		}
+		return null;
+	}
 	public PracticeBasePair get(String practiceBaseName){
 		if(practiceBaseName==null || practiceBaseName.isEmpty()) return null;
 		for(RegionPair rp:this.list) if(rp.getRegion()!=null)

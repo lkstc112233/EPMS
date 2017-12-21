@@ -28,13 +28,15 @@ public class StudentGathering extends action.TableOperationAction{
 	@Override
 	protected Field[] refuseDisplayField() {
 		return Field.getFields(Student.class,
-			//	"year",
-			//	"id","name","mobile","email",
-				"major","practiceBase",
-			//	"sfzh","zzmm","province","nation",
-			//	"hxyx"
-				"recommend","teacherId",
-				"outstandingType","outstandingMaterial"
+				//	"year",
+				//	"id","name","mobile","email",
+				//	"major",
+					"practiceBase",
+				//	"sfzh","zzmm","province","nation",
+				//	"hxyx",
+					"recommend","teacherId",
+					"outstandingType","outstandingMaterial",
+					"status"
 				);
 	}
 	

@@ -2,6 +2,7 @@ package action.function;
 
 import action.Manager;
 import obj.*;
+import obj.annualTable.Student;
 
 public class StudentImport extends action.TableOperationAction{
 	private static final long serialVersionUID = 8833385464572061925L;
@@ -24,5 +25,19 @@ public class StudentImport extends action.TableOperationAction{
 				role==token.Role.jwc ? null : new obj.staticSource.School(user.getSchool())
 						));
 	}
-	
+
+	@Override
+	protected Field[] refuseDisplayField() {
+		return Field.getFields(Student.class,
+				//	"year",
+				//	"id","name","mobile","email",
+				//	"major",
+					"practiceBase",
+				//	"sfzh","zzmm","province","nation",
+					"hxyx",
+					"recommend","teacherId",
+					"outstandingType","outstandingMaterial",
+					"status"
+					);
+	}
 }

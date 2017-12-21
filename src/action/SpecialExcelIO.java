@@ -19,6 +19,7 @@ public interface SpecialExcelIO {
 			int year,
 			PracticeBase pb,
 			String majorName,
+			Integer status,
 			OutputStream stream)
 					throws IOException;
 
@@ -30,13 +31,23 @@ public interface SpecialExcelIO {
 			ListOfPracticeBaseAndStudents list,
 			OutputStream stream)
 					throws IOException;
-	
+
 	/**
 	 * 布局规划
 	 */
 	public abstract String createPlanDesign(
 			int year,
 			ListOfPracticeBaseAndStudents list,
+			OutputStream stream)
+					throws IOException;
+
+	/**
+	 * 数字媒体设备规划
+	 */
+	public abstract String createPlanMedia(
+			int year,
+			ListOfPracticeBaseAndStudents list,
+			boolean[][][] media,
 			OutputStream stream)
 					throws IOException;
 	

@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.*;
 
 import obj.*;
+import obj.annualTable.Time;
 import obj.staticSource.ACCESS;
 import token.Role;
 
@@ -19,19 +20,19 @@ public abstract class AnnualBase extends Base implements Base.ListableWithNoSave
 	/**
 	 * 保证不返回null
 	 */
-	static public List<Time> listTime(Role role,int year,boolean setupIfEmpty)
+	static public List<Pair<Time,ACCESS>> listTime(Role role,int year,boolean setupIfEmpty)
 			throws IllegalArgumentException, InstantiationException, SQLException{
 		return AnnualBase.listTime(role, year, setupIfEmpty, true);
 	}
-	static private List<Time> listTime(Role role,int year,boolean setupIfEmpty,boolean first)
+	static private List<Pair<Time,ACCESS>> listTime(Role role,int year,boolean setupIfEmpty,boolean first)
 			throws IllegalArgumentException, InstantiationException, SQLException{
-		List<Time> res=new ArrayList<Time>();
+		List<Pair<Time,ACCESS>> res=new ArrayList<Pair<Time,ACCESS>>();
 		//将Time和ACCESS表联合查询，check筛选出当前权限符合的条目，依次放入res即可
 		List<Base[]> tmp=Base.list(
 				new JoinParam(Time.class).append(
 						JoinParam.Type.InnerJoin, ACCESS.class,
-						Field.getField(Time.class,"project"),
-						Field.getField(ACCESS.class,"project")),
+						Field.getField(Time.class,"id"),
+						Field.getField(ACCESS.class,"id")),
 				new Restraint(new Restraint.Part[]{
 						new Restraint.Part(
 								Field.getField(Time.class,"year"),Integer.valueOf(year)),
@@ -45,8 +46,10 @@ public abstract class AnnualBase extends Base implements Base.ListableWithNoSave
 			return listTime(role,year,false,first=false);
 		}
 		if(tmp!=null) for(Base[] t:tmp)
-			if(t!=null && t.length>0 && t[0] instanceof Time)
-				res.add((Time) t[0]);
+			if(t!=null && t.length>=2 
+			&& t[0]!=null && t[0] instanceof Time
+			&& t[1]!=null && t[1] instanceof ACCESS)
+				res.add(new Pair<Time,ACCESS>((Time)t[0],(ACCESS)t[1]));
 		return res;
 	}
 	

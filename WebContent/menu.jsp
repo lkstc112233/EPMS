@@ -81,23 +81,23 @@
 				<td valign="middle"><ul class="listContent">
 					<li>
 						<span class="time">
-							<s:if test="#__tableRow.time1!=null">
-								[<b><s:date name="%{#__tableRow.time1}" format="yyyy-MM-dd"/></b>&nbsp;
-								<s:date name="%{#__tableRow.time1}" format="HH:mm:ss"/>&nbsp;
+							<s:if test="#__tableRow.key.time1!=null">
+								[<b><s:date name="%{#__tableRow.key.time1}" format="yyyy-MM-dd"/></b>&nbsp;
+								<s:date name="%{#__tableRow.key.time1}" format="HH:mm:ss"/>&nbsp;
 								->
-								&nbsp;<b><s:date name="%{#__tableRow.time2}" format="yyyy-MM-dd"/></b>
-								&nbsp;<s:date name="%{#__tableRow.time2}" format="HH:mm:ss"/>
+								&nbsp;<b><s:date name="%{#__tableRow.key.time2}" format="yyyy-MM-dd"/></b>
+								&nbsp;<s:date name="%{#__tableRow.key.time2}" format="HH:mm:ss"/>
 								]
 							</s:if>
 							<s:else>
 								&nbsp;
 							</s:else>
 						</span>
-						<s:if test="isSpecialACCESSName(#__tableRow.project)">
-							<s:property value="%{#__tableRow.project}" />
+						<s:if test="#__tableRow.value.actionClass == null || #__tableRow.value.actionClass.isEmpty() == true">
+							<s:property value="%{#__tableRow.value.project}" />
 						</s:if><s:else>
-							<a href='<s:url action="function_%{#__tableRow.actionClass}_display"/>' onclick="this.href=this.href+'?annual.year='+document.getElementById('annualYear').value">
-								<s:property value="%{#__tableRow.project}" />
+							<a href='<s:url action="function_%{#__tableRow.value.actionClass}_display"/>' onclick="this.href=this.href+'?annual.year='+document.getElementById('annualYear').value">
+								<s:property value="%{#__tableRow.value.project}" />
 							</a>
 						</s:else>
 					</li>  

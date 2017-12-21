@@ -161,7 +161,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 	}
 	
 	@Override
-	public String createStudentList(int year,PracticeBase pb, String majorName, OutputStream out) throws IOException {
+	public String createStudentList(int year,PracticeBase pb, String majorName, Integer status, OutputStream out) throws IOException {
 		if(pb==null) throw new IOException("大区为空!");
 		if(majorName==null || majorName.isEmpty()) majorName=null;
 		Region region;
@@ -176,24 +176,29 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 				new Restraint(Field.getFields(Student.class,"year","practiceBase"),new Object[] {year,pb.getName()})
 				:new Restraint(Field.getFields(Student.class,"year","practiceBase","major"),new Object[]{year,pb.getName(),majorName});
 		try{
-			for(Student stu:Base.list(Student.class,restraint)) try{
-				Major m=new Major(stu.getMajor());
-				InnerPerson t=new InnerPerson(stu.getTeacherId());
-				if(!list.containsKey(m))
-					list.put(m,new Pair<Set<InnerPerson>,List<Student>>(new HashSet<InnerPerson>(),new ArrayList<Student>()));
-				Pair<Set<InnerPerson>,List<Student>> p=list.get(m);
-				p.getKey().add(t);
-				p.getValue().add(stu);
-			}catch(IllegalArgumentException | SQLException e) {
-				System.err.println(stu.getName()+"没有指导老师！("+stu.toString()+")");
+			for(Student stu:Base.list(Student.class,restraint)) {
+				if(status==null || stu.getStatus()==status || stu.getStatus()*status > 0) {
+					try{
+						Major m=new Major(stu.getMajor());
+						InnerPerson t=new InnerPerson(stu.getTeacherId());
+						if(!list.containsKey(m))
+							list.put(m,new Pair<Set<InnerPerson>,List<Student>>(new HashSet<InnerPerson>(),new ArrayList<Student>()));
+						Pair<Set<InnerPerson>,List<Student>> p=list.get(m);
+						p.getKey().add(t);
+						p.getValue().add(stu);
+					}catch(IllegalArgumentException | SQLException e) {
+						System.err.println(stu.getName()+"没有指导老师！("+stu.toString()+")");
+					}
+				}
 			}
 		}catch(IllegalArgumentException | SQLException | InstantiationException e) {
 			System.err.println("读取实习生列表失败！");
 		}
-		String name=String.format("%d年[%s]%s免费师范生教育实习学生名单",
+		String name=String.format("%d年[%s]%s免费师范生教育实习学生名单%s",
 				year,pb.getName(),
-				majorName==null?"":("("+majorName+")")
-						);
+				(majorName==null?"":("("+majorName+")")),
+				(status==0?"":"(特殊调剂)")
+				);
 		try(Workbook wb=new XSSFWorkbook();){
 			Sheet st=wb.createSheet("学生名单");
 			CellStyle styleBigTitle=POIExcel.getCellStyle(wb,"宋体",18,true,HorizontalAlignment.CENTER,BorderStyle.NONE,false,null);
@@ -466,7 +471,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 					continue;
 				}
 				if(i<3)
-					cell.setCellValue("本科生学生人数"+allNumber+"人");
+					cell.setCellValue("实习学生总人数"+allNumber+"人");
 				else
 					cell.setCellValue(i==3?allNumber:numbers[i-4]);
 			}
@@ -630,6 +635,168 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 					cell.setCellValue(numbers[i-4]);
 			}
 			r++;
+			//列宽，第一个参数代表列id(从0开始),第2个参数代表宽度值  参考 ："2012-08-10"的宽度为2500
+	//		st.setColumnWidth(0,2500);
+			debug(wb,name);
+	        wb.write(out);
+		}
+		return name+".xlsx";//下载文件名称
+	}
+
+	@Override
+	public String createPlanMedia(int year, ListOfPracticeBaseAndStudents list, boolean[][][] media, OutputStream out)
+			throws IOException {
+		final Integer status = null;//特殊调剂
+		return createPlanMedia(year,list,media,status,out);
+	}
+	public String createPlanMedia(int year, ListOfPracticeBaseAndStudents list, boolean[][][] media, Integer status, OutputStream out)
+			throws IOException {
+		List<Major> majors=new ArrayList<Major>();
+		try {
+			majors.addAll(Base.list(Major.class));
+		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
+			throw new IOException(e.getMessage());
+		}
+		List<Major> tmp=new ArrayList<Major>();
+		for(int i=0;i<majors.size();i++) {
+			Major m=null;
+			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
+				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
+					for(Student stu:pair.getStudents()) {
+						if(status==null || stu.getStatus()==status || stu.getStatus()*status > 0) {
+							if(majors.get(i).getName().equals(stu.getMajor())) {
+								m=majors.get(i);
+							}if(m!=null) break;
+						}
+					}if(m!=null) break;
+				}if(m!=null) break;
+			}if(m!=null) tmp.add(m);
+		}
+		majors=tmp;
+		int mediaAll=0;
+		int[] mediaMajor=new int[majors.size()];
+		for(int i=0;i<majors.size();i++) {
+			mediaMajor[i]=0;
+			for(int j=0;j<media[i].length;j++)
+				for(int k=0;k<media[i][j].length;k++)
+					if(media[i][j][k])
+						mediaMajor[i]++;
+			mediaAll+=mediaMajor[i];
+		}
+		int[][] mediaPracticeBase=new int[list.getList().size()][];
+		for(int j=0;j<mediaPracticeBase.length;j++) {
+			mediaPracticeBase[j]=new int[list.getList().get(j).getList().size()];
+			for(int k=0;k<mediaPracticeBase[j].length;k++) {
+				mediaPracticeBase[j][k]=0;
+				for(int i=0;i<media.length;i++)
+					if(media[i][j][k])
+						mediaPracticeBase[j][k]++;
+			}
+		}
+		String name=String.format("%d年免费师范生教育实习数字媒体设备规划",
+				year);
+		try(Workbook wb=new XSSFWorkbook();){
+			Sheet st=wb.createSheet("布局规划");
+			//列：大区、序号、实习基地名称、总设备数、各学科人数
+			//行：大标题、列标签、求和列、内容
+			CellStyle styleBigTitle=POIExcel.getCellStyle(wb,"宋体",18,true,HorizontalAlignment.CENTER,BorderStyle.NONE,false,null);
+		//	CellStyle styleSmallTitle=POIExcel.getCellStyle(wb,"宋体",12,true,HorizontalAlignment.CENTER,BorderStyle.NONE,false);
+		//	CellStyle styleBigSum=POIExcel.getCellStyle(wb,"宋体",10,true,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,IndexedColors.CORAL.getIndex());
+		//	CellStyle styleSmallSum=POIExcel.getCellStyle(wb,"宋体",10,true,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,IndexedColors.LIGHT_YELLOW.getIndex());
+			CellStyle styleTitle=POIExcel.getCellStyle(wb,"宋体",10,true,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,null);
+			CellStyle styleContent=POIExcel.getCellStyle(wb,"宋体",10,false,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,null);
+			CellStyle styleContentMeida=POIExcel.getCellStyle(wb,"宋体",10,false,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,IndexedColors.RED.getIndex());
+			//设置列数
+			final int column=4+majors.size();
+			Row row;
+			Cell cell;
+			int r=0;
+			/*第一行标题*/row=st.createRow(r);
+			setHeight(row,40);
+			cell=row.createCell(0);
+			cell.setCellType(CellType.STRING);
+			cell.setCellValue(name);
+			cell.setCellStyle(styleBigTitle);
+			for(int i=1;i<column;i++) row.createCell(i).setCellStyle(styleBigTitle);
+			st.addMergedRegion(new CellRangeAddress(r,r,0,column-1));
+			r++;
+			/*第二行列标签*/row=st.createRow(r);
+			setHeight(row,30);
+			for(int i=0;i<column;i++) {
+				cell=row.createCell(i);
+				cell.setCellType(CellType.STRING);
+				cell.setCellValue(i==0?"实习大区":i==1?"序号":
+					i==2?"实习基地名称":i==3?"设备小计":
+						majors.get(i-4).getSubject());
+				setWidth(st,i,i==0?4:i==1?3:
+					i==2?26:i==3?5:4);
+				cell.setCellStyle(i==3?styleContentMeida:styleTitle);
+			}
+			r++;
+			/*第三行统计设备*/row=st.createRow(r);
+			setHeight(row,30);
+			for(int i=0;i<column;i++) {
+				cell=row.createCell(i);
+			//	cell.setCellType(CellType.STRING);
+				cell.setCellStyle(i==3?styleContentMeida:styleTitle);
+				if(i<3) {
+					if(i==2) st.addMergedRegion(new CellRangeAddress(r,r,0,2));
+					if(i>0) continue;
+				}
+				if(i==column-1) {
+					st.addMergedRegion(new CellRangeAddress(r-1,r,i,i));
+					continue;
+				}
+				if(i<3)
+					cell.setCellValue("数字媒体设备总计"+mediaAll+"套");
+				else if(i==3)
+					cell.setCellValue(mediaAll);
+				else
+					cell.setCellValue(mediaMajor[i-4]);
+			}
+			r++;
+			/*第四行开始每个专业实习生列表*/
+			int gCnt=1;
+			int rpIndex=-1;
+			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) { rpIndex++;
+				int rStart=r;
+				int pairIndex=-1;
+				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) { pairIndex++;
+					row=st.createRow(r);
+					setHeight(row,-1);
+					int num[]=new int[majors.size()];
+					for(int i=0;i<num.length;i++) {
+						num[i]=0;
+						for(Student stu:pair.getStudents())
+							if(status==null || stu.getStatus()==status || stu.getStatus()*status > 0)
+								if(majors.get(i).getName().equals(stu.getMajor()))
+									num[i]++;
+					}
+					for(int i=0;i<column;i++) {
+						cell=row.createCell(i);
+					//	cell.setCellType(CellType.STRING);
+						if(i>5)
+							cell.setCellStyle(media[i-4][rpIndex][pairIndex]?styleContentMeida:styleContent);
+						else
+							cell.setCellStyle(i==4?styleContentMeida:styleContent);
+						if(i==0 && r>rStart) continue;
+						if(i==0)
+							cell.setCellValue(rp.getRegion().getName());
+						else if(i==1)
+							cell.setCellValue(gCnt);
+						else if(i==2)
+							cell.setCellValue(pair.getPracticeBase().getName());
+						else if(i==3)
+							cell.setCellValue(mediaPracticeBase[rpIndex][pairIndex]);
+						else if(num[i-4]!=0)
+							cell.setCellValue(num[i-4]);
+					}
+					gCnt++;
+					r++;
+				}
+				if(r-1>rStart)
+					st.addMergedRegion(new CellRangeAddress(rStart,r-1,0,0));
+			}
 			//列宽，第一个参数代表列id(从0开始),第2个参数代表宽度值  参考 ："2012-08-10"的宽度为2500
 	//		st.setColumnWidth(0,2500);
 			debug(wb,name);
