@@ -79,6 +79,7 @@
 			<span style="float:left;margin-left:20px;">
 			<s:form action="function_student_ExportTeacherList_download" method="post" theme="simple">
 				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
+				<s:hidden name="status" value="" theme="simple"/>
 				<s:submit value="指导教师名单" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>

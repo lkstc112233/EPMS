@@ -807,12 +807,15 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 	
 	
 	@Override
-	public String createTeacherList(int year, OutputStream out) throws IOException {
+	public String createTeacherList(int year, Boolean status,OutputStream out) throws IOException {
 		String name=String.format("%d年免费师范生教育实习指导教师名单",
 				year);
 		Map<Integer,Set<InnerPerson>> teachers=new TreeMap<Integer,Set<InnerPerson>>();
 		try{
 			for(Student stu:Base.list(Student.class,new Restraint(Field.getField(Student.class,"year"),year))) try{
+				PracticeBase pb=new PracticeBase(stu.getPracticeBase());
+				if(status!=null && !(status^pb.getStatus()))
+					continue;
 				InnerPerson t=new InnerPerson(stu.getTeacherId());
 				School s=new School(t.getSchool());
 				if(!teachers.containsKey(s.getOrderId()))

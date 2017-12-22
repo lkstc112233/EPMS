@@ -56,6 +56,7 @@ public interface SpecialExcelIO {
 	 */
 	public abstract String createTeacherList(
 			int year,
+			Boolean status,
 			OutputStream stream)
 					throws IOException;
 
