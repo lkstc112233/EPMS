@@ -55,11 +55,9 @@ public class ExportPlanMedia extends ActionSupport{
 			for(ListOfPracticeBaseAndStudents.RegionPair rp:this.practiceBaseAndStudents.getList()) {
 				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
 					for(Student stu:pair.getStudents()) {
-						if(status==null || stu.getStatus()==status || stu.getStatus()*status > 0) {
-							if(majors.get(i).getName().equals(stu.getMajor())) {
-								m=majors.get(i);
-							}if(m!=null) break;
-						}
+						if(majors.get(i).getName().equals(stu.getMajor())) {
+							m=majors.get(i);
+						}if(m!=null) break;
 					}if(m!=null) break;
 				}if(m!=null) break;
 			}if(m!=null) tmp.add(m);

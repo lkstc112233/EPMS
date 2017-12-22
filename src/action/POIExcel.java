@@ -177,18 +177,16 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 				:new Restraint(Field.getFields(Student.class,"year","practiceBase","major"),new Object[]{year,pb.getName(),majorName});
 		try{
 			for(Student stu:Base.list(Student.class,restraint)) {
-				if(status==null || stu.getStatus()==status || stu.getStatus()*status > 0) {
-					try{
-						Major m=new Major(stu.getMajor());
-						InnerPerson t=new InnerPerson(stu.getTeacherId());
-						if(!list.containsKey(m))
-							list.put(m,new Pair<Set<InnerPerson>,List<Student>>(new HashSet<InnerPerson>(),new ArrayList<Student>()));
-						Pair<Set<InnerPerson>,List<Student>> p=list.get(m);
-						p.getKey().add(t);
-						p.getValue().add(stu);
-					}catch(IllegalArgumentException | SQLException e) {
-						System.err.println(stu.getName()+"没有指导老师！("+stu.toString()+")");
-					}
+				try{
+					Major m=new Major(stu.getMajor());
+					InnerPerson t=new InnerPerson(stu.getTeacherId());
+					if(!list.containsKey(m))
+						list.put(m,new Pair<Set<InnerPerson>,List<Student>>(new HashSet<InnerPerson>(),new ArrayList<Student>()));
+					Pair<Set<InnerPerson>,List<Student>> p=list.get(m);
+					p.getKey().add(t);
+					p.getValue().add(stu);
+				}catch(IllegalArgumentException | SQLException e) {
+					System.err.println(stu.getName()+"没有指导老师！("+stu.toString()+")");
 				}
 			}
 		}catch(IllegalArgumentException | SQLException | InstantiationException e) {
@@ -663,11 +661,9 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
 				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
 					for(Student stu:pair.getStudents()) {
-						if(status==null || stu.getStatus()==status || stu.getStatus()*status > 0) {
-							if(majors.get(i).getName().equals(stu.getMajor())) {
-								m=majors.get(i);
-							}if(m!=null) break;
-						}
+						if(majors.get(i).getName().equals(stu.getMajor())) {
+							m=majors.get(i);
+						}if(m!=null) break;
 					}if(m!=null) break;
 				}if(m!=null) break;
 			}if(m!=null) tmp.add(m);
@@ -768,9 +764,8 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 					for(int i=0;i<num.length;i++) {
 						num[i]=0;
 						for(Student stu:pair.getStudents())
-							if(status==null || stu.getStatus()==status || stu.getStatus()*status > 0)
-								if(majors.get(i).getName().equals(stu.getMajor()))
-									num[i]++;
+							if(majors.get(i).getName().equals(stu.getMajor()))
+								num[i]++;
 					}
 					for(int i=0;i<column;i++) {
 						cell=row.createCell(i);
