@@ -110,12 +110,20 @@
 								</s:if><s:else>
 									<td style="border:0;padding:0;">
 										<s:if test="#__opField.source != null || #__opField.isFieldClassBool() || #__opField.isFieldClassBoolean()">
-											<s:select list="%{#__opField.sourceList}"
-											listKey="key" listValue="value"
-											headerKey="" headerValue="无"
-											name="operateBase.%{#__opField.name}"
-											value="%{operateBase.fieldsValue[#__opFieldStatus.index]}"
-											style="text-align:center;height:100%;width:-webkit-fill-available;" theme="simple" />
+											<s:if test="#__opField.notNull">
+												<s:select list="%{#__opField.sourceList}"
+												listKey="key" listValue="value"
+												name="operateBase.%{#__opField.name}"
+												value="%{operateBase.fieldsValue[#__opFieldStatus.index]}"
+												style="text-align:center;height:100%;width:-webkit-fill-available;" theme="simple" />
+											</s:if><s:else>
+												<s:select list="%{#__opField.sourceList}"
+												listKey="key" listValue="value"
+												headerKey="" headerValue="无"
+												name="operateBase.%{#__opField.name}"
+												value="%{operateBase.fieldsValue[#__opFieldStatus.index]}"
+												style="text-align:center;height:100%;width:-webkit-fill-available;" theme="simple" />
+											</s:else>
 										</s:if><s:else>
 											<s:textfield name="operateBase.%{#__opField.name}"
 											value="%{operateBase.fieldsValue[#__opFieldStatus.index]}"
