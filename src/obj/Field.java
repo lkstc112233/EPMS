@@ -194,7 +194,7 @@ public class Field implements Comparable<Field>{
 		return Field.s2S(a==null?null:a.toString());
 	}
 	static public String s2S(String a){
-		return a==null||a.isEmpty()?null:a;
+		return a==null||a.isEmpty()||a.toLowerCase().equals("null")?null:a;
 	}
 	static public String s2s(String a,String defaultResult){
 		return a==null||a.isEmpty()?defaultResult:a;
@@ -205,6 +205,7 @@ public class Field implements Comparable<Field>{
 	}
 	static public Integer s2I(String a){
 		if(a==null||a.isEmpty()) return null;
+		if(a.toLowerCase().equals("null")) return null;
 		try{
 			return Integer.valueOf(a);
 		}catch(Exception e){
@@ -217,6 +218,7 @@ public class Field implements Comparable<Field>{
 	}
 	static public Float s2F(String a){
 		if(a==null||a.isEmpty()) return null;
+		if(a.toLowerCase().equals("null")) return null;
 		try{
 			return Float.valueOf(a);
 		}catch(Exception e){
@@ -229,6 +231,7 @@ public class Field implements Comparable<Field>{
 	}
 	static public Boolean s2B(String a){
 		if(a==null||a.isEmpty()) return null;
+		if(a.toLowerCase().equals("null")) return null;
 		try{
 			return Boolean.valueOf(a);
 		}catch(Exception e){
@@ -237,6 +240,7 @@ public class Field implements Comparable<Field>{
 	}
 	static public Timestamp s2TS(String a){
 		if(a==null||a.isEmpty()) return null;
+		if(a.toLowerCase().equals("null")) return null;
 		try{
 			return Timestamp.valueOf(a);
 		}catch(Exception e){
