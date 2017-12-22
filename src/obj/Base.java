@@ -80,7 +80,8 @@ public abstract class Base extends Object implements Comparable<Base>, Cloneable
 	 */
 	public boolean checkKeyField(){
 		for(Field f:this.getFields()) if(f.isKey())
-			if(Field.nullValue(f.get(this)))
+		//	if(Field.nullValue(f.get(this)))
+			if(f.get(this)==null)
 				return false;
 		return true;
 	}
@@ -89,7 +90,8 @@ public abstract class Base extends Object implements Comparable<Base>, Cloneable
 	 */
 	public boolean checkNotNullField(){
 		for(Field f:this.getFields()) if(f.notNull())
-			if(Field.nullValue(f.get(this)))
+		//	if(Field.nullValue(f.get(this)))
+			if(f.get(this)==null)
 				return false;
 		return true;
 	}

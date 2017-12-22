@@ -13,15 +13,15 @@ public class OuterPerson extends Base implements Base.ListableWithNoSave{
 	@SQLField(value="姓名",weight=2,isKey=true,notNull=true)
 	private String name;
 	@SQLField(value="校外人员职位",weight=10,notNull=true,source="OuterOffice.name")
-	private String office;
+	private String office="其他";
 	@SQLField(value="所在实习基地",weight=11,notNull=true,source="PracticeBase.name")
 	private String practiceBase;
-	@SQLField(value="座机",weight=12)
-	private String phone;
-	@SQLField(value="手机",weight=13)
-	private String mobile;
-	@SQLField(value="邮箱",weight=14)
-	private String email;
+	@SQLField(value="座机",weight=12,notNull=true)
+	private String phone="";
+	@SQLField(value="手机",weight=13,notNull=true)
+	private String mobile="";
+	@SQLField(value="邮箱",weight=14,notNull=true)
+	private String email="";
 	
 
 	public String getName(){return name;}
@@ -31,11 +31,11 @@ public class OuterPerson extends Base implements Base.ListableWithNoSave{
 	public String getPracticeBase(){return practiceBase;}
 	public void setPracticeBase(String a){this.practiceBase=Field.s2S(a);}
 	public String getPhone(){return phone;}
-	public void setPhone(String a){this.phone=a;}
+	public void setPhone(String a){this.phone=Field.s2s(a,"");}
 	public String getMobile(){return mobile;}
-	public void setMobile(String a){this.mobile=a;}
+	public void setMobile(String a){this.mobile=Field.s2s(a,"");}
 	public String getEmail(){return email;}	
-	public void setEmail(String a){this.email=a;}
+	public void setEmail(String a){this.email=Field.s2s(a,"");}
 	
 	
 

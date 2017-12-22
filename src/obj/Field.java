@@ -69,29 +69,28 @@ public class Field implements Comparable<Field>{
 	/**
 	 * Override
 	 */
-	static public boolean nullValue(Object value){
-		return value==null || String.valueOf(value).isEmpty();
-	}
+//	static public boolean nullValue(Object value){
+//		return value==null || String.valueOf(value).isEmpty();
+//	}
 	public Object get(Base b) throws IllegalArgumentException{
 		field.setAccessible(true);
 		if(b==null) return null;
 		Object o=null;
 		try{o=field.get(b);}catch(IllegalAccessException e){e.printStackTrace();}
-		if(Field.nullValue(o))
-			this.set(b,o=null);
+	//	if(Field.nullValue(o)) this.set(b,o=null);
 		return o;
 	}
 	public Base set(Base b,Object value) throws IllegalArgumentException{
 		field.setAccessible(true);
 		if(b==null) return b;
-		if(Field.nullValue(value)) value=null;
+	//	if(Field.nullValue(value)) value=null;
 		try{field.set(b,value);
 		}catch(IllegalAccessException e){e.printStackTrace();}
 		return b;
 	}
 	public Base setBySetter(Base b,Object value) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
 		field.setAccessible(true);
-		if(Field.nullValue(value)) value=null;
+	//	if(Field.nullValue(value)) value=null;
 		String methodName="set"+this.getName().substring(0,1).toUpperCase()+this.getName().substring(1);
 		java.lang.reflect.Method m=null;
 		boolean string=false;
