@@ -45,9 +45,9 @@ public class ExportAllStudentList extends ActionSupport{
 	private String majorName;
 		public void setMajorName(String a){this.majorName=Field.s2S(a);}
 		public String getMajorName(){return majorName;}
-	private int status=0;
-		public void setStatus(String a){this.status=Field.s2i(a,0);}
-		public int getStatus(){return status;}
+	private Boolean status=false;
+		public void setStatus(String a){this.status=Field.s2B(a);}
+		public Boolean getStatus(){return status;}
 	
 
 	/*
@@ -64,8 +64,8 @@ public class ExportAllStudentList extends ActionSupport{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private ByteArrayOutputStream downloadOutputStream=null;
-	protected String downloadByIO(SpecialIO io,int year,PracticeBase pb,String majorName,int status,OutputStream stream) throws IOException{
-		return io.createStudentList(year,pb,majorName,status,stream);
+	protected String downloadByIO(SpecialIO io,int year,PracticeBase pb,String majorName,OutputStream stream) throws IOException{
+		return io.createStudentList(year,pb,majorName,stream);
 	}
 	public String download(){//下载模板
 		if(this.practiceBaseAndStudents==null)
@@ -79,12 +79,13 @@ public class ExportAllStudentList extends ActionSupport{
 		for(ListOfPracticeBaseAndStudents.RegionPair rp:this.practiceBaseAndStudents.getList()) {
 			for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
 				PracticeBase pb=pair.getPracticeBase();
+				if(status!=null && !(status^pb.getStatus()))
+					continue;
 				System.out.println(">> ExportAllStudentList:download > create download file. practiceBaseName="+pb.getName());
 				OutputStream out=new ByteArrayOutputStream();
 				try{
 					String name=this.downloadByIO((SpecialIO)Base.io(),
 							this.getAnnual().getYear(),pair.getPracticeBase(),this.majorName,
-							status,//status
 							out);
 					files.put(name,out);
 				}catch(IOException e){
