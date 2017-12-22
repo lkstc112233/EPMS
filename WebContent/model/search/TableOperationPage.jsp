@@ -109,17 +109,17 @@
 								<s:if test="fieldsDisplay[#__PartStatus.index][#__opFieldStatus.index] == false">
 								</s:if><s:else>
 									<td style="border:0;padding:0;">
-										<s:if test="#__opField.source == null">
-											<s:textfield name="operateBase.%{#__opField.name}"
-											value="%{operateBase.fieldsValue[#__opFieldStatus.index]}"
-											style="text-align:center;height:100%;width:100%" theme="simple" />
-										</s:if><s:else>
+										<s:if test="#__opField.source != null || #__opField.isFieldClassBool() || #__opField.isFieldClassBoolean()">
 											<s:select list="%{#__opField.sourceList}"
 											listKey="key" listValue="value"
 											headerKey="" headerValue="无"
 											name="operateBase.%{#__opField.name}"
 											value="%{operateBase.fieldsValue[#__opFieldStatus.index]}"
 											style="text-align:center;height:100%;width:-webkit-fill-available;" theme="simple" />
+										</s:if><s:else>
+											<s:textfield name="operateBase.%{#__opField.name}"
+											value="%{operateBase.fieldsValue[#__opFieldStatus.index]}"
+											style="text-align:center;height:100%;width:100%" theme="simple" />
 										</s:else>
 									</td>
 								</s:else>
@@ -178,18 +178,26 @@
 									<s:if test="fieldsDisplay[#__PartStatus.index][#__opFieldStatus.index] == false">
 									</s:if><s:else>
 										<td style="padding:0;white-space: nowrap;background:white;">
-											<s:if test="#__opField.source == null">
+											<s:if test="#__opField.source != null || #__opField.isFieldClassBool() || #__opField.isFieldClassBoolean()">
+												<s:if test="#__opField.notNull">
+													<s:select list="%{#__opField.sourceList}"
+													listKey="key" listValue="value"
+													name="search.result[%{#__Status.index}][%{#__PartStatus.index}].%{#__opField.name}"
+													value="%{#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]}"
+													style="text-align:center;border:0px;height:100%;width:-webkit-fill-available;" theme="simple" />
+												</s:if><s:else>
+													<s:select list="%{#__opField.sourceList}"
+													listKey="key" listValue="value"
+													name="search.result[%{#__Status.index}][%{#__PartStatus.index}].%{#__opField.name}"
+													value="%{#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]}"
+													headerKey="" headerValue="无"
+													style="text-align:center;border:0px;height:100%;width:-webkit-fill-available;" theme="simple" />
+												</s:else>
+											</s:if><s:else>
 												<s:textfield
 												name="search.result[%{#__Status.index}][%{#__PartStatus.index}].%{#__opField.name}"
 												value="%{#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]}"
 												style="text-align:center;border:0px;height:100%;width:100%" theme="simple" />
-											</s:if><s:else>
-												<s:select list="%{#__opField.sourceList}"
-												listKey="key" listValue="value"
-												name="search.result[%{#__Status.index}][%{#__PartStatus.index}].%{#__opField.name}"
-												value="%{#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]}"
-												headerKey="" headerValue="无"
-												style="text-align:center;border:0px;height:100%;width:-webkit-fill-available;" theme="simple" />
 											</s:else>
 										</td>
 									</s:else>

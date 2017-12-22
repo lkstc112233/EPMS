@@ -149,7 +149,15 @@ public class Field implements Comparable<Field>{
 		return Field.getField(Base.getClassForName(ss[0]),ss[1]);
 	}
 	
-	
+	public Class<?> getFieldClass(){
+		return this.field==null?null:this.field.getType();
+	}
+	public boolean isFieldClassBoolean() {
+		return Boolean.class.equals(this.getFieldClass());
+	}
+	public boolean isFieldClassBool() {
+		return boolean.class.equals(this.getFieldClass());
+	}
 
 	/**
 	 * 获取该Field的source对应列表
@@ -164,7 +172,22 @@ public class Field implements Comparable<Field>{
 	public List<Pair> getSourceList(){
 		if(MapSourceList.containsKey(this)) return MapSourceList.get(this);
 		Field sourceField=this.source();
-		if(sourceField==null) return null;
+		if(sourceField==null) {
+			if(this.isFieldClassBoolean()) {
+				List<Pair> res=new ArrayList<Pair>();
+				res.add(new Pair(true,"true"));
+				res.add(new Pair(false,"false"));
+				MapSourceList.put(this,res);
+				return res;
+			}else if(this.isFieldClassBool()) {
+				List<Pair> res=new ArrayList<Pair>();
+				res.add(new Pair(true,"true"));
+				res.add(new Pair(false,"false"));
+				MapSourceList.put(this,res);
+				return res;
+			}else
+				return null;
+		}
 		List<Pair> res=new ArrayList<Pair>();
 		for(Base b:this.sourceList())
 			res.add(new Pair(sourceField.get(b),b.getDescription()));

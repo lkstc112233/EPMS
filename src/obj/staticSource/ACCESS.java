@@ -23,22 +23,22 @@ public class ACCESS extends Base{
 	private Timestamp time1;
 	@SQLField(value="终止时间",weight=12)
 	private Timestamp time2;
-	@SQLField(value="学生权限",weight=13)
+	@SQLField(value="学生权限",weight=13,notNull=true)
 	private boolean xs=false;
-	@SQLField(value="教育实习联系人权限",weight=14)
+	@SQLField(value="教育实习联系人权限",weight=14,notNull=true)
 	private boolean lxr=false;
-	@SQLField(value="教师权限",weight=16)
+	@SQLField(value="教师权限",weight=16,notNull=true)
 	private boolean js=false;
-	@SQLField(value="教务处权限",weight=17)
+	@SQLField(value="教务处权限",weight=17,notNull=true)
 	private boolean jwc=true;
-	@SQLField(value="领导权限",weight=18)
+	@SQLField(value="领导权限",weight=18,notNull=true)
 	private boolean ld=false;
 	
 	public void setId(int a){this.id=a;}
 	public void setId(String a) {this.id=Field.s2i(a,-1);}
 	public int getId() {return this.id;}
 	public String getProject() {return project;}
-	public void setProject(String a) {this.project=Field.s2S(a);}
+	public void setProject(String a) {this.project=Field.s2s(a,"");}
 	public String getActionClass(){return this.actionClass;}
 	public void setActionClass(String a){this.actionClass=Field.s2S(a);}
 	public Timestamp getTime1() {return time1;}
@@ -70,7 +70,7 @@ public class ACCESS extends Base{
 	public void setJs(String a){this.js=Field.s2b(a,false);}
 	public boolean getJwc() {return jwc;}
 	public void setJwc(boolean jwc) {this.jwc = jwc;}
-	public void setJwc(String a){this.jwc=Field.s2b(a,false);}
+	public void setJwc(String a){this.jwc=Field.s2b(a,true);}
 	public boolean getLd() {return ld;}
 	public void setLd(boolean ld) {this.ld = ld;}
 	public void setLd(String a){this.ld=Field.s2b(a,false);}
