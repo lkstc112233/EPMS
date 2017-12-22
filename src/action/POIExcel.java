@@ -649,11 +649,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 	@Override
 	public String createPlanMedia(int year, ListOfPracticeBaseAndStudents list, boolean[][][] media, OutputStream out)
 			throws IOException {
-		final Integer status = null;//特殊调剂
-		return createPlanMedia(year,list,media,status,out);
-	}
-	public String createPlanMedia(int year, ListOfPracticeBaseAndStudents list, boolean[][][] media, Integer status, OutputStream out)
-			throws IOException {
+		final Boolean status=false;
 		List<Major> majors=new ArrayList<Major>();
 		try {
 			majors.addAll(Base.list(Major.class));
@@ -665,6 +661,8 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			Major m=null;
 			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
 				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
+					if(status!=null && !(status^pair.getPracticeBase().getStatus()))
+						continue;
 					for(Student stu:pair.getStudents()) {
 						if(majors.get(i).getName().equals(stu.getMajor())) {
 							m=majors.get(i);
@@ -763,6 +761,8 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 				int rStart=r;
 				int pairIndex=-1;
 				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) { pairIndex++;
+					if(status!=null && !(status^pair.getPracticeBase().getStatus()))
+						continue;
 					row=st.createRow(r);
 					setHeight(row,-1);
 					int num[]=new int[majors.size()];
