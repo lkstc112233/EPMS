@@ -37,6 +37,7 @@ public interface SpecialExcelIO {
 	public abstract String createPlanDesign(
 			int year,
 			ListOfPracticeBaseAndStudents list,
+			Boolean status,
 			OutputStream stream)
 					throws IOException;
 

@@ -370,7 +370,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 	}
 	
 	@Override
-	public String createPlanDesign(int year, ListOfPracticeBaseAndStudents list, OutputStream out)
+	public String createPlanDesign(int year, ListOfPracticeBaseAndStudents list,Boolean status, OutputStream out)
 			throws IOException {
 		List<Major> majors=new ArrayList<Major>();
 		try {
@@ -383,6 +383,8 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			Major m=null;
 			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
 				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
+					if(status!=null && !(status^pair.getPracticeBase().getStatus()))
+						continue;
 					for(Student stu:pair.getStudents()) {
 						if(majors.get(i).getName().equals(stu.getMajor())) {
 							m=majors.get(i);
@@ -400,6 +402,8 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			numbers[i]=0;
 			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
 				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
+					if(status!=null && !(status^pair.getPracticeBase().getStatus()))
+						continue;
 					boolean hx=pair.getPracticeBase().getHx();
 					for(Student stu:pair.getStudents()) {
 						if(majors.get(i).getName().equals(stu.getMajor())) {
@@ -480,6 +484,8 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			int gNumber[]=new int[majors.size()];
 			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
 				PracticeBase pb=rp.getList().get(0).getPracticeBase();
+				if(status!=null && !(status^pb.getStatus()))
+					continue;
 				int statu=0;
 				if(gProvince==null) statu=1;
 				else if(gHx ^ pb.getHx()) statu=2;

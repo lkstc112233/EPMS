@@ -38,6 +38,12 @@ public class ExportPlanDesign extends ActionSupport{
 		return Manager.tips("该项目不可用!","jump");
 	}
 
+
+	private Boolean status=false;
+		public void setStatus(String a){this.status=Field.s2B(a);}
+		public Boolean getStatus(){return status;}
+		
+		
 	/*
 	 * 下载模板
 	 */
@@ -52,8 +58,8 @@ public class ExportPlanDesign extends ActionSupport{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private ByteArrayOutputStream downloadOutputStream=null;
-	protected String downloadByIO(SpecialIO io,int year,ListOfPracticeBaseAndStudents list,OutputStream stream) throws IOException{
-		return io.createPlanDesign(year,list,stream);
+	protected String downloadByIO(SpecialIO io,int year,ListOfPracticeBaseAndStudents list,Boolean status,OutputStream stream) throws IOException{
+		return io.createPlanDesign(year,list,status,stream);
 	}
 	public String download(){//下载模板
 		System.out.println(">> ExportPlanDesign:download >");
@@ -63,7 +69,8 @@ public class ExportPlanDesign extends ActionSupport{
 		this.downloadOutputStream=new ByteArrayOutputStream();
 		try{
 			String fileName=this.downloadByIO((SpecialIO)Base.io(),
-					this.getAnnual().getYear(),this.practiceBaseAndStudents,downloadOutputStream);
+					this.getAnnual().getYear(),this.practiceBaseAndStudents,status,
+					downloadOutputStream);
 			this.setDownloadFileName(fileName);//设置下载文件名称
 			this.downloadOutputStream.flush();
 		}catch(IOException e){

@@ -100,9 +100,9 @@ public class POI implements SQLIO, SpecialIO{
 		return word.createPracticeBaseConsultationLetter(year, pb, majorName, stream);
 	}
 	@Override
-	public String createPlanDesign(int year, ListOfPracticeBaseAndStudents list, OutputStream stream)
+	public String createPlanDesign(int year, ListOfPracticeBaseAndStudents list,Boolean status, OutputStream stream)
 			throws IOException {
-		return excel.createPlanDesign(year, list, stream);
+		return excel.createPlanDesign(year, list,status, stream);
 	}
 	@Override
 	public String createPlanMedia(int year, ListOfPracticeBaseAndStudents list, boolean[][][] media,
