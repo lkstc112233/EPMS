@@ -72,10 +72,13 @@ public class ExportAllPracticeBaseConsultationLetter extends ActionSupport{
 				this.getAnnual().getYear(),majorName);
 		this.setDownloadFileName(fileName);
 		//准备文件内容
+		final Boolean status=false;
 		Map<String,OutputStream> files=new HashMap<String,OutputStream>();
 		for(ListOfPracticeBaseAndStudents.RegionPair rp:this.practiceBaseAndStudents.getList()) {
 			for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
 				PracticeBase pb=pair.getPracticeBase();
+				if(status!=null && !(status^pb.getStatus()))
+					continue;
 				System.out.println(">> ExportAllPracticeBaseConsultationLetter:download > create download file. practiceBaseName="+pb.getName());
 				OutputStream out=new ByteArrayOutputStream();
 				try{
