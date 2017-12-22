@@ -161,7 +161,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 	}
 	
 	@Override
-	public String createStudentList(int year,PracticeBase pb, String majorName, Integer status, OutputStream out) throws IOException {
+	public String createStudentList(int year,PracticeBase pb, String majorName, OutputStream out) throws IOException {
 		if(pb==null) throw new IOException("大区为空!");
 		if(majorName==null || majorName.isEmpty()) majorName=null;
 		Region region;
@@ -192,10 +192,9 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 		}catch(IllegalArgumentException | SQLException | InstantiationException e) {
 			System.err.println("读取实习生列表失败！");
 		}
-		String name=String.format("%d年[%s]%s免费师范生教育实习学生名单%s",
+		String name=String.format("%d年[%s]%s免费师范生教育实习学生名单",
 				year,pb.getName(),
-				(majorName==null?"":("("+majorName+")")),
-				(status==0?"":"(特殊调剂)")
+				(majorName==null?"":("("+majorName+")"))
 				);
 		try(Workbook wb=new XSSFWorkbook();){
 			Sheet st=wb.createSheet("学生名单");
