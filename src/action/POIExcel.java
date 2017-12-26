@@ -483,9 +483,11 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			int gCnt=1;
 			int gNumber[]=new int[majors.size()];
 			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
-				PracticeBase pb=rp.getList().get(0).getPracticeBase();
-				if(status!=null && !(status^pb.getStatus()))
-					continue;
+				int index=0;
+				PracticeBase pb;
+				do{
+					pb=rp.getList().get(index++).getPracticeBase();
+				}while(status!=null && (status^pb.getStatus()));
 				int statu=0;
 				if(gProvince==null) statu=1;
 				else if(gHx ^ pb.getHx()) statu=2;
@@ -544,6 +546,8 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 				}
 				int rStart=r;
 				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
+					if(status!=null && (status^pair.getPracticeBase().getStatus()))
+						continue;
 					row=st.createRow(r);
 					setHeight(row,-1);
 					int num[]=new int[majors.size()];
@@ -703,8 +707,9 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 		//	CellStyle styleBigSum=POIExcel.getCellStyle(wb,"宋体",10,true,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,IndexedColors.CORAL.getIndex());
 		//	CellStyle styleSmallSum=POIExcel.getCellStyle(wb,"宋体",10,true,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,IndexedColors.LIGHT_YELLOW.getIndex());
 			CellStyle styleTitle=POIExcel.getCellStyle(wb,"宋体",10,true,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,null);
+			CellStyle styleTitleMeida=POIExcel.getCellStyle(wb,"宋体",10,true,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,IndexedColors.ROSE.getIndex());
 			CellStyle styleContent=POIExcel.getCellStyle(wb,"宋体",10,false,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,null);
-			CellStyle styleContentMeida=POIExcel.getCellStyle(wb,"宋体",10,false,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,IndexedColors.RED.getIndex());
+			CellStyle styleContentMeida=POIExcel.getCellStyle(wb,"宋体",10,false,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,IndexedColors.ROSE.getIndex());
 			//设置列数
 			final int column=4+majors.size();
 			Row row;
@@ -729,7 +734,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 						majors.get(i-4).getSubject());
 				setWidth(st,i,i==0?4:i==1?3:
 					i==2?26:i==3?5:4);
-				cell.setCellStyle(i==3?styleContentMeida:styleTitle);
+				cell.setCellStyle(styleTitle);
 			}
 			r++;
 			/*第三行统计设备*/row=st.createRow(r);
@@ -737,14 +742,10 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			for(int i=0;i<column;i++) {
 				cell=row.createCell(i);
 			//	cell.setCellType(CellType.STRING);
-				cell.setCellStyle(i==3?styleContentMeida:styleTitle);
+				cell.setCellStyle(i>=3?styleTitleMeida:styleTitle);
 				if(i<3) {
 					if(i==2) st.addMergedRegion(new CellRangeAddress(r,r,0,2));
 					if(i>0) continue;
-				}
-				if(i==column-1) {
-					st.addMergedRegion(new CellRangeAddress(r-1,r,i,i));
-					continue;
 				}
 				if(i<3)
 					cell.setCellValue("数字媒体设备总计"+mediaAll+"套");
@@ -755,11 +756,11 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			}
 			r++;
 			/*第四行开始每个专业实习生列表*/
-			int gCnt=1;
 			int rpIndex=-1;
 			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) { rpIndex++;
 				int rStart=r;
 				int pairIndex=-1;
+				int gCnt=1;
 				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) { pairIndex++;
 					if(status!=null && (status^pair.getPracticeBase().getStatus()))
 						continue;
@@ -775,10 +776,10 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 					for(int i=0;i<column;i++) {
 						cell=row.createCell(i);
 					//	cell.setCellType(CellType.STRING);
-						if(i>5)
+						if(i>=4)
 							cell.setCellStyle(media[i-4][rpIndex][pairIndex]?styleContentMeida:styleContent);
 						else
-							cell.setCellStyle(i==4?styleContentMeida:styleContent);
+							cell.setCellStyle(i==3?styleContentMeida:styleContent);
 						if(i==0 && r>rStart) continue;
 						if(i==0)
 							cell.setCellValue(rp.getRegion().getName());
@@ -877,7 +878,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			for(Map.Entry<Integer,Set<InnerPerson>> entry:teachers.entrySet()) {
 				for(InnerPerson t:entry.getValue()) {
 					/*学生内容*/row=st.createRow(r);
-					row.setHeight((short)-1);
+					setHeight(row,-1);
 					boolean first=true;
 					for(int i=0;i<column;i++) {
 						cell=row.createCell(i);

@@ -46,7 +46,7 @@ public class ExportPlanMedia extends ActionSupport{
 	
 	
 
-	private boolean[][][] getMedia(Integer status) throws IllegalArgumentException, InstantiationException, SQLException {
+	private boolean[][][] getMedia() throws IllegalArgumentException, InstantiationException, SQLException {
 		List<Major> majors=new ArrayList<Major>();
 		majors.addAll(Base.list(Major.class));
 		List<Major> tmp=new ArrayList<Major>();
@@ -67,7 +67,7 @@ public class ExportPlanMedia extends ActionSupport{
 		for(int i=0;i<media.length;i++) {
 			media[i]=new boolean[this.practiceBaseAndStudents.getList().size()][];
 			for(int j=0;j<media[i].length;j++) {
-				media[i][j]=new boolean[this.practiceBaseAndStudents.getList().get(i).getList().size()];
+				media[i][j]=new boolean[this.practiceBaseAndStudents.getList().get(j).getList().size()];
 				for(int k=0;k<media[i][j].length;k++)
 					media[i][j][k]=false;
 			}
@@ -109,9 +109,8 @@ public class ExportPlanMedia extends ActionSupport{
 		if(this.practiceBaseAndStudents==null)
 			return Manager.tips("该项目未初始化!","jump");
 		boolean[][][] media;
-		final Integer status=null;
 		try {
-		media=getMedia(status);
+			media=getMedia();
 		}catch(IllegalArgumentException | InstantiationException | SQLException e) {
 			this.downloadOutputStream=null;
 			return Manager.tips("无法读取媒体设备规划！",e,"jump");
