@@ -71,8 +71,9 @@ public class ExportAllStudentList extends ActionSupport{
 		if(this.practiceBaseAndStudents==null)
 			return Manager.tips("该项目未初始化!","jump");
 		//设置下载文件名称
-		String fileName=String.format("%d年免费师范生教育实习学生名单.zip",
-				this.getAnnual().getYear(),majorName);
+		String fileName=String.format("%d年免费师范生教育实习学生名单%s.zip",
+				this.getAnnual().getYear(),majorName,
+				status==null?"(含特殊基地)":status?"(特殊基地)":"");
 		this.setDownloadFileName(fileName);
 		//准备文件内容
 		Map<String,OutputStream> files=new HashMap<String,OutputStream>();

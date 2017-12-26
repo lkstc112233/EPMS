@@ -416,8 +416,8 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			allNumber+=numbers[i];
 			hxAllNumber+=hxNumber[i];
 		}
-		String name=String.format("%d年免费师范生教育实习布局规划",
-				year);
+		String name=String.format("%d年免费师范生教育实习布局规划%s",
+				year,status==null?"(含特殊基地)":status?"(特殊基地)":"");
 		try(Workbook wb=new XSSFWorkbook();){
 			Sheet st=wb.createSheet("布局规划");
 			//列：大区、序号、实习基地名称、总人数、各学科人数、指导教师列表
