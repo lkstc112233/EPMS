@@ -103,6 +103,7 @@ public class StudentGroupLeaderRecommend extends ActionSupport{
 			return Manager.tips("读取实习专业列表失败!",NONE);
 		Manager.saveSession(SessionListKey,this.practiceBaseAndStudents);
 		System.out.println(">> StudentGroupLeaderRecommend:display <NONE");
+		this.choose[2]=null;
 		return NONE;
 	}
 	
