@@ -108,6 +108,15 @@ public class POIWord implements SpecialWordIO{
 						//	para.removeRun(i);
 							runs.get(i).setText("",0);
 						}*/
+					firstRun=null;
+					for(int i=seg.getBeginRun();i<=seg.getEndRun();i++) {
+						if(runs.get(i).getFontSize()>0) {
+							firstRun=runs.get(i);
+							break;
+						}
+					}
+					if(firstRun==null)
+						System.err.println("Cannot get the font size!");
 					for(int i=seg.getBeginRun();i<=seg.getEndRun();i++)
 						runs.get(i).setText("",0);
 					String[] replacedSplit=replaced.split("\\n");
