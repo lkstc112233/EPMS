@@ -224,7 +224,13 @@
 								<s:if test="fieldsDisplay[#__PartStatus.index][#__opFieldStatus.index] == false">
 								</s:if><s:else>
 									<td style="white-space: nowrap;">
-										<s:property value="#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]" />
+										<s:if test="#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index].equals(\"✔\")">
+											<div style="color:green;">✔</div>
+										</s:if><s:elseif test="#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index].equals(\"✘\")">
+											<div style="color:red;">✘</div>
+										</s:elseif><s:else>
+											<s:property value="#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]" />
+										</s:else>
 									</td>
 								</s:else>
 							</s:iterator>

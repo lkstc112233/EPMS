@@ -69,10 +69,10 @@ public abstract class Base extends Object implements Comparable<Base>, Cloneable
 		return Base.getField(this.getClass(),fieldName);
 	}
 	
-	public final Object[] getFieldsValue(){
+	public final String[] getFieldsValue(){
 		Field[] fs=this.getFields();
-		Object[] res=new Object[fs.length];
-		for(int i=0;i<fs.length;i++) res[i]=fs[i].get(this);
+		String[] res=new String[fs.length];
+		for(int i=0;i<fs.length;i++) res[i]=Field.o2s(fs[i].get(this),"","✔","✘");
 		return res;
 	}
 	/**

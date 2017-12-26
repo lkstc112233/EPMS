@@ -175,14 +175,14 @@ public class Field implements Comparable<Field>{
 		if(sourceField==null) {
 			if(this.isFieldClassBoolean()) {
 				List<Pair> res=new ArrayList<Pair>();
-				res.add(new Pair(true,"true"));
-				res.add(new Pair(false,"false"));
+				res.add(new Pair(true,"✔"));
+				res.add(new Pair(false,"✘"));
 				MapSourceList.put(this,res);
 				return res;
 			}else if(this.isFieldClassBool()) {
 				List<Pair> res=new ArrayList<Pair>();
-				res.add(new Pair(true,"true"));
-				res.add(new Pair(false,"false"));
+				res.add(new Pair(true,"✔"));
+				res.add(new Pair(false,"✘"));
 				MapSourceList.put(this,res);
 				return res;
 			}else
