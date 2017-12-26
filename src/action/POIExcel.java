@@ -383,7 +383,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			Major m=null;
 			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
 				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
-					if(status!=null && !(status^pair.getPracticeBase().getStatus()))
+					if(status!=null && (status^pair.getPracticeBase().getStatus()))
 						continue;
 					for(Student stu:pair.getStudents()) {
 						if(majors.get(i).getName().equals(stu.getMajor())) {
@@ -402,7 +402,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			numbers[i]=0;
 			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
 				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
-					if(status!=null && !(status^pair.getPracticeBase().getStatus()))
+					if(status!=null && (status^pair.getPracticeBase().getStatus()))
 						continue;
 					boolean hx=pair.getPracticeBase().getHx();
 					for(Student stu:pair.getStudents()) {
@@ -661,7 +661,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			Major m=null;
 			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
 				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
-					if(status!=null && !(status^pair.getPracticeBase().getStatus()))
+					if(status!=null && (status^pair.getPracticeBase().getStatus()))
 						continue;
 					for(Student stu:pair.getStudents()) {
 						if(majors.get(i).getName().equals(stu.getMajor())) {
@@ -761,7 +761,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 				int rStart=r;
 				int pairIndex=-1;
 				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) { pairIndex++;
-					if(status!=null && !(status^pair.getPracticeBase().getStatus()))
+					if(status!=null && (status^pair.getPracticeBase().getStatus()))
 						continue;
 					row=st.createRow(r);
 					setHeight(row,-1);
@@ -814,7 +814,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 		try{
 			for(Student stu:Base.list(Student.class,new Restraint(Field.getField(Student.class,"year"),year))) try{
 				PracticeBase pb=new PracticeBase(stu.getPracticeBase());
-				if(status!=null && !(status^pb.getStatus()))
+				if(status!=null && (status^pb.getStatus()))
 					continue;
 				InnerPerson t=new InnerPerson(stu.getTeacherId());
 				School s=new School(t.getSchool());
@@ -907,6 +907,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 	
 	@Override
 	public String createSuperviseList(int year,ListOfRegionAndPracticeBaseAndInnerPerson list, OutputStream out) throws IOException {
+		final Boolean status=false;
 		String name=String.format("%d年免费师范生教育实习督导任务表",
 				year);
 		try(Workbook wb=new XSSFWorkbook();){
@@ -959,6 +960,8 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 				String[] mergeId=new String[] {null,null,null,null};
 				boolean[] merge=new boolean[] {false,false,false,false};
 				for(ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair pair:rp.getList()) {
+					if(status!=null && (status^pair.getPracticeBase().getStatus()))
+						continue;
 					row=st.createRow(r);
 					setHeight(row,-1);
 					InnerPerson[] inner=new InnerPerson[] {pair.getLeader(),null,null,null};

@@ -77,7 +77,7 @@ public class ExportAllPracticeBaseConsultationLetter extends ActionSupport{
 		for(ListOfPracticeBaseAndStudents.RegionPair rp:this.practiceBaseAndStudents.getList()) {
 			for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
 				PracticeBase pb=pair.getPracticeBase();
-				if(status!=null && !(status^pb.getStatus()))
+				if(status!=null && (status^pb.getStatus()))
 					continue;
 				System.out.println(">> ExportAllPracticeBaseConsultationLetter:download > create download file. practiceBaseName="+pb.getName());
 				OutputStream out=new ByteArrayOutputStream();

@@ -75,7 +75,7 @@ public class ExportPracticeBaseConsultationLetter extends ActionSupport{
 		if(pair==null)
 			return Manager.tips("实习基地名称有误!","jump");
 		final Boolean status=false;
-		if(status!=null && !(status^pair.getPracticeBase().getStatus()))
+		if(status!=null && (status^pair.getPracticeBase().getStatus()))
 			return Manager.tips("实习基地是非正式实习基地，不能提供商洽函！","jump");
 		System.out.println(">> ExportPracticeBaseConsultationLetter:download > create download file.");
 		downloadOutputStream=new ByteArrayOutputStream();
