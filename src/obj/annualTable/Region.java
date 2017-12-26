@@ -176,6 +176,13 @@ public class Region extends AnnualBase{
 		if(region==null) return;
 		if(!region.getClass().equals(this.getClass()))
 			throw new IllegalArgumentException("类型不同！");
+		//先更新studentGroupLearderId
+		if(((Region)region).getStudentGroupLeaderId()==null&&this.getStudentGroupLeaderId()!=null
+				||!((Region)region).getStudentGroupLeaderId().equals(this.getStudentGroupLeaderId())) {
+			this.setStudentGroupLeaderId(((Region)region).getStudentGroupLeaderId());
+			this.updateStudentGroupLeaderId();
+		}
+		//再更新其他的
 		StringBuilder sb=new StringBuilder();
 		sb.append("UPDATE ");
 		sb.append(this.getSQLTableName());
