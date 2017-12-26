@@ -248,7 +248,7 @@
 	
 	
 <% //跳转到当前操作的条目,choose[0]表示块index、choose[1]表示行号
-Object tmp=pageContext.findAttribute("choose");
+Object tmp=pageContext.findAttribute("jumpX");
 Integer x=null;
 if(tmp!=null){
 	if(tmp instanceof Integer[])

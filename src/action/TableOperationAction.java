@@ -23,6 +23,8 @@ public abstract class TableOperationAction extends ActionSupport{
 	protected Search search=null;//查询信息
 	private boolean[][] fieldsDisplay;//显示的Field，与search同等的设置和释放资源
 	private Integer[] choose;//操作项
+	private Integer jumpX;//操作项
+		public Integer getJumpX() {return this.jumpX;}
 	private Base operateBase;//当为update|delete时，此处存放旧数据
 	
 	public Search getSearch(){return this.search;}
@@ -111,6 +113,8 @@ public abstract class TableOperationAction extends ActionSupport{
 			}
 		}
 		this.setup();
+		if(choose[1]!=null && choose[1]>=0)
+			jumpX=choose[1];
 		return NONE;
 	}
 	
@@ -130,6 +134,7 @@ public abstract class TableOperationAction extends ActionSupport{
 					e,NONE);
 		}
 		Manager.removeSession(SessionChooseKey);
+		jumpX=this.choose[1];
 		this.choose=null;
 		System.out.println(">> TableOperationAction:execute > resultSet count="+this.search.getResult().size());
 		return display();
@@ -148,6 +153,7 @@ public abstract class TableOperationAction extends ActionSupport{
 			return Manager.tips("操作选择错误！",
 					NONE);
 		Base newBase=null;
+		jumpX=this.choose[1];
 		try{
 			newBase=this.search.getResult().get(this.choose[1])[this.choose[0]];
 		}catch(Exception e){
