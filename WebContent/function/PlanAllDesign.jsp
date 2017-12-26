@@ -58,7 +58,15 @@
 							</td>
 						</s:if>
 						<td style="text-align:left;padding-left:10px;">
-							<s:property value="#__practiceBaseRow.name" />
+							<s:if test="#__practiceBaseRow.status">
+								<div style="color:red;">
+									<s:property value="#__practiceBaseRow.name" />
+								</div>
+							</s:if><s:else>
+								<div>
+									<s:property value="#__practiceBaseRow.name" />
+								</div>
+							</s:else>
 						</td>
 						<s:iterator value="majors" status="__majorStatus">
 							<td style="width:20px;padding:0px;">

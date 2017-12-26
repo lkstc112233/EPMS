@@ -59,7 +59,15 @@
 						</td>
 					</s:if>
 					<td style="text-align:left;padding-left:10px;">
-						<s:property value="#__practiceBaseRow.name" />
+						<s:if test="#__practiceBaseRow.status">
+							<div style="color:red;">
+								<s:property value="#__practiceBaseRow.name" />
+							</div>
+						</s:if><s:else>
+							<div>
+								<s:property value="#__practiceBaseRow.name" />
+							</div>
+						</s:else>
 					</td>
 					<td style="font-weight:900;background:rgba(255,150,150,0.5);">
 						<s:property value="mediaPracticeBaseCounts[#__regionStatus.index][#__practiceBaseStatus.index]" />

@@ -29,7 +29,7 @@
 	<table width="80%"><tbody>
 	<% boolean[] PracticeBaseFieldDisplay=new boolean[]{
 			false,true,true,true,true,
-			false,true,
+			false,true,true,
 			false,false,false,true}; %>
 	<s:iterator value="regionAndPracticeBase.list" var="__Row" status="__Status">
 		<!-- ########### 大区信息 ########### -->
@@ -89,7 +89,21 @@
 						<% }else{ %>
 						<td style="word-wrap:break-word;word-break:break-all;display:none;">
 						<% } %>
-							<s:property value="#__Col" />
+							<s:if test="#__Col.equals(\"✔\")">
+								<div style="font-size:26px;color:green;">✔</div>
+							</s:if><s:elseif test="#__Col.equals(\"✘\")">
+								<div style="color:red;">✘</div>
+							</s:elseif><s:else>
+								<s:if test="#__pbsRow.status">
+									<div style="color:red;">
+										<s:property value="#__Col" />
+									</div>
+								</s:if><s:else>
+									<div>
+										<s:property value="#__Col" />
+									</div>
+								</s:else>
+							</s:else>
 						</td>
 					</s:iterator>
 				</tr></s:iterator>
@@ -125,7 +139,21 @@
 						<% }else{ %>
 						<td style="word-wrap:break-word;word-break:break-all;display:none;">
 						<% } %>
-							<s:property value="#__Col" />
+							<s:if test="#__Col.equals(\"✔\")">
+								<div style="font-size:26px;color:green;">✔</div>
+							</s:if><s:elseif test="#__Col.equals(\"✘\")">
+								<div style="color:red;">✘</div>
+							</s:elseif><s:else>
+								<s:if test="#__pbsRow.status">
+									<div style="color:red;">
+										<s:property value="#__Col" />
+									</div>
+								</s:if><s:else>
+									<div>
+										<s:property value="#__Col" />
+									</div>
+								</s:else>
+							</s:else>
 						</td>
 					</s:iterator>
 				</tr></s:iterator>

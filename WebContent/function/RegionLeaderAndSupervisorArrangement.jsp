@@ -46,7 +46,13 @@
 						</td>
 					</s:if>
 					<td style="width:160px;text-align:left;padding-left:10px;">
-						<s:property value="#__practiceBaseRow.name" />
+						<s:if test="#__practiceBaseRow.status">
+							<span style="color:red;">
+								<s:property value="#__practiceBaseRow.name" />
+							</span>
+						</s:if><s:else>
+							<s:property value="#__practiceBaseRow.name" />
+						</s:else>
 					</td>
 					<!-- 总领队 -->
 					<s:if test="#__practiceBaseStatus.index == 0">
@@ -76,7 +82,8 @@
 						</s:else>
 					</td></s:iterator>
 				</tr>
-			</s:iterator></s:iterator>
+			</s:iterator>
+			</s:iterator>
 		</tbody></table>
 		<table width="300px"><tbody>
 			<tr><td>

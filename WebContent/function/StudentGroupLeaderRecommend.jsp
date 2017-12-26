@@ -40,7 +40,7 @@
 			false,true,true,false,false,
 			false,false,false,
 			true,true,true,false,
-			false,false,false,false,false};
+			false,false,false,false};
 		int i; %>
 	<% String majorName=obj.Field.o2S(pageContext.findAttribute("majorName")); %>
 		
@@ -66,7 +66,15 @@
 			</s:if>
 			<td colspan="100">
 				<div class="listHeader" style="width:80%;background:linear-gradient(to right,#0071bc,rgba(0,0,0,0));border:0;">
-					<s:property value="#__Row.practiceBase.name" />
+					<s:if test="#__Row.practiceBase.status">
+						<span style="float:left;color:red;">
+							<s:property value="#__Row.practiceBase.name" />
+						</span>
+					</s:if><s:else>
+						<span style="float:left;">
+							<s:property value="#__Row.practiceBase.name" />
+						</span>
+					</s:else>
 					<span style="font-size:12px;margin-left:20px;">
 						<s:if test="#__Row.practiceBase.hx">
 							回生源地实习基地
