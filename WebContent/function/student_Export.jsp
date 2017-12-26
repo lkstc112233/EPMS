@@ -40,6 +40,7 @@
 			<s:form action="function_student_ExportAllStudentList_download" method="post" theme="simple">
 				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 				<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
+				<s:hidden name="status" value="false" theme="simple"/>
 				<s:submit value="实习生名单" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>
@@ -54,10 +55,17 @@
 			</s:form>
 			</span>
 			<span style="float:left;margin-left:20px;">
+			<s:form action="function_student_ExportStudentInsuranceList_download" method="post" theme="simple">
+				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
+				<s:submit value="投保确认单" theme="simple"
+				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
+			</s:form>
+			</span>
+			<span style="float:left;margin-left:20px;">
 			<s:form action="function_student_ExportAllPracticeBaseConsultationLetter_download" method="post" theme="simple">
 				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 				<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
-				<s:submit value="所有商洽函" theme="simple"
+				<s:submit value="基地商洽函" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>
 			</span>
@@ -77,9 +85,17 @@
 			</s:form>
 			</span>
 			<span style="float:left;margin-left:20px;">
-			<s:form action="function_student_ExportTeacherList_download" method="post" theme="simple">
+			<s:form action="function_student_ExportPlanMedia_download" method="post" theme="simple">
 				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 				<s:hidden name="status" value="" theme="simple"/>
+				<s:submit value="设备发放规划" theme="simple"
+				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
+			</s:form>
+			</span>
+			<span style="float:left;margin-left:20px;">
+			<s:form action="function_student_ExportTeacherList_download" method="post" theme="simple">
+				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
+				<s:hidden name="status" value="false" theme="simple"/>
 				<s:submit value="指导教师名单" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>
@@ -95,7 +111,7 @@
 			false,true,true,true,true,
 			true,false,false,
 			true,true,true,false,
-			false,false,false,false,false};
+			false,false,false,false};
 		int i; %>
 		
 	<!-- ###### 已分配实习生 ###### -->
@@ -115,14 +131,20 @@
 						rp.getAllStudentsCount()+rp.getSize()*3-1); %>
 				<td rowspan="${_rowspan}" class="listHeader"
 				style="width:30px;background:#0071bc;text-indent:0px;text-align:center;" >
-					<s:property value="#__rpRow.region.name" />
+					<s:property value="#__Row.region.name" />
 				</td>
 			</s:if>
 			<td colspan="100">
 				<div class="listHeader" style="width:100%;background:linear-gradient(to right,#0071bc,rgba(0,0,0,0));border:0;">
-					<span style="float:left;">
-						<s:property value="#__Row.practiceBase.name" />
-					</span>
+					<s:if test="#__Row.practiceBase.status">
+						<span style="float:left;color:red;">
+							<s:property value="#__Row.practiceBase.name" />
+						</span>
+					</s:if><s:else>
+						<span style="float:left;">
+							<s:property value="#__Row.practiceBase.name" />
+						</span>
+					</s:else>
 					<span style="float:left;font-size:12px;margin-left:20px;">
 						<s:if test="#__Row.practiceBase.hx">
 							回生源地实习基地
@@ -139,17 +161,19 @@
 							<s:hidden name="practiceBaseName" value="%{#__Row.practiceBase.name}" theme="simple"/>
 							<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
 							<s:submit value="下载实习生名单" theme="simple"
-							style="width:auto;background:white;border:double 3px #0071bc;font-weight:600;height:25px;"/>
+							style="width:auto;background:rgba(255,255,255,0.85);border:double 3px #0071bc;font-weight:600;height:25px;"/>
 						</s:form>
 					</span>
 					<span style="float:left;font-size:12px;margin-left:5px;margin-top:5px;">
-						<s:form action="function_student_ExportPracticeBaseConsultationLetter_download" method="post" theme="simple">
-							<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
-							<s:hidden name="practiceBaseName" value="%{#__Row.practiceBase.name}" theme="simple"/>
-							<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
-							<s:submit value="下载商洽函" theme="simple"
-							style="width:auto;background:white;border:double 3px #0071bc;font-weight:600;height:25px;"/>
-						</s:form>
+						<s:if test="#__Row.practiceBase.status==false">
+							<s:form action="function_student_ExportPracticeBaseConsultationLetter_download" method="post" theme="simple">
+								<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
+								<s:hidden name="practiceBaseName" value="%{#__Row.practiceBase.name}" theme="simple"/>
+								<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
+								<s:submit value="下载商洽函" theme="simple"
+								style="width:auto;background:rgba(255,255,255,0.85);border:double 3px #0071bc;font-weight:600;height:25px;"/>
+							</s:form>
+						</s:if>
 					</span>
 				</div>
 			</td>
@@ -217,7 +241,7 @@
 				style="width:100%;height:100%;border:0;background:#00000000;color:black;font-size:14px;" theme="simple" />
 			</td>
 			<!-- 推荐大组长 --><td style="width:36px;padding:0;border:0">
-				<s:if test="#__studentRow.recommend"><!-- 已推荐 -->
+				<s:if test="#__studentRow.id==#__Row.region.studentGroupLeaderId"><!-- 已推荐 -->
 					<s:submit value="✔"
 						style="padding:0;margin:0;border:3px black double;background:gold;width:30px;height:30px;font-size:30px;line-height:5px;" theme="simple" />
 				</s:if><s:else><!-- 未推荐 -->
