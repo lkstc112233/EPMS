@@ -79,7 +79,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			CellStyle styleContent=POIExcel.getCellStyle(wb,"宋体",10,false,HorizontalAlignment.CENTER,BorderStyle.THIN,false,null);
 			for(int r=0,rmax=this.getTitleRowCounts(clazz);r<rmax;r++){
 				Row row=st.createRow(r);
-				row.setHeight((short)-1);
+				setHeight(row,-1);
 				int i=-1;
 				for(Field f:displayFields) if(!f.autoInit()){
 					Cell cell=row.createCell(++i);
@@ -245,7 +245,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 				r++;
 				for(InnerPerson t:entry.getValue().getKey()) {
 					/*指导教师*/row=st.createRow(r);
-					row.setHeight((short)-1);
+					setHeight(row,-1);
 					cell=row.createCell(0);
 					cell.setCellType(CellType.STRING);
 					cell.setCellValue(String.format("指导老师：%s  %s  %s",
@@ -256,7 +256,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 					r++;
 				}
 				/*学生抬头*/row=st.createRow(r);
-				row.setHeight((short)-1);
+				setHeight(row,-1);
 				for(int i=0;i<column;i++) {
 					cell=row.createCell(i);
 					cell.setCellType(CellType.STRING);
@@ -267,7 +267,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 				r++;
 				for(Student s:entry.getValue().getValue()){
 					/*学生内容*/row=st.createRow(r);
-					row.setHeight((short)-1);
+					setHeight(row,-1);
 					boolean groupLeader=
 							s.getId()!=null && s.getId().equals(region.getStudentGroupLeaderId());
 					for(int i=0;i<column;i++) {
@@ -316,7 +316,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			st.addMergedRegion(new CellRangeAddress(r,r,0,column-1));
 			r++;
 			/*第二行抬头*/row=st.createRow(r);
-			row.setHeight((short)-1);
+			setHeight(row,-1);
 			for(int i=0;i<column;i++) {
 				cell=row.createCell(i);
 				cell.setCellType(CellType.STRING);
@@ -325,8 +325,8 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 						i==column-2?"专业":"投保时间");
 				cell.setCellStyle(styleTitle);
 				setWidth(st,i,i==0?4:
-					i<column-2?-1:
-						i==column-2?6:20);
+					i==1?18:i<column-2?10:
+					i==column-2?6:20);
 			}
 			r++;
 			/*第三行开始每个专业实习生列表*/
@@ -346,7 +346,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 							throw new IOException("专业读取失败！("+e.getMessage()+")");
 						}
 						/*学生内容*/row=st.createRow(r);
-						row.setHeight((short)-1);
+						setHeight(row,-1);
 						for(int i=0;i<column;i++) {
 							cell=row.createCell(i);
 							//	cell.setCellType(CellType.STRING);
