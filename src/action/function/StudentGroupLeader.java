@@ -150,6 +150,8 @@ public class StudentGroupLeader extends ActionSupport{
 		for(ListOfPracticeBaseAndStudents.RegionPair rp:this.practiceBaseAndStudents.getList()){
 			for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
 				String groupLeaderId=pair.getRegion().getStudentGroupLeaderId();
+				if(groupLeaderId==null || groupLeaderId.isEmpty())
+					continue;
 				try {
 					Student stu=new Student(this.getAnnual().getYear(),groupLeaderId);
 					//若学生不在的话则清空！
@@ -186,14 +188,18 @@ public class StudentGroupLeader extends ActionSupport{
 					boolean ok=false;
 					for(Pair p:preparedMajor) if(!pair.getStudents().isEmpty()){
 						Student gro=null;
+						boolean flag=false;
 						for(Student s:pair.getStudents()) {
-							if(s.getRecommend() && p.major.getName().equals(s.getMajor())) {
-								gro=s;
-								break;
+							if(p.major.getName().equals(s.getMajor())) {
+								flag=true;
+								if(s.getRecommend()) {
+									gro=s;
+									break;
+								}
 							}
 						}
 						if(gro==null) {
-							if(!pair.getStudents().isEmpty())
+							if(flag)
 								error.append("\n专业("+p.major.getDescription()+")在基地("+pair.getPracticeBase().getDescription()+")未推荐学生大组长!");
 						}
 						else {
