@@ -91,12 +91,12 @@
 							list="innerPersons"
 							listKey="id" listValue="description"
 							headerKey="" headerValue="-未定-"
-							style="margin-top:7px;height:21px;" theme="simple" />
+							style="margin-top:7px;height:21px;background-color:rgba(255,255,255,0.5);" theme="simple" />
 							<s:hidden name="majorName" value="%{majorName}" theme="simple" />
 							<s:hidden name="choose[0]" value="%{#__Row.practiceBase.name}" theme="simple" />
 							<s:hidden name="choose[1]" value="" theme="simple" />
 							<s:submit value="为该基地所有学生设置指导老师" cssClass="buttonInline"
-							style="vertical-align:initial;" theme="simple" />
+							style="vertical-align:initial;background-color:rgba(255,255,255,0.63);" theme="simple" />
 						</s:form>
 					</div>
 				</div>
