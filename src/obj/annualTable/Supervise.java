@@ -21,13 +21,13 @@ public class Supervise extends AnnualBase{
 	private String remark;
 	@SQLField(value="机票费",weight=13,ps="小于100000")
 	private float moneyPlane;
-	@SQLField(value="机票费",weight=14,ps="小于100000")
+	@SQLField(value="订票费",weight=14,ps="小于100000")
 	private float moneyBooking;
-	@SQLField(value="机票费",weight=15,ps="小于100000")
+	@SQLField(value="保险费",weight=15,ps="小于100000")
 	private float moneyInsurance;
-	@SQLField(value="机票费",weight=16,ps="小于100000")
+	@SQLField(value="火车票",weight=16,ps="小于100000")
 	private float moneyTrain;
-	@SQLField(value="机票费",weight=17,ps="小于100000")
+	@SQLField(value="住宿费",weight=17,ps="小于100000")
 	private float moneyAccommodation;
 	@SQLField(value="住宿天数",weight=18,ps="小于128")
 	private int   moneyAccommodationNum;
