@@ -98,7 +98,6 @@
 	style="font-size:15px;font-weight:700;background:inherit;">
 		总领队及督导任务表&nbsp;
 		<span class="time">（点击大区或基地名称下载实习基地信息，点击督导老师姓名下载督导任务书）</span>
-		<span class="time">（点击大区或基地名称下载实习基地信息，点击督导老师姓名下载督导任务书）</span>
 	</li></ul>
 	</td></tr>
 	</tbody></table>
@@ -134,23 +133,11 @@
 					</td>
 				</s:if>
 				<!-- 基地名称 -->
-				<s:if test="schoolName == #__supervisor.school">
 					<td style="padding:0;background-color:lightyellow;font-weight:800;">
 						<a href="<s:url action='function_teacher_ExportPracticeBaseInfomation_download'/>?practiceBaseName=<s:property value='#__pairRow.practiceBase.name'/>">
 							<s:property value="#__pairRow.practiceBase.name" />
 						</a>
 					</td>
-				</s:if><s:elseif test="schoolName == '教务处'">
-					<td style="padding:0;background-color:white;">
-						<a href="<s:url action='function_teacher_ExportPracticeBaseInfomation_download'/>?practiceBaseName=<s:property value='#__pairRow.practiceBase.name'/>">
-							<s:property value="#__pairRow.practiceBase.name" />
-						</a>
-					</td>
-				</s:elseif><s:else>
-					<td style="padding:0;background-color:white;">
-						<s:property value="#__pairRow.practiceBase.name" />
-					</td>
-				</s:else>
 				<!-- 总领队 -->
 				<s:if test="#__pairStatus.index == 0">
 					<s:if test="schoolName == #__pairRow.leader.school">
