@@ -27,8 +27,11 @@ public final class Annual {
 			tmp=Calendar.getInstance().get(Calendar.YEAR);
 		if(tmp!=null){
 			this.setYear(tmp);
-			Manager.saveSession(yearToken,Integer.valueOf(this.getYear()));
+			this.saveSession();
 		}
+	}
+	public void saveSession() {
+		Manager.saveSession(yearToken,Integer.valueOf(this.getYear()));
 	}
 	
 	@Override
