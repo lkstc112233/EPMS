@@ -24,12 +24,14 @@ public class ListOfRegionAndPracticeBaseAndInnerPerson{
 			private PracticeBase practiceBase;
 			private InnerPerson leader;
 			private InnerPerson[] supervisor;
+			private Supervise[] supervise;
 				public Region getRegion() {return this.region;}
 				public PracticeBase getPracticeBase(){return this.practiceBase;}
 				public InnerPerson getLeader() {return this.leader;}
 				public InnerPerson[] getSupervisor() {return this.supervisor;}
-			public PracticeBasePair(Region r,PracticeBase pb,InnerPerson leader,InnerPerson[] supervisor){
-				this.region=r;this.practiceBase=pb;this.leader=leader;this.supervisor=supervisor;
+				public Supervise[] getSupervise() {return this.supervise;}
+			public PracticeBasePair(Region r,PracticeBase pb,InnerPerson leader,InnerPerson[] supervisor,Supervise[] supervise){
+				this.region=r;this.practiceBase=pb;this.leader=leader;this.supervisor=supervisor;this.supervise=supervise;
 			}
 		}
 		@Override
@@ -84,7 +86,7 @@ public class ListOfRegionAndPracticeBaseAndInnerPerson{
 				if(bs[3]!=null && pb!=null && region!=null) sup=(Supervise)bs[3];
 				if(leader==null || sup==null) continue;
 				try {
-					this.put(region,pb,leader,sup,new InnerPerson(sup.getSupervisorId()));
+					this.put(region,pb,leader,sup,new InnerPerson(sup.getSupervisorId()),sup);
 				}catch(IllegalArgumentException | SQLException e) {
 					e.printStackTrace();
 				}
@@ -113,24 +115,25 @@ public class ListOfRegionAndPracticeBaseAndInnerPerson{
 			}
 		return null;
 	}
-	public void put(Region region,PracticeBase pb,InnerPerson leader,Supervise sup,InnerPerson supervisor) throws IllegalArgumentException, InstantiationException, SQLException {
+	public void put(Region region,PracticeBase pb,InnerPerson leader,Supervise sup,InnerPerson supervisor,Supervise supervise) throws IllegalArgumentException, InstantiationException, SQLException {
 		if(region==null || pb==null)
 			return;
 		PracticeBasePair tmp=this.get(pb);
 		if(tmp==null){//需要新增一个PracticeBasePair
 			for(RegionPair rp:this.list) {
 				if(rp.getRegion().getName()!=null && rp.getRegion().getName().equals(region.getName())) {
-					rp.getList().add(tmp=new PracticeBasePair(region,pb,leader,new InnerPerson[Supervise.getTypeList().length]));
+					rp.getList().add(tmp=new PracticeBasePair(region,pb,leader,new InnerPerson[Supervise.getTypeList().length],new Supervise[Supervise.getTypeList().length]));
 					break;
 				}
 			}
 			if(tmp==null) {
 				//需要新增一个RegionPair
 				RegionPair rp=new RegionPair(region);
-				rp.getList().add(tmp=new PracticeBasePair(region,pb,leader,new InnerPerson[Supervise.getTypeList().length]));
+				rp.getList().add(tmp=new PracticeBasePair(region,pb,leader,new InnerPerson[Supervise.getTypeList().length],new Supervise[Supervise.getTypeList().length]));
 				this.list.add(rp);
 			}
 		}
 		tmp.getSupervisor()[sup.getSuperviseType()]=supervisor;
+		tmp.getSupervise()[sup.getSuperviseType()]=supervise;
 	}
 }
