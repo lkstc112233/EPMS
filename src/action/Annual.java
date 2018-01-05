@@ -2,16 +2,27 @@ package action;
 
 import java.util.Calendar;
 
+import obj.Field;
+
 public final class Annual {
 
 	static public String yearToken="year";
 	static public int Year_Minimum=1990;
 	
 	public int year=0;
-		public void setYear(int a){this.year=a;}
-		public void setYear(String a){try{this.year=Integer.parseInt(a);}catch(NumberFormatException e){}}
+		public void setYear(int a){
+			this.year=a;
+			if(this.checkYear())
+				this.saveSession();
+		}
+		public void setYear(String a){
+			this.year=Field.s2i(a,0);
+			if(this.checkYear())
+				this.saveSession();
+		}
 		public int getYear(){return year;}
-		public boolean checkYear(){return this.year>=Year_Minimum;}
+		public boolean checkYear(int year){return year>=Year_Minimum;}
+		public boolean checkYear(){return this.checkYear(this.year);}
 	
 	
 	public Annual(){
@@ -23,7 +34,7 @@ public final class Annual {
 		
 	public void setupYear(){
 		Integer tmp=Manager.loadSession(Integer.class,Annual.yearToken);
-		if(tmp==null || !this.checkYear())
+		if(tmp==null || !this.checkYear(tmp))
 			tmp=Calendar.getInstance().get(Calendar.YEAR);
 		if(tmp!=null){
 			this.setYear(tmp);
