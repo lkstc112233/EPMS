@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>EPMS-<s:property value="#session.role.name" />-分配实习生到实习基地（<s:property value="annual.year" />年）</title>
+<title>EPMS-<s:property value="#session.role.name" />-入校督导详细信息（<s:property value="annual.year" />年）</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
@@ -77,7 +77,7 @@
 					<s:property value="#__pairRow.supervisor[typeIndex].email" />
 				</td>
 				<!-- 经费 -->
-				<s:form action="function_SupervisePage_execute" method="post" theme="simple">
+				<s:form action="function_Supervise0Page_execute" method="post" theme="simple">
 					<td style="padding:0;background-color:white;">
 						<s:if test="#__pairRow.supervise[typeIndex].moneyPlane == 0">
 							<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].moneyPlane"
@@ -149,14 +149,8 @@
 						</s:else>
 					</td>
 					<td style="padding:0;background-color:white;">
-						<s:if test="#__pairRow.supervise[typeIndex].remark.isEmpty() == true">
-							<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].remark"
-							value=""
-							style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
-						</s:if><s:else>
-							<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].remark"
-							style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
-						</s:else>
+						<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].remark"
+						style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
 					</td>
 					<td>
 						<s:hidden name="typeIndex" value="%{typeIndex}" />

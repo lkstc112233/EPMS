@@ -8,6 +8,7 @@ import action.Manager;
 import obj.Field;
 import obj.annualTable.*;
 import obj.annualTable.ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair;
+import token.Role;
 
 /**
  * 总领队和督导老师
@@ -39,6 +40,8 @@ public class SupervisePage extends ActionSupport{
 	}
 	
 	public String display(){
+		if(Manager.getUser()==null || Role.getRole(Manager.getUser())!=Role.jwc)
+			return Manager.tips("无权查看督导详细信息!","back");
 		System.out.println(">> Export:display > year="+this.getAnnual().getYear());
 		this.regionAndPracticeBaseAndInnerPerson=null;
 		try{
@@ -60,6 +63,8 @@ public class SupervisePage extends ActionSupport{
 	//保存信息
 	@Override
 	public String execute(){
+		if(Manager.getUser()==null || Role.getRole(Manager.getUser())!=Role.jwc)
+			return Manager.tips("无权查看督导详细信息!","back");
 		if(this.regionAndPracticeBaseAndInnerPerson==null)
 			return Manager.tips("该项目不可用!",NONE);
 		PracticeBasePair pair=this.regionAndPracticeBaseAndInnerPerson.get(practiceBaseName);
