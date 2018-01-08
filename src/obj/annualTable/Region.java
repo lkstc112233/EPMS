@@ -26,7 +26,9 @@ public class Region extends AnnualBase{
 	private Timestamp mobilizationTime;
 	@SQLField(value="动员会地点",weight=14)
 	private String mobilizationPlace;
-	@SQLField(value="备注",weight=15,ps="文本储存")
+	@SQLField(value="是否收到回执单",notNull=true,weight=15)
+	private boolean moneyBack;
+	@SQLField(value="备注",weight=20,ps="文本储存")
 	private String remark;
 
 
@@ -48,6 +50,9 @@ public class Region extends AnnualBase{
 	public void setMobilizationTime(String a) {this.mobilizationTime=Field.s2TS(a);}
 	public String getMobilizationPlace() {return mobilizationPlace;}
 	public void setMobilizationPlace(String mobilizationPlace) {this.mobilizationPlace=mobilizationPlace;}
+	public boolean getMoneyBack() {return this.moneyBack;}
+	public void setMoneyBack(boolean a) {this.moneyBack=a;}
+	public void setMoneyBack(String a) {this.moneyBack=Field.s2b(a,false);}
 	public String getRemark() {return remark;}
 	public void setRemark(String remark) {this.remark = remark;}
 
