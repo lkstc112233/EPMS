@@ -29,7 +29,7 @@ public class TimeReset extends ActionSupport{
 			return Manager.tips("出错了！",
 					e,ERROR);
 		}
-		return "jump";
+		return "back";
 	}
 	
 	public String display(){
