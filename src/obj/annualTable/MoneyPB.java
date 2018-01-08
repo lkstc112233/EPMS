@@ -40,6 +40,9 @@ public class MoneyPB extends AnnualBase{
 		this.brf+=m.brf;
 		this.moneyElse+=m.moneyElse;
 	}
+	public float getSum() {
+		return this.rkjs+this.bzr+this.gbcj+this.syy+this.glf+this.zsf+this.brf+this.moneyElse;
+	}
 		
 	public String getPracticeBase() {return practiceBase;}
 	public void setPracticeBase(String a) {this.practiceBase=Field.s2S(a);}
