@@ -42,7 +42,7 @@ public class Plan extends AnnualBase {
 	
 	@Override
 	public String getDescription() {
-		return this.practiceBase+"_"+this.major+"_"+this.number;
+		return this.getYear()+"-"+this.practiceBase+"_"+this.major+"_"+this.number;
 	}
 	
 	

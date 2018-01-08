@@ -89,7 +89,7 @@ public class Supervise extends AnnualBase{
 
 	@Override
 	public String getDescription() {
-		return this.superviseType+"_"+this.practiceBase+"("+this.supervisorId+")";
+		return this.getYear()+"-"+this.superviseType+"_"+this.practiceBase+"("+this.supervisorId+")";
 	}
 	
 	

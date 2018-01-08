@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>EPMS-<s:property value="#session.role.name" />-分配实习生到实习基地（<s:property value="annual.year" />年）</title>
+<title>EPMS-<s:property value="#session.role.name" />-导出督导任务书等相关数据（<s:property value="annual.year" />年）</title>
 <link rel="stylesheet" type="text/css" href="styles/style.css">
 </head>
 
@@ -37,7 +37,6 @@
 			<tr><td colspan="100" style="text-align:center;">
 				<span style="float:left;margin-left:50px;">
 				<s:form action="function_teacher_ExportAllSuperviseList_download" method="post" theme="simple">
-					<s:hidden name="jumpURL" value="function_teacher_Export_display.action" theme="simple"/>
 					<s:submit value="督导任务列表" theme="simple"
 					style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 				</s:form>
@@ -70,7 +69,6 @@
 						<td style="background:white;height:30px">
 						<s:iterator value="#__schoolRow" var="__supervisorRow">
 							<s:form action="function_teacher_ExportSupervisorAllMandate_download" method="post" theme="simple">
-								<s:hidden name="jumpURL" value="function_teacher_Export_display.action" theme="simple"/>
 								<s:hidden name="supervisorId" value="%{#__supervisorRow.id}" theme="simple"/>
 								<s:submit value="%{#__supervisorRow.name}" theme="simple"
 								style="float:left;margin-right:10px;"
@@ -178,26 +176,6 @@
 </div>
 
 
-
-
-
-
-
-
-<% //跳转到当前操作的条目,choose[0]表示块index、choose[1]表示行号
-Object tmp=pageContext.findAttribute("choose");
-String x=null;
-if(tmp!=null){
-	if(tmp instanceof String[] && ((String[])tmp).length>=3)
-		x=((String[])tmp)[1];//[1]表示学生
-}
-if(x!=null && !x.isEmpty()){ %>
-	<script>
-		var jumpX=document.getElementById("choose<%=x%>");
-		if(jumpX!=null)
-			jumpX.scrollIntoView();
-	</script>
-<% } %>
 
 
 

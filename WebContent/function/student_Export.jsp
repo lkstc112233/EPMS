@@ -38,7 +38,6 @@
 			</s:if>
 			<span style="float:left;margin-left:50px;">
 			<s:form action="function_student_ExportAllStudentList_download" method="post" theme="simple">
-				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 				<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
 				<s:hidden name="status" value="false" theme="simple"/>
 				<s:submit value="实习生名单" theme="simple"
@@ -47,7 +46,6 @@
 			</span>
 			<span style="float:left;margin-left:20px;">
 			<s:form action="function_student_ExportAllStudentList_download" method="post" theme="simple">
-				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 				<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
 				<s:hidden name="status" value="true" theme="simple"/>
 				<s:submit value="特殊基地实习生名单" theme="simple"
@@ -56,14 +54,12 @@
 			</span>
 			<span style="float:left;margin-left:20px;">
 			<s:form action="function_student_ExportStudentInsuranceList_download" method="post" theme="simple">
-				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 				<s:submit value="投保确认单" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>
 			</span>
 			<span style="float:left;margin-left:20px;">
 			<s:form action="function_student_ExportAllPracticeBaseConsultationLetter_download" method="post" theme="simple">
-				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 				<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
 				<s:submit value="基地商洽函" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
@@ -71,14 +67,12 @@
 			</span>
 			<span style="float:left;margin-left:20px;">
 			<s:form action="function_student_ExportPlanDesign_download" method="post" theme="simple">
-				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 				<s:submit value="教育实习布局规划" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>
 			</span>
 			<span style="float:left;margin-left:20px;">
 			<s:form action="function_student_ExportPlanDesign_download" method="post" theme="simple">
-				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 				<s:hidden name="status" value="" theme="simple"/>
 				<s:submit value="教育实习布局规划(含特殊基地)" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
@@ -86,7 +80,6 @@
 			</span>
 			<span style="float:left;margin-left:20px;">
 			<s:form action="function_student_ExportPlanMedia_download" method="post" theme="simple">
-				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 				<s:hidden name="status" value="" theme="simple"/>
 				<s:submit value="设备发放规划" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
@@ -94,7 +87,6 @@
 			</span>
 			<span style="float:left;margin-left:20px;">
 			<s:form action="function_student_ExportTeacherList_download" method="post" theme="simple">
-				<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 				<s:hidden name="status" value="false" theme="simple"/>
 				<s:submit value="指导教师名单" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
@@ -157,7 +149,6 @@
 					</span>
 					<span style="float:left;font-size:12px;margin-left:20px;margin-top:5px;">
 						<s:form action="function_student_ExportStudentList_download" method="post" theme="simple">
-							<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 							<s:hidden name="practiceBaseName" value="%{#__Row.practiceBase.name}" theme="simple"/>
 							<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
 							<s:submit value="下载实习生名单" theme="simple"
@@ -167,7 +158,6 @@
 					<span style="float:left;font-size:12px;margin-left:5px;margin-top:5px;">
 						<s:if test="#__Row.practiceBase.status==false">
 							<s:form action="function_student_ExportPracticeBaseConsultationLetter_download" method="post" theme="simple">
-								<s:hidden name="jumpURL" value="function_student_Export_display.action" theme="simple"/>
 								<s:hidden name="practiceBaseName" value="%{#__Row.practiceBase.name}" theme="simple"/>
 								<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
 								<s:submit value="下载商洽函" theme="simple"
@@ -260,26 +250,6 @@
 </div>
 
 
-
-
-
-
-
-
-<% //跳转到当前操作的条目,choose[0]表示块index、choose[1]表示行号
-Object tmp=pageContext.findAttribute("choose");
-String x=null;
-if(tmp!=null){
-	if(tmp instanceof String[] && ((String[])tmp).length>=3)
-		x=((String[])tmp)[1];//[1]表示学生
-}
-if(x!=null && !x.isEmpty()){ %>
-	<script>
-		var jumpX=document.getElementById("choose<%=x%>");
-		if(jumpX!=null)
-			jumpX.scrollIntoView();
-	</script>
-<% } %>
 
 
 
