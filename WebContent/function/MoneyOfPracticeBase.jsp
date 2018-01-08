@@ -83,9 +83,38 @@
 				</td>
 				<!-- 实习人数(实验员) -->
 				<!-- 各项 -->
+				<% i=0; %>
+				<s:iterator value="%{#__pairRow.sum.fieldsValue}" var="__Col">
+					<% if(MoneyPBFieldDisplay[i++]){ %>
+					<td style="word-wrap:break-word;word-break:break-all;">
+					<% }else{ %>
+					<td style="word-wrap:break-word;word-break:break-all;display:none;">
+					<% } %>
+						<s:property value="#__Col" />
+					</td>
+				</s:iterator>
 				<!-- 总计 -->
+				<td style="padding:0;background-color:lightyellow;font-weight:800;">
+					<s:property value="#__pairRow.sum.sum" />
+				</td>
 				<!-- 回执单 -->
+				<td style="padding:0;">
+					<s:form action="function_moneyPB_Export_execute" method="post" theme="simple">
+						<s:checkbox
+						name="practiceBaseAndMoney.list[%{#__rpStatus}].list[%{#__pairStatus}].region.moneyBack"
+						style="width:100%;height:100%;margin:0;" theme="simple" />
+						<s:hidden name="practiceBaseName" value="%{#__pairRow.practiceBase.name}" />
+						<s:hidden name="type" value="Region" />
+					</s:form>
+				</td>
 				<!-- 备注 -->
+				<td style="padding:0;">
+					<s:form action="function_moneyPB_Export_execute" method="post" theme="simple">
+						<s:textfield value="#__pairRow.practiceBase.remark" />
+						<s:hidden name="practiceBaseName" value="%{#__pairRow.practiceBase.name}" />
+						<s:hidden name="type" value="PracticeBase" />
+					</s:form>
+				</td>
 			</tr>
 		</s:iterator></s:iterator>
 	</tbody></table>

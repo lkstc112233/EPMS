@@ -43,7 +43,7 @@ public class Export extends ActionSupport{
 		this.practiceBaseAndMoney=null;
 		try{
 			this.practiceBaseAndMoney=new ListOfPracticeBaseAndMoney(
-					this.getAnnual().getYear(),null);
+					this.getAnnual().getYear());
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 			return Manager.tips("数据库开小差去了！",e,NONE);
 		}
@@ -52,9 +52,42 @@ public class Export extends ActionSupport{
 		return NONE;
 	}
 	
+	
+	
+	private String practiceBaseName;
+		public void setPracticeBaseName(String a) {this.practiceBaseName=a;}
+		public String getPracticeBaseName() {return this.practiceBaseName;}
+	private String type;
+		public void setType(String a) {this.type=a;}
+		public String getType() {return this.type;}
+		
 	@Override
 	public String execute(){
-		return display();
+		String res="修改成功!";
+		if("Region".equals(this.type)) {
+			//保存Region信息：moneyBack
+			ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair=
+					this.practiceBaseAndMoney.get(this.practiceBaseName);
+			if(pair==null)
+				return Manager.tips("实习基地选择错误!("+this.practiceBaseName+")",NONE);
+			try {
+				pair.getRegion().update();
+			} catch (IllegalArgumentException | SQLException e) {
+				return Manager.tips("服务器开小差去了!",e,display());
+			}
+		}else if("PracticeBase".equals(this.type)) {
+			//保存PracticeBase信息：remark
+			ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair=
+					this.practiceBaseAndMoney.get(this.practiceBaseName);
+			if(pair==null)
+				return Manager.tips("实习基地选择错误!("+this.practiceBaseName+")",NONE);
+			try {
+				pair.getPracticeBase().update();
+			} catch (IllegalArgumentException | SQLException e) {
+				return Manager.tips("服务器开小差去了!",e,display());
+			}
+		}
+		return Manager.tips(res,display());
 	}
 	
 	
