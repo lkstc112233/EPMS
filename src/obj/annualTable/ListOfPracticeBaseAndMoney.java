@@ -5,6 +5,7 @@ import java.util.*;
 
 import obj.*;
 import obj.staticObject.*;
+import obj.staticSource.Major;
 import obj.annualTable.ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair;
 
 /**
@@ -36,11 +37,15 @@ public class ListOfPracticeBaseAndMoney{
 			private Region region;
 			private PracticeBase practiceBase;
 			private MoneyPB sum;
+			private int numberOfStudent;
+			private int numberOfStudentSYY;
 			private List<MoneyPB> moneys=new ArrayList<MoneyPB>();
 				public int getSize(){return this.moneys.size();}
 				public Region getRegion() {return this.region;}
 				public PracticeBase getPracticeBase(){return this.practiceBase;}
 				public MoneyPB getSum() {return sum;}
+				public int getNumberOfStudent() {return this.numberOfStudent;}
+				public int getNumberOfStudentSYY() {return this.numberOfStudentSYY;}
 				public List<MoneyPB> getMoneys(){return this.moneys;}
 			public PracticeBasePair(Region r,PracticeBase pb){this.region=r;this.practiceBase=pb;}
 		}
@@ -103,6 +108,19 @@ public class ListOfPracticeBaseAndMoney{
 				for(MoneyPB p:pair.moneys)
 					sum.appendSum(p);
 				pair.sum=sum;
+				Restraint restraint=new Restraint(
+						Field.getFields(Student.class,"year","practiceBase"),
+						new Object[] {year,pair.getPracticeBase().getName()}
+				);
+				pair.numberOfStudent=Base.list(Student.class,restraint).size();
+				pair.numberOfStudentSYY=Base.list(new JoinParam(Student.class)
+						.append(JoinParam.Type.InnerJoin,
+								Major.class,
+								Field.getField(Major.class,"name"),
+								Field.getField(Student.class,"major"),
+								Field.getField(Major.class,"isSYY"),
+								true
+								),restraint).size();
 			}
 		}
 	}
