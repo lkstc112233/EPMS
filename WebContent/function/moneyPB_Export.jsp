@@ -28,7 +28,6 @@
 		<tr><td colspan="100" style="text-align:center;">
 			<span style="float:left;margin-left:50px;">
 			<s:form action="function_moneyPB_ExportAllMoneyPB_download" method="post" theme="simple">
-				<s:hidden name="jumpURL" value="function_teacher_Export_display.action" theme="simple"/>
 				<s:submit value="下载所有实习基地经费表" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>
@@ -41,8 +40,8 @@
 	
 	
 	<% boolean[] MoneyPBFieldDisplay=new boolean[]{
-			false,false,false,
-			true,true,true,true,true,true,true,true};
+			false,false,
+			true,true,true,true,true,true,true,true,false};
 		int i; %>
 	<table class="wtable" style="cellpadding:0;cellspacing:0;table-layout:fixed;"><tbody id="Table_2" style="display:;">
 		<tr class="wtableHeader" style="height:auto;">
@@ -95,7 +94,9 @@
 				</s:iterator>
 				<!-- 总计 -->
 				<td style="padding:0;background-color:lightyellow;font-weight:800;">
-					<s:property value="#__pairRow.sum.sum" />
+					<a href="<s:url action='function_moneyPB_MoneyPBInfo_display'/>?practiceBaseName=<s:property value='#__pairRow.practiceBase.name'/>">
+						<s:property value="#__pairRow.sum.sum" />
+					</a>
 				</td>
 				<!-- 回执单 -->
 				<td style="padding:0;">
