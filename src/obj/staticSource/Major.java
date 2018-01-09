@@ -19,6 +19,8 @@ public class Major extends Base{
 	private String school;
 	@SQLField(value="是否为体育类",weight=100,notNull=true)
 	private boolean isPE=false;
+	@SQLField(value="是否为实验员",weight=101,notNull=true)
+	private boolean isSYY=false;
 
 	public String getName(){return this.name;}
 	public void setName(String a){this.name=Field.s2S(a);}
@@ -29,6 +31,9 @@ public class Major extends Base{
 	public boolean getIsPE() {return this.isPE;}
 	public void setIsPE(String a) {this.isPE=Field.s2b(a,false);}
 	public void setIsPE(boolean a) {this.isPE=a;}
+	public boolean getIsSYY() {return this.isSYY;}
+	public void setIsSYY(String a) {this.isSYY=Field.s2b(a,false);}
+	public void setIsSYY(boolean a) {this.isSYY=a;}
 	
 
 	public Major() {
