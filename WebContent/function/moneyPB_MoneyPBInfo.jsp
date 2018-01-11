@@ -41,92 +41,14 @@
 	</tbody></table>
 	
 	
-	<% boolean[] MoneyPBFieldDisplay=new boolean[]{
-			false,false,false,
-			true,true,true,true,true,true,true,true};
-		int i; %>
-	<table class="wtable" style="cellpadding:0;cellspacing:0;table-layout:fixed;"><tbody id="Table_2" style="display:;">
-		<tr class="wtableHeader" style="height:auto;">
-			<td style="width:3%;">大区</td>
-			<td>基地名称</td>
-			<td>实习人数<br/>(实验员数)</td>
-			<% i=0; %>
-			<s:iterator value="moneyPB.fields" var="__opField" status="__opFieldStatus">
-				<% if(MoneyPBFieldDisplay[i++]){ %>
-				<td style="word-wrap:break-word;word-break:break-all;">
-				<% }else{ %>
-				<td style="word-wrap:break-word;word-break:break-all;display:none;">
-				<% } %>
-					<s:property value="#__opField.description"/>
-					<s:if test="#__opField.notNull == true">
-				*
-					</s:if>
-				</td>
-			</s:iterator>
-			<td>总计</td>
-			<td>回执单</td>
-			<td>备注</td>
-		</tr>
-		<s:iterator value="practiceBaseAndMoney.list" var="__rpRow" status="__rpStatus">
-		<s:iterator value="#__rpRow.list" var="__pairRow" status="__pairStatus">
-			<tr class="wtableContent">
-				<s:set var="_colspan" value="%{#__rpRow.size}" />
-				<s:if test="#__pairStatus.index == 0">
-					<td rowspan="${_colspan}" style="width:3%;background-color:white;">
-						<s:property value="#__rpRow.region.name" />
-					</td>
-				</s:if>
-				<!-- 基地名称 -->
-				<td style="padding:0;background-color:lightyellow;font-weight:800;">
-					<a href="<s:url action='function_moneyPB_ExportMoneyPB_download'/>?practiceBaseName=<s:property value='#__pairRow.practiceBase.name'/>">
-						<s:property value="#__pairRow.practiceBase.name" />
-					</a>
-				</td>
-				<!-- 实习人数(实验员) -->
-				<td>
-					<s:property value="#__pairRow.numberOfStudent" />
-					&nbsp;
-					(<s:property value="#__pairRow.numberOfStudentSYY" />)
-				</td>
-				<!-- 各项 -->
-				<% i=0; %>
-				<s:iterator value="%{#__pairRow.sum.fieldsValue}" var="__Col">
-					<% if(MoneyPBFieldDisplay[i++]){ %>
-					<td style="word-wrap:break-word;word-break:break-all;">
-					<% }else{ %>
-					<td style="word-wrap:break-word;word-break:break-all;display:none;">
-					<% } %>
-						<s:property value="#__Col" />
-					</td>
-				</s:iterator>
-				<!-- 总计 -->
-				<td style="padding:0;background-color:lightyellow;font-weight:800;">
-					<a href="<s:url action='function_moneyPB_MoneyPBInfo_display'/>?practiceBaseName=<s:property value='#__pairRow.practiceBase.name'/>">
-						<s:property value="#__pairRow.sum.sum" />
-					</a>
-				</td>
-				<!-- 回执单 -->
-				<td style="padding:0;">
-					<s:form action="function_moneyPB_Export_execute" method="post" theme="simple">
-						<s:checkbox
-						name="practiceBaseAndMoney.list[%{#__rpStatus}].list[%{#__pairStatus}].region.moneyBack"
-						style="width:100%;height:100%;margin:0;" theme="simple" />
-						<s:hidden name="practiceBaseName" value="%{#__pairRow.practiceBase.name}" />
-						<s:hidden name="type" value="Region" />
-					</s:form>
-				</td>
-				<!-- 备注 -->
-				<td style="padding:0;">
-					<s:form action="function_moneyPB_Export_execute" method="post" theme="simple">
-						<s:textfield value="#__pairRow.practiceBase.remark" />
-						<s:hidden name="practiceBaseName" value="%{#__pairRow.practiceBase.name}" />
-						<s:hidden name="type" value="PracticeBase" />
-					</s:form>
-				</td>
-			</tr>
-		</s:iterator></s:iterator>
-	</tbody></table>
-	
+	<jsp:include page="/model/search/TableOperationPage.jsp" flush="true">
+		<jsp:param name="actionName" value="function_moneyPB_Export"/>
+		<jsp:param name="joinParamPage" value="/model/search/joinparam/OnePage.jsp"/>
+
+		<jsp:param name="poiBoolean" value="false"/>
+		<jsp:param name="createBoolean" value="true"/>
+		<jsp:param name="deleteBoolean" value="true"/>
+	</jsp:include>
 
 </div>
 
