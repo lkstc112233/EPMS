@@ -46,7 +46,7 @@
 			</span>
 			<span style="float:left;margin-left:50px;">
 			<s:form action="function_moneyPB_ExportAllMoneyPB_download" method="post" theme="simple">
-				<s:submit value="下载所有实习基地经费表" theme="simple"
+				<s:submit value="下载所有基地经费表" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>
 			</span>
@@ -59,7 +59,9 @@
 	
 	<% boolean[] MoneyPBFieldDisplay=new boolean[]{
 			false,false,
-			true,true,true,true,true,true,true,true,false};
+			true,true,true,
+			true,true,true,
+			true,true,false};
 		int i; %>
 	<table class="wtable" style="cellpadding:0;cellspacing:0;table-layout:fixed;"><tbody id="Table_2" style="display:;">
 		<tr class="wtableHeader" style="height:auto;">
@@ -123,7 +125,6 @@
 						name="practiceBaseAndMoney.list[%{#__rpStatus}].list[%{#__pairStatus}].region.moneyBack"
 						style="width:100%;height:100%;margin:0;" theme="simple" />
 						<s:hidden name="practiceBaseName" value="%{#__pairRow.practiceBase.name}" />
-						<s:hidden name="type" value="Region" />
 					</s:form>
 				</td>
 				<!-- 备注 -->

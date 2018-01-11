@@ -15,6 +15,7 @@ public class ExportMoneyPB extends ActionSupport{
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
 	
+	
 	private ListOfPracticeBaseAndMoney practiceBaseAndStudents;
 	
 	public ListOfPracticeBaseAndMoney getPracticeBaseAndStudents(){return this.practiceBaseAndStudents;}
