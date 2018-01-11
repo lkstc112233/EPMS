@@ -1,29 +1,31 @@
 package obj.annualTable;
 
+import java.sql.SQLException;
+
 import obj.*;
 
 @SQLTable("MoneyPB")
 public class MoneyPB extends AnnualBase{
 	@SQLField(value="实习基地",weight=1,isKey=true,notNull=true,source="PracticeBase.name")
 	private String practiceBase;
-	@SQLField(value="备注",weight=12,ps="文本储存")
-	private String remark;
-	@SQLField(value="原任课教师指导实习酬金",weight=13)
+	@SQLField(value="原任课教师指导实习酬金",weight=10)
 	private float rkjs;
-	@SQLField(value="原班主任指导实习酬金",weight=14)
+	@SQLField(value="原班主任指导实习酬金",weight=11)
 	private float bzr;
-	@SQLField(value="有关干部酬金",weight=15)
+	@SQLField(value="有关干部酬金",weight=12)
 	private float gbcj;
-	@SQLField(value="实验员协助工作酬金",weight=16)
+	@SQLField(value="实验员协助工作酬金",weight=13)
 	private float syy;
-	@SQLField(value="教育实习管理费",weight=17)
+	@SQLField(value="教育实习管理费",weight=14)
 	private float glf;
-	@SQLField(value="住宿费",weight=18)
+	@SQLField(value="住宿费",weight=15)
 	private float zsf;
-	@SQLField(value="被褥费",weight=19)
+	@SQLField(value="被褥费",weight=16)
 	private float brf;
-	@SQLField(value="其他",weight=20)
+	@SQLField(value="其他",weight=17)
 	private float moneyElse;
+	@SQLField(value="备注",weight=20,ps="文本储存")
+	private String remark;
 	
 	static private final int[] TypeList=new int[]{0,1,2};
 		static public int[] getTypeList(){return MoneyPB.TypeList;}
