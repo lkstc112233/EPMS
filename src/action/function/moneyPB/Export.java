@@ -57,39 +57,70 @@ public class Export extends ActionSupport{
 	private String practiceBaseName;
 		public void setPracticeBaseName(String a) {this.practiceBaseName=a;}
 		public String getPracticeBaseName() {return this.practiceBaseName;}
-	private String type;
-		public void setType(String a) {this.type=a;}
-		public String getType() {return this.type;}
 		
 	@Override
 	public String execute(){
-		String res="修改成功!";
-		if("Region".equals(this.type)) {
-			//保存Region信息：moneyBack
-			ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair=
-					this.practiceBaseAndMoney.get(this.practiceBaseName);
-			if(pair==null)
-				return Manager.tips("实习基地选择错误!("+this.practiceBaseName+")",NONE);
-			try {
-				pair.getRegion().update();
-			} catch (IllegalArgumentException | SQLException e) {
-				return Manager.tips("服务器开小差去了!",e,display());
-			}
-		}else if("PracticeBase".equals(this.type)) {
-			//保存PracticeBase信息：remark
-			ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair=
-					this.practiceBaseAndMoney.get(this.practiceBaseName);
-			if(pair==null)
-				return Manager.tips("实习基地选择错误!("+this.practiceBaseName+")",NONE);
-			try {
-				pair.getPracticeBase().update();
-			} catch (IllegalArgumentException | SQLException e) {
-				return Manager.tips("服务器开小差去了!",e,display());
-			}
+		//保存Region信息：moneyBack
+		ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair=
+				this.practiceBaseAndMoney.get(this.practiceBaseName);
+		if(pair==null)
+			return Manager.tips("实习基地选择错误!("+this.practiceBaseName+")",NONE);
+		try {
+			pair.getRegion().update();
+		} catch (IllegalArgumentException | SQLException e) {
+			return Manager.tips("服务器开小差去了!",e,display());
 		}
-		return Manager.tips(res,display());
+		return Manager.tips("修改成功!",display());
 	}
 	
-	
+	public String delete() {
+		StringBuilder error=new StringBuilder();
+		for(ListOfPracticeBaseAndMoney.RegionPair rp:this.practiceBaseAndMoney.getList()) {
+			for(ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair:rp.getList()) {
+				for(MoneyPB money:pair.getMoneys()) {
+					try {
+						money.delete();
+					} catch (IllegalArgumentException | SQLException e) {
+						error.append("\n"+pair.getPracticeBase().getName()+
+								"清空失败("+e.getMessage()+")");
+					}
+				}
+			}
+		}
+		if(error.length()<=0)
+			return Manager.tips("清空成功!",display());
+		else
+			return Manager.tips("清空失败部分:"+error.toString(),display());
+	}
+
+	public String create() {
+		MoneyPB base[];
+		try {
+			base = MoneyPB.getMoneyPBBase();
+		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
+			return Manager.tips("读取教育实习经费标准失败!",e,NONE);
+		}
+		StringBuilder error=new StringBuilder();
+		for(ListOfPracticeBaseAndMoney.RegionPair rp:this.practiceBaseAndMoney.getList()) {
+			for(ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair:rp.getList()) {
+				try {
+					MoneyPB money=base[pair.getPracticeBase().getProvince().contains("北京")?0:1];
+					money=(MoneyPB)money.clone();
+					money.multiply(
+							pair.getNumberOfStudent(),
+							pair.getNumberOfStudentSYY(),
+							pair.getRegion().getAccommodation());
+					money.create();
+				} catch (IllegalArgumentException | SQLException | IllegalAccessException e) {
+					error.append("\n"+pair.getPracticeBase().getName()+
+							"增加失败("+e.getMessage()+")");
+				}
+			}
+		}
+		if(error.length()<=0)
+			return Manager.tips("增加成功!",display());
+		else
+			return Manager.tips("增加失败部分:"+error.toString(),display());
+	}
 	
 }

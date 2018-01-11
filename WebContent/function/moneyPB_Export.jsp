@@ -33,6 +33,18 @@
 			</s:form>
 			</span>
 			<span style="float:left;margin-left:50px;">
+			<s:form action="function_moneyPB_Export_create" method="post" theme="simple">
+				<s:submit value="为所有基地按人数增加经费" theme="simple"
+				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
+			</s:form>
+			</span>
+			<span style="float:left;margin-left:50px;">
+			<s:form action="function_moneyPB_Export_delete" method="post" theme="simple">
+				<s:submit value="清空所有基地经费" theme="simple"
+				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
+			</s:form>
+			</span>
+			<span style="float:left;margin-left:50px;">
 			<s:form action="function_moneyPB_ExportAllMoneyPB_download" method="post" theme="simple">
 				<s:submit value="下载所有实习基地经费表" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
@@ -115,12 +127,13 @@
 					</s:form>
 				</td>
 				<!-- 备注 -->
-				<td style="padding:0;">
-					<s:form action="function_moneyPB_Export_execute" method="post" theme="simple">
-						<s:textfield value="#__pairRow.practiceBase.remark" />
-						<s:hidden name="practiceBaseName" value="%{#__pairRow.practiceBase.name}" />
-						<s:hidden name="type" value="PracticeBase" />
-					</s:form>
+				<td style="padding:0;word-wrap:break-word;word-break:break-all;">
+					<s:iterator value="#__pairRow.moneys" var="__money" status="__moneyStatus">
+						<s:if test="__moneyStatus.index == 0">
+							<br />
+						</s:if>
+						<s:property value="#__money.remark" />
+					</s:iterator>
 				</td>
 			</tr>
 		</s:iterator></s:iterator>
