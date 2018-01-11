@@ -32,6 +32,9 @@ public class MoneyPB extends AnnualBase{
 	static private final String[] TypeNameList=new String[] {"入校督导","中期督导","返校督导"};
 		static public String[] getTypeNameList() {return MoneyPB.TypeNameList;}
 
+	public float getSum() {
+		return this.rkjs+this.bzr+this.gbcj+this.syy+this.glf+this.zsf+this.brf+this.moneyElse;
+	}
 	public void appendSum(MoneyPB m) {
 		this.rkjs+=m.rkjs;
 		this.bzr+=m.bzr;
@@ -42,8 +45,22 @@ public class MoneyPB extends AnnualBase{
 		this.brf+=m.brf;
 		this.moneyElse+=m.moneyElse;
 	}
-	public float getSum() {
-		return this.rkjs+this.bzr+this.gbcj+this.syy+this.glf+this.zsf+this.brf+this.moneyElse;
+	public void multiply(int studentCount,int syyCount,boolean accommodation) {
+		this.rkjs*=studentCount;
+		this.bzr*=studentCount;
+		this.gbcj*=studentCount;
+		this.syy*=syyCount;
+		this.glf*=studentCount;
+		this.zsf*=accommodation?0:studentCount;
+		this.brf*=accommodation?0:studentCount;
+		this.moneyElse*=studentCount;
+	}
+	static public MoneyPB[] getMoneyPBBase() throws IllegalArgumentException, InstantiationException, SQLException {
+		MoneyPB[] base=new MoneyPB[2];
+		for(int i=0;i<base.length;i++) 
+			base[i]=Base.list(MoneyPB.class,new Restraint(Field.getField(MoneyPB.class,"year"),
+					i)).get(0);
+		return base;
 	}
 		
 	public String getPracticeBase() {return practiceBase;}
