@@ -58,7 +58,7 @@
 	
 	
 	<% boolean[] MoneyPBFieldDisplay=new boolean[]{
-			false,false,
+			false,false,false,
 			true,true,true,
 			true,true,true,
 			true,true,false};
@@ -95,12 +95,18 @@
 					</td>
 				</s:if>
 				<!-- 基地名称 -->
-				<td style="padding:0;background-color:lightyellow;font-weight:800;">
+				<td style="padding:0;font-weight:800;">
 					<a href="<s:url action='function_moneyPB_ExportMoneyPB_download'/>?practiceBaseName=<s:property value='#__pairRow.practiceBase.name'/>">
 						<s:property value="#__pairRow.practiceBase.name" />
 					</a>
 				</td>
 				<!-- 实习人数(实验员) -->
+				<td style="font-weight:800;">
+					<s:property value="#__pairRow.numberOfStudent" />
+					(
+					<s:property value="#__pairRow.numberOfStudentSYY" />
+					)
+				</td>
 				<!-- 各项 -->
 				<% i=0; %>
 				<s:iterator value="%{#__pairRow.sum.fieldsValue}" var="__Col">
@@ -121,9 +127,13 @@
 				<!-- 回执单 -->
 				<td style="padding:0;">
 					<s:form action="function_moneyPB_Export_execute" method="post" theme="simple">
-						<s:checkbox
-						name="practiceBaseAndMoney.list[%{#__rpStatus}].list[%{#__pairStatus}].region.moneyBack"
-						style="width:100%;height:100%;margin:0;" theme="simple" />
+						<s:if test="#__pairRow.region.moneyBack==true">
+							<s:submit value="✔"
+							style="color:green;padding:0;margin:0;border:3px black double;background:white;width:30px;height:30px;font-size:30px;line-height:5px;" theme="simple" />
+						</s:if><s:else>
+							<s:submit value="  "
+							style="padding:0;margin:0;border:3px black double;background:white;width:30px;height:30px;" theme="simple" />
+						</s:else>
 						<s:hidden name="practiceBaseName" value="%{#__pairRow.practiceBase.name}" />
 					</s:form>
 				</td>

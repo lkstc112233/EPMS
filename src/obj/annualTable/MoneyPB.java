@@ -6,6 +6,9 @@ import obj.*;
 
 @SQLTable("MoneyPB")
 public class MoneyPB extends AnnualBase{
+	@SQLField(value="序号",isKey=true,notNull=true,autoIncrease=true,weight=0)
+	private int id;	public void setOrderId(int a){this.id=a;}	public void setOrderId(String a) {this.id=Field.s2i(a,-1);}	public int getOrderId() {return this.id;}
+	
 	@SQLField(value="实习基地",weight=1,source="PracticeBase.name")
 	private String practiceBase;
 	@SQLField(value="原任课教师指导实习酬金",weight=10)
