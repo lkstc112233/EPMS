@@ -12,14 +12,54 @@ import org.apache.poi.xwpf.usermodel.*;
 
 import obj.*;
 import obj.annualTable.*;
-import obj.annualTable.ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair;
 import obj.staticObject.*;
-import obj.staticSource.ACCESS;
-import obj.staticSource.Major;
-import obj.staticSource.OuterOffice;
-import obj.staticSource.School;
+import obj.staticSource.*;
 
 public class POIWord implements SpecialWordIO{
+	static private final char [] ChineseNum ={'零','壹','贰','叁','肆','伍','陆','柒','捌','玖'};
+	static private final char [] ChineseUnit={'里','分','角','元','拾','佰','仟','万','拾','佰','仟','亿','拾','佰','仟'};
+	static private String arabNumToChineseRMB(String moneyNum) throws IllegalArgumentException{  
+	    String res="";  
+	    int i=3;  
+	    int len=moneyNum.length();  
+	    if(len>12){  
+	        throw new IllegalArgumentException("Number too large!");  
+	    }  
+	    if("0".equals(moneyNum))  
+	        return "零元";  
+	    //System.out.println(moneyNum);  
+	    for(len--;len>=0;len--){  
+	        res=ChineseUnit[i++]+res;  
+	        int num=Integer.parseInt(moneyNum.charAt(len)+"");  
+	        res=ChineseNum[num]+res;  
+	    }  
+	    return res.replaceAll("零[拾佰仟]", "零")  
+	            .replaceAll("零+亿", "亿").replaceAll("零+万", "万")  
+	            .replaceAll("零+元", "元").replaceAll("零+", "零");  
+	}  
+	static private String arabNumToChineseRMB(float moneyNum) throws IllegalArgumentException {
+	    String money=String.format("%.3f",moneyNum);
+	    if(moneyNum==0.0)
+	        return "零元";
+	    String[] ss=money.split("\\.",2);
+	    if(ss.length==1||ss[1].isEmpty())
+	    	return arabNumToChineseRMB(ss[0])+"整";
+	    String res="";
+	    int deci=Integer.parseInt(money.split("\\.")[1].substring(0,3));
+	    int i=0;
+	    while(deci>0){
+	        res=ChineseUnit[i++]+res;
+	        res=ChineseNum[deci%10]+res;
+	        deci/=10;
+	    }
+	    res=res.replaceAll("零[里分角]", "零");
+	    if(i<3)
+	        res="零"+res;
+	    res=res.replaceAll("零+", "零");
+	    if(res.endsWith("零"))
+	        res=res.substring(0,res.length()-1);
+	    return arabNumToChineseRMB(ss[0])+res;
+	}
 	
 	//"\\w"匹配字母、数字、下划线。等价于'[A-Za-z0-9_]'
 	static final public String regex="\\$\\{[A-Za-z_](\\w|\\.)*\\}";
@@ -259,7 +299,7 @@ public class POIWord implements SpecialWordIO{
 	@Override
 	public String createSupervisorMandate(int year,
 			InnerPerson supervisor,
-			PracticeBasePair pair,
+			ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair pair,
 			int superviseIndex,
 			OutputStream out) throws IOException
 	{
@@ -395,4 +435,71 @@ public class POIWord implements SpecialWordIO{
 		return name+".docx";
 	}
 
+	@Override
+	public String createPracticeBaseMoney(int year,
+			ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair,
+			OutputStream out) throws IOException {
+		//start
+		String name=String.format("%d年免费师范生教育实习基地经费明细单(%s)",
+				year,
+				pair.getPracticeBase().getName());
+		String modelFileName="免费师范生教育实习基地经费明细单.docx";
+		Map<String,Object> param=new HashMap<String,Object>();
+		param.put("grade",String.valueOf(year-3));
+		param.put("year",String.valueOf(year));
+		param.put("nowYear",String.valueOf(Manager.getNowTimeYear()));
+		param.put("nowMonth",String.valueOf(Manager.getNowTimeMonth()));
+		param.put("nowDay",String.valueOf(Manager.getNowTimeDay()));
+		param.put("practiceBaseName",pair.getPracticeBase().getName());
+		param.put("sum",pair.getSum());
+		param.put("studentNum",pair.getNumberOfStudent());
+		param.put("syyNum",pair.getNumberOfStudentSYY());
+		param.put("sumSmall",String.format("%.2f",pair.getSum().getSum()));
+		param.put("sumChinese",arabNumToChineseRMB(pair.getSum().getSum()));
+		MoneyPB base[];
+		try {
+			base = MoneyPB.getMoneyPBBase();
+		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
+			throw new IOException("读取教育实习经费标准失败!("+e+")");
+		}
+		param.put("base",base[pair.getPracticeBase().getProvince().contains("北京")?0:1]);
+		param.put("startMonth",Manager.getTimeMonth(pair.getRegion().getEnterPracticeBaseTime()));
+		param.put("startDay",Manager.getTimeDay(pair.getRegion().getEnterPracticeBaseTime()));
+		try{
+			Time a=new Time(year,ACCESS.jysx);
+			param.put("endMonth",Manager.getTimeMonth(a.getTime2()));
+			param.put("endDay",Manager.getTimeDay(a.getTime2()));
+		}catch(IllegalArgumentException|SQLException e) {
+			throw new IOException(e.getMessage());
+		}
+		try(FileInputStream in=new FileInputStream(POI.path+modelFileName);){
+			FileChannel channel=in.getChannel();
+			FileLock lock=null;
+			for(int i=0;i<POI.LockMaxTry;i++) try{
+				lock=channel.tryLock(0L,Long.MAX_VALUE,true);
+				if(lock!=null) break;
+				try{Thread.sleep(POI.LockTryWait);//共享锁
+				}catch(InterruptedException e){}
+		//	}catch(OverlappingFileLockException e) {
+			}catch(Exception e) {
+				e.printStackTrace();
+				break;
+			}
+			if(lock==null)
+				throw new IOException("模板文件被占用，无法读取!");
+			XWPFDocument doc;
+			try{
+				doc=this.getModel(in,param);
+			}catch(IOException e){
+				throw e;
+			}finally{
+				if(lock.isValid())
+					lock.release();
+			}
+			debug(doc,name);
+			doc.write(out);
+			doc.close();
+		}
+		return name+".docx";
+	}
 }

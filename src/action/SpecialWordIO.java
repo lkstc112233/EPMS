@@ -3,9 +3,8 @@ package action;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import obj.annualTable.ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair;
-import obj.staticObject.InnerPerson;
-import obj.staticObject.PracticeBase;
+import obj.annualTable.*;
+import obj.staticObject.*;
 
 public interface SpecialWordIO {
 	/**
@@ -23,7 +22,7 @@ public interface SpecialWordIO {
 	public abstract String createSupervisorMandate(
 			int year,
 			InnerPerson supervisor,
-			PracticeBasePair pair,
+			ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair pair,
 			int superviseIndex,
 			OutputStream stream)
 					throws IOException;
@@ -37,4 +36,16 @@ public interface SpecialWordIO {
 			OutputStream stream
 			)
 					throws IOException;
+	/**
+	 * 实习基地经费
+	 * @param studentNum 
+	 * @param sum 
+	 * @param enterPracticeBaseTime 
+	 */
+	public abstract String createPracticeBaseMoney(
+			int year,
+			ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair,
+			OutputStream stream
+			)throws IOException;
+	
 }

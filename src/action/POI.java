@@ -11,7 +11,6 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import obj.*;
 import obj.annualTable.*;
-import obj.annualTable.ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair;
 import obj.staticObject.*;
 import obj.restraint.BaseRestraint;
 
@@ -118,7 +117,7 @@ public class POI implements SQLIO, SpecialIO{
 		return excel.createSuperviseList(year, list, stream);
 	}
 	@Override
-	public String createSupervisorMandate(int year,InnerPerson supervisor,PracticeBasePair pair,int superviseIndex,
+	public String createSupervisorMandate(int year,InnerPerson supervisor,ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair pair,int superviseIndex,
 			OutputStream stream) throws IOException {
 		return word.createSupervisorMandate(year, supervisor, pair, superviseIndex, stream);
 	}
@@ -126,6 +125,11 @@ public class POI implements SQLIO, SpecialIO{
 	@Override
 	public String createPracticeBaseInfomation(int year, PracticeBase pb, OutputStream stream) throws IOException {
 		return word.createPracticeBaseInfomation(year, pb, stream);
+	}
+
+	@Override
+	public String createPracticeBaseMoney(int year,ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair, OutputStream stream) throws IOException {
+		return word.createPracticeBaseMoney(year,pair,stream);
 	}
 
 
