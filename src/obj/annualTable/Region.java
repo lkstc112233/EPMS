@@ -1,5 +1,10 @@
 package obj.annualTable;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.sql.*;
 import java.util.List;
 
@@ -9,28 +14,33 @@ import obj.staticObject.PracticeBase;
 
 @SQLTable("Region")
 public class Region extends AnnualBase{
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	static public @interface PrivateField {
+	}
 	
 	@SQLField(value="大区名称",weight=1,isKey=true,notNull=true,ps="大区名称不能重复")
 	private String name;
-	@SQLField(value="实习基地",weight=2,isKey=true,notNull=true,source="PracticeBase.name")
+	@PrivateField @SQLField(value="实习基地",weight=2,isKey=true,notNull=true,source="PracticeBase.name")
 	private String practiceBase;
-	@SQLField(value="学生大组长学号",weight=3,source="Student.id")
+	@PrivateField @SQLField(value="学生大组长学号",weight=3,source="Student.id")
 	private String studentGroupLeaderId;
 	@SQLField(value="总领队工号",weight=10,source="InnerPerson.id")
 	private String leaderId;
-	@SQLField(value="入校时间",weight=11)
+	@PrivateField @SQLField(value="入校时间",weight=11)
 	private Timestamp enterPracticeBaseTime;
-	@SQLField(value="入校地点",weight=12)
+	@PrivateField @SQLField(value="入校地点",weight=12)
 	private String enterPracticeBasePlace;
-	@SQLField(value="动员会时间",weight=13)
+	@PrivateField @SQLField(value="动员会时间",weight=13)
 	private Timestamp mobilizationTime;
-	@SQLField(value="动员会地点",weight=14)
+	@PrivateField @SQLField(value="动员会地点",weight=14)
 	private String mobilizationPlace;
-	@SQLField(value="是否住宿",notNull=true,weight=15)
+	@PrivateField @SQLField(value="是否住宿",notNull=true,weight=15)
 	private boolean accommodation=true;
-	@SQLField(value="是否收到回执单",notNull=true,weight=16)
+	@PrivateField @SQLField(value="是否收到回执单",notNull=true,weight=16)
 	private boolean moneyBack=false;
-	@SQLField(value="备注",weight=20,ps="文本储存")
+	@PrivateField @SQLField(value="备注",weight=20,ps="文本储存")
 	private String remark;
 
 
@@ -182,64 +192,50 @@ public class Region extends AnnualBase{
 	 * 需要同时修改所有该大区内容（包括year）
 	 */
 	@Override
-	public void update(Base region) throws IllegalArgumentException, SQLException{
-		if(region==null) return;
-		if(!region.getClass().equals(this.getClass()))
+	public void update(Base b) throws IllegalArgumentException, SQLException{
+		if(b==null) return;
+		if(!b.getClass().equals(this.getClass()))
 			throw new IllegalArgumentException("类型不同！");
-		//先更新studentGroupLearderId
-		String studentGroupLeaderId=((Region)region).getStudentGroupLeaderId();
-		if(studentGroupLeaderId==null && this.getStudentGroupLeaderId()!=null
-				|| studentGroupLeaderId!=null && !studentGroupLeaderId.equals(this.getStudentGroupLeaderId())) {
-			this.setStudentGroupLeaderId(((Region)region).getStudentGroupLeaderId());
-			this.updateStudentGroupLeaderId();
-		}
-		//再更新其他的
+		Region region=(Region)b;
+		//先更新PrivateField
+		PreparedStatement pst=this.updatePrivateField(region,true);
+		int num=pst.executeUpdate();
+		System.err.println("Region:update更新PrivateField "+num+"重值！("+pst.toString()+")");
+		//再更新CommonField
+		pst=this.updatePrivateField(region,false);
+		num=pst.executeUpdate();
+		System.err.println("Region:update更新CommonField "+num+"重值！("+pst.toString()+")");
+		region.copyTo(this);
+	}
+	
+	
+	public PreparedStatement updatePrivateField(Region region,boolean privateField) throws SQLException {
 		StringBuilder sb=new StringBuilder();
 		sb.append("UPDATE ");
 		sb.append(this.getSQLTableName());
 		sb.append(" SET ");
 		boolean first=true;
-		for(Field f:this.getFields()){
-			if(f.getName().equals("practiceBase")) continue;
-			if(f.getName().equals("studentGroupLeaderId")) continue;
+		for(Field f:this.getFields()) if(!f.isKey() && (privateField ^ f.getAnnotation(PrivateField.class)==null)) {
 			if(first) first=false;
 			else sb.append(" , ");
 			sb.append(f.getName());
 			sb.append(" = ?");
 		}
 		sb.append(" WHERE ");
-		sb.append("year = ? AND name = ?");
-		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
-		int parameterIndex=1;
-		for(Field f:this.getFields()){
-			if(f.getName().equals("practiceBase")) continue;
-			if(f.getName().equals("studentGroupLeaderId")) continue;
-			pst.setObject(parameterIndex++,f.get(region));
+		first=true;
+		for(Field f:this.getFields()) if(f.isKey() && (privateField || !f.getName().equals("practiceBase"))) {
+			if(first) first=false;
+			else sb.append(" AND ");
+			sb.append(f.getName());
+			sb.append(" = ?");
 		}
-		pst.setObject(parameterIndex++,this.getYear());
-		pst.setObject(parameterIndex++,this.getName());
-		int num=pst.executeUpdate();
-		System.err.println("Region:update更新了"+num+"重值！("+pst.toString()+")");
-		region.copyTo(this);
-	}
-	
-	
-	public void updateStudentGroupLeaderId() throws SQLException {
-		StringBuilder sb=new StringBuilder();
-		sb.append("UPDATE ");
-		sb.append(this.getSQLTableName());
-		sb.append(" SET ");
-		sb.append("studentGroupLeaderId = ?");
-		sb.append(" WHERE ");
-		sb.append("year = ? AND name = ? AND practiceBase = ?");
 		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
 		int parameterIndex=1;
-		pst.setObject(parameterIndex++,this.getStudentGroupLeaderId());
-		pst.setObject(parameterIndex++,this.getYear());
-		pst.setObject(parameterIndex++,this.getName());
-		pst.setObject(parameterIndex++,this.getPracticeBase());
-		int num=pst.executeUpdate();
-		System.err.println("Region:update更新了"+num+"重值！("+pst.toString()+")");
+		for(Field f:this.getFields()) if(!f.isKey() && (privateField ^ f.getAnnotation(PrivateField.class)==null))
+			pst.setObject(parameterIndex++,f.get(region));
+			for(Field f:this.getFields()) if(f.isKey() && (privateField || !f.getName().equals("practiceBase")))
+			pst.setObject(parameterIndex++,f.get(this));
+		return pst;
 	}
 	
 	

@@ -117,7 +117,7 @@ public class StudentGroupLeader extends ActionSupport{
 					display());
 		choose_pair.getRegion().setStudentGroupLeaderId(this.choose[1]);
 		try {
-			choose_pair.getRegion().updateStudentGroupLeaderId();
+			choose_pair.getRegion().update();
 		}catch(SQLException | IllegalArgumentException e) {
 			return Manager.tips("基地("+choose_pair.getPracticeBase().getDescription()+")学生大组长设置失败!",
 					e,display());
@@ -205,7 +205,7 @@ public class StudentGroupLeader extends ActionSupport{
 						else {
 							pair.getRegion().setStudentGroupLeaderId(gro.getId());
 							try{
-								pair.getRegion().updateStudentGroupLeaderId();
+								pair.getRegion().update();
 								p.gro++;//TODO check: 排序内容是否更新？
 								ok=true;
 								break;
