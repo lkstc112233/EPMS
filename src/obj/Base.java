@@ -197,12 +197,6 @@ public abstract class Base extends Object implements Comparable<Base>, Cloneable
 	// 清除、存在
 	// 增删改查
 	//=============================================================
-	public void clear(){
-		for(Field f:this.getFields())try{
-			f.set(this,null);
-		} catch (IllegalArgumentException e) {}
-	}
-	
 	public boolean existAndLoad() throws IllegalArgumentException, SQLException{
 		return this.load(true)>0;
 	}
@@ -270,7 +264,7 @@ public abstract class Base extends Object implements Comparable<Base>, Cloneable
 		sb.append(this.getSQLTableName());
 		sb.append(" SET ");
 		boolean first=true;
-		for(Field f:this.getFields()){
+		for(Field f:this.getFields()) if(!f.autoIncrease()){
 			if(first) first=false;
 			else sb.append(" , ");
 			sb.append(f.getName());
@@ -327,14 +321,14 @@ public abstract class Base extends Object implements Comparable<Base>, Cloneable
 		sb.append(this.getSQLTableName());
 		sb.append(" (");
 		boolean first=true;
-		for(Field f:this.getFields()){
+		for(Field f:this.getFields()) if(!f.autoIncrease()){
 			if(first) first=false;
 			else sb.append(",");
 			sb.append(f.getName());
 		}
 		sb.append(") VALUES (");
 		first=true;
-		for(@SuppressWarnings("unused")Field f:this.getFields()){
+		for(Field f:this.getFields()) if(!f.autoIncrease()){
 			if(first) first=false;
 			else sb.append(",");
 			sb.append("?");
@@ -342,10 +336,11 @@ public abstract class Base extends Object implements Comparable<Base>, Cloneable
 		sb.append(")");
 		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
 		int SQLParameterIndex=1;
-		for(Field f:this.getFields())
+		for(Field f:this.getFields()) if(!f.autoIncrease())
 			pst.setObject(SQLParameterIndex++,f.get(this));
 		int num=pst.executeUpdate();
 		System.err.println("更新了"+num+"重值！("+pst.toString()+")");
+		this.load();
 		Base.MapList.remove(this.getClass());
 	}
 	

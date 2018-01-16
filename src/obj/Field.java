@@ -1,5 +1,6 @@
 package obj;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -14,6 +15,10 @@ public class Field implements Comparable<Field>{
 		public Class<? extends Base> getClazz(){return clazz;}
 	public final java.lang.reflect.Field field;
 	public final SQLField s;
+	
+	public Annotation getAnnotation(Class<? extends Annotation> annotationClass) {
+		return field.getAnnotation(annotationClass);
+	}
 	@Override
 	public String toString(){
 		return this.getClazz().getSimpleName()+"."+this.getName();
@@ -142,6 +147,8 @@ public class Field implements Comparable<Field>{
 	public boolean	autoInit(){return s.autoInit();}
 	public boolean	getNotNull(){return s.notNull();}
 	public boolean	notNull(){return s.notNull();}
+	public boolean autoIncrease() {return s.autoIncrease();}
+	public boolean getAutoIncrease() {return s.autoIncrease();}
 	public Field	getSource(){return this.source();}
 	public Field	source(){
 		String[] ss=s.source().split("\\.");
