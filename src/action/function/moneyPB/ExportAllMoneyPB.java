@@ -53,9 +53,8 @@ public class ExportAllMoneyPB extends ActionSupport{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private ByteArrayOutputStream downloadOutputStream=null;
-	protected String downloadByIO(SpecialIO io,int year,PracticeBase pb,OutputStream stream) throws IOException{
-//TODO	return io.createPracticeBaseConsultationLetter(year,pb,majorName,stream);
-		return null;
+	protected String downloadByIO(SpecialIO io,int year,ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair, OutputStream stream) throws IOException{
+		return io.createPracticeBaseMoney(year,pair,stream);
 	}
 	public String download(){//下载模板
 		if(this.practiceBaseAndStudents==null)
@@ -76,7 +75,7 @@ public class ExportAllMoneyPB extends ActionSupport{
 				OutputStream out=new ByteArrayOutputStream();
 				try{
 					String name=this.downloadByIO((SpecialIO)Base.io(),
-							this.getAnnual().getYear(),pair.getPracticeBase(),out);
+							this.getAnnual().getYear(),pair,out);
 					files.put(name,out);
 				}catch(IOException e){
 					downloadOutputStream=null;

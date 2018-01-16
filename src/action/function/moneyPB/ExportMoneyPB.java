@@ -7,7 +7,6 @@ import com.opensymphony.xwork2.ActionSupport;
 import action.*;
 import obj.*;
 import obj.annualTable.*;
-import obj.staticObject.PracticeBase;
 
 public class ExportMoneyPB extends ActionSupport{
 	private static final long serialVersionUID = 3677055466118899859L;
@@ -58,9 +57,8 @@ public class ExportMoneyPB extends ActionSupport{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private ByteArrayOutputStream downloadOutputStream=null;
-	protected String downloadByIO(SpecialIO io,int year,PracticeBase pb,OutputStream stream) throws IOException{
-//TODO	return io.createPracticeBaseConsultationLetter(year,pb,majorName,stream);
-		return null;
+	protected String downloadByIO(SpecialIO io,int year,ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair, OutputStream stream) throws IOException{
+		return io.createPracticeBaseMoney(year,pair,stream);
 	}
 	public String download(){//下载模板
 		System.out.println(">> ExportMoneyPB:download > practiceBaseName="+this.practiceBaseName);
@@ -77,7 +75,7 @@ public class ExportMoneyPB extends ActionSupport{
 		downloadOutputStream=new ByteArrayOutputStream();
 		try{
 			String fileName=this.downloadByIO((SpecialIO)Base.io(),
-					this.getAnnual().getYear(),pair.getPracticeBase(),downloadOutputStream);
+					this.getAnnual().getYear(),pair,downloadOutputStream);
 			this.setDownloadFileName(fileName);//设置下载文件名称
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
