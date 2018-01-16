@@ -10,6 +10,8 @@ public class IOHelper {
 	
 	
 	static public ByteArrayOutputStream ZIP(Map<String,OutputStream> files) throws IOException {
+		if(files.isEmpty())
+			throw new IOException("没有文件可供下载");
 		ByteArrayOutputStream out=new ByteArrayOutputStream();
 		try(ZipOutputStream zos=new ZipOutputStream(out);){
 			for(Entry<String,OutputStream> entry:files.entrySet()) {
