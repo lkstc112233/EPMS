@@ -27,7 +27,7 @@
 		</td></tr>
 		<tr><td colspan="100" style="text-align:center;">
 			<span style="float:left;margin-left:50px;">
-			<s:form action="function_moneyPB_MoneyPBBaseInfo_create" method="post" theme="simple">
+			<s:form action="function_moneyPB_MoneyPBBaseInfo_display" method="post" theme="simple">
 				<s:submit value="查看/修改经费标准" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>

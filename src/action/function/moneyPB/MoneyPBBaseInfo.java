@@ -54,7 +54,7 @@ public class MoneyPBBaseInfo extends ActionSupport{
 	
 	
 	
-	private String create(){
+	public String create(){
 		this.base=new MoneyPB[2];
 		try {
 			for(int i=0;i<base.length;i++) { 

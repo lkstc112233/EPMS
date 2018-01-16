@@ -42,17 +42,17 @@
 			<% }else{ %>
 			<tr class="wtableContent" style="display:none;">
 			<% } %>
-				<td><!-- 条目 -->
+				<td style="border:0;"><!-- 条目 -->
 					<s:property value="#__opField.description" />
 				</td>
-				<td><!-- 0 -->
-					<s:textfield value="base[0].%{#__opField.name}"
-					style="width:100%;height:100%;border:0;text-align:center;"
+				<td style="border:0;"><!-- 0 -->
+					<s:textfield name="base[0].%{#__opField.name}"
+					style="width:100%;height:100%;text-align:center;"
 					theme="simple" />
 				</td>
-				<td><!-- 1 -->
-					<s:textfield value="base[1].%{#__opField.name}"
-					style="width:100%;height:100%;border:0;text-align:center;"
+				<td style="border:0;"><!-- 1 -->
+					<s:textfield name="base[1].%{#__opField.name}"
+					style="width:100%;height:100%;text-align:center;"
 					theme="simple" />
 				</td>
 			</tr>

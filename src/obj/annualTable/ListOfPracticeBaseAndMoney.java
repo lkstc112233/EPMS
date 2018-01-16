@@ -74,7 +74,7 @@ public class ListOfPracticeBaseAndMoney{
 		//已分配实习基地的
 		List<Base[]> tmp=Base.list(
 				new JoinParam(MoneyPB.class)
-				.append(JoinParam.Type.InnerJoin,
+				.append(JoinParam.Type.RightJoin,
 						PracticeBase.class,
 						Field.getField(MoneyPB.class,"practiceBase"),
 						Field.getField(PracticeBase.class,"name"),

@@ -110,6 +110,8 @@ public class Export extends ActionSupport{
 							pair.getNumberOfStudent(),
 							pair.getNumberOfStudentSYY(),
 							pair.getRegion().getAccommodation());
+					money.setPracticeBase(pair.getPracticeBase().getName());
+					money.setYear(this.annual.getYear());
 					money.create();
 				} catch (IllegalArgumentException | SQLException | IllegalAccessException e) {
 					error.append("\n"+pair.getPracticeBase().getName()+

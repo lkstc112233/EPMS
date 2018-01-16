@@ -6,7 +6,7 @@ import obj.*;
 
 @SQLTable("MoneyPB")
 public class MoneyPB extends AnnualBase{
-	@SQLField(value="实习基地",weight=1,isKey=true,notNull=true,source="PracticeBase.name")
+	@SQLField(value="实习基地",weight=1,source="PracticeBase.name")
 	private String practiceBase;
 	@SQLField(value="原任课教师指导实习酬金",weight=10)
 	private float rkjs;
