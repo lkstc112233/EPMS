@@ -109,11 +109,6 @@
 			</s:iterator>
 		</s:iterator>
 	</tbody></table>
-	<table width="300px"><tbody>
-		<tr><td>
-			&nbsp;<s:submit value="提交修改" cssClass="button"/>
-		</td></tr>
-	</tbody></table>
 	
 </div>
 

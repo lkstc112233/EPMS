@@ -187,8 +187,9 @@ public class Region extends AnnualBase{
 		if(!region.getClass().equals(this.getClass()))
 			throw new IllegalArgumentException("类型不同！");
 		//先更新studentGroupLearderId
-		if(((Region)region).getStudentGroupLeaderId()==null&&this.getStudentGroupLeaderId()!=null
-				||!((Region)region).getStudentGroupLeaderId().equals(this.getStudentGroupLeaderId())) {
+		String studentGroupLeaderId=((Region)region).getStudentGroupLeaderId();
+		if(studentGroupLeaderId==null && this.getStudentGroupLeaderId()!=null
+				|| studentGroupLeaderId!=null && !studentGroupLeaderId.equals(this.getStudentGroupLeaderId())) {
 			this.setStudentGroupLeaderId(((Region)region).getStudentGroupLeaderId());
 			this.updateStudentGroupLeaderId();
 		}
