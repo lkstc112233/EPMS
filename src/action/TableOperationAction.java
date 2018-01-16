@@ -294,14 +294,8 @@ public abstract class TableOperationAction extends ActionSupport{
 			return Manager.tips("文件为空！",display());
 		for(int i=0;i<content.size();i++) try{
 			Base b=content.get(i);
-			if(b==null) continue;
-			if(b.exist()) {
-				b.update();
-				error.set(i,"更新成功!");
-			}else {
-				b.create();
-				error.set(i,"添加成功!");
-			}
+			String msg=this.updateBase(b);
+			error.set(i,msg);
 		}catch (IllegalArgumentException | IllegalAccessException | SQLException | InstantiationException e) {
 			e.printStackTrace();
 			error.set(i,"出错!("+e.getMessage()+")");
@@ -314,6 +308,17 @@ public abstract class TableOperationAction extends ActionSupport{
 		}
 		Manager.tips("上传成功！");
 		return display();
+	}
+	
+	public String updateBase(Base b) throws InstantiationException, IllegalArgumentException, IllegalAccessException, SQLException {
+		if(b==null) return "未找到!";
+		if(b.exist()) {
+			b.update();
+			return "更新成功!";
+		}else {
+			b.create();
+			return "添加成功!";
+		}
 	}
 
 	/*
