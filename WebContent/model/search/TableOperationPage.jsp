@@ -114,7 +114,7 @@
 												<s:select list="%{#__opField.sourceList}"
 												listKey="key" listValue="value"
 												name="operateBase.%{#__opField.name}"
-												value="%{operateBase.fieldsValue[#__opFieldStatus.index]}"
+												value="%{operateBase.fieldsValueSimple[#__opFieldStatus.index]}"
 												style="text-align:center;height:100%;width:-webkit-fill-available;" theme="simple" />
 											</s:if><s:else>
 												<s:select list="%{#__opField.sourceList}"
@@ -191,7 +191,7 @@
 													<s:select list="%{#__opField.sourceList}"
 													listKey="key" listValue="value"
 													name="search.result[%{#__Status.index}][%{#__PartStatus.index}].%{#__opField.name}"
-													value="%{#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]}"
+													value="%{#__Row[#__PartStatus.index].fieldsValueSimple[#__opFieldStatus.index]}"
 													style="text-align:center;border:0px;height:100%;width:-webkit-fill-available;" theme="simple" />
 												</s:if><s:else>
 													<s:select list="%{#__opField.sourceList}"
