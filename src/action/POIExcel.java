@@ -161,9 +161,8 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 	}
 	
 	@Override
-	public String createStudentList(int year,PracticeBase pb, String majorName, OutputStream out) throws IOException {
+	public String createStudentList(int year,PracticeBase pb, Major major, OutputStream out) throws IOException {
 		if(pb==null) throw new IOException("大区为空!");
-		if(majorName==null || majorName.isEmpty()) majorName=null;
 		Region region;
 		try{
 			region=Base.list(Region.class,new Restraint(Field.getFields(Region.class,"year","practiceBase"),new Object[] {year,pb.getName()}))
@@ -172,9 +171,9 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			throw new IOException("未找到实习基地所在大区!("+e.getMessage()+")");
 		}
 		Map<Major,Pair<Set<InnerPerson>,List<Student>>> list=new TreeMap<Major,Pair<Set<InnerPerson>,List<Student>>>();
-		Restraint restraint = majorName==null ?
+		Restraint restraint = major==null ?
 				new Restraint(Field.getFields(Student.class,"year","practiceBase"),new Object[] {year,pb.getName()})
-				:new Restraint(Field.getFields(Student.class,"year","practiceBase","major"),new Object[]{year,pb.getName(),majorName});
+				:new Restraint(Field.getFields(Student.class,"year","practiceBase","major"),new Object[]{year,pb.getName(),major.getName()});
 		try{
 			for(Student stu:Base.list(Student.class,restraint)) {
 				try{
@@ -194,7 +193,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 		}
 		String name=String.format("%d年[%s]%s免费师范生教育实习学生名单",
 				year,pb.getName(),
-				(majorName==null?"":("("+majorName+")"))
+				(major==null?"":("("+major.getDescription()+")"))
 				);
 		try(Workbook wb=new XSSFWorkbook();){
 			Sheet st=wb.createSheet("学生名单");

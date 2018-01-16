@@ -12,6 +12,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import obj.*;
 import obj.annualTable.*;
 import obj.staticObject.*;
+import obj.staticSource.Major;
 import obj.restraint.BaseRestraint;
 
 public class POI implements SQLIO, SpecialIO{
@@ -85,9 +86,9 @@ public class POI implements SQLIO, SpecialIO{
 	}
 
 	@Override
-	public String createStudentList(int year, PracticeBase pb, String majorName,
+	public String createStudentList(int year, PracticeBase pb,Major major,
 			OutputStream stream) throws IOException {
-		return excel.createStudentList(year, pb, majorName, stream);
+		return excel.createStudentList(year, pb, major, stream);
 	}
 	@Override
 	public String createStudentInsuranceList(int year, ListOfPracticeBaseAndStudents list, OutputStream stream) throws IOException {

@@ -1,6 +1,7 @@
 package action.function.student;
 
 import java.io.*;
+import java.sql.SQLException;
 import java.util.*;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -9,6 +10,7 @@ import action.*;
 import obj.*;
 import obj.annualTable.*;
 import obj.staticObject.PracticeBase;
+import obj.staticSource.Major;
 
 /**
  * 导出实习生名单
@@ -64,15 +66,22 @@ public class ExportAllStudentList extends ActionSupport{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private ByteArrayOutputStream downloadOutputStream=null;
-	protected String downloadByIO(SpecialIO io,int year,PracticeBase pb,String majorName,OutputStream stream) throws IOException{
-		return io.createStudentList(year,pb,majorName,stream);
+	protected String downloadByIO(SpecialIO io,int year,PracticeBase pb,Major major,OutputStream stream) throws IOException{
+		return io.createStudentList(year,pb,major,stream);
 	}
 	public String download(){//下载模板
 		if(this.practiceBaseAndStudents==null)
 			return Manager.tips("该项目未初始化!","jump");
 		//设置下载文件名称
-		String fileName=String.format("%d年免费师范生教育实习学生名单%s.zip",
-				this.getAnnual().getYear(),majorName,
+		Major major=null;
+		if(majorName!=null) try {
+			major=new Major(majorName);
+		} catch (IllegalArgumentException | SQLException e1) {
+			return Manager.tips("专业名称有误!","jump");
+		}
+		String fileName=String.format("%d年%s免费师范生教育实习学生名单%s.zip",
+				this.getAnnual().getYear(),
+				(major==null?"":("("+major.getDescription()+")")),
 				status==null?"(含特殊基地)":status?"(特殊基地)":"");
 		this.setDownloadFileName(fileName);
 		//准备文件内容
@@ -86,7 +95,7 @@ public class ExportAllStudentList extends ActionSupport{
 				OutputStream out=new ByteArrayOutputStream();
 				try{
 					String name=this.downloadByIO((SpecialIO)Base.io(),
-							this.getAnnual().getYear(),pair.getPracticeBase(),this.majorName,
+							this.getAnnual().getYear(),pair.getPracticeBase(),major,
 							out);
 					files.put(name,out);
 				}catch(IOException e){

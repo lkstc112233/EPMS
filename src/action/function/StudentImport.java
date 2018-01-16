@@ -22,7 +22,7 @@ public class StudentImport extends action.TableOperationAction{
 			try {
 				for(PracticeBase pb:Base.list(PracticeBase.class,new Restraint(
 						Field.getFields(PracticeBase.class,"status","hx"),
-						new Object[] {true,true})))
+						new Object[] {false,true})))
 					this.provinceWithPracticeBase.add(pb.getProvince());
 			} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 				e.printStackTrace();

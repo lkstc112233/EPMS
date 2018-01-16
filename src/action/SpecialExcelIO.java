@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import obj.annualTable.ListOfPracticeBaseAndStudents;
 import obj.annualTable.ListOfRegionAndPracticeBaseAndInnerPerson;
 import obj.staticObject.PracticeBase;
+import obj.staticSource.Major;
 
 public interface SpecialExcelIO {
 	
@@ -18,7 +19,7 @@ public interface SpecialExcelIO {
 	public abstract String createStudentList(
 			int year,
 			PracticeBase pb,
-			String majorName,
+			Major major,
 			OutputStream stream)
 					throws IOException;
 
