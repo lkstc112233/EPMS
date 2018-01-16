@@ -101,7 +101,7 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 			} catch (IllegalArgumentException | SQLException e) {
 				e.printStackTrace();
 				if(error.length()>0) error.append(',');
-				error.append(region.getName());
+				error.append(region.getName()+"的相关信息保存失败!("+e.getMessage()+")");
 			}
 		}
 		//保存所有的Supervise
@@ -118,6 +118,8 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 							tmp.update();
 					} catch (SQLException | IllegalAccessException | InstantiationException e) {
 						e.printStackTrace();
+						error.append(tmp.getPracticeBase()+"的"+Supervise.getTypeNameList()[type]
+								+"的相关信息保存失败!("+e.getMessage()+")");
 					}
 				}
 			}

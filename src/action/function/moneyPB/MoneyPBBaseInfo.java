@@ -15,8 +15,7 @@ public class MoneyPBBaseInfo extends ActionSupport{
 		if(this.base!=null) return this.base;
 		try {
 			return this.base=MoneyPB.getMoneyPBBase();
-		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 			return this.base=null;
 		}
 	}

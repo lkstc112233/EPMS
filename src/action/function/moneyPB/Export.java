@@ -20,7 +20,7 @@ public class Export extends ActionSupport{
 
 	private ListOfPracticeBaseAndMoney practiceBaseAndMoney;
 	
-	public ListOfPracticeBaseAndMoney getpracticeBaseAndMoney(){return this.practiceBaseAndMoney;}
+	public ListOfPracticeBaseAndMoney getPracticeBaseAndMoney(){return this.practiceBaseAndMoney;}
 	
 	//记忆化部件
 	public MoneyPB getMoneyPB() {return new MoneyPB();}
@@ -65,6 +65,7 @@ public class Export extends ActionSupport{
 				this.practiceBaseAndMoney.get(this.practiceBaseName);
 		if(pair==null)
 			return Manager.tips("实习基地选择错误!("+this.practiceBaseName+")",NONE);
+		pair.getRegion().setMoneyBack(!pair.getRegion().getMoneyBack());
 		try {
 			pair.getRegion().update();
 		} catch (IllegalArgumentException | SQLException e) {
@@ -97,7 +98,7 @@ public class Export extends ActionSupport{
 		MoneyPB base[];
 		try {
 			base = MoneyPB.getMoneyPBBase();
-		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
+		} catch (Exception e) {
 			return Manager.tips("读取教育实习经费标准失败!",e,NONE);
 		}
 		StringBuilder error=new StringBuilder();

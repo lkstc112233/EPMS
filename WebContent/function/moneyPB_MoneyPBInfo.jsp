@@ -42,7 +42,7 @@
 	
 	
 	<jsp:include page="/model/search/TableOperationPage.jsp" flush="true">
-		<jsp:param name="actionName" value="function_moneyPB_Export"/>
+		<jsp:param name="actionName" value="function_moneyPB_MoneyPBInfo"/>
 		<jsp:param name="joinParamPage" value="/model/search/joinparam/OnePage.jsp"/>
 
 		<jsp:param name="poiBoolean" value="false"/>

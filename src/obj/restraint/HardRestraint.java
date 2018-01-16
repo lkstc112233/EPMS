@@ -51,7 +51,8 @@ public class HardRestraint extends AllRestraint{
 					e.printStackTrace();
 					continue;
 				}
-				res=false;
+				if(!setIfFalse)
+					res=false;
 			}
 		}
 		return res;
