@@ -61,8 +61,15 @@ public class SQLOperation extends ActionSupport{
 				list.add(obj);
 			}
 		}catch(SQLException e){
-			return Manager.tips("数据库开小差去了，请重新输入！",
-					e,display());
+			try {
+				Statement st=DB.con().createStatement();
+				int num=st.executeUpdate(sql);
+				System.out.println(">> SQLOperstionSelectAction:execute > 更新"+num+"重值");
+				Manager.tips("更新"+num+"个值!");
+			}catch(SQLException e2) {
+				return Manager.tips("数据库开小差去了，请重新输入！",
+						e2,display());
+			}
 		}
 		return SUCCESS;
 	}
