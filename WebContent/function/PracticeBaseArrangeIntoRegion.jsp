@@ -39,11 +39,6 @@
 					未分配大区的实习基地
 				</s:if><s:else>
 					<s:property value="%{#__Row.region.name}" />
-					<div class="right">
-						<a href="<s:url action='function_RegionInfo_display'/>?region.name=<s:property value='%{#__Row.region.name}'/>"
-							style="color:black;text-decoration:none;" class="buttonInline">
-						修改大区信息</a>
-					</div>
 				</s:else>
 			</div>
 		</td></tr>
