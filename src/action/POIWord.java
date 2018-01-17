@@ -93,7 +93,8 @@ public class POIWord implements SpecialWordIO{
 		target.setDoubleStrikethrough(source.isDoubleStrikeThrough());
 		target.setEmbossed(source.isEmbossed());
 		target.setFontFamily(source.getFontFamily());
-		target.setFontSize(source.getFontSize());
+		if(source.getFontSize()>0)
+			target.setFontSize(source.getFontSize());
 		target.setImprinted(source.isImprinted());
 		target.setItalic(source.isItalic());
 		target.setKerning(source.getKerning());
@@ -114,9 +115,8 @@ public class POIWord implements SpecialWordIO{
 			Object o=param;
 			for(String a:ss) if(o!=null)
 				o=getFromParam(o,a,s);
-			String newStr=o==null?"":o.toString();
+			String newStr=getParamString(o);
 			//oldStr->newStr
-			//TODO newStr包含的\n需要被替换为多个Run
 			TextSegement seg=para.searchText(oldStr,new PositionInParagraph());
 			if(seg!=null) {
 				if(seg.getBeginRun()==seg.getEndRun()) {
@@ -155,17 +155,27 @@ public class POIWord implements SpecialWordIO{
 							break;
 						}
 					}
-					if(firstRun==null)
-						System.err.println("Cannot get the font size!");
-					for(int i=seg.getBeginRun();i<=seg.getEndRun();i++)
-						runs.get(i).setText("",0);
-					String[] replacedSplit=replaced.split("\\n");
-					for(int i=0;i<replacedSplit.length;i++) {
-						XWPFRun run=para.insertNewRun(seg.getEndRun()+i);
-						copyRun(run,firstRun);
-						run.setText(replacedSplit[i],0);
-						if(i<replacedSplit.length-1)
-							run.addBreak();
+					if(1>2 && firstRun==null) {
+						String error="Cannot get the font size!(";
+						for(int i=seg.getBeginRun()+1;i<=seg.getEndRun();i++) {
+							XWPFRun run=runs.get(i);
+							error+="["+run.getText(0)+"("+run.getFontFamily()+","+run.getFontName()+","+run.getFontSize()+")]";
+							run.setText("",0);
+						}
+						System.err.println(error);
+						runs.get(seg.getBeginRun()).setText(replaced);
+					}else {
+						firstRun=runs.get(seg.getBeginRun());
+						for(int i=seg.getBeginRun();i<=seg.getEndRun();i++)
+							runs.get(i).setText("",0);
+						String[] replacedSplit=replaced.split("\\n");
+						for(int i=0;i<replacedSplit.length;i++) {
+							XWPFRun run=para.insertNewRun(seg.getEndRun()+i);
+							copyRun(run,firstRun);
+							run.setText(replacedSplit[i]);
+							if(i<replacedSplit.length-1)
+								run.addBreak();
+						}
 					}
 				}
 			}
