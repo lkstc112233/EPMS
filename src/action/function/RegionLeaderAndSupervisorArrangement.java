@@ -3,9 +3,7 @@ package action.function;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.opensymphony.xwork2.ActionSupport;
-
-import action.Manager;
+import action.*;
 import obj.*;
 import obj.annualTable.*;
 import obj.annualTable.ListOfRegionAndPracticeBases.RegionPair.PracticeBasePair;
@@ -15,7 +13,7 @@ import token.Role;
 /**
  * 指定总领队和督导老师
  */
-public class RegionLeaderAndSupervisorArrangement extends ActionSupport{
+public class RegionLeaderAndSupervisorArrangement extends Action{
 	private static final long serialVersionUID = 8833385464572061925L;
 
 	private action.Annual annual=new action.Annual();
@@ -94,12 +92,12 @@ public class RegionLeaderAndSupervisorArrangement extends ActionSupport{
 				//		new Restraint.Part(Field.getField(InnerPerson.class,"name"),Restraint.Type.NotLike,InnerPerson.UndefinedName)
 						}));
 		}catch(SQLException | IllegalArgumentException | InstantiationException e){
-			return Manager.tips("数据库读取校内人员列表失败！",e,NONE);
+			return this.returnWithTips(NONE,"数据库读取校内人员列表失败！",e);
 		}
 		try{
 			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/false);
 		}catch (SQLException | IllegalArgumentException | InstantiationException e) {
-			return Manager.tips("数据库读取实习基地及大区信息失败！",e,NONE);
+			return this.returnWithTips(NONE,"数据库读取实习基地及大区信息失败！",e);
 		}
 		this.setupSupervises();
 		if(this.regionAndPracticeBase!=null)
@@ -112,7 +110,7 @@ public class RegionLeaderAndSupervisorArrangement extends ActionSupport{
 		boolean ok=false;
 		StringBuilder error=new StringBuilder();
 		if(this.regionAndPracticeBase==null)
-			return display();
+			return this.returnWithTips(NONE,"实习基地选择错误!");
 		//保存所有的Region的Leader
 		for(ListOfRegionAndPracticeBases.RegionPair rp:this.regionAndPracticeBase.getList()){
 			Region region=rp.getRegion();
@@ -143,9 +141,9 @@ public class RegionLeaderAndSupervisorArrangement extends ActionSupport{
 				}
 			}
 		}		
-		return Manager.tips("修改"+(ok?"成功":"失败")+"！"
-				+(error.length()>0?("\n"+error.toString()):""),
-				display());
+		return this.jumpToMethodWithTips("display",
+				"修改"+(ok?"成功":"失败")+"！"
+				+(error.length()>0?("\n"+error.toString()):""));
 	}
 
 	

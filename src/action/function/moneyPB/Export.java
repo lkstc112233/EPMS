@@ -2,16 +2,13 @@ package action.function.moneyPB;
 
 import java.sql.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
-import action.Manager;
-import obj.annualTable.ListOfPracticeBaseAndMoney;
-import obj.annualTable.MoneyPB;
+import action.*;
+import obj.annualTable.*;
 
 /**
  * 经费-教育实习基地经费
  */
-public class Export extends ActionSupport{
+public class Export extends Action{
 	private static final long serialVersionUID = 5998268336475528662L;
 
 	private action.Annual annual=new action.Annual();
@@ -25,16 +22,13 @@ public class Export extends ActionSupport{
 	//记忆化部件
 	public MoneyPB getMoneyPB() {return new MoneyPB();}
 
-	static public final String SessionListKey="moneyPB_Export_list"; 
-	static public final String ActionName="function_moneyPB_Export_display.action";
+	static public final String SessionListKey="moneyPB_Export_List";
 	
 	public Export(){
 		super();
 		this.practiceBaseAndMoney=Manager.loadSession(ListOfPracticeBaseAndMoney.class,SessionListKey);
 	}
 	
-	
-
 	/**
 	 * 用于显示
 	 */
@@ -45,10 +39,9 @@ public class Export extends ActionSupport{
 			this.practiceBaseAndMoney=new ListOfPracticeBaseAndMoney(
 					this.getAnnual().getYear());
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
-			return Manager.tips("数据库开小差去了！",e,NONE);
+			return this.returnWithTips(NONE,"数据库开小差去了！",e);
 		}
 		Manager.saveSession(SessionListKey,this.practiceBaseAndMoney);
-		System.out.println(">> Export:display <NONE");
 		return NONE;
 	}
 	
@@ -64,14 +57,14 @@ public class Export extends ActionSupport{
 		ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair=
 				this.practiceBaseAndMoney.get(this.practiceBaseName);
 		if(pair==null)
-			return Manager.tips("实习基地选择错误!("+this.practiceBaseName+")",NONE);
+			return this.returnWithTips(NONE,"实习基地选择错误!("+this.practiceBaseName+")");
 		pair.getRegion().setMoneyBack(!pair.getRegion().getMoneyBack());
 		try {
 			pair.getRegion().update();
 		} catch (IllegalArgumentException | SQLException e) {
-			return Manager.tips("服务器开小差去了!",e,display());
+			return this.returnWithTips(NONE,"服务器开小差去了!",e);
 		}
-		return Manager.tips("修改成功!",display());
+		return this.jumpToMethodWithTips("display","修改成功!");
 	}
 	
 	public String delete() {
@@ -89,9 +82,9 @@ public class Export extends ActionSupport{
 			}
 		}
 		if(error.length()<=0)
-			return Manager.tips("清空成功!",display());
+			return this.jumpToMethodWithTips("display","清空成功!");
 		else
-			return Manager.tips("清空失败部分:"+error.toString(),display());
+			return this.jumpToMethodWithTips("display","清空失败部分:"+error.toString());
 	}
 
 	public String create() {
@@ -99,7 +92,7 @@ public class Export extends ActionSupport{
 		try {
 			base = MoneyPB.getMoneyPBBase();
 		} catch (Exception e) {
-			return Manager.tips("读取教育实习经费标准失败!",e,NONE);
+			return this.jumpBackWithTips("读取教育实习经费标准失败!",e);
 		}
 		StringBuilder error=new StringBuilder();
 		for(ListOfPracticeBaseAndMoney.RegionPair rp:this.practiceBaseAndMoney.getList()) {
@@ -121,9 +114,9 @@ public class Export extends ActionSupport{
 			}
 		}
 		if(error.length()<=0)
-			return Manager.tips("增加成功!",display());
+			return this.jumpToMethodWithTips("display","增加成功!");
 		else
-			return Manager.tips("增加失败部分:"+error.toString(),display());
+			return this.jumpToMethodWithTips("display","增加失败部分:"+error.toString());
 	}
 	
 }

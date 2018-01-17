@@ -3,8 +3,7 @@ package action.sudo;
 import java.sql.*;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
+import action.Action;
 import action.Manager;
 import action.login.MenuAction;
 import obj.Pair;
@@ -12,7 +11,7 @@ import obj.annualTable.Time;
 import obj.staticSource.ACCESS;
 import token.Role;
 
-public class TimeManager extends ActionSupport{
+public class TimeManager extends Action{
 	private static final long serialVersionUID = -2768220819301945257L;
 	
 	private action.Annual annual=new action.Annual();;
@@ -42,8 +41,7 @@ public class TimeManager extends ActionSupport{
 			try {
 				t.update();
 			} catch (IllegalArgumentException | SQLException e) {
-				return Manager.tips("第"+i+"条上传Time失败！",
-						e,NONE);
+				return this.returnWithTips(NONE,"第"+i+"条上传Time失败！",e);
 			}
 		}
 		System.out.println(">> TimeManagerAction:execute > 开始上传修改数据到数据库ACCESS表");
@@ -53,11 +51,10 @@ public class TimeManager extends ActionSupport{
 				ACCESS a=ACCESS.getFromTime(t);
 				a.update();
 			} catch (IllegalArgumentException | IllegalAccessException | SQLException | NullPointerException e) {
-				return Manager.tips("第"+i+"条上传ACCESS失败！",
-						e,NONE);
+				return this.returnWithTips(NONE,"第"+i+"条上传ACCESS失败！",e);
 			}
 		}
-		return Manager.tips("修改成功!",SUCCESS);
+		return this.jumpToMethodWithTips("display","修改成功!");
 	}
 	
 	public String display(){
@@ -66,8 +63,7 @@ public class TimeManager extends ActionSupport{
 		try {
 			times=Time.listTime(role,this.getAnnual().getYear(),/*setupIfEmpty*/true);
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
-			return Manager.tips("出错了！",
-					e,ERROR);
+			return this.returnWithTips(NONE,"服务器开小差去了!",e);
 		}
 		Manager.saveSession(SessionListKey,times);
 		return NONE;

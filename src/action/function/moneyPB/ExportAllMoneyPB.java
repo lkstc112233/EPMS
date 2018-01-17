@@ -3,14 +3,12 @@ package action.function.moneyPB;
 import java.io.*;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 import action.*;
 import obj.*;
 import obj.annualTable.*;
 import obj.staticObject.PracticeBase;
 
-public class ExportAllMoneyPB extends ActionSupport{
+public class ExportAllMoneyPB extends Action{
 	private static final long serialVersionUID = 3677055466118899859L;
 
 	private action.Annual annual=new action.Annual();
@@ -28,13 +26,9 @@ public class ExportAllMoneyPB extends ActionSupport{
 		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndMoney.class,SessionListKey);
 	}
 
-	private String jumpURL=Export.ActionName;
-		public String getJumpURL() {return this.jumpURL;}
-		public void setJumpURL(String a) {this.jumpURL=a;}
-
 	@Override
 	public String execute(){
-		return Manager.tips("该项目不可用!","jump");
+		return this.jumpBackWithTips("该项目不可用!");
 	}
 	
 	
@@ -58,7 +52,7 @@ public class ExportAllMoneyPB extends ActionSupport{
 	}
 	public String download(){//下载模板
 		if(this.practiceBaseAndStudents==null)
-			return Manager.tips("该项目未初始化!","jump");
+			return this.jumpBackWithTips("该项目未初始化!");
 		//设置下载文件名称
 		String fileName=String.format("%d年免费师范生教育实习实习基地经费明细表及回执单.zip",
 				this.getAnnual().getYear());
@@ -79,7 +73,7 @@ public class ExportAllMoneyPB extends ActionSupport{
 					files.put(name,out);
 				}catch(IOException e){
 					downloadOutputStream=null;
-					return Manager.tips("创建文件失败，暂时无法下载！",e,"jump");
+					return this.jumpBackWithTips("创建文件失败，暂时无法下载！",e);
 				}
 			}
 		}
@@ -88,7 +82,7 @@ public class ExportAllMoneyPB extends ActionSupport{
 			this.downloadOutputStream.flush();
 		} catch (IOException e) {
 			this.downloadOutputStream=null;
-			return Manager.tips("压缩文件失败，暂时无法下载！",e,"jump");
+			return this.jumpBackWithTips("压缩文件失败，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportAllMoneyPB:download <downloadAttachment");
 		return "downloadAttachment";

@@ -3,9 +3,7 @@ package action.function.teacher;
 import java.sql.SQLException;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
-import action.Manager;
+import action.*;
 import obj.*;
 import obj.annualTable.*;
 import obj.staticObject.InnerPerson;
@@ -15,7 +13,7 @@ import token.Role;
 /**
  * 总领队和督导老师
  */
-public class Export extends ActionSupport{
+public class Export extends Action{
 	private static final long serialVersionUID = 8833385464572061925L;
 
 	private action.Annual annual=new action.Annual();
@@ -75,7 +73,6 @@ public class Export extends ActionSupport{
 	
 
 	static public final String SessionListKey="teacher_Export_List";
-	static public final String ActionName="teacher_Export_display.action";
 		
 	public Export(){
 		super();
@@ -91,12 +88,11 @@ public class Export extends ActionSupport{
 			this.regionAndPracticeBaseAndInnerPerson=new ListOfRegionAndPracticeBaseAndInnerPerson(
 					this.getAnnual().getYear());
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
-			return Manager.tips("数据库开小差去了！",e,NONE);
+			return this.returnWithTips(NONE,"数据库开小差去了！",e);
 		}
 		if(this.getSchools()==null)
-			return Manager.tips("读取实习专业列表失败!",NONE);
+			return this.returnWithTips(NONE,"读取实习专业列表失败!");
 		Manager.saveSession(SessionListKey,this.regionAndPracticeBaseAndInnerPerson);
-		System.out.println(">> Export:display <NONE");
 		return NONE;
 	}
 	

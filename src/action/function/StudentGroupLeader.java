@@ -4,9 +4,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.Map.Entry;
 
-import com.opensymphony.xwork2.ActionSupport;
-
-import action.Manager;
+import action.*;
 import obj.*;
 import obj.annualTable.Student;
 import obj.annualTable.ListOfPracticeBaseAndStudents;
@@ -17,7 +15,7 @@ import token.Role;
 /**
  * 确定实习生大组长和指导教师
  */
-public class StudentGroupLeader extends ActionSupport{
+public class StudentGroupLeader extends Action{
 	private static final long serialVersionUID = 5998268336475528662L;
 
 	private action.Annual annual=new action.Annual();
@@ -70,7 +68,7 @@ public class StudentGroupLeader extends ActionSupport{
 			this.practiceBaseAndStudents=new ListOfPracticeBaseAndStudents(
 					this.getAnnual().getYear(),/*major*/null);
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
-			return Manager.tips("数据库开小差去了！",e,NONE);
+			return this.returnWithTips(NONE,"数据库开小差去了！",e);
 		}
 		Manager.saveSession(SessionListKey,this.practiceBaseAndStudents);
 		System.out.println(">> Export:display <NONE");
@@ -97,14 +95,12 @@ public class StudentGroupLeader extends ActionSupport{
 	@Override
 	public String execute(){
 		if(this.practiceBaseAndStudents==null)
-			return Manager.tips("数据库开小差去了!",
-					display());
+			return this.jumpBackWithTips("数据库开小差去了!");
 		System.out.println(">> StudentGroupLeaderRecommend:execute > choose= ["+this.choose[0]+","+this.choose[1]+"]");
 		ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair choose_pair=
 				this.practiceBaseAndStudents.get(this.choose[0]);//choose[0]是大区名称
 		if(choose_pair==null)
-			return Manager.tips("请选择正确的实习基地！",
-					display());
+			return this.jumpBackWithTips("请选择正确的实习基地！");
 		//StudenGroupLeaderRecommend:execute
 		//推荐大组长：choose[1]学生
 		Student pro=null;
@@ -113,24 +109,21 @@ public class StudentGroupLeader extends ActionSupport{
 			break;
 		}
 		if(pro==null)
-			return Manager.tips("基地("+this.choose[0]+")没有学生学号为("+this.choose[1]+")!",
-					display());
+			return this.jumpBackWithTips("基地("+this.choose[0]+")没有学生学号为("+this.choose[1]+")!");
 		choose_pair.getRegion().setStudentGroupLeaderId(this.choose[1]);
 		try {
 			choose_pair.getRegion().update();
 		}catch(SQLException | IllegalArgumentException e) {
-			return Manager.tips("基地("+choose_pair.getPracticeBase().getDescription()+")学生大组长设置失败!",
-					e,display());
+			return this.jumpBackWithTips("基地("+choose_pair.getPracticeBase().getDescription()+")学生大组长设置失败!");
 		}
-		return Manager.tips("基地("+choose_pair.getPracticeBase().getDescription()+")学生大组长("+pro.getDescription()+")设置成功!",
-				display());
+		return this.jumpToMethodWithTips("display",
+				"基地("+choose_pair.getPracticeBase().getDescription()+")学生大组长("+pro.getDescription()+")设置成功!");
 	}
 	
 	
 	public String create(){
 		if(this.practiceBaseAndStudents==null)
-			return Manager.tips("数据库开小差去了!",
-					display());
+			return this.jumpBackWithTips("数据库开小差去了!");
 		StringBuilder error=new StringBuilder();
 		Map<String,Pair> prepared=new HashMap<String,Pair>();
 		for(ListOfPracticeBaseAndStudents.RegionPair rp:this.practiceBaseAndStudents.getList()){
@@ -141,12 +134,12 @@ public class StudentGroupLeader extends ActionSupport{
 					else
 						prepared.get(s.getMajor()).stu++;
 				}catch(IllegalArgumentException | SQLException e) {
-					return Manager.tips("读取专业列表失败，已停止!",display());
+					return this.jumpBackWithTips("读取专业列表失败，已停止!");
 				}
 			}
 		}
 		if(prepared.isEmpty())
-			return Manager.tips("读取学生列表失败，已停止!",display());
+			return this.jumpBackWithTips("读取学生列表失败，已停止!");
 		for(ListOfPracticeBaseAndStudents.RegionPair rp:this.practiceBaseAndStudents.getList()){
 			for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
 				String groupLeaderId=pair.getRegion().getStudentGroupLeaderId();
@@ -173,7 +166,7 @@ public class StudentGroupLeader extends ActionSupport{
 					}else
 						prepared.get(stu.getMajor()).gro++;
 				}catch(IllegalArgumentException | SQLException e) {
-					return Manager.tips("服务器开小差去了，无法读取学生大组长！\n"+error.toString(),e,display());
+					return this.jumpBackWithTips("服务器开小差去了，无法读取学生大组长！\n"+error.toString(),e);
 				}
 			}
 		}
@@ -219,8 +212,9 @@ public class StudentGroupLeader extends ActionSupport{
 				}
 			}
 		}
-		return Manager.tips(error.length()<=0?"设定完毕！":
-			("设定结束！\n错误信息如下：\n"+error.toString()),display());
+		return this.jumpToMethodWithTips("display",
+				error.length()<=0?"设定完毕！":
+					("设定结束！\n错误信息如下：\n"+error.toString()));
 	}
 	
 	

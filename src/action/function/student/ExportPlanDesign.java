@@ -2,8 +2,6 @@ package action.function.student;
 
 import java.io.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 import action.*;
 import obj.*;
 import obj.annualTable.*;
@@ -11,7 +9,7 @@ import obj.annualTable.*;
 /**
  * 导出实习生名单
  */
-public class ExportPlanDesign extends ActionSupport{
+public class ExportPlanDesign extends Action{
 	private static final long serialVersionUID = 3677055466118899859L;
 
 	private action.Annual annual=new action.Annual();
@@ -29,13 +27,9 @@ public class ExportPlanDesign extends ActionSupport{
 		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudents.class,SessionListKey);
 	}
 
-	private String jumpURL=Export.ActionName;
-		public String getJumpURL() {return this.jumpURL;}
-		public void setJumpURL(String a) {this.jumpURL=a;}
-
 	@Override
 	public String execute(){
-		return Manager.tips("该项目不可用!","jump");
+		return this.jumpBackWithTips("该项目不可用!");
 	}
 
 
@@ -64,7 +58,7 @@ public class ExportPlanDesign extends ActionSupport{
 	public String download(){//下载模板
 		System.out.println(">> ExportPlanDesign:download >");
 		if(this.practiceBaseAndStudents==null)
-			return Manager.tips("该项目未初始化!","jump");
+			return this.jumpBackWithTips("该项目未初始化!");
 		System.out.println(">> ExportPlanDesign:download > create download file.");
 		this.downloadOutputStream=new ByteArrayOutputStream();
 		try{
@@ -75,7 +69,7 @@ public class ExportPlanDesign extends ActionSupport{
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
 			this.downloadOutputStream=null;
-			return Manager.tips("服务器开小差去了，暂时无法下载！",e,"jump");
+			return this.jumpBackWithTips("服务器开小差去了，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportPlanDesign:download <downloadAttachment");
 		return "downloadAttachment";

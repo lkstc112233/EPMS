@@ -2,15 +2,13 @@ package action.function.student;
 
 import java.io.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 import action.*;
 import obj.*;
 
 /**
  * 导出实习生名单
  */
-public class ExportTeacherList extends ActionSupport{
+public class ExportTeacherList extends Action{
 	private static final long serialVersionUID = 3677055466118899859L;
 
 	private action.Annual annual=new action.Annual();
@@ -23,13 +21,9 @@ public class ExportTeacherList extends ActionSupport{
 		super();
 	}
 
-	private String jumpURL=Export.ActionName;
-		public String getJumpURL() {return this.jumpURL;}
-		public void setJumpURL(String a) {this.jumpURL=a;}
-
 	@Override
 	public String execute(){
-		return Manager.tips("该项目不可用!","jump");
+		return this.jumpBackWithTips("该项目不可用!");
 	}
 
 	
@@ -68,7 +62,7 @@ public class ExportTeacherList extends ActionSupport{
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
 			this.downloadOutputStream=null;
-			return Manager.tips("服务器开小差去了，暂时无法下载！",e,"jump");
+			return this.jumpBackWithTips("服务器开小差去了，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportTeacherList:download <downloadAttachment");
 		return "downloadAttachment";

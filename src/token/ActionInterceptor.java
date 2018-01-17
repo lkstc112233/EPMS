@@ -14,6 +14,7 @@ import obj.staticSource.ACCESS;
 public class ActionInterceptor extends AbstractInterceptor{
 	private static final long serialVersionUID = -6659361640363083885L;	
 	
+	
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
 		String actionName=invocation.getInvocationContext().getName();
@@ -23,9 +24,10 @@ public class ActionInterceptor extends AbstractInterceptor{
 //				+((System.currentTimeMillis()-org.apache.struts2.ServletActionContext.getRequest().getSession().getLastAccessedTime())/1000)
 //				+"/"+org.apache.struts2.ServletActionContext.getRequest().getSession().getMaxInactiveInterval()
 //				+")userToken="+inner);
-		if(user==null)
-			return Manager.tips("登录已超时，请重新登录！",
-					"login");
+		if(user==null) {
+			Manager.tips("登录已超时，请重新登录！");
+			return "login";
+		}
 		//判断的当前权限
 	/*	<!-- Action名称登记 -->
 		<!-- sudo开头的必须要求教务处权限 -->
@@ -40,8 +42,8 @@ public class ActionInterceptor extends AbstractInterceptor{
 			try{
 				as=Base.list(ACCESS.class,new Restraint(Field.getField(ACCESS.class,"actionClass"),an[1]));
 			}catch(IllegalArgumentException|InstantiationException|SQLException|NullPointerException|IndexOutOfBoundsException e){
-				return Manager.tips("数据库错误!",
-						e,"error");
+				Manager.tips("数据库错误!",e);
+				return "error";
 			}
 			if(as==null || as.isEmpty()){
 				//TODO 没有权限限制的action
@@ -73,9 +75,10 @@ public class ActionInterceptor extends AbstractInterceptor{
 			//不限制
 			errorMsg=null;
 		}
-		if(errorMsg!=null)
-			return Manager.tips(user.getOffice()+"无权访问（只允许"+errorMsg.toString()+"访问），请重新登录！",
-					"error");
+		if(errorMsg!=null) {
+			Manager.tips(user.getOffice()+"无权访问（只允许"+errorMsg.toString()+"访问），请重新登录！");
+			return "error";
+		}
 		Manager.setActionName(actionName);
 		return invocation.invoke();
 	}

@@ -2,8 +2,6 @@ package action.function.teacher;
 
 import java.io.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 import action.*;
 import obj.*;
 import obj.annualTable.*;
@@ -13,7 +11,7 @@ import obj.staticObject.InnerPerson;
 /**
  * 导出督导任务书
  */
-public class ExportSupervisorMandate extends ActionSupport{
+public class ExportSupervisorMandate extends Action{
 	private static final long serialVersionUID = 3677055466118899859L;
 
 	private action.Annual annual=new action.Annual();
@@ -31,13 +29,9 @@ public class ExportSupervisorMandate extends ActionSupport{
 		this.regionAndPracticeBaseAndInnerPerson=Manager.loadSession(ListOfRegionAndPracticeBaseAndInnerPerson.class, SessionListKey);
 	}
 
-	private String jumpURL=Export.ActionName;
-		public String getJumpURL() {return this.jumpURL;}
-		public void setJumpURL(String a) {this.jumpURL=a;}
-
 	@Override
 	public String execute(){
-		return Manager.tips("该项目不可用!","jump");
+		return this.jumpBackWithTips("该项目不可用!");
 	}
 	
 	
@@ -70,13 +64,13 @@ public class ExportSupervisorMandate extends ActionSupport{
 	public String download(){//下载模板
 		System.out.println(">> ExportSupervisorMandate:download > practiceBaseName="+this.practiceBaseName+",superviseIndex="+this.superviseIndex);
 		if(this.regionAndPracticeBaseAndInnerPerson==null)
-			return Manager.tips("该项目未初始化!","jump");
+			return this.jumpBackWithTips("该项目未初始化!");
 		ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair
 			pair=this.regionAndPracticeBaseAndInnerPerson.get(practiceBaseName);
 		if(pair==null)
-			return Manager.tips("实习基地名称不正确!","jump");
+			return this.jumpBackWithTips("实习基地名称不正确!");
 		if(superviseIndex<0||superviseIndex>=pair.getSupervisor().length)
-			return Manager.tips("督导序号不正确","jump");
+			return this.jumpBackWithTips("督导序号不正确");
 		InnerPerson supervisor=pair.getSupervisor()[superviseIndex];
 		System.out.println(">> ExportSupervisorMandate:download > create download file.");
 		downloadOutputStream=new ByteArrayOutputStream();
@@ -87,7 +81,7 @@ public class ExportSupervisorMandate extends ActionSupport{
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
 			downloadOutputStream=null;
-			return Manager.tips("服务器开小差去了，暂时无法下载！",e,"jump");
+			return this.jumpBackWithTips("服务器开小差去了，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportSupervisorMandate:download <downloadAttachment");
 		return "downloadAttachment";

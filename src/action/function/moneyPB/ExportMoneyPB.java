@@ -2,13 +2,11 @@ package action.function.moneyPB;
 
 import java.io.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 import action.*;
 import obj.*;
 import obj.annualTable.*;
 
-public class ExportMoneyPB extends ActionSupport{
+public class ExportMoneyPB extends Action{
 	private static final long serialVersionUID = 3677055466118899859L;
 
 	private action.Annual annual=new action.Annual();
@@ -27,13 +25,9 @@ public class ExportMoneyPB extends ActionSupport{
 		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndMoney.class,SessionListKey);
 	}
 
-	private String jumpURL=Export.ActionName;
-		public String getJumpURL() {return this.jumpURL;}
-		public void setJumpURL(String a) {this.jumpURL=a;}
-
 	@Override
 	public String execute(){
-		return Manager.tips("该项目不可用!","jump");
+		return this.jumpBackWithTips("该项目不可用!");
 	}
 	
 	
@@ -63,14 +57,14 @@ public class ExportMoneyPB extends ActionSupport{
 	public String download(){//下载模板
 		System.out.println(">> ExportMoneyPB:download > practiceBaseName="+this.practiceBaseName);
 		if(this.practiceBaseAndStudents==null)
-			return Manager.tips("该项目未初始化!","jump");
+			return this.jumpBackWithTips("该项目未初始化!");
 		ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair=
 				this.practiceBaseAndStudents.get(this.practiceBaseName);
 		if(pair==null)
-			return Manager.tips("实习基地名称有误!","jump");
+			return this.jumpBackWithTips("实习基地名称有误!");
 		final Boolean status=false;
 		if(status!=null && (status^pair.getPracticeBase().getStatus()))
-			return Manager.tips("实习基地是非正式实习基地，不能提供经费明细！","jump");
+			return this.jumpBackWithTips("实习基地是非正式实习基地，不能提供经费明细！");
 		System.out.println(">> ExportMoneyPB:download > create download file.");
 		downloadOutputStream=new ByteArrayOutputStream();
 		try{
@@ -80,7 +74,7 @@ public class ExportMoneyPB extends ActionSupport{
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
 			downloadOutputStream=null;
-			return Manager.tips("服务器开小差去了，暂时无法下载！",e,"jump");
+			return this.jumpBackWithTips("服务器开小差去了，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportMoneyPB:download <downloadAttachment");
 		return "downloadAttachment";

@@ -3,9 +3,7 @@ package action.function;
 import java.sql.*;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
-import action.Manager;
+import action.*;
 import obj.*;
 import obj.annualTable.Student;
 import obj.annualTable.ListOfPracticeBaseAndStudents;
@@ -16,14 +14,14 @@ import token.Role;
 /**
  * 确定实习生大组长和指导教师
  */
-public class StudentGroupLeaderRecommend extends ActionSupport{
+public class StudentGroupLeaderRecommend extends Action{
 	private static final long serialVersionUID = 5998268336475528662L;
 
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
 	
 	
-	private String majorName="汉语言文学（师范）";
+	private String majorName;
 	private ListOfPracticeBaseAndStudents practiceBaseAndStudents;
 	private String[] choose=new String[]{null,null,null};//[0]基地,[1]学生Id,[2]老师Id
 	
@@ -68,12 +66,14 @@ public class StudentGroupLeaderRecommend extends ActionSupport{
 		}
 	
 
-	static public final String SessionListKey="StudentArrangeIntoPracticeBase_list"; 
+	static public final String SessionListKey="StudentArrangeIntoPracticeBase_list";
+	static public final String SessionMajorNameKey="StudentArrangeIntoPracticeBase_majorName";
 	
 	public StudentGroupLeaderRecommend(){
 		super();
 		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudents.class,SessionListKey);
-		if(this.getMajors()!=null && !this.getMajors().isEmpty())
+		this.majorName=Manager.loadSession(String.class,SessionMajorNameKey);
+		if(this.majorName==null && this.getMajors()!=null && !this.getMajors().isEmpty())//默认值
 			this.setMajorName(this.getMajors().get(0).getName());
 	}
 
@@ -89,19 +89,20 @@ public class StudentGroupLeaderRecommend extends ActionSupport{
 		try{
 			major=new Major(this.majorName);
 		}catch(IllegalArgumentException | SQLException e){
-			return Manager.tips("专业("+this.majorName+")不存在！",e,NONE);
+			return this.returnWithTips(NONE,"专业("+this.majorName+")不存在！",e);
 		}
 		try {
 			this.practiceBaseAndStudents=new ListOfPracticeBaseAndStudents(
 					this.getAnnual().getYear(),major);
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
-			return Manager.tips("数据库开小差去了！",e,NONE);
+			return this.returnWithTips(NONE,"数据库开小差去了！",e);
 		}
 		if(this.getInnerPersons()==null)
-			return Manager.tips("读取校内教师列表失败!",NONE);
+			return this.returnWithTips(NONE,"读取校内教师列表失败!");
 		if(this.getMajors()==null)
-			return Manager.tips("读取实习专业列表失败!",NONE);
+			return this.returnWithTips(NONE,"读取实习专业列表失败!");
 		Manager.saveSession(SessionListKey,this.practiceBaseAndStudents);
+		Manager.saveSession(SessionMajorNameKey,this.majorName);
 		System.out.println(">> StudentGroupLeaderRecommend:display <NONE");
 		this.choose[2]=null;
 		return NONE;
@@ -118,8 +119,7 @@ public class StudentGroupLeaderRecommend extends ActionSupport{
 		ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair=
 				this.practiceBaseAndStudents.get(this.choose[0]);//choose[0]是基地名称
 		if(pair==null)
-			return Manager.tips("请选择正确的实习基地！",
-					display());
+			return this.jumpBackWithTips("请选择正确的实习基地！");
 		//StudenGroupLeaderRecommend:execute
 		if(this.choose[2]==null || this.choose[2].isEmpty()) { 
 			//推荐大组长：choose[1]学生
@@ -129,8 +129,7 @@ public class StudentGroupLeaderRecommend extends ActionSupport{
 				break;
 			}
 			if(!ok) 
-				return Manager.tips("基地("+this.choose[0]+")没有学生学号为("+this.choose[1]+")!",
-						display());
+				return this.jumpBackWithTips("基地("+this.choose[0]+")没有学生学号为("+this.choose[1]+")!");
 			StringBuilder error=new StringBuilder();
 			for(Student stu:pair.getStudents()) {
 				boolean flag=stu.getId().equals(this.choose[1]);
@@ -145,15 +144,14 @@ public class StudentGroupLeaderRecommend extends ActionSupport{
 					error.append(stu.getName()+"推荐状态变更失败!("+e.getMessage()+")");
 				}
 			}
-			return Manager.tips(error.toString(),
-					display());
+			return this.jumpToMethodWithTips("display",error.toString());
 		}else if(this.choose[1]==null || this.choose[1].isEmpty()) {
 			//设置基地所有学生指导老师：choose[2]老师
 			InnerPerson teacher=null;
 			try {
 				teacher=new InnerPerson(this.choose[2]);
 			}catch(SQLException | IllegalArgumentException e) {
-				return Manager.tips("指导教师输入错误!",e,display());
+				return this.jumpBackWithTips("指导教师输入错误!",e);
 			}
 			StringBuilder error=new StringBuilder();
 			for(Student stu:pair.getStudents()) {
@@ -168,15 +166,14 @@ public class StudentGroupLeaderRecommend extends ActionSupport{
 					error.append(stu.getName()+"设置指导老师失败!("+e.getMessage()+")");
 				}
 			}
-			return Manager.tips(error.toString(),
-					display());
+			return this.jumpToMethodWithTips("display",error.toString());
 		}else {
 			//设置某学生指导老师：choose[1]学生,choose[2]老师
 			InnerPerson teacher=null;
 			try {
 				teacher=new InnerPerson(this.choose[2]);
 			}catch(SQLException | IllegalArgumentException e) {
-				return Manager.tips("指导教师输入错误!",e,display());
+				return this.jumpBackWithTips("指导教师输入错误!",e);
 			}
 			Student opStudent=null;
 			for(Student stu:pair.getStudents()) if(stu.getId().equals(this.choose[1])) {
@@ -184,20 +181,16 @@ public class StudentGroupLeaderRecommend extends ActionSupport{
 				break;
 			}
 			if(opStudent==null)
-				return Manager.tips("基地("+this.choose[0]+")没有学生学号为("+this.choose[1]+")!",
-						display());
+				return this.jumpBackWithTips("基地("+this.choose[0]+")没有学生学号为("+this.choose[1]+")!");
 			if(teacher.getId().equals(opStudent.getTeacherId()))
-				return Manager.tips(opStudent.getName()+"指导教师没有变化!",
-						display());
+				return this.jumpBackWithTips(opStudent.getName()+"指导教师没有变化!");
 			opStudent.setTeacherId(teacher.getId());
 			try {
 				opStudent.update();
 			}catch(SQLException | IllegalArgumentException e) {
-				return Manager.tips(opStudent.getName()+"设置指导老师失败!",
-						e,display());
+				return this.jumpBackWithTips(opStudent.getName()+"设置指导老师失败!",e);
 			}
-			return Manager.tips(opStudent.getName()+"指导老师设置为"+teacher.getDescription(),
-					display());
+			return this.jumpToMethodWithTips("display",opStudent.getName()+"指导老师设置为"+teacher.getDescription());
 		}
 	}
 	

@@ -7,12 +7,10 @@ import java.util.*;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 import obj.*;
 import obj.restraint.BaseRestraint;
 
-public abstract class TableOperationAction extends ActionSupport{
+public abstract class TableOperationAction extends Action{
 	private static final long serialVersionUID = 5998268336475528662L;
 
 	static public final String SessionSearchKey="TableOperationAction_Search";
@@ -92,7 +90,7 @@ public abstract class TableOperationAction extends ActionSupport{
 			try{
 				this.search=this.createSearch();
 			}catch(Exception e){
-				return Manager.tips("搜索结果实例初始化失败！",e,NONE);
+				return this.returnWithTips(NONE,"搜索结果实例初始化失败！",e);
 			}
 			this.fieldsDisplay=new boolean[this.search.getParam().size()][];
 			for(int i=0;i<this.fieldsDisplay.length;i++){
@@ -122,22 +120,22 @@ public abstract class TableOperationAction extends ActionSupport{
 	@Override
 	public String execute(){//执行查询
 		if(this.search==null)
-			return Manager.tips("搜索结果实例初始化失败！",display());
+			this.display();
+		if(this.search==null)
+			return this.jumpToMethodWithTips("display","搜索结果实例初始化失败！");
 		System.out.println(">> TableOperationAction:execute > start");
 		try {
 			this.search.execute();
 		} catch (IllegalAccessException | InstantiationException e) {
-			return Manager.tips("搜索结果生成失败！"
-					,e,NONE);
+			return this.returnWithTips(NONE,"搜索结果生成失败！",e);
 		} catch (SQLException e) {
-			Manager.tips("搜索操作失败，可能是数据库开小差去了！",
-					e,NONE);
+			return this.returnWithTips(NONE,"搜索操作失败，可能是数据库开小差去了！",e);
 		}
 		Manager.removeSession(SessionChooseKey);
 		jumpX=this.choose[1];
 		this.choose=null;
 		System.out.println(">> TableOperationAction:execute > resultSet count="+this.search.getResult().size());
-		return display();
+		return this.jumpToMethod("display");
 	}
 	
 	
@@ -147,11 +145,10 @@ public abstract class TableOperationAction extends ActionSupport{
 	 */
 	public String update(){
 		if(this.search==null)
-			return Manager.tips("搜索结果实例初始化失败！",display());
+			return this.jumpToMethodWithTips("display","搜索结果实例初始化失败！");
 		System.out.println(">> TableOperationAction:update > start");
 		if(this.operateBase==null)
-			return Manager.tips("操作选择错误！",
-					NONE);
+			return this.returnWithTips(NONE,"操作选择错误!");
 		Base newBase=null;
 		jumpX=this.choose[1];
 		try{
@@ -159,29 +156,24 @@ public abstract class TableOperationAction extends ActionSupport{
 		}catch(Exception e){
 		}
 		if(newBase==null)
-			return Manager.tips("选择条目错误！",
-					NONE);
+			return this.returnWithTips(NONE,"选择条目错误！");
 		if(!this.search.getBaseRestraint().checkBase(newBase,/*setIfFalse*/false))
-			return Manager.tips("不能修改为其他[年份/部院系]条目！",
-					NONE);
+			return this.returnWithTips(NONE,"不能修改为其他[年份/部院系]条目！");
 		try{
 			this.operateBase.update(newBase);
 		}catch (IllegalArgumentException e) {
-			return Manager.tips("修改时参数错误！",
-					e,NONE);
+			return this.returnWithTips(NONE,"修改时参数错误！",e);
 		} catch (SQLException e) {
-			return Manager.tips("修改时遇到数据库错误！",
-					e,NONE);
+			return this.returnWithTips(NONE,"修改时遇到数据库错误！",e);
 		}
-		return Manager.tips("修改成功！",
-				execute());
+		return this.jumpToMethodWithTips("execute","修改成功！");
 	}
 	/**
 	 * 删除选中条（根据choose值）
 	 */
 	public String delete(){
 		if(this.search==null)
-			return Manager.tips("搜索结果实例初始化失败！",display());
+			return this.jumpToMethodWithTips("display","搜索结果实例初始化失败！");
 		System.out.println(">> TableOperationAction:delete > start");
 		this.operateBase=null;
 		try{
@@ -189,50 +181,39 @@ public abstract class TableOperationAction extends ActionSupport{
 		}catch(Exception e){
 		}
 		if(this.operateBase==null)
-			return Manager.tips("操作选择错误！",
-					NONE);
+			return this.returnWithTips(NONE,"操作选择错误!");
 		if(!this.search.getBaseRestraint().checkBase(this.operateBase,/*setIfFalse*/false))
-			return Manager.tips("不能删除其他[年份/部院系]条目！",
-					NONE);
+			return this.returnWithTips(NONE,"不能删除其他[年份/部院系]条目！");
 		try{
 			this.operateBase.delete();
 		}catch (IllegalArgumentException e) {
-			return Manager.tips("删除时参数错误！",
-					e,NONE);
+			return this.returnWithTips(NONE,"删除时参数错误！",e);
 		} catch (SQLException e) {
-			return Manager.tips("删除时遇到数据库错误！",
-					e,NONE);
+			return this.returnWithTips(NONE,"删除时遇到数据库错误！",e);
 		}
-		return Manager.tips("删除成功！",
-				execute());
+		return this.jumpToMethodWithTips("execute","删除成功！");
 	}
 	/**
 	 * 新建条（新建createBase）
 	 */
 	public String create(){
 		if(this.search==null)
-			return Manager.tips("搜索结果实例初始化失败！",display());
+			return this.jumpToMethodWithTips("display","搜索结果实例初始化失败！");
 		System.out.println(">> TableOperationAction:update > start");
 		if(this.operateBase==null)
-			return Manager.tips("操作选择错误！",
-					NONE);
+			return this.returnWithTips(NONE,"操作选择错误！");
 		if(!this.search.getBaseRestraint().checkBase(this.operateBase,/*setIfFalse*/false))
-			return Manager.tips("不能新建其他[年份/部院系]条目！",
-					NONE);
+			return this.returnWithTips(NONE,"不能新建其他[年份/部院系]条目！");
 		try{
 			this.operateBase.create();
 		} catch (IllegalArgumentException e) {
-			return Manager.tips("创建时参数错误！",
-					e,NONE);
+			return this.returnWithTips(NONE,"创建时参数错误！",e);
 		} catch (IllegalAccessException e) {
-			return Manager.tips("创建时参数权限错误！",
-					e,NONE);
+			return this.returnWithTips(NONE,"创建时参数权限错误！",e);
 		} catch (SQLException e) {
-			return Manager.tips("创建时遇到数据库错误！",
-					e,NONE);
+			return this.returnWithTips(NONE,"创建时遇到数据库错误！",e);
 		}
-		return Manager.tips("创建成功！",
-				execute());
+		return this.jumpToMethodWithTips("execute","创建成功！");
 	}
 	
 	
@@ -269,29 +250,29 @@ public abstract class TableOperationAction extends ActionSupport{
 		System.out.println(">> TableOperationAction:upload > uploadFileFileName="+this.getUploadFileFileName());
 		Class<? extends Base> clazz=Base.getClassForName(this.fileTableName);
 		if(clazz==null)
-			return Manager.tips("选择了错误的表名称",display());
+			return this.jumpToMethodWithTips("display","选择了错误的表名称！");
 		if(this.getUploadFile()==null)
-			return Manager.tips("上传了空文件！",display());
+			return this.jumpToMethodWithTips("display","上传了空文件！");
 		List<? extends Base> content=null;
 		List<String> error=new ArrayList<String>();
 		try(FileInputStream in=new FileInputStream(this.getUploadFile());){
 			content=this.uploadByIO(Base.io(),clazz,in,error,this.getSearch().getBaseRestraint());
 		}
 		catch(IOException e){
-			return Manager.tips("文件错误！",e,display());
+			return this.jumpToMethodWithTips("display","文件错误！");
 		}
 		catch (EncryptedDocumentException e) {
-			return Manager.tips("解码错误！",e,display());
+			return this.jumpToMethodWithTips("display","解码错误！");
 		}
 		catch (InvalidFormatException e) {
-			return Manager.tips("格式错误！",e,display());
+			return this.jumpToMethodWithTips("display","格式错误！");
 		} catch (InstantiationException | IllegalAccessException e) {
-			return Manager.tips("初始化实例错误！",e,display());
+			return this.jumpToMethodWithTips("display","始化实例错误！");
 		}
 		if(content==null)
-			return Manager.tips("文件读取失败！",display());
+			return this.jumpToMethodWithTips("display","文件读取失败！");
 		if(content.isEmpty())
-			return Manager.tips("文件为空！",display());
+			return this.jumpToMethodWithTips("display","文件为空！");
 		for(int i=0;i<content.size();i++) try{
 			Base b=content.get(i);
 			String msg=this.updateBase(b);
@@ -304,10 +285,10 @@ public abstract class TableOperationAction extends ActionSupport{
 			StringBuilder errorMsg=new StringBuilder("上传情况：\n\n");
 			for(int i=0;i<error.size();i++)
 				errorMsg.append("Row["+i+"]:"+error.get(i)+"\n");
-			return Manager.tips(errorMsg.toString(),display());
+			return this.jumpToMethodWithTips("display",errorMsg.toString());
 		}
 		Manager.tips("上传成功！");
-		return display();
+		return this.jumpToMethod("display");
 	}
 	
 	public String updateBase(Base b) throws InstantiationException, IllegalArgumentException, IllegalAccessException, SQLException {
@@ -352,7 +333,7 @@ public abstract class TableOperationAction extends ActionSupport{
 		System.out.println(">> TableOperationAction:download > tableName="+this.fileTableName);
 		Class<? extends Base> clazz=Base.getClassForName(this.fileTableName);
 		if(clazz==null)
-			return Manager.tips("选择了错误的表名称",display());
+			return this.jumpToMethodWithTips("display","选择了错误的表名称");
 		this.setDownloadFileName(Base.getSQLTableName(clazz)+"模板.xlsx");//设置下载文件名称
 		System.out.println(">> TableOperationAction:download > tableName="+this.fileTableName);
 		System.out.println(">> TableOperationAction:download > downloadFielName="+this.getDownloadFileName());
@@ -362,7 +343,7 @@ public abstract class TableOperationAction extends ActionSupport{
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
 			downloadOutputStream=null;
-			return Manager.tips("服务器开小差去了，暂时无法下载！",e,display());
+			return this.jumpToMethodWithTips("display","服务器开小差去了，暂时无法下载!",e);
 		}
 		System.out.println(">> TableOperationAction:download <downloadAttachment");
 		return "downloadAttachment";

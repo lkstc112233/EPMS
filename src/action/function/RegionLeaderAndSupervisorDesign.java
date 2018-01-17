@@ -4,9 +4,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.Map.Entry;
 
-import com.opensymphony.xwork2.ActionSupport;
-
-import action.Manager;
+import action.*;
 import obj.*;
 import obj.annualTable.*;
 import obj.annualTable.ListOfRegionAndPracticeBases.RegionPair.PracticeBasePair;
@@ -17,7 +15,7 @@ import obj.staticSource.School;
 /**
  * 实习总领队和督导任务学科规划
  */
-public class RegionLeaderAndSupervisorDesign extends ActionSupport{
+public class RegionLeaderAndSupervisorDesign extends Action{
 	private static final long serialVersionUID = 8833385464572061925L;
 
 	private action.Annual annual=new action.Annual();
@@ -75,11 +73,11 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 	
 	public String display(){
 		if(this.getInnerPersons()==null)
-			return Manager.tips("数据库读取校内人员列表失败！",NONE);
+			return this.returnWithTips(NONE,"数据库读取校内人员列表失败！");
 		try {
 			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/false);
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
-			return Manager.tips("数据库读取实习基地及大区信息失败！",e,NONE);
+			return this.returnWithTips(NONE,"数据库读取实习基地及大区信息失败！",e);
 		}
 		this.getSupervises();
 		if(this.regionAndPracticeBase!=null)
@@ -92,7 +90,7 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 		boolean ok=false;
 		StringBuilder error=new StringBuilder();
 		if(this.regionAndPracticeBase==null)
-			return display();
+			return this.jumpBackWithTips("实习基地选择错误!");
 		//保存所有的Region的Leader
 		for(ListOfRegionAndPracticeBases.RegionPair rp:this.regionAndPracticeBase.getList()){
 			Region region=rp.getRegion();
@@ -125,9 +123,9 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 				}
 			}
 		}
-		return Manager.tips("修改"+(ok?"成功":"失败")+"！"
-				+(error.length()>0?("\n"+error.toString()):""),
-				display());
+		return this.jumpToMethodWithTips("display",
+				"修改"+(ok?"成功":"失败")+"！"
+				+(error.length()>0?("\n"+error.toString()):""));
 	}
 
 	
@@ -152,8 +150,7 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 		for(ListOfRegionAndPracticeBases.RegionPair rp:this.regionAndPracticeBase.getList()){
 			Region region=rp.getRegion();
 			if(region.getLeaderId()==null || region.getLeaderId().isEmpty())
-				return Manager.tips("请先将总领队学科规划填充完毕！",
-						NONE);
+				return this.returnWithTips(NONE,"请先将总领队学科规划填充完毕！");
 		}
 		Map<String,Pair> prepared=new HashMap<String,Pair>();
 		try {
@@ -171,14 +168,14 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 					else
 						prepared.get(m.getSchool()).stu++;
 				} catch (IllegalArgumentException | SQLException e) {
-					return Manager.tips("读取部院系列表失败!",e,NONE);
+					return this.returnWithTips(NONE,"读取部院系列表失败!",e);
 				}
 			}
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
-			return Manager.tips("读取实习生列表失败!",e,NONE);
+			return this.returnWithTips(NONE,"读取实习生列表失败!",e);
 		}
 		if(prepared.isEmpty())
-			return Manager.tips("第一阶段读取部院系列表失败，已停止!",NONE);
+			return this.returnWithTips(NONE,"第一阶段读取部院系列表失败，已停止!");
 		int j=0;for(ListOfRegionAndPracticeBases.RegionPair rp:this.regionAndPracticeBase.getList()){
 			String leaderId=rp.getRegion().getLeaderId();
 			for(int type:this.getSuperviseTypeList()) {
@@ -192,7 +189,7 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 						else
 							sup.update();
 					}catch(SQLException | IllegalArgumentException | InstantiationException | IllegalAccessException e) {
-						return Manager.tips("第二阶段出现问题，已停止!",e,display());
+						return this.jumpToMethodWithTips("display","第二阶段出现问题，已停止!",e);
 					}
 					//统计计数
 					if(sup.getSupervisorId()!=null && !sup.getSupervisorId().isEmpty()) try {
@@ -202,7 +199,7 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 						else
 							prepared.get(inner.getSchool()).sup++;
 					}catch(SQLException | IllegalArgumentException e) {
-						return Manager.tips("第二阶段出现未知老师工号，已停止!",e,display());
+						return this.jumpToMethodWithTips("display","第二阶段出现未知老师工号，已停止!",e);
 					}
 				}
 			}j++;
@@ -274,8 +271,9 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 				}
 			}
 		}
-		return Manager.tips(error.length()<=0?"填充完毕！":
-			("填充结束！\n错误信息如下：\n"+error.toString()),display());
+		return this.jumpToMethodWithTips("display",
+				error.length()<=0?"填充完毕！":
+					("填充结束！\n错误信息如下：\n"+error.toString()));
 	}
 	
 }

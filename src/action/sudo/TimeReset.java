@@ -2,14 +2,11 @@ package action.sudo;
 
 import java.sql.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
-import action.Manager;
+import action.Action;
 import obj.*;
 import obj.annualTable.Time;
 
-
-public class TimeReset extends ActionSupport{
+public class TimeReset extends Action{
 	private static final long serialVersionUID = -2075656836784414352L;
 
 	private action.Annual annual=new action.Annual();;
@@ -26,10 +23,9 @@ public class TimeReset extends ActionSupport{
 			for(Time t:Base.list(Time.class,new Restraint(Field.getField(Time.class,"year"),this.getAnnual().getYear())))
 				t.delete();
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
-			return Manager.tips("出错了！",
-					e,ERROR);
+			return this.returnWithTips(ERROR,"出错了！",e);
 		}
-		return "back";
+		return "menu";
 	}
 	
 	public String display(){

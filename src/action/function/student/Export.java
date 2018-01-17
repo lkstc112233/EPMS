@@ -3,20 +3,17 @@ package action.function.student;
 import java.sql.*;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
-import action.Manager;
+import action.*;
 import obj.*;
-import obj.annualTable.Student;
+import obj.annualTable.*;
 import obj.staticObject.InnerPerson;
-import obj.annualTable.ListOfPracticeBaseAndStudents;
 import obj.staticSource.Major;
 import token.Role;
 
 /**
  * 导出实习生名单、商洽函、布局规划、指导老师名单
  */
-public class Export extends ActionSupport{
+public class Export extends Action{
 	private static final long serialVersionUID = 5998268336475528662L;
 
 	private action.Annual annual=new action.Annual();
@@ -74,7 +71,6 @@ public class Export extends ActionSupport{
 	
 
 	static public final String SessionListKey="student_Export_list"; 
-	static public final String ActionName="function_student_Export_display.action";
 	
 	public Export(){
 		super();
@@ -96,16 +92,16 @@ public class Export extends ActionSupport{
 			if(this.majorName!=null && !this.majorName.isEmpty())
 				major=new Major(this.majorName);
 		}catch(IllegalArgumentException | SQLException e){
-			return Manager.tips("专业("+this.majorName+")不存在！",e,NONE);
+			return this.returnWithTips(NONE,"专业("+this.majorName+")不存在！",e);
 		}
 		try{
 			this.practiceBaseAndStudents=new ListOfPracticeBaseAndStudents(
 					this.getAnnual().getYear(),major);
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
-			return Manager.tips("数据库开小差去了！",e,NONE);
+			return this.returnWithTips(NONE,"数据库开小差去了！",e);
 		}
 		if(this.getMajors()==null)
-			return Manager.tips("读取实习专业列表失败!",NONE);
+			return this.returnWithTips(NONE,"读取实习专业列表失败!");
 		Manager.saveSession(SessionListKey,this.practiceBaseAndStudents);
 		System.out.println(">> Export:display <NONE");
 		return NONE;

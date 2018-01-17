@@ -5,8 +5,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 import action.*;
 import obj.*;
 import obj.annualTable.*;
@@ -17,7 +15,7 @@ import obj.staticSource.School;
 /**
  * 导出督导任务书
  */
-public class ExportSupervisorAllMandate extends ActionSupport{
+public class ExportSupervisorAllMandate extends Action{
 	private static final long serialVersionUID = 3677055466118899859L;
 
 	private action.Annual annual=new action.Annual();
@@ -35,13 +33,9 @@ public class ExportSupervisorAllMandate extends ActionSupport{
 		this.regionAndPracticeBaseAndInnerPerson=Manager.loadSession(ListOfRegionAndPracticeBaseAndInnerPerson.class, SessionListKey);
 	}
 
-	private String jumpURL=Export.ActionName;
-		public String getJumpURL() {return this.jumpURL;}
-		public void setJumpURL(String a) {this.jumpURL=a;}
-
 	@Override
 	public String execute(){
-		return Manager.tips("该项目不可用!","jump");
+		return this.jumpBackWithTips("该项目不可用!");
 	}
 	
 	
@@ -71,14 +65,14 @@ public class ExportSupervisorAllMandate extends ActionSupport{
 	public String download(){//下载模板
 		System.out.println(">> ExportSupervisorAllMandate:download > supervisorId="+this.supervisorId);
 		if(this.regionAndPracticeBaseAndInnerPerson==null)
-			return Manager.tips("该项目未初始化!","jump");
+			return this.jumpBackWithTips("该项目未初始化!");
 		InnerPerson supervisor;
 		School school;
 		try {
 			supervisor=new InnerPerson(supervisorId);
 			school=new School(supervisor.getSchool());
 		}catch(IllegalArgumentException | SQLException e) {
-			return Manager.tips("督导老师工号("+supervisorId+")不正确",e,"jump");
+			return this.jumpBackWithTips("督导老师工号("+supervisorId+")不正确",e);
 		}
 		//设置下载文件名称
 		String fileName=String.format("%d年[%s%s]免费师范生教育实习督导任务书.zip",
@@ -101,7 +95,7 @@ public class ExportSupervisorAllMandate extends ActionSupport{
 							files.put(name,out);
 						}catch(IOException e){
 							downloadOutputStream=null;
-							return Manager.tips("创建文件失败，暂时无法下载！",e,"jump");
+							return this.jumpBackWithTips("创建文件失败，暂时无法下载！",e);
 						}
 					}
 					superviseIndex++;
@@ -113,7 +107,7 @@ public class ExportSupervisorAllMandate extends ActionSupport{
 			this.downloadOutputStream.flush();
 		} catch (IOException e) {
 			this.downloadOutputStream=null;
-			return Manager.tips("压缩文件失败，暂时无法下载！",e,"jump");
+			return this.jumpBackWithTips("压缩文件失败，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportSupervisorAllMandate:download <downloadAttachment");
 		return "downloadAttachment";

@@ -3,9 +3,7 @@ package action.function;
 import java.sql.*;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
-import action.Manager;
+import action.*;
 import obj.*;
 import obj.annualTable.*;
 import obj.staticObject.PracticeBase;
@@ -15,13 +13,13 @@ import token.Role;
 /**
  * 安排学生到实习基地
  */
-public class StudentArrangeIntoPracticeBase extends ActionSupport{
+public class StudentArrangeIntoPracticeBase extends Action{
 	private static final long serialVersionUID = 5998268336475528662L;
 
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
 	
-	private String majorName="汉语言文学（师范）";
+	private String majorName;
 	private boolean[] checkBox;
 	private ListOfPracticeBaseAndStudentsAndPlan practiceBaseAndStudents;
 	private String practiceBaseName;
@@ -65,13 +63,15 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 	
 
 	static public final String SessionListKey="StudentArrangeIntoPracticeBase_list"; 
+	static public final String SessionMajorNameKey="StudentArrangeIntoPracticeBase_majorName";
 	
 	public StudentArrangeIntoPracticeBase(){
 		super();
 		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudentsAndPlan.class,SessionListKey);
-		this.setupCheckBox();
-		if(this.getMajors()!=null && !this.getMajors().isEmpty())
+		this.majorName=Manager.loadSession(String.class,SessionMajorNameKey);
+		if(this.majorName==null && this.getMajors()!=null && !this.getMajors().isEmpty())//默认值
 			this.setMajorName(this.getMajors().get(0).getName());
+		this.setupCheckBox();
 	}
 
 	private void setupCheckBox(){
@@ -97,19 +97,20 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 		try{
 			major=new Major(this.majorName);
 		}catch(IllegalArgumentException | SQLException e){
-			return Manager.tips("专业("+this.majorName+")不存在！",e,NONE);
+			return this.returnWithTips(NONE,"专业("+this.majorName+")不存在！",e);
 		}
 		try {
 			this.practiceBaseAndStudents=new ListOfPracticeBaseAndStudentsAndPlan(
 					this.getAnnual().getYear(),major,/*minPlanNumber*/1);
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
-			return Manager.tips("数据库开小差去了！",e,NONE);
+			return this.returnWithTips(NONE,"数据库开小差去了！",e);
 		}
 		if(this.getPracticeBases()==null)
-			return Manager.tips("读取实习基地列表失败!",NONE);
+			return this.returnWithTips(NONE,"读取实习基地列表失败!");
 		if(this.getMajors()==null)
-			return Manager.tips("读取实习专业列表失败!",NONE);
+			return this.returnWithTips(NONE,"读取实习专业列表失败!");
 		Manager.saveSession(SessionListKey,this.practiceBaseAndStudents);
+		Manager.saveSession(SessionMajorNameKey,this.majorName);
 		this.setupCheckBox();
 		System.out.println(">> RegionArrangement:display <NONE");
 		return NONE;
@@ -124,19 +125,16 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 			return display();
 		System.out.println(">> RegionArrangement:execute > practiceBaseName= "+this.practiceBaseName);
 		if(this.practiceBaseName==null || this.practiceBaseName.isEmpty())
-			return Manager.tips("请选择一个实习基地！",
-					display());
+			return this.jumpBackWithTips("请选择一个实习基地！");
 		ListOfPracticeBaseAndStudentsAndPlan.RegionPair.PracticeBasePair pair=
 				this.practiceBaseAndStudents.get(this.practiceBaseName);
 		if(pair==null || pair.getPlan()==null)
-			return Manager.tips("基地("+this.practiceBaseName+")没有("+this.majorName+")专业派遣计划！",
-					display());
+			return this.jumpBackWithTips("基地("+this.practiceBaseName+")没有("+this.majorName+")专业派遣计划！");
 		//RegionArrangement:execute
 		boolean flag=false;
 		for(boolean s:checkBox) flag|=s;
 		if(!flag)
-			return Manager.tips("请至少选择一个实习生分配到实习基地！",
-					display());
+			return this.jumpBackWithTips("请至少选择一个实习生分配到实习基地！");
 		List<Student> tmp=new ArrayList<Student>();
 		StringBuilder sb=new StringBuilder();
 		StringBuilder error=new StringBuilder();
@@ -167,10 +165,10 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 			pair.getStudents().add(s);
 			this.practiceBaseAndStudents.getUndistributedStudents().remove(s);
 		}
-		Manager.tips((sb.length()>0?(sb.toString()+" 已经分配到基地("+this.practiceBaseName+")！"):"")+
-				(error.length()>0?("\n\n错误信息：\n"+error.toString()):""));
 		Manager.removeSession(SessionListKey);
-		return display();
+		return this.jumpToMethodWithTips("display",
+				(sb.length()>0?(sb.toString()+" 已经分配到基地("+this.practiceBaseName+")！"):"")+
+				(error.length()>0?("\n\n错误信息：\n"+error.toString()):""));
 	}
 	
 	/**
@@ -181,18 +179,15 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 			return display();
 		System.out.println(">> RegionArrangement:delete > practiceBaseName= "+this.practiceBaseName);
 		if(this.practiceBaseName==null || this.practiceBaseName.isEmpty())
-			return Manager.tips("未选中实习生！",
-					display());
+			return this.jumpBackWithTips("未选中实习生！");
 		boolean flag=false;
 		for(boolean s:checkBox) flag|=s;
 		if(!flag)
-			return Manager.tips("请至少选择一个实习生来移除！",
-					display());
+			return this.jumpBackWithTips("请至少选择一个实习生来移除！");
 		ListOfPracticeBaseAndStudentsAndPlan.RegionPair.PracticeBasePair pair=
 				this.practiceBaseAndStudents.get(this.practiceBaseName);
 		if(pair==null)
-			return Manager.tips("选中了一个不存在的实习基地（"+this.practiceBaseName+"）！",
-					display());
+			return this.jumpBackWithTips("选中了一个不存在的实习基地("+this.practiceBaseName+")！");
 		List<Student> tmp=new ArrayList<Student>();
 		StringBuilder sb=new StringBuilder();
 		for(int i=0;i<pair.getStudents().size();i++){
@@ -215,9 +210,9 @@ public class StudentArrangeIntoPracticeBase extends ActionSupport{
 		}
 		for(Student s:tmp)
 			pair.getStudents().remove(s);
-		Manager.tips((sb.length()>0?(sb.toString()+" 已经从实习基地("+this.practiceBaseName+")移出！"):"error"));
 		Manager.removeSession(SessionListKey);
-		return display();
+		return this.jumpToMethodWithTips("display",
+				(sb.length()>0?(sb.toString()+" 已经从实习基地("+this.practiceBaseName+")移出！"):"error"));
 	}
 	
 	

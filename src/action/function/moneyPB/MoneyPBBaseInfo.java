@@ -2,12 +2,10 @@ package action.function.moneyPB;
 
 import java.sql.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
-import action.Manager;
+import action.*;
 import obj.annualTable.MoneyPB;
 
-public class MoneyPBBaseInfo extends ActionSupport{
+public class MoneyPBBaseInfo extends Action{
 	private static final long serialVersionUID = 5998268336475528662L;
 
 	private MoneyPB[] base;
@@ -20,11 +18,6 @@ public class MoneyPBBaseInfo extends ActionSupport{
 		}
 	}
 
-	private String jumpURL=Export.ActionName;
-		public String getJumpURL() {return this.jumpURL;}
-		public void setJumpURL(String a) {this.jumpURL=a;}
-		
-	
 	public MoneyPBBaseInfo(){
 		super();
 	}
@@ -32,14 +25,14 @@ public class MoneyPBBaseInfo extends ActionSupport{
 	@Override
 	public String execute(){
 		if(this.getBase()==null)
-			return Manager.tips("项目未初始化!",display());
+			return this.jumpToMethodWithTips("display","项目未初始化!");
 		try {
 			for(MoneyPB m:this.base)
 				m.update();
 		} catch (IllegalArgumentException | SQLException e) {
-			return Manager.tips("服务器开了点小差！",e,NONE);
+			return this.returnWithTips(NONE,"服务器开了点小差！",e);
 		}
-		return Manager.tips("修改成功！",display());
+		return this.jumpToMethodWithTips("display","修改成功！");
 	}
 		
 	/**
@@ -63,9 +56,9 @@ public class MoneyPBBaseInfo extends ActionSupport{
 					base[i].create();
 			}
 		} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
-			return Manager.tips("创建教育实习经费标准条目失败!",e,"jump");
+			return this.jumpBackWithTips("创建教育实习经费标准条目失败!",e);
 		}
-		return Manager.tips("创建教育实习经费标准条目成功!",NONE);
+		return this.returnWithTips(NONE,"创建教育实习经费标准条目成功!");
 	}
 	
 	

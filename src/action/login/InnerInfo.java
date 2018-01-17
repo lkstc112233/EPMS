@@ -3,14 +3,13 @@ package action.login;
 import java.sql.SQLException;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
+import action.Action;
 import action.Manager;
 import obj.staticObject.InnerPerson;
 import obj.staticSource.InnerOffice;
 import obj.staticSource.School;
 
-public class InnerInfo extends ActionSupport{
+public class InnerInfo extends Action{
 	private static final long serialVersionUID = -2488160597018042665L;
 
 	private InnerPerson inner;
@@ -46,8 +45,7 @@ public class InnerInfo extends ActionSupport{
 			try {
 				Manager.getUser().updatePassword(this.inner.getPassword());
 			} catch (SQLException e) {
-				return Manager.tips("修改密码失败，请重试！",
-						e,display());
+				return this.jumpToMethodWithTips("display","修改密码失败，请重试！",e);
 			}
 			System.out.println(">> InnerInfoAction:execute > 成功修改密码");
 		}
@@ -56,11 +54,9 @@ public class InnerInfo extends ActionSupport{
 			Manager.getUser().update(inner);
 			inner.setPassword(null);
 		} catch (IllegalArgumentException | SQLException e) {
-			return Manager.tips("修改个人信息失败，请重试！",
-					e,display());
+			return this.jumpToMethodWithTips("display","修改个人信息失败，请重试！",e);
 		}
-		return Manager.tips("修改个人信息成功！",
-				SUCCESS);
+		return this.returnWithTips(SUCCESS,"修改个人信息成功！");
 	}
 	
 	public String display(){

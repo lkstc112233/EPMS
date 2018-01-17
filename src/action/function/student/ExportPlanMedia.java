@@ -2,12 +2,7 @@ package action.function.student;
 
 import java.io.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.opensymphony.xwork2.ActionSupport;
+import java.util.*;
 
 import action.*;
 import obj.*;
@@ -17,7 +12,7 @@ import obj.staticSource.Major;
 /**
  * 导出数字媒体设备规划
  */
-public class ExportPlanMedia extends ActionSupport{
+public class ExportPlanMedia extends Action{
 	private static final long serialVersionUID = 3677055466118899859L;
 
 	private action.Annual annual=new action.Annual();
@@ -35,13 +30,9 @@ public class ExportPlanMedia extends ActionSupport{
 		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudents.class,SessionListKey);
 	}
 
-	private String jumpURL=Export.ActionName;
-		public String getJumpURL() {return this.jumpURL;}
-		public void setJumpURL(String a) {this.jumpURL=a;}
-
 	@Override
 	public String execute(){
-		return Manager.tips("该项目不可用!","jump");
+		return this.jumpBackWithTips("该项目不可用!");
 	}
 	
 	
@@ -107,13 +98,13 @@ public class ExportPlanMedia extends ActionSupport{
 	public String download(){//下载模板
 		System.out.println(">> ExportPlanDesign:download >");
 		if(this.practiceBaseAndStudents==null)
-			return Manager.tips("该项目未初始化!","jump");
+			return this.jumpBackWithTips("该项目未初始化!");
 		boolean[][][] media;
 		try {
 			media=getMedia();
 		}catch(IllegalArgumentException | InstantiationException | SQLException e) {
 			this.downloadOutputStream=null;
-			return Manager.tips("无法读取媒体设备规划！",e,"jump");
+			return this.jumpBackWithTips("无法读取媒体设备规划！",e);
 		}
 		System.out.println(">> ExportPlanDesign:download > create download file.");
 		this.downloadOutputStream=new ByteArrayOutputStream();
@@ -124,7 +115,7 @@ public class ExportPlanMedia extends ActionSupport{
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
 			this.downloadOutputStream=null;
-			return Manager.tips("服务器开小差去了，暂时无法下载！",e,"jump");
+			return this.jumpBackWithTips("服务器开小差去了，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportPlanDesign:download <downloadAttachment");
 		return "downloadAttachment";

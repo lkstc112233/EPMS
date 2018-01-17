@@ -3,8 +3,6 @@ package action.function.student;
 import java.io.*;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 import action.*;
 import obj.*;
 import obj.annualTable.*;
@@ -13,7 +11,7 @@ import obj.staticObject.PracticeBase;
 /**
  * 导出实习生名单
  */
-public class ExportAllPracticeBaseConsultationLetter extends ActionSupport{
+public class ExportAllPracticeBaseConsultationLetter extends Action{
 	private static final long serialVersionUID = 3677055466118899859L;
 
 	private action.Annual annual=new action.Annual();
@@ -31,13 +29,9 @@ public class ExportAllPracticeBaseConsultationLetter extends ActionSupport{
 		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudents.class,SessionListKey);
 	}
 
-	private String jumpURL=Export.ActionName;
-		public String getJumpURL() {return this.jumpURL;}
-		public void setJumpURL(String a) {this.jumpURL=a;}
-
 	@Override
 	public String execute(){
-		return Manager.tips("该项目不可用!","jump");
+		return this.jumpBackWithTips("该项目不可用!");
 	}
 	
 	
@@ -66,7 +60,7 @@ public class ExportAllPracticeBaseConsultationLetter extends ActionSupport{
 	}
 	public String download(){//下载模板
 		if(this.practiceBaseAndStudents==null)
-			return Manager.tips("该项目未初始化!","jump");
+			return this.jumpBackWithTips("该项目未初始化!");
 		//设置下载文件名称
 		String fileName=String.format("%d年免费师范生教育实习商洽函.zip",
 				this.getAnnual().getYear(),majorName);
@@ -87,7 +81,7 @@ public class ExportAllPracticeBaseConsultationLetter extends ActionSupport{
 					files.put(name,out);
 				}catch(IOException e){
 					downloadOutputStream=null;
-					return Manager.tips("创建文件失败，暂时无法下载！",e,"jump");
+					return this.jumpBackWithTips("创建文件失败，暂时无法下载！",e);
 				}
 			}
 		}
@@ -96,7 +90,7 @@ public class ExportAllPracticeBaseConsultationLetter extends ActionSupport{
 			this.downloadOutputStream.flush();
 		} catch (IOException e) {
 			this.downloadOutputStream=null;
-			return Manager.tips("压缩文件失败，暂时无法下载！",e,"jump");
+			return this.jumpBackWithTips("压缩文件失败，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportAllPracticeBaseConsultationLetter:download <downloadAttachment");
 		return "downloadAttachment";

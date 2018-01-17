@@ -3,9 +3,7 @@ package action.function;
 import java.sql.SQLException;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
-import action.Manager;
+import action.*;
 import obj.*;
 import obj.annualTable.*;
 import obj.annualTable.ListOfRegionAndPracticeBases.RegionPair.PracticeBasePair;
@@ -14,7 +12,7 @@ import obj.staticObject.*;
 /**
  * 设置当年实习基地信息表（总领队、督导老师、入校时间、入校地点等）
  */
-public class RegionInfo extends ActionSupport{
+public class RegionInfo extends Action{
 	private static final long serialVersionUID = 8833385464572061925L;
 
 	private action.Annual annual=new action.Annual();
@@ -71,11 +69,11 @@ public class RegionInfo extends ActionSupport{
 	
 	public String display(){
 		if(this.getInnerPersons()==null)
-			return Manager.tips("数据库读取校内人员列表失败！",NONE);
+			return this.returnWithTips(NONE,"数据库读取校内人员列表失败！");
 		try {
 			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/false);
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
-			return Manager.tips("数据库读取实习基地及大区信息失败！",e,NONE);
+			return this.returnWithTips(NONE,"数据库读取实习基地及大区信息失败！");
 		}
 		this.getSupervises();
 		if(this.regionAndPracticeBase!=null)
@@ -96,7 +94,7 @@ public class RegionInfo extends ActionSupport{
 		//保存Region
 		ListOfRegionAndPracticeBases.RegionPair.PracticeBasePair pair=this.regionAndPracticeBase.get(this.practiceBaseName);
 		if(pair==null)
-			return Manager.tips("实习基地选择错误!("+this.practiceBaseName+")",NONE);
+			return this.returnWithTips(NONE,"实习基地选择错误!("+this.practiceBaseName+")");
 		Region region=pair.getRegion();
 		try {
 			region.update();
@@ -113,7 +111,7 @@ public class RegionInfo extends ActionSupport{
 			try {
 				tmp=this.supervises[type][index[0]][index[1]];
 			} catch (IndexOutOfBoundsException e) {
-				return Manager.tips("实习基地选择错误!("+this.practiceBaseName+")",NONE);
+				return this.returnWithTips(NONE,"实习基地选择错误!("+this.practiceBaseName+")");
 			}
 			try {
 				if(tmp.getSupervisorId()==null||tmp.getSupervisorId().isEmpty())
@@ -129,9 +127,9 @@ public class RegionInfo extends ActionSupport{
 						+"的相关信息保存失败!("+e.getMessage()+")");
 			}
 		}
-		return Manager.tips("修改"+(ok?"成功":"失败")+"！"
-				+(error.length()>0?("\n"+error.toString()):""),
-				display());
+		return this.jumpToMethodWithTips("display",
+				"修改"+(ok?"成功":"失败")+"！"
+				+(error.length()>0?("\n"+error.toString()):""));
 	}
 
 	

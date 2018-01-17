@@ -3,9 +3,7 @@ package action.function;
 import java.sql.SQLException;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
-import action.Manager;
+import action.*;
 import obj.*;
 import obj.annualTable.*;
 import obj.staticObject.PracticeBase;
@@ -14,7 +12,7 @@ import obj.staticSource.Major;
 /**
  * 分配媒体设备
  */
-public class PlanMedia extends ActionSupport{
+public class PlanMedia extends Action{
 	private static final long serialVersionUID = 8833385464572061925L;
 
 	private action.Annual annual=new action.Annual();
@@ -148,14 +146,14 @@ public class PlanMedia extends ActionSupport{
 		try {
 			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/false);
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
-			return Manager.tips("数据库读取实习基地及大区信息失败",e,ERROR);
+			return this.jumpBackWithTips("数据库读取实习基地及大区信息失败",e);
 		}
 		if(this.getMajors()==null)
-			return Manager.tips("数据库读取专业列表失败！",ERROR);
+			return this.jumpBackWithTips("数据库读取专业列表失败！");
 		if(this.getNumbers()==null)
-			return Manager.tips("数据库读取布局规划失败！",ERROR);
+			return this.jumpBackWithTips("数据库读取布局规划失败！");
 		if(this.getMedia()==null)
-			return Manager.tips("数据库读取数字媒体设备规划失败！",ERROR);
+			return this.jumpBackWithTips("数据库读取数字媒体设备规划失败！");
 		if(this.regionAndPracticeBase!=null)
 			Manager.saveSession(SessionListKey,this.regionAndPracticeBase);
 		if(this.majors!=null)
@@ -170,8 +168,8 @@ public class PlanMedia extends ActionSupport{
 	public String execute(){
 	//	StringBuilder error=new StringBuilder();
 		if(this.regionAndPracticeBase==null||this.numbers==null||this.majors==null)
-			return Manager.tips("该项目不可用!",display());
-		return Manager.tips("该项目不可用!",display());
+			return this.jumpBackWithTips("该项目不可用!");
+		return this.jumpToMethodWithTips("display","该项目不可用!");
 	}
 
 
@@ -183,7 +181,7 @@ public class PlanMedia extends ActionSupport{
 	 */
 	public String create(){
 		if(this.regionAndPracticeBase==null||this.numbers==null||this.majors==null)
-			return Manager.tips("该项目不可用!",display());
+			return this.jumpBackWithTips("该项目不可用!");
 		if(clickIndex==null || clickIndex.length<3)
 			clickIndex=new int[] {-1,-1,-1};
 		try {
@@ -191,8 +189,7 @@ public class PlanMedia extends ActionSupport{
 			PracticeBase pb=this.regionAndPracticeBase.getList().get(clickIndex[1])
 					.getList().get(clickIndex[2]).getPracticeBase();
 			if(this.numbers[clickIndex[0]][clickIndex[1]][clickIndex[2]]<=0)
-				return Manager.tips(major.getDescription()+"至"+pb.getDescription()+"无派遣计划!",
-						display());
+				return this.jumpToMethodWithTips("display",major.getDescription()+"至"+pb.getDescription()+"无派遣计划!");
 			Plan p=new Plan();
 			p.setYear(this.getAnnual().getYear());
 			p.setMajor(major.getName());
@@ -204,14 +201,14 @@ public class PlanMedia extends ActionSupport{
 				}
 			} catch (IllegalArgumentException | SQLException e) {
 				e.printStackTrace();
-				return Manager.tips("数据库开小差去了，修改失败!",display());
+				return this.jumpToMethodWithTips("display","数据库开小差去了，修改失败!");
 			}
 		}catch(IndexOutOfBoundsException e) {
-			return Manager.tips("点击错误!",e,NONE);
+			return this.jumpBackWithTips("点击错误!");
 		}catch(NullPointerException e) {
-			return Manager.tips("读取错误!",e,NONE);
+			return this.jumpBackWithTips("读取错误!");
 		}
-		return Manager.tips("修改成功！",display());
+		return this.jumpToMethodWithTips("display","修改成功！");
 	}
 
 	

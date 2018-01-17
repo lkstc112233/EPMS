@@ -3,8 +3,7 @@ package action.function;
 import java.sql.SQLException;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
+import action.Action;
 import action.Manager;
 import obj.*;
 import obj.annualTable.*;
@@ -14,7 +13,7 @@ import obj.staticSource.Major;
 /**
  * 全面确定派遣计划
  */
-public class PlanAllDesign extends ActionSupport{
+public class PlanAllDesign extends Action{
 	private static final long serialVersionUID = 8833385464572061925L;
 
 	private action.Annual annual=new action.Annual();
@@ -176,20 +175,20 @@ public class PlanAllDesign extends ActionSupport{
 		try {
 			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/false);
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
-			return Manager.tips("数据库读取实习基地及大区信息失败",e,ERROR);
+			return this.jumpBackWithTips("数据库读取实习基地及大区信息失败",e);
 		}
 		if(this.getMajors()==null)
-			return Manager.tips("数据库读取专业列表失败！",ERROR);
+			return this.jumpBackWithTips("数据库读取专业列表失败！");
 		if(this.getNumbers()==null)
-			return Manager.tips("数据库读取布局规划失败！",ERROR);
+			return this.jumpBackWithTips("数据库读取布局规划失败！");
 		if(this.getMajorsCounts()==null)
-			return Manager.tips("数据库读取专业实习生人数失败！",ERROR);
+			return this.jumpBackWithTips("数据库读取专业实习生人数失败！");
 		if(this.getMajorsNHxCounts()==null)
-			return Manager.tips("数据库读取在北京及周边地区实习人数失败！",ERROR);
+			return this.jumpBackWithTips("数据库读取在北京及周边地区实习人数失败！");
 		if(this.getMajorsRegionsHxCounts()==null)
-			return Manager.tips("数据库读取回生源地实习人数失败！",ERROR);
+			return this.jumpBackWithTips("数据库读取回生源地实习人数失败！");
 		if(getMajorsRegionsCountsIsError()==null)
-			return Manager.tips("数据库检测实习生人数与规划人数失败！",ERROR);
+			return this.jumpBackWithTips("数据库检测实习生人数与规划人数失败！");
 		if(this.regionAndPracticeBase!=null)
 			Manager.saveSession(SessionListKey,this.regionAndPracticeBase);
 		if(this.majors!=null)
@@ -248,14 +247,11 @@ public class PlanAllDesign extends ActionSupport{
 			}
 		}
 		if(!ok)
-			return Manager.tips("修改失败！\n\n失败条目:"+error.toString(),
-					display());
+			return this.jumpToMethodWithTips("display","修改失败！\n\n失败条目:"+error.toString());
 		else if(error.length()>0)
-			return Manager.tips("修改成功！\n\n失败条目:"+error.toString(),
-					display());
+			return this.jumpToMethodWithTips("display","修改成功！\n\n失败条目:"+error.toString());
 		else
-			return Manager.tips("修改成功！",
-					display());
+			return this.jumpToMethodWithTips("display","修改成功！");
 	}
 
 	
