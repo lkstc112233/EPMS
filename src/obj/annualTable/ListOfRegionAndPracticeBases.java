@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 import obj.*;
+import obj.annualTable.ListOfRegionAndPracticeBases.RegionPair.PracticeBasePair;
 import obj.staticObject.PracticeBase;
 
 /**
@@ -13,39 +14,44 @@ import obj.staticObject.PracticeBase;
  *  which is an '<code>ArrayList</code>' with type'<code>PracticBase</code>'
  */
 public class ListOfRegionAndPracticeBases{
-	static public class Pair implements Comparable<Pair>{
+	static public class RegionPair implements Comparable<RegionPair>{
 		private Region region;
-		private List<PracticeBase> practiceBases=new ArrayList<PracticeBase>();
-			public int getSize(){return this.practiceBases.size();}
-			public Region getRegion(){return this.region;}
-			public List<PracticeBase> getPracticeBases(){return this.practiceBases;}
-			public Pair(Region r){this.region=r;}
+		private List<PracticeBasePair> list=new ArrayList<PracticeBasePair>();
+		public Region getRegion() {return this.region;}
+		public int getSize() {return this.list.size();}
+		public List<PracticeBasePair> getList(){return this.list;}
+		public RegionPair(Region region) {this.region=region;}
+
+		static public class PracticeBasePair{
+			private Region region;
+			private PracticeBase practiceBase;
+			public Region getRegion() {return this.region;}
+			public PracticeBase getPracticeBase(){return this.practiceBase;}
+			public PracticeBasePair(Region r,PracticeBase pb){this.region=r;this.practiceBase=pb;}
+		}
 		@Override
-		public int compareTo(Pair o) {
+		public int compareTo(RegionPair o) {
 			if(o==null) return 1;
-			if(region==null && o.region!=null) return -1;
-			if(region!=null && o.region==null) return 1;
-			if(region==null && o.region==null) return 0;
-			boolean hx=this.practiceBases.get(0).getHx();
-			boolean hx2=o.practiceBases.get(0).getHx();
+			boolean hx=this.list.get(0).practiceBase.getHx();
+			boolean hx2=o.list.get(0).practiceBase.getHx();
 			if(hx && !hx2) return 1;
 			if(!hx && hx2) return -1;
 			if(hx && hx2)
 				return this.region.compareTo(o.region);
 			else
-				return this.practiceBases.get(0).getProvince()
-						.compareTo(o.practiceBases.get(0).getProvince());
+				return this.list.get(0).practiceBase.getProvince()
+						.compareTo(o.list.get(0).practiceBase.getProvince());
 		}	
 	}
-	private List<Pair> list=new ArrayList<Pair>();
-		public List<Pair> getList(){return list;}
+	private List<RegionPair> list=new ArrayList<RegionPair>();
+		public List<RegionPair> getList(){return list;}
 		public int getSize(){return list.size();}
 	
 		
 
 	public ListOfRegionAndPracticeBases(int year,boolean containsNullRegion) throws IllegalArgumentException, InstantiationException, SQLException{
 		if(containsNullRegion)
-			list.add(new Pair(null));
+			list.add(new RegionPair(null));
 		List<Base[]> tmp=Base.list(
 				new JoinParam(PracticeBase.class).append(containsNullRegion ? JoinParam.Type.LeftJoin : JoinParam.Type.InnerJoin,
 						Region.class,
@@ -67,43 +73,67 @@ public class ListOfRegionAndPracticeBases{
 		}
 		Collections.sort(this.list);
 	}
-	
+
 	public int[] indexOf(String practiceBaseName){
 		int[] index=new int[]{-1,-1};
 		if(practiceBaseName==null || practiceBaseName.isEmpty()) return null;
 		for(index[0]=0;index[0]<this.list.size();index[0]++){
-			List<PracticeBase> pbs=this.list.get(index[0]).getPracticeBases();
-			for(index[1]=0;index[1]<pbs.size();index[1]++){
-				PracticeBase pb=pbs.get(index[1]);
+			RegionPair rp=this.list.get(index[0]);
+			for(index[1]=0;index[1]<rp.getList().size();index[1]++){
+				PracticeBase pb=rp.getList().get(index[1]).practiceBase;
 				if(pb!=null && pb.getName()!=null && pb.getName().equals(practiceBaseName))
 					return index;
 			}
 		}
 		return null;
 	}
-	public Pair get(String regionName){
-		if(regionName==null || regionName.isEmpty()) return null;
-		for(Pair p:this.list){
-			Region t=p.region;
-			if(t!=null && t.getName()!=null && t.getName().equals(regionName))
-				return p;
-		}
+
+	public RegionPair getByRegion(Region region){
+		return this.getByRegion(region==null?null:region.getName());
+	}
+	public RegionPair getByRegion(String regionName){
+		for(RegionPair rp:this.list) if(rp.getRegion()==null && regionName==null || rp.getRegion()!=null && regionName!=null && rp.getRegion().getName().equals(regionName))
+			return rp;
 		return null;
 	}
-	public Pair get(Region r) {
-		for(Pair p:this.list){
-			Region t=p.region;
-			if(r==null && t==null) return p;
-			if(r!=null && t!=null && t.getName()!=null && t.getName().equals(r.getName()))
-				return p;
-		}
+	public PracticeBasePair get(String practiceBaseName){
+		if(practiceBaseName==null || practiceBaseName.isEmpty()) return null;
+		for(RegionPair rp:this.list)
+			for(PracticeBasePair p:rp.list){
+				PracticeBase t=p.practiceBase;
+				if(t!=null && t.getName()!=null && t.getName().equals(practiceBaseName))
+					return p;
+			}
 		return null;
 	}
-	public void put(Region r, PracticeBase pb) {
+	public PracticeBasePair get(PracticeBase pb){
+		for(RegionPair rp:this.list)
+			for(PracticeBasePair p:rp.list){
+				PracticeBase t=p.practiceBase;
+				if(pb==null && t==null) return p;
+				if(pb!=null && t!=null && t.getName()!=null && t.getName().equals(pb.getName()))
+					return p;
+			}
+		return null;
+	}
+	public void put(Region region, PracticeBase pb) {
 		if(pb==null) return;
-		Pair tmp=this.get(r);
-		if(tmp==null)
-			this.list.add(tmp=new Pair(r));
-		tmp.practiceBases.add(pb);
+		PracticeBasePair tmp=this.get(pb);
+		if(tmp==null){//需要新增一个PracticeBasePair
+			for(RegionPair rp:this.list) {
+				if(rp.getRegion()==null && region==null ||
+						rp.getRegion()!=null && region!=null
+						&& rp.getRegion().getName().equals(region.getName())) {
+					rp.getList().add(tmp=new PracticeBasePair(region,pb));
+					break;
+				}
+			}
+			if(tmp==null) {
+				//需要新增一个RegionPair
+				RegionPair rp=new RegionPair(region);
+				rp.getList().add(tmp=new PracticeBasePair(region,pb));
+				this.list.add(rp);
+			}
+		}
 	}
 }

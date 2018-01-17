@@ -8,8 +8,8 @@ import com.opensymphony.xwork2.ActionSupport;
 import action.Manager;
 import obj.*;
 import obj.annualTable.*;
+import obj.annualTable.ListOfRegionAndPracticeBases.RegionPair.PracticeBasePair;
 import obj.staticObject.InnerPerson;
-import obj.staticObject.PracticeBase;
 import token.Role;
 
 /**
@@ -61,13 +61,13 @@ public class RegionLeaderAndSupervisorArrangement extends ActionSupport{
 				[this.regionAndPracticeBase.getList().size()][];
 		for(int type:this.getSuperviseTypeList()){
 			for(int i=0;i<this.supervises[type].length;i++){
-				List<PracticeBase> pbs=this.regionAndPracticeBase.getList().get(i).getPracticeBases();
+				List<PracticeBasePair> pbs=this.regionAndPracticeBase.getList().get(i).getList();
 				this.supervises[type][i]=new Supervise[pbs.size()];
 				this.innerPersonSupervisors[type][i]=new InnerPerson[pbs.size()];
 				for(int j=0;j<this.supervises[type][i].length;j++){
 					Supervise tmp=new Supervise();
 					tmp.setYear(this.getAnnual().getYear());
-					tmp.setPracticeBase(pbs.get(j).getName());
+					tmp.setPracticeBase(pbs.get(j).getPracticeBase().getName());
 					tmp.setSuperviseType(type);
 					try {
 						tmp.load();
@@ -114,8 +114,8 @@ public class RegionLeaderAndSupervisorArrangement extends ActionSupport{
 		if(this.regionAndPracticeBase==null)
 			return display();
 		//保存所有的Region的Leader
-		for(ListOfRegionAndPracticeBases.Pair pair:this.regionAndPracticeBase.getList()){
-			Region region=pair.getRegion();
+		for(ListOfRegionAndPracticeBases.RegionPair rp:this.regionAndPracticeBase.getList()){
+			Region region=rp.getRegion();
 			try {
 				region.update();
 				ok=true;

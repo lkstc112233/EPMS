@@ -42,7 +42,7 @@ public class PlanAllDesign extends ActionSupport{
 				[this.regionAndPracticeBase.getList().size()][];
 		for(int i=0;i<this.majors.size();i++)
 			for(int j=0;j<this.regionAndPracticeBase.getList().size();j++)
-				this.numbers[i][j]=new int[this.regionAndPracticeBase.getList().get(j).getPracticeBases().size()];
+				this.numbers[i][j]=new int[this.regionAndPracticeBase.getList().get(j).getList().size()];
 		Map<String,Integer> majorsMap=new HashMap<String,Integer>();
 		for(int i=0;i<this.majors.size();i++)
 			majorsMap.put(this.majors.get(i).getName(),i);
@@ -104,7 +104,7 @@ public class PlanAllDesign extends ActionSupport{
 			int i=-1;for(Major m:this.getMajors()) {
 				this.majorsRegionsHxCounts[++i]=new int[this.getRegionAndPracticeBase().getList().size()];
 				for(int j=0;j<this.majorsRegionsHxCounts[i].length;j++) {
-					PracticeBase pb=this.getRegionAndPracticeBase().getList().get(j).getPracticeBases().get(0);
+					PracticeBase pb=this.getRegionAndPracticeBase().getList().get(j).getList().get(0).getPracticeBase();
 					this.majorsRegionsHxCounts[i][j]=Base.list(Student.class,new Restraint(
 						Field.getFields(Student.class,"year","major","hxyx","province"),
 						new Object[]{this.getAnnual().getYear(),m.getName(),true,pb.getProvince()}))
@@ -125,17 +125,17 @@ public class PlanAllDesign extends ActionSupport{
 				//先计算北京及周边地区实习大区
 				int cnt=0;
 				for(int j=0;j<this.majorsRegionsCountsIsError[i].length;j++) {
-					if(!this.getRegionAndPracticeBase().getList().get(j).getPracticeBases().get(0).getHx())
-						for(int k=0;k<this.getRegionAndPracticeBase().getList().get(j).getPracticeBases().size();k++)
+					if(!this.getRegionAndPracticeBase().getList().get(j).getList().get(0).getPracticeBase().getHx())
+						for(int k=0;k<this.getRegionAndPracticeBase().getList().get(j).getList().size();k++)
 							cnt+=this.getNumbers()[i][j][k];
 				}
 				int CMP=Integer.compare(cnt,this.getMajorsNHxCounts()[i]);
 				//在计算回乡实习大区
 				for(int j=0;j<this.majorsRegionsCountsIsError[i].length;j++) {
-					PracticeBase pb=this.getRegionAndPracticeBase().getList().get(j).getPracticeBases().get(0);
+					PracticeBase pb=this.getRegionAndPracticeBase().getList().get(j).getList().get(0).getPracticeBase();
 					int cmp=cnt=0;
 					if(pb.getHx()) {
-						for(int k=0;k<this.getRegionAndPracticeBase().getList().get(j).getPracticeBases().size();k++)
+						for(int k=0;k<this.getRegionAndPracticeBase().getList().get(j).getList().size();k++)
 							cnt+=this.getNumbers()[i][j][k];
 						cmp=Integer.compare(cnt,this.getMajorsRegionsHxCounts()[i][j]);
 					}else cmp=CMP;
@@ -151,8 +151,8 @@ public class PlanAllDesign extends ActionSupport{
 	public int getLastNHxRegionIndex() {
 		if(lastNHxRegionIndex>=0) return this.lastNHxRegionIndex;
 		int i=0,res=-1;
-		try{for(ListOfRegionAndPracticeBases.Pair pair:this.getRegionAndPracticeBase().getList()) {
-				if(!pair.getPracticeBases().get(0).getHx())
+		try{for(ListOfRegionAndPracticeBases.RegionPair rp:this.getRegionAndPracticeBase().getList()) {
+				if(!rp.getList().get(0).getPracticeBase().getHx())
 					res=i;
 				i++;
 		}}catch (NullPointerException | IndexOutOfBoundsException e){
@@ -211,7 +211,7 @@ public class PlanAllDesign extends ActionSupport{
 					Plan p=new Plan();
 					p.setYear(this.getAnnual().getYear());
 					p.setMajor(this.majors.get(i).getName());
-					p.setPracticeBase(this.regionAndPracticeBase.getList().get(j).getPracticeBases().get(k).getName());
+					p.setPracticeBase(this.regionAndPracticeBase.getList().get(j).getList().get(k).getPracticeBase().getName());
 					try {
 						if(p.existAndLoad()){
 							if(p.getNumber()!=num){
@@ -231,20 +231,20 @@ public class PlanAllDesign extends ActionSupport{
 						e.printStackTrace();
 						error.append("\n("+this.getMajors().get(i)+","+
 						this.regionAndPracticeBase.getList().get(j).getRegion().getDescription()+","+
-						this.regionAndPracticeBase.getList().get(j).getPracticeBases().get(k).getDescription()+
+						this.regionAndPracticeBase.getList().get(j).getList().get(k).getPracticeBase().getDescription()+
 						")"+e.getMessage());
 						continue;
 					}
 				}
 			}
 		}
-		for(ListOfRegionAndPracticeBases.Pair pair:this.regionAndPracticeBase.getList()) {
-			for(PracticeBase pb:pair.getPracticeBases()) try {
-				pb.update();
+		for(ListOfRegionAndPracticeBases.RegionPair rp:this.regionAndPracticeBase.getList()) {
+			for(ListOfRegionAndPracticeBases.RegionPair.PracticeBasePair pair:rp.getList()) try {
+				pair.getPracticeBase().update();
 				ok=true;
 			}catch(IllegalArgumentException | SQLException e) {
 				e.printStackTrace();
-				error.append("\n"+pb.getDescription()+"备注修改失败！("+e.getMessage()+")");
+				error.append("\n"+pair.getPracticeBase().getDescription()+"备注修改失败！("+e.getMessage()+")");
 			}
 		}
 		if(!ok)

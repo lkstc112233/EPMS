@@ -46,7 +46,7 @@
 				</s:iterator>
 			</tr>
 			<s:iterator value="regionAndPracticeBase.list" var="__regionRow" status="__regionStatus">
-			<s:iterator value="#__regionRow.practiceBases" var="__practiceBaseRow" status="__practiceBaseStatus">
+			<s:iterator value="#__regionRow.list" var="__practiceBaseRow" status="__practiceBaseStatus">
 				<tr class="wtableContent">
 					<s:set var="_colspan" value="%{#__regionRow.size}" />
 					<s:if test="#__practiceBaseStatus.index == 0">
@@ -55,12 +55,12 @@
 						</td>
 					</s:if>
 					<td style="width:160px;text-align:left;padding-left:10px;">
-						<s:if test="#__practiceBaseRow.status">
+						<s:if test="#__practiceBaseRow.practiceBase.status">
 							<span style="color:red;">
-								<s:property value="#__practiceBaseRow.name" />
+								<s:property value="#__practiceBaseRow.practiceBase.name" />
 							</span>
 						</s:if><s:else>
-							<s:property value="#__practiceBaseRow.name" />
+							<s:property value="#__practiceBaseRow.practiceBase.name" />
 						</s:else>
 					</td>
 					<!-- 总领队 -->

@@ -50,7 +50,7 @@
 		</tr>
 		<!-- ###媒体设备规划### -->
 		<s:iterator value="regionAndPracticeBase.list" var="__regionRow" status="__regionStatus">
-			<s:iterator value="#__regionRow.practiceBases" var="__practiceBaseRow" status="__practiceBaseStatus">
+			<s:iterator value="#__regionRow.list" var="__practiceBaseRow" status="__practiceBaseStatus">
 				<tr class="wtableContent">
 					<s:if test="#__practiceBaseStatus.index == 0">
 						<s:set var="_colspan" value="%{#__regionRow.size}" />
@@ -59,13 +59,13 @@
 						</td>
 					</s:if>
 					<td style="text-align:left;padding-left:10px;">
-						<s:if test="#__practiceBaseRow.status">
+						<s:if test="#__practiceBaseRow.practiceBase.status">
 							<div style="color:red;">
-								<s:property value="#__practiceBaseRow.name" />
+								<s:property value="#__practiceBaseRow.practiceBase.name" />
 							</div>
 						</s:if><s:else>
 							<div>
-								<s:property value="#__practiceBaseRow.name" />
+								<s:property value="#__practiceBaseRow.practiceBase.name" />
 							</div>
 						</s:else>
 					</td>

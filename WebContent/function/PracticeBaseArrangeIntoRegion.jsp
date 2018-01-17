@@ -65,7 +65,7 @@
 		<!-- ########### 实习基地列表 ########### -->
 		<s:if test="#__Row.region == null">
 			<s:form action="function_PracticeBaseArrangeIntoRegion_execute" method="post" theme="simple">
-				<s:iterator value="#__Row.practiceBases" var="__pbsRow" status="__pbsStatus">
+				<s:iterator value="#__Row.list" var="__pbsRow" status="__pbsStatus">
 				<tr class="wtableContent">
 					<!-- 选择 -->
 					<td style="width:13px;padding:0;border:0;">
@@ -78,7 +78,7 @@
 					</td>
 					<!-- 内容 -->
 					<% int i=0; %>
-					<s:iterator value="%{#__pbsRow.fieldsValue}" var="__Col">
+					<s:iterator value="%{#__pbsRow.practiceBase.fieldsValue}" var="__Col">
 						<% if(PracticeBaseFieldDisplay[i++]){ %>
 						<td style="word-wrap:break-word;word-break:break-all;">
 						<% }else{ %>
@@ -89,7 +89,7 @@
 							</s:if><s:elseif test="#__Col.equals(\"✘\")">
 								<div style="color:red;">✘</div>
 							</s:elseif><s:else>
-								<s:if test="#__pbsRow.status">
+								<s:if test="#__pbsRow.practiceBase.status">
 									<div style="color:red;">
 										<s:property value="#__Col" />
 									</div>
@@ -115,7 +115,7 @@
 			</s:form>
 		</s:if><s:else>
 			<s:form action="function_PracticeBaseArrangeIntoRegion_delete" method="post" theme="simple">
-				<s:iterator value="#__Row.practiceBases" var="__pbsRow" status="__pbsStatus">
+				<s:iterator value="#__Row.list" var="__pbsRow" status="__pbsStatus">
 				<tr class="wtableContent">
 					<!-- 选择 -->
 					<td style="width:13px;padding:0;border:0;">
@@ -128,7 +128,7 @@
 					</td>
 					<!-- 内容 -->
 					<% int i=0; %>
-					<s:iterator value="%{#__pbsRow.fieldsValue}" var="__Col">
+					<s:iterator value="%{#__pbsRow.practiceBase.fieldsValue}" var="__Col">
 						<% if(PracticeBaseFieldDisplay[i++]){ %>
 						<td style="word-wrap:break-word;word-break:break-all;">
 						<% }else{ %>
@@ -139,7 +139,7 @@
 							</s:if><s:elseif test="#__Col.equals(\"✘\")">
 								<div style="color:red;">✘</div>
 							</s:elseif><s:else>
-								<s:if test="#__pbsRow.status">
+								<s:if test="#__pbsRow.practiceBase.status">
 									<div style="color:red;">
 										<s:property value="#__Col" />
 									</div>

@@ -7,6 +7,7 @@ import com.opensymphony.xwork2.ActionSupport;
 
 import action.Manager;
 import obj.annualTable.*;
+import obj.annualTable.ListOfRegionAndPracticeBases.RegionPair.PracticeBasePair;
 import obj.staticObject.PracticeBase;
 
 /**
@@ -42,8 +43,8 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 		this.checkBox=null;
 		if(this.regionAndPracticeBase!=null){
 			int len=0;
-			for(ListOfRegionAndPracticeBases.Pair p:this.regionAndPracticeBase.getList())
-				len=Math.max(len,p.getPracticeBases().size());
+			for(ListOfRegionAndPracticeBases.RegionPair rp:this.regionAndPracticeBase.getList())
+				len=Math.max(len,rp.getList().size());
 			this.checkBox=new boolean[len];
 		}
 	}
@@ -84,14 +85,14 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 		if(!flag)
 			return Manager.tips("请至少选择一个实习基地添加到大区！",
 					NONE);
-		List<PracticeBase> nullRegionPracticeBases=this.regionAndPracticeBase.get((Region)null).getPracticeBases();
+		List<PracticeBasePair> nullRegionPracticeBases=this.regionAndPracticeBase.getByRegion((Region)null).getList();
 		//	List<PracticeBase> tmp=new ArrayList<PracticeBase>();
 		StringBuilder sb=new StringBuilder();
 		StringBuilder error=new StringBuilder();
 		for(int i=0;i<nullRegionPracticeBases.size();i++){
 			if(checkBox[i]){
 				//选中了
-				PracticeBase pb=nullRegionPracticeBases.get(i);
+				PracticeBase pb=nullRegionPracticeBases.get(i).getPracticeBase();
 				if(pb==null||pb.getName()==null)
 					continue;
 				//	tmp.add(pb);
@@ -136,7 +137,7 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 		if(!flag)
 			return Manager.tips("请至少选择一个实习基地来移除！",
 					NONE);
-		List<PracticeBase> deletePracticeBases=this.regionAndPracticeBase.get(this.regionName).getPracticeBases();
+		List<PracticeBasePair> deletePracticeBases=this.regionAndPracticeBase.getByRegion(this.regionName).getList();
 		if(deletePracticeBases==null)
 			return Manager.tips("选中了一个不存在的大区（"+this.regionName+"）！",
 					NONE);
@@ -145,7 +146,7 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 		for(int i=0;i<deletePracticeBases.size();i++){
 			if(checkBox[i]){
 				//选中了
-				PracticeBase pb=deletePracticeBases.get(i);
+				PracticeBase pb=deletePracticeBases.get(i).getPracticeBase();
 				if(pb==null||pb.getName()==null)
 					continue;
 				//	tmp.add(pb);

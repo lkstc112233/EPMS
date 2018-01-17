@@ -9,6 +9,7 @@ import com.opensymphony.xwork2.ActionSupport;
 import action.Manager;
 import obj.*;
 import obj.annualTable.*;
+import obj.annualTable.ListOfRegionAndPracticeBases.RegionPair.PracticeBasePair;
 import obj.staticObject.*;
 import obj.staticSource.Major;
 import obj.staticSource.School;
@@ -47,12 +48,12 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 				[this.regionAndPracticeBase.getList().size()][];
 		for(int type:this.getSuperviseTypeList()){
 			for(int i=0;i<this.supervises[type].length;i++){
-				List<PracticeBase> pbs=this.regionAndPracticeBase.getList().get(i).getPracticeBases();
+				List<PracticeBasePair> pbs=this.regionAndPracticeBase.getList().get(i).getList();
 				this.supervises[type][i]=new Supervise[pbs.size()];
 				for(int j=0;j<this.supervises[type][i].length;j++){
 					Supervise tmp=new Supervise();
 					tmp.setYear(this.getAnnual().getYear());
-					tmp.setPracticeBase(pbs.get(j).getName());
+					tmp.setPracticeBase(pbs.get(j).getPracticeBase().getName());
 					tmp.setSuperviseType(type);
 					try {
 						tmp.load();
@@ -93,8 +94,8 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 		if(this.regionAndPracticeBase==null)
 			return display();
 		//保存所有的Region的Leader
-		for(ListOfRegionAndPracticeBases.Pair pair:this.regionAndPracticeBase.getList()){
-			Region region=pair.getRegion();
+		for(ListOfRegionAndPracticeBases.RegionPair rp:this.regionAndPracticeBase.getList()){
+			Region region=rp.getRegion();
 			try {
 				region.update();
 				ok=true;
@@ -148,8 +149,8 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 	 * 自动填充空白的总领队和督导学科规划
 	 */
 	public String create() {
-		for(ListOfRegionAndPracticeBases.Pair pair:this.regionAndPracticeBase.getList()){
-			Region region=pair.getRegion();
+		for(ListOfRegionAndPracticeBases.RegionPair rp:this.regionAndPracticeBase.getList()){
+			Region region=rp.getRegion();
 			if(region.getLeaderId()==null || region.getLeaderId().isEmpty())
 				return Manager.tips("请先将总领队学科规划填充完毕！",
 						NONE);
@@ -178,8 +179,8 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 		}
 		if(prepared.isEmpty())
 			return Manager.tips("第一阶段读取部院系列表失败，已停止!",NONE);
-		int j=0;for(ListOfRegionAndPracticeBases.Pair pair:this.regionAndPracticeBase.getList()){
-			String leaderId=pair.getRegion().getLeaderId();
+		int j=0;for(ListOfRegionAndPracticeBases.RegionPair rp:this.regionAndPracticeBase.getList()){
+			String leaderId=rp.getRegion().getLeaderId();
 			for(int type:this.getSuperviseTypeList()) {
 				for(Supervise sup:this.supervises[type][j]) {
 					if((type==this.getSuperviseTypeList()[0] || type==this.getSuperviseTypeList()[this.getSuperviseTypeList().length-1]) && 
@@ -216,7 +217,7 @@ public class RegionLeaderAndSupervisorDesign extends ActionSupport{
 			for(j=0;j<this.getSupervises()[type].length;j++) {
 				for(int k=0;k<this.getSupervises()[type][j].length;k++) {
 					Supervise sup=this.getSupervises()[type][j][k];
-					PracticeBase pb=this.getRegionAndPracticeBase().getList().get(j).getPracticeBases().get(k);
+					PracticeBase pb=this.getRegionAndPracticeBase().getList().get(j).getList().get(k).getPracticeBase();
 					if(sup.getSupervisorId()==null || sup.getSupervisorId().isEmpty()) {
 						Collections.sort(preparedSchool);
 						Pair pair=null;

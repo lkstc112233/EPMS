@@ -40,7 +40,7 @@ public class PlanMedia extends ActionSupport{
 				[this.regionAndPracticeBase.getList().size()][];
 		for(int i=0;i<this.majors.size();i++)
 			for(int j=0;j<this.regionAndPracticeBase.getList().size();j++)
-				this.numbers[i][j]=new int[this.regionAndPracticeBase.getList().get(j).getPracticeBases().size()];
+				this.numbers[i][j]=new int[this.regionAndPracticeBase.getList().get(j).getList().size()];
 		Map<String,Integer> majorsMap=new HashMap<String,Integer>();
 		for(int i=0;i<this.majors.size();i++)
 			majorsMap.put(this.majors.get(i).getName(),i);
@@ -189,7 +189,7 @@ public class PlanMedia extends ActionSupport{
 		try {
 			Major major=this.getMajors().get(clickIndex[0]);
 			PracticeBase pb=this.regionAndPracticeBase.getList().get(clickIndex[1])
-					.getPracticeBases().get(clickIndex[2]);
+					.getList().get(clickIndex[2]).getPracticeBase();
 			if(this.numbers[clickIndex[0]][clickIndex[1]][clickIndex[2]]<=0)
 				return Manager.tips(major.getDescription()+"至"+pb.getDescription()+"无派遣计划!",
 						display());
