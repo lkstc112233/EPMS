@@ -5,7 +5,6 @@ import java.util.*;
 
 import com.opensymphony.xwork2.ActionSupport;
 
-import action.Annual;
 import action.Manager;
 import obj.Pair;
 import obj.annualTable.Time;
@@ -49,10 +48,8 @@ public class MenuAction extends ActionSupport{
 			return Manager.tips("服务器开了一些小差，尚未搜索到["+this.getAnnual().getYear()+"年]的时间表！",
 					e,ERROR);
 		}
-		Annual annual=new Annual();
-		Manager.clearSession();
-		Manager.setUser(user);
-		annual.saveSession();
+		//重置Session
+		Manager.resetSession();
 		Manager.saveSession(SessionListKey,this.times);
 		String res=Role.getRole(Manager.getUser()).toString();
 		System.out.println(">> MenuAction:execute <"+res);

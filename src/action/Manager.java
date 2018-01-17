@@ -13,10 +13,47 @@ import obj.staticObject.InnerPerson;
 import token.Role;
 
 public class Manager {
-	
+
+	/*=======================================================
+	 * 关于user
+	 */
+	static private final String userToken="inner";
+	static private final String userRoleToken="role";
+	static public InnerPerson getUser(){
+		return Manager.loadSession(InnerPerson.class,userToken);}
+	static public void setUser(InnerPerson inner){
+		Manager.saveSession(userToken,inner);
+		try{
+			Manager.saveSession(userRoleToken,token.Role.getRole(inner));
+		}catch(Exception e){Manager.removeSession(userRoleToken);}
+	}
+	static public void removeUser(){
+		Manager.removeSession(userToken);}
+	/*=======================================================
+	 * 关于Annual
+	 */
+	static private final String annualToken="year";
+	static public void setYear(int year) {
+		Manager.saveSession(annualToken,Integer.valueOf(year));
+	}
+	static public Integer getYear() {
+		return Manager.loadSession(Integer.class,annualToken);
+	}
 	/*=======================================================
 	 * 关于Session
 	 */
+	static public void resetSession() {
+		InnerPerson usr=Manager.getUser();
+		Integer year=Manager.getYear();
+		//clear
+		Manager.clearSession();
+		//reload
+		if(usr!=null)
+			Manager.setUser(usr);
+		if(year!=null)
+			Manager.setYear(year);
+	}
+	
 	static public void saveSession(String key,Object value){
 		if(value==null) Manager.removeSession(key);
 		else ActionContext.getContext().getSession().put(key,value);
@@ -70,23 +107,6 @@ public class Manager {
 		return result;
 	}
 
-	/*=======================================================
-	 * 关于user
-	 */
-	static private final String userToken="inner";
-	static private final String userRoleToken="role";
-	static public InnerPerson getUser(){
-		return Manager.loadSession(InnerPerson.class,userToken);}
-	static public void setUser(InnerPerson inner){
-		Manager.saveSession(userToken,inner);
-		try{
-			Manager.saveSession(userRoleToken,token.Role.getRole(inner));
-		}catch(Exception e){Manager.removeSession(userRoleToken);}
-	}
-	static public void removeUser(){
-		Manager.removeSession(userToken);}
-	
-	
 
 	/*=======================================================
 	 * 关于SQL
