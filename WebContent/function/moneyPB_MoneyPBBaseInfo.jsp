@@ -1,3 +1,4 @@
+<%@page import="obj.Field"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags" %>
@@ -14,8 +15,8 @@
 	<jsp:include page="/model/common_top.jsp" flush="true" /><%-- 动态包含  页面头 --%>
 		
 <div class="bag">
-	<% boolean[] MoneyPBFieldDisplay=new boolean[]{
-			false,false,false,
+	<% Boolean[] MoneyPBFieldDisplay=new Boolean[]{
+			false,null,false,
 			true,true,true,
 			true,true,true,
 			true,true,false};
@@ -36,12 +37,16 @@
 			<td>其他地区</td>
 		</tr>
 		<% i=0; %>
-		<s:iterator value="%{base[0].fields}" var="__opField" status="__opFieldStatus">
-			<% if(MoneyPBFieldDisplay[i++]){ %>
+		<s:iterator value="base[0].fields" var="__opField" status="__opFieldStatus">
+			<%  Boolean flag=MoneyPBFieldDisplay[i++];
+				if(flag==null)
+					;
+				else if(flag){ %>
 			<tr class="wtableContent">
 			<% }else{ %>
 			<tr class="wtableContent" style="display:none;">
 			<% } %>
+			<% if(flag!=null){ %>
 				<td style="border:0;"><!-- 条目 -->
 					<s:property value="#__opField.description" />
 				</td>
@@ -56,10 +61,11 @@
 					theme="simple" />
 				</td>
 			</tr>
+			<% } %>
 		</s:iterator>
-		<tr>
-			<td colspan="100" style="text-align:center;">
-				<s:submit value="提交修改" cssClass="button"/>
+		<tr class="wtableContent">
+			<td colspan="100" style="border:0;">
+				<s:submit value="提交修改" cssClass="button" theme="simple"/>
 			</td>
 		</tr>
 	</s:form>
