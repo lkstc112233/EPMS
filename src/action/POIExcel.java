@@ -914,7 +914,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			Sheet st=wb.createSheet("督导任务");
 			CellStyle styleBigTitle=POIExcel.getCellStyle(wb,"宋体",18,true,HorizontalAlignment.CENTER,BorderStyle.NONE,false,null);
 		//	CellStyle styleSmallTitle=POIExcel.getCellStyle(wb,"宋体",12,true,HorizontalAlignment.CENTER,BorderStyle.NONE,false,null);
-			CellStyle styleTitle=POIExcel.getCellStyle(wb,"宋体",10,true,HorizontalAlignment.CENTER,BorderStyle.NONE,true,null);
+			CellStyle styleTitle=POIExcel.getCellStyle(wb,"宋体",10,true,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,null);
 			CellStyle styleContent=POIExcel.getCellStyle(wb,"宋体",10,false,HorizontalAlignment.CENTER,BorderStyle.HAIR,true,null);
 			//设置列数
 			final Field[] fs=Field.getFields(InnerPerson.class,"name","id","mobile","email");
@@ -938,21 +938,37 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			setHeight(row,40);
 			for(int i=0;i<column;i++) {
 				cell=row.createCell(i);
-				cell.setCellType(CellType.STRING);
-				cell.setCellValue(i==0?"实习大区":
-					i==1?"序号":
-						i==2?"实习基地名称":
-							(i-3)%fs_len<1?"学院":
-								fs[(i-3)%fs_len].getDescription());
 				setWidth(st,i,i==0?4:
 					i==1?3:
 						i==2?26:
 							((i-3)%fs_len)<2?5:
 								((i-3)%fs_len)==2?0:12);
+				cell.setCellType(CellType.STRING);
+				cell.setCellValue(i==0?"实习大区":
+					i==1?"序号":
+						i==2?"实习基地名称":
+							(i-3)/fs_len==0?"总领队":
+								Supervise.getTypeNameList()[(i-3)/fs_len-1]);
+				if((i-3)%fs_len==fs_len-1)
+					st.addMergedRegion(new CellRangeAddress(r,r,i-fs_len+1,i));
 				cell.setCellStyle(styleTitle);
 			}
 			r++;
-			/*第三行*/
+			/*第三行列标签*/row=st.createRow(r);
+			setHeight(row,40);
+			for(int i=0;i<column;i++) {
+				cell=row.createCell(i);
+				cell.setCellType(CellType.STRING);
+				if(i<3)
+					st.addMergedRegion(new CellRangeAddress(r-1,r,i,i));
+				else {
+					cell.setCellValue((i-3)%fs_len<1?"学院":
+									fs[(i-3)%fs_len-1].getDescription());
+					cell.setCellStyle(styleTitle);
+				}
+			}
+			r++;
+			/*第四行*/
 			for(ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair rp:list.getList()) {
 				int gCnt=1;
 				int rStart=r;
@@ -978,8 +994,8 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 						else if(i==2)
 							cell.setCellValue(pair.getPracticeBase().getName());
 						else {
-							int j=(i-3)/fs.length%fs_cnt;
-							int k=(i-3)%fs.length;
+							int j=(i-3)/fs_len;
+							int k=(i-3)%fs_len;
 							if(k==0) {
 								if(gCnt==rp.getList().size() ||
 										(inner[j]!=null && mergeId[j]!=null && !mergeId[j].equals(inner[j].getId())))
@@ -988,10 +1004,10 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 							if(merge[j]) {
 								//merge the rows before here(mergeR[j]...mergeToR)
 								int mergeToR=(gCnt==rp.getList().size())?r:r-1;//最后一个
-								if(mergeToR>mergeR[j]) {
+								if(mergeToR>mergeR[j])
 									st.addMergedRegion(new CellRangeAddress(mergeR[j],mergeToR,i,i));
-								}
-							}else if(k<1) {
+							}
+							if(k<1) {//院系简称
 								String schoolSubName="";
 								try {
 									schoolSubName=new School(inner[j].getSchool()).getSubName();
@@ -999,11 +1015,12 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 									System.err.println(inner[j].getDescription()+"没有查找到所在院系！("+e.getMessage()+")");
 								}
 								cell.setCellValue(schoolSubName);
-							}else
+							}else//其他信息
 								cell.setCellValue(Field.o2s(fs[k-1].get(inner[j]),""));
 							if(k==fs_len-1) {
 								mergeId[j]=inner[j]==null?null:inner[j].getId();
-								mergeR[j]=r;
+								if(merge[j])//当前行merge过
+									mergeR[j]=r;
 							}
 						}
 					}
