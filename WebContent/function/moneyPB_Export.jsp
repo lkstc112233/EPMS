@@ -120,7 +120,7 @@
 				</s:iterator>
 				<!-- 总计 -->
 				<td style="padding:0;background-color:lightyellow;font-weight:800;">
-					<a href="<s:url action='function_moneyPB_MoneyPBInfo_display'/>?practiceBaseName=<s:property value='#__pairRow.practiceBase.name'/>">
+					<a href="<s:url action='function_moneyPB_MoneyPBInfo_execute'/>?practiceBaseName=<s:property value='#__pairRow.practiceBase.name'/>">
 						<s:property value="#__pairRow.sum.sum" />
 					</a>
 				</td>

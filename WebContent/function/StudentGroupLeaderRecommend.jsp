@@ -42,8 +42,6 @@
 			true,true,true,false,
 			false,false,false,false};
 		int i; %>
-	<% String majorName=obj.Field.o2S(pageContext.findAttribute("majorName")); %>
-		
 	<!-- ###### 已分配实习生 ###### -->
 	<table width="80%"><tbody>
 	<s:iterator value="practiceBaseAndStudents.list" var="__rpRow" status="__rpStatus">
@@ -92,7 +90,6 @@
 							listKey="id" listValue="description"
 							headerKey="" headerValue="-未定-"
 							style="margin-top:7px;height:21px;background-color:rgba(255,255,255,0.5);" theme="simple" />
-							<s:hidden name="majorName" value="%{majorName}" theme="simple" />
 							<s:hidden name="choose[0]" value="%{#__Row.practiceBase.name}" theme="simple" />
 							<s:hidden name="choose[1]" value="" theme="simple" />
 							<s:submit value="为该基地所有学生设置指导老师" cssClass="buttonInline"
@@ -158,7 +155,6 @@
 			</td>
 			<!-- 指导老师 --><td style="width:175px;padding:0;border:0;">
 				<s:form action="function_StudentGroupLeaderRecommend_execute" method="post" theme="simple">
-					<s:hidden name="majorName" value="%{majorName}" theme="simple" />
 					<s:hidden name="choose[0]" value="%{#__Row.practiceBase.name}" theme="simple" />
 					<s:hidden name="choose[1]" value="%{#__studentRow.id}" theme="simple" />
 					<s:select name="choose[2]" list="innerPersons"
@@ -176,7 +172,6 @@
 						style="padding:0;margin:0;border:3px black double;background:gold;width:30px;height:30px;font-size:30px;line-height:5px;" theme="simple" />
 				</s:if><s:else><!-- 未推荐 -->
 					<s:form action="function_StudentGroupLeaderRecommend_execute" method="post" theme="simple">
-						<s:hidden name="majorName" value="%{majorName}" theme="simple" />
 						<s:hidden name="choose[0]" value="%{#__Row.practiceBase.name}" theme="simple" />
 						<s:hidden name="choose[1]" value="%{#__studentRow.id}" theme="simple" />
 						<s:hidden name="choose[2]" value="" theme="simple" />
