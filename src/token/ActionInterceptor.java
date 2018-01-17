@@ -76,6 +76,7 @@ public class ActionInterceptor extends AbstractInterceptor{
 		if(errorMsg!=null)
 			return Manager.tips(user.getOffice()+"无权访问（只允许"+errorMsg.toString()+"访问），请重新登录！",
 					"error");
+		Manager.setActionName(actionName);
 		return invocation.invoke();
 	}
 	

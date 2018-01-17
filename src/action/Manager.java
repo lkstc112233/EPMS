@@ -40,11 +40,69 @@ public class Manager {
 		return Manager.loadSession(Integer.class,annualToken);
 	}
 	/*=======================================================
+	 * 关于ActionName
+	 */
+	static private final String chainListKey="chainList";
+	static private final int ListMaxSize=10;
+	static private LinkedList<String> getChainList(){
+		@SuppressWarnings("unchecked")
+		LinkedList<String> list=Manager.loadSession(LinkedList.class,chainListKey);
+		if(list==null) Manager.saveSession(chainListKey,list=new LinkedList<String>());
+		return list;
+	}
+	static private final String ActionNameKey="actionName";
+	static private boolean checkActionNameAvailable(String a) {
+		if(a==null) return false;
+		if(a.isEmpty()) return false;
+		if(a.equals("back")) return false;
+		if(!a.contains("_"))
+			return true;
+		String b=a.substring(0,a.lastIndexOf("_"));
+		if(!b.contains("_"))
+			return true;
+		String actionClassName=b.substring(b.lastIndexOf("_")+1,b.length());
+		String c=actionClassName.toLowerCase();
+		if(c.startsWith("export") && !c.equals("export")) return false;
+		return true;
+		
+	}
+	static public void setActionName(String actionName) {
+		if(!Manager.checkActionNameAvailable(actionName)) return;
+		Manager.saveSession(ActionNameKey,actionName);
+		LinkedList<String> list=Manager.getChainList();
+		if(list.isEmpty() || list.getFirst()==null || !list.getFirst().equals(actionName))
+			list.addFirst(actionName);
+		while(list.size()>ListMaxSize)
+			Manager.removeLastActionName();
+	}
+	static public String removeLastActionName() {
+		LinkedList<String> list=Manager.getChainList();
+		String res=null;
+		if(!list.isEmpty()) {
+			res=list.getLast();
+			list.removeLast();
+		}
+		return res;
+	}
+	static public String removeFirstActionName() {
+		LinkedList<String> list=Manager.getChainList();
+		String res=null;
+		if(!list.isEmpty()) {
+			res=list.getFirst();
+			list.removeFirst();
+		}
+		return res;
+	}
+	static public String getActionName() {
+		return Manager.loadSession(String.class,ActionNameKey);
+	}
+	/*=======================================================
 	 * 关于Session
 	 */
 	static public void resetSession() {
 		InnerPerson usr=Manager.getUser();
 		Integer year=Manager.getYear();
+		LinkedList<String> list=Manager.getChainList();
 		//clear
 		Manager.clearSession();
 		//reload
@@ -52,6 +110,7 @@ public class Manager {
 			Manager.setUser(usr);
 		if(year!=null)
 			Manager.setYear(year);
+		Manager.saveSession(Manager.chainListKey,list);
 	}
 	
 	static public void saveSession(String key,Object value){
@@ -83,29 +142,25 @@ public class Manager {
 	 */
 	static private final String TipsName="errorTips";
 	static public void tips(String msg){
-		Manager.tips(msg,null,null);
+		Manager.tips(msg,null);
 	}
 	static public void tips(String msg,Throwable exception){
-		Manager.tips(msg,exception,null);
-	}
-	static public String tips(String msg,String result){
-		return Manager.tips(msg,null,result);
-	}
-	static public String tips(String msg,Throwable exception,String result){
 		if(msg==null) msg="";
 		if(exception!=null){
 			msg+="\n("+exception.getMessage()+")";
 			exception.printStackTrace();
 		}
 		if(!msg.isEmpty()){
+			String oldMsg=Manager.loadSession(String.class,TipsName);
+			if(oldMsg!=null && !oldMsg.isEmpty())
+				msg=oldMsg+"\n\n===========\n\n"+msg;
 			Manager.saveSession(TipsName,msg
 					.replaceAll("\n","\\\\n")
 					.replaceAll("\"","\\\\\""));
 			System.err.println("Tips>> "+msg);
 		}
-		System.err.println("Tips>> return "+result);
-		return result;
 	}
+	
 
 
 	/*=======================================================
