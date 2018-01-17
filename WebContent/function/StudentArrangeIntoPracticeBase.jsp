@@ -123,7 +123,6 @@
 						style="padding-top:0;height:auto;" theme="simple"/>
 					</td>
 				</tr>
-				<s:hidden name="majorName" value="%{majorName}" theme="simple" />
 			</s:form>
 		</s:else>
 		<tr><td height="45px" colspan="100" valign="top" /></tr>
@@ -239,7 +238,6 @@
 				</tr>
 			</s:else>
 			<tr><td height="35px" colspan="100" valign="top" /></tr>
-			<s:hidden name="majorName" value="%{majorName}" theme="simple" />
 		</s:form>
 	</s:iterator>
 	</s:iterator>

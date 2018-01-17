@@ -29,7 +29,7 @@
 		<tr><td colspan="100" style="text-align:center;">
 			<span style="float:left;margin-left:50px;">
 			<s:form action="function_moneyPB_ExportMoneyPB_download" method="post" theme="simple">
-				<s:hidden name="practiceBaseName" value='practiceBaseName'/>
+				<s:hidden name="practiceBaseName" value='%{practiceBaseName}'/>
 				<s:submit value="下载实习基地经费表" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>

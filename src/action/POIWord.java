@@ -120,6 +120,7 @@ public class POIWord implements SpecialWordIO{
 		target.setStrikeThrough(source.isStrikeThrough());
 		target.setUnderline(source.getUnderline());
 	}
+	@SuppressWarnings("unused")
 	static private void ReplaceInParagraph(XWPFParagraph para,Object param) throws IOException {
 		String str=para.getText();
 		Pattern pattern=Pattern.compile(regex);

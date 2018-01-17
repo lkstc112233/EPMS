@@ -280,7 +280,7 @@ public abstract class Base extends Object implements Comparable<Base>, Cloneable
 		}
 		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
 		int parameterIndex=1;
-		for(Field f:this.getFields())
+		for(Field f:this.getFields()) if(!f.autoIncrease())
 			pst.setObject(parameterIndex++,f.get(base));
 		for(Field f:this.getFields()) if(f.isKey())
 			pst.setObject(parameterIndex++,f.get(this));
