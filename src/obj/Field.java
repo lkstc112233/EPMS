@@ -4,6 +4,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
@@ -274,7 +276,13 @@ public class Field implements Comparable<Field>{
 		try{
 			return Timestamp.valueOf(a);
 		}catch(Exception e){
-			e.printStackTrace();
+			try {
+				Date date=new SimpleDateFormat("yyyy-MM-dd").parse(a);
+				return new Timestamp(date.getTime());
+			} catch (ParseException ex) {
+				System.err.println(e.getMessage()+"\n"+ex.getMessage());
+				ex.printStackTrace();
+			}
 		}return null;
 	}
 	
