@@ -34,8 +34,9 @@
 			<!-- //TODO error会跳转到login.jsp -->
 			<result name="error" type="redirect"> menu.action</result>
 			<result name="invalid.token"> invalidToken.jsp</result>
-			<result name="jump" type="redirect"> ${jumpURL}</result>
 			<result name="login"> login.jsp </result>
+			<result name="jump" type="redirectAction"> ${chainAction}</result>
+			<result name="menu" type="redirectAction"> menu</result>
 		</global-results>
 		
 		<!-- ################################################################################ -->
@@ -57,6 +58,10 @@
 			<result> login.jsp</result>
 			<!--该登录动作不受token过滤器影响-->
 			<interceptor-ref name="defaultStack" />
+		</action>
+		
+		<!--动作：back-->
+		<action name="back" class="action.login.MenuAction" method="back">
 		</action>
 		
 		<!--动作：menu配置-->
