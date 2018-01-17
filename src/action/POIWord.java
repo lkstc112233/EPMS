@@ -3,6 +3,7 @@ package action;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.nio.channels.*;
 import java.sql.SQLException;
 import java.util.*;
@@ -40,9 +41,9 @@ public class POIWord implements SpecialWordIO{
 	static private String arabNumToChineseRMB(float moneyNum) throws IllegalArgumentException {
 	    String money=String.format("%.3f",moneyNum);
 	    if(moneyNum==0.0)
-	        return "零元";
+	        return "零元整";
 	    String[] ss=money.split("\\.",2);
-	    if(ss.length==1||ss[1].isEmpty())
+	    if(ss.length==1||ss[1].isEmpty() || ss.length==2&&Integer.parseInt(ss[1])==0)
 	    	return arabNumToChineseRMB(ss[0])+"整";
 	    String res="";
 	    int deci=Integer.parseInt(money.split("\\.")[1].substring(0,3));
@@ -64,6 +65,23 @@ public class POIWord implements SpecialWordIO{
 	//"\\w"匹配字母、数字、下划线。等价于'[A-Za-z0-9_]'
 	static final public String regex="\\$\\{[A-Za-z_](\\w|\\.)*\\}";
 	
+	static private String getParamString(Object param) {
+		if(param==null) return "";
+		Float f=null;
+		if(param instanceof Float) f=(Float)param;
+		else if(param instanceof Double) f=((Double)param).floatValue();
+		if(f!=null) {
+			for(int i=0,b=1;i<10;i++,b*=10) {
+				int a=Math.round(f*b);
+				if(Math.abs(f*b-a)*b<1e-7) {
+					String res=String.valueOf(a);
+					int len=res.length();
+					return res.substring(0,len-i)+(i<=0?"":("."+res.substring(len-i+1,len)));
+				}
+			}
+		}
+		return param.toString();
+	}
 	static private Object getFromParam(Object o,String field,String allStr) throws IOException {
 		String getterMethodName="get"+field.substring(0,1).toUpperCase()+field.substring(1);
 		try {
