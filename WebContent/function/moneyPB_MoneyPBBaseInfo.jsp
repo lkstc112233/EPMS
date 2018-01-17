@@ -58,7 +58,9 @@
 			</tr>
 		</s:iterator>
 		<tr>
-			<s:submit value="提交修改" cssClass="button"/>
+			<td colspan="100" style="text-align:center;">
+				<s:submit value="提交修改" cssClass="button"/>
+			</td>
 		</tr>
 	</s:form>
 	</tbody></table>

@@ -54,8 +54,8 @@ public class MoneyPB extends AnnualBase{
 		this.gbcj*=studentCount;
 		this.syy*=syyCount;
 		this.glf*=studentCount;
-		this.zsf*=accommodation?0:studentCount;
-		this.brf*=accommodation?0:studentCount;
+		this.zsf*=accommodation?studentCount:0;
+		this.brf*=accommodation?studentCount:0;
 		this.moneyElse*=studentCount;
 	}
 	static public MoneyPB[] getMoneyPBBase() throws IllegalArgumentException, InstantiationException, SQLException {
