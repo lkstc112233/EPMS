@@ -40,6 +40,8 @@ public class Region extends AnnualBase{
 	private boolean accommodation=true;
 	@PrivateField @SQLField(value="是否收到回执单",notNull=true,weight=16)
 	private boolean moneyBack=false;
+	@PrivateField @SQLField(value="外地学生交通费",weight=17,ps="小于100000")
+	private float moneyTrain;
 	@PrivateField @SQLField(value="备注",weight=20,ps="文本储存")
 	private String remark;
 
@@ -68,6 +70,9 @@ public class Region extends AnnualBase{
 	public boolean getMoneyBack() {return this.moneyBack;}
 	public void setMoneyBack(boolean a) {this.moneyBack=a;}
 	public void setMoneyBack(String a) {this.moneyBack=Field.s2b(a,false);}
+	public float getMoneyTrain() {return moneyTrain;}
+	public void setMoneyTrain(float a) {this.moneyTrain = a;}
+	public void setMoneyTrain(String a){this.moneyTrain=Field.s2f(a,0);}
 	public String getRemark() {return remark;}
 	public void setRemark(String remark) {this.remark = remark;}
 
