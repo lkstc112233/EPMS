@@ -5,7 +5,7 @@ import java.util.*;
 
 import action.*;
 import obj.annualTable.*;
-import obj.annualTable.ListOfRegionAndPracticeBases.RegionPair.PracticeBasePair;
+import obj.annualTable.list.*;
 import obj.staticObject.PracticeBase;
 
 /**
@@ -18,12 +18,12 @@ public class PracticeBaseArrangeIntoRegion extends Action{
 	public action.Annual getAnnual(){return this.annual;}
 
 	private boolean[] checkBox;
-	private ListOfRegionAndPracticeBases regionAndPracticeBase;
+	private List_Region_PracticeBase regionAndPracticeBase;
 	private String regionName;
 	
 	public void setCheckBox(boolean[] a){this.checkBox=a;}
 	public boolean[] getCheckBox(){return this.checkBox;}
-	public ListOfRegionAndPracticeBases getRegionAndPracticeBase(){return this.regionAndPracticeBase;}
+	public List_Region_PracticeBase getRegionAndPracticeBase(){return this.regionAndPracticeBase;}
 	public String getRegionName(){return this.regionName;}
 	public void setRegionName(String a){this.regionName=a;}
 	public PracticeBase getPracticeBase(){return new PracticeBase();}
@@ -33,7 +33,7 @@ public class PracticeBaseArrangeIntoRegion extends Action{
 	
 	public PracticeBaseArrangeIntoRegion(){
 		super();
-		this.regionAndPracticeBase=Manager.loadSession(ListOfRegionAndPracticeBases.class,SessionListKey);
+		this.regionAndPracticeBase=Manager.loadSession(List_Region_PracticeBase.class,SessionListKey);
 		this.setupCheckBox();
 	}
 
@@ -41,8 +41,8 @@ public class PracticeBaseArrangeIntoRegion extends Action{
 		this.checkBox=null;
 		if(this.regionAndPracticeBase!=null){
 			int len=0;
-			for(ListOfRegionAndPracticeBases.RegionPair rp:this.regionAndPracticeBase.getList())
-				len=Math.max(len,rp.getList().size());
+			for(RegionPair<PracticeBasePairBase> rp:this.regionAndPracticeBase.getList())
+				len=Math.max(len,rp.getSize());
 			this.checkBox=new boolean[len];
 		}
 	}
@@ -52,7 +52,7 @@ public class PracticeBaseArrangeIntoRegion extends Action{
 		System.out.println(">> RegionArrangement:display > year="+this.getAnnual().getYear());
 		this.regionAndPracticeBase=null;
 		try {
-			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/true);
+			this.regionAndPracticeBase=new List_Region_PracticeBase(this.getAnnual().getYear(),/*containsNullRegion*/true);
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
 			return this.returnWithTips(NONE,"数据库开小差去了！",e);
 		}
@@ -79,7 +79,7 @@ public class PracticeBaseArrangeIntoRegion extends Action{
 		for(boolean s:checkBox) flag|=s;
 		if(!flag)
 			return this.returnWithTips(NONE,"请至少选择一个实习基地添加到大区！");
-		List<PracticeBasePair> nullRegionPracticeBases=this.regionAndPracticeBase.getByRegion((Region)null).getList();
+		List<PracticeBasePair> nullRegionPracticeBases=this.regionAndPracticeBase.get((Region)null).getList();
 		//	List<PracticeBase> tmp=new ArrayList<PracticeBase>();
 		StringBuilder sb=new StringBuilder();
 		StringBuilder error=new StringBuilder();
