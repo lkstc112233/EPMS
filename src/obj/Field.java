@@ -171,11 +171,10 @@ public class Field implements Comparable<Field>{
 	/**
 	 * 获取该Field的source对应列表
 	 */
-	static public class Pair{
-		String key,value;
-		public Pair(Object a,String b){key=a==null?null:String.valueOf(a);value=b;}
-		public String getKey(){return key;}
-		public String getValue(){return value;}
+	static private class Pair extends obj.Pair<String,String>{
+		public Pair(Object a,String b){
+			super(a==null?null:String.valueOf(a),b);
+		}
 	}
 	static private Map<Field,List<Pair>> MapSourceList=new HashMap<Field,List<Pair>>();
 	public List<Pair> getSourceList(){

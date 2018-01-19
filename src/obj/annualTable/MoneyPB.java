@@ -4,6 +4,11 @@ import java.sql.SQLException;
 
 import obj.*;
 
+/**
+ * MoneyPB		是给实习基地经费中针对不同实习基地产生不同住宿费、被褥费等费用的可持久化数据类型
+ * MoneyMajor	是给部院系经费中的机动经费
+ * MoneyMajorPB	是给部院系经费中针对不同实习基地产生不同补助标准的可持久化数据类型
+ */
 @SQLTable("MoneyPB")
 public class MoneyPB extends AnnualBase{
 	@SQLField(value="序号",isKey=true,notNull=true,autoIncrease=true,weight=0)
@@ -30,11 +35,6 @@ public class MoneyPB extends AnnualBase{
 	@SQLField(value="备注",weight=20,ps="文本储存")
 	private String remark;
 	
-	static private final int[] TypeList=new int[]{0,1,2};
-		static public int[] getTypeList(){return MoneyPB.TypeList;}
-	static private final String[] TypeNameList=new String[] {"入校督导","中期督导","返校督导"};
-		static public String[] getTypeNameList() {return MoneyPB.TypeNameList;}
-
 	public float getSum() {
 		return this.rkjs+this.bzr+this.gbcj+this.syy+this.glf+this.zsf+this.brf+this.moneyElse;
 	}
