@@ -34,8 +34,6 @@
 			&nbsp;
 		</td></tr>
 		<tr><td colspan="100" style="text-align:center;">
-			<s:if test="majorName == allMajors.name">
-			</s:if>
 			<span style="float:left;margin-left:50px;">
 			<s:form action="function_student_ExportAllStudentList_download" method="post" theme="simple">
 				<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
@@ -44,40 +42,44 @@
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>
 			</span>
-			<span style="float:left;margin-left:20px;">
-			<s:form action="function_student_ExportAllStudentList_download" method="post" theme="simple">
-				<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
-				<s:hidden name="status" value="true" theme="simple"/>
-				<s:submit value="特殊基地实习生名单" theme="simple"
-				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
-			</s:form>
-			</span>
-			<span style="float:left;margin-left:20px;">
-			<s:form action="function_student_ExportStudentInsuranceList_download" method="post" theme="simple">
-				<s:submit value="投保确认单" theme="simple"
-				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
-			</s:form>
-			</span>
-			<span style="float:left;margin-left:20px;">
-			<s:form action="function_student_ExportAllPracticeBaseConsultationLetter_download" method="post" theme="simple">
-				<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
-				<s:submit value="基地商洽函" theme="simple"
-				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
-			</s:form>
-			</span>
+			<s:if test="majorName == allMajors.name">
+				<span style="float:left;margin-left:20px;">
+				<s:form action="function_student_ExportAllStudentList_download" method="post" theme="simple">
+					<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
+					<s:hidden name="status" value="true" theme="simple"/>
+					<s:submit value="特殊基地实习生名单" theme="simple"
+					style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
+				</s:form>
+				</span>
+				<span style="float:left;margin-left:20px;">
+				<s:form action="function_student_ExportStudentInsuranceList_download" method="post" theme="simple">
+					<s:submit value="投保确认单" theme="simple"
+					style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
+				</s:form>
+				</span>
+				<span style="float:left;margin-left:20px;">
+				<s:form action="function_student_ExportAllPracticeBaseConsultationLetter_download" method="post" theme="simple">
+					<s:hidden name="majorName" value="%{allMajors.name}" theme="simple"/>
+					<s:submit value="基地商洽函" theme="simple"
+					style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
+				</s:form>
+				</span>
+			</s:if>
 			<span style="float:left;margin-left:20px;">
 			<s:form action="function_student_ExportPlanDesign_download" method="post" theme="simple">
 				<s:submit value="教育实习布局规划" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>
 			</span>
-			<span style="float:left;margin-left:20px;">
-			<s:form action="function_student_ExportPlanDesign_download" method="post" theme="simple">
-				<s:hidden name="status" value="" theme="simple"/>
-				<s:submit value="教育实习布局规划(含特殊基地)" theme="simple"
-				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
-			</s:form>
-			</span>
+			<s:if test="majorName == allMajors.name">
+				<span style="float:left;margin-left:20px;">
+				<s:form action="function_student_ExportPlanDesign_download" method="post" theme="simple">
+					<s:hidden name="status" value="" theme="simple"/>
+					<s:submit value="教育实习布局规划(含特殊基地)" theme="simple"
+					style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
+				</s:form>
+				</span>
+			</s:if>
 			<span style="float:left;margin-left:20px;">
 			<s:form action="function_student_ExportPlanMedia_download" method="post" theme="simple">
 				<s:hidden name="status" value="" theme="simple"/>
@@ -88,7 +90,7 @@
 			<span style="float:left;margin-left:20px;">
 			<s:form action="function_student_ExportTeacherList_download" method="post" theme="simple">
 				<s:hidden name="status" value="false" theme="simple"/>
-				<s:submit value="指导教师名单" theme="simple"
+				<s:submit value="指导教师名单(全部专业)" theme="simple"
 				style="width:auto;background:white;border:double 6px #0071bc;font-weight:600;height:40px;padding-left:5px;padding-right:5px;"/>
 			</s:form>
 			</span>
