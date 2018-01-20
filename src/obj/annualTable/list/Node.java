@@ -1,30 +1,42 @@
 package obj.annualTable.list;
 
-import java.util.List;
-
-public class Node<T,L>{
-	public final Class<T> tClazz;
-	private T t;
-	private List<L> list;
+public class Node<T,L extends Leaf<?,?>> extends Leaf<T,L>{
 	
-	public final Class<T> getTClass(){return this.tClazz;}
-	public final T getT() {return t;}
-	public final List<L> getList(){return list;}
-	public final int getSize() {return list.size();}
-	
-	@SuppressWarnings("unchecked")
 	public Node(T t) {
-		if(t==null)
-			throw new NullPointerException("Use 'new Pair(Class)' INSTEAD, if T is null.");
-		this.t=t;
-		this.tClazz=(Class<T>)this.getT().getClass();
+		super(t);
 	}
-	public Node(Class<T> tClazz) {
-		if(tClazz==null)
-			throw new NullPointerException("The tClazz in Pair(Class<?>) CANNOT be null.");
-		this.t=null;
-		this.tClazz=tClazz;
+	/**
+	 * 获取List中的某个元素，其Node.t属性和输入TOfListContent相同(equals)
+	 * 相当于contains
+	 */
+	public L get(final Object tOfListContent) {
+		for(L content:this.getList()) {
+			if(tOfListContent==null && content.getT()==null) return content;
+			if(tOfListContent!=null && content.getT()!=null) {
+				if(tOfListContent.equals(content))
+					return content;
+			}
+		}
+		return null;
+	}
+	/**
+	 * 向该Node中插入子节点，如果没有子节点则新建子节点（会调用get方法）
+	 */
+	@Deprecated
+	@Override
+	public L insert(Object listContentToBeInsert){
+		return super.insert(listContentToBeInsert);
+	}
+	public boolean insert(Object tOfListContentToBeInsert,final L aNewListContentIfNecessary){
+		if(this.get(tOfListContentToBeInsert)==null){
+			//相当于!contains(listContentToBeInsert)
+			if(aNewListContentIfNecessary==null)
+				throw new NullPointerException("When we insert a new 'L' into the list,"
+						+ "the 'aNewListContentIfNecessary' CANNOT be null!");
+			super.insert(aNewListContentIfNecessary);
+			return true;
+		}
+		return false;
 	}
 	
-
 }
