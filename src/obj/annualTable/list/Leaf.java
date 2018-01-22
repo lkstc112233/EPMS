@@ -2,7 +2,7 @@ package obj.annualTable.list;
 
 public class Leaf<T,L>{
 	private T t;
-	private java.util.List<L> list;
+	private java.util.List<L> list=new java.util.ArrayList<L>();
 	
 	public final T getT() {return t;}
 	public final java.util.List<L> getList(){return list;}
