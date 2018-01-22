@@ -35,7 +35,7 @@
 		<!-- ########### 大区信息 ########### -->
 		<tr><td colspan="100">
 			<div class="listHeader" style="width:80%;background:linear-gradient(to right,#0071bc,rgba(0,0,0,0));border:0;">
-				<s:if test="#__Row.region == null">
+				<s:if test="#__Row.t == null">
 					未分配大区的实习基地
 				</s:if><s:else>
 					<s:property value="%{#__Row.t.name}" />
@@ -78,7 +78,7 @@
 					</td>
 					<!-- 内容 -->
 					<% int i=0; %>
-					<s:iterator value="%{#__pbrRow.t.first.fieldsValue}" var="__Col">
+					<s:iterator value="%{#__pbrRow.first.fieldsValue}" var="__Col">
 						<% if(PracticeBaseFieldDisplay[i++]){ %>
 						<td style="word-wrap:break-word;word-break:break-all;">
 						<% }else{ %>
@@ -128,7 +128,7 @@
 					</td>
 					<!-- 内容 -->
 					<% int i=0; %>
-					<s:iterator value="%{#__pbrRow.t.first.fieldsValue}" var="__Col">
+					<s:iterator value="%{#__pbrRow.first.fieldsValue}" var="__Col">
 						<% if(PracticeBaseFieldDisplay[i++]){ %>
 						<td style="word-wrap:break-word;word-break:break-all;">
 						<% }else{ %>
