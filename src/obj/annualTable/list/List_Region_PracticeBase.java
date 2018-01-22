@@ -26,7 +26,7 @@ public class List_Region_PracticeBase extends List<Leaf<Region,PracticeBaseWithR
 						Field.getField(PracticeBase.class,"name"),
 						Field.getField(Region.class,"year"),
 						year),
-				new Restraint(Field.getField(Student.class,"id"))
+				new Restraint(Field.getField(PracticeBase.class,"hx"))
 				);
 		for(Base[] bs:tmp){
 			if(bs!=null && bs.length>=2){
@@ -75,11 +75,9 @@ public class List_Region_PracticeBase extends List<Leaf<Region,PracticeBaseWithR
 	public void put(Region region,PracticeBase pb) throws IllegalArgumentException, InstantiationException, SQLException {
 		if(pb==null)
 			return;
-		Leaf<Region,PracticeBaseWithRegion> aNewListContentIfNecessary=
+		Leaf<Region,PracticeBaseWithRegion> tmp=
 				new Leaf<Region,PracticeBaseWithRegion>(region);
-		if(this.insert(region,aNewListContentIfNecessary)){
-			aNewListContentIfNecessary.insert(
-					new PracticeBaseWithRegion(pb,region));
-		}
+		tmp=this.insert(region,tmp);
+		tmp.insert(new PracticeBaseWithRegion(pb,region));
 	}
 }
