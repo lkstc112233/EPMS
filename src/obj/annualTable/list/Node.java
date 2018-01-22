@@ -22,21 +22,20 @@ public class Node<T,L extends Leaf<?,?>> extends Leaf<T,L>{
 	/**
 	 * 向该Node中插入子节点，如果没有子节点则新建子节点（会调用get方法）
 	 */
-	@Deprecated
 	@Override
-	public L insert(Object listContentToBeInsert){
+	protected L insert(Object listContentToBeInsert){
 		return super.insert(listContentToBeInsert);
 	}
-	public boolean insert(Object tOfListContentToBeInsert,final L aNewListContentIfNecessary){
-		if(this.get(tOfListContentToBeInsert)==null){
+	public L insert(Object tOfListContentToBeInsert,final L aNewListContentIfNecessary){
+		L tmp=this.get(tOfListContentToBeInsert);
+		if(tmp==null){
 			//相当于!contains(listContentToBeInsert)
 			if(aNewListContentIfNecessary==null)
 				throw new NullPointerException("When we insert a new 'L' into the list,"
 						+ "the 'aNewListContentIfNecessary' CANNOT be null!");
-			super.insert(aNewListContentIfNecessary);
-			return true;
+			super.insert(tmp=aNewListContentIfNecessary);
 		}
-		return false;
+		return tmp;
 	}
 	
 }

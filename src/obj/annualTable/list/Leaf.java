@@ -30,7 +30,7 @@ public class Leaf<T,L>{
 	 * 向该Node中插入子节点，如果没有子节点则新建子节点（会调用get方法）
 	 */
 	@SuppressWarnings("unchecked")
-	public L insert(Object listContentToBeInsert){
+	protected L insert(Object listContentToBeInsert){
 		L tmp=this.get(listContentToBeInsert);
 		if(tmp==null) try{//相当于!contains(listContentToBeInsert)
 			this.getList().add((L)listContentToBeInsert);
@@ -38,6 +38,9 @@ public class Leaf<T,L>{
 			return null;
 		}
 		return tmp;
+	}
+	public L insert(Object listContentToBeInsert,L aNewListContentIfNecessary){
+		return this.insert(listContentToBeInsert);
 	}
 
 }
