@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import obj.annualTable.*;
+import obj.annualTable.list.PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors;
 import obj.staticObject.*;
 
 public interface SpecialWordIO {
@@ -22,7 +23,7 @@ public interface SpecialWordIO {
 	public abstract String createSupervisorMandate(
 			int year,
 			InnerPerson supervisor,
-			ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair pair,
+			PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors pblss,
 			int superviseIndex,
 			OutputStream stream)
 					throws IOException;

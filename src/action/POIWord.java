@@ -12,6 +12,7 @@ import org.apache.poi.xwpf.usermodel.*;
 
 import obj.*;
 import obj.annualTable.*;
+import obj.annualTable.list.PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors;
 import obj.staticObject.*;
 import obj.staticSource.*;
 
@@ -331,7 +332,7 @@ public class POIWord implements SpecialWordIO{
 	@Override
 	public String createSupervisorMandate(int year,
 			InnerPerson supervisor,
-			ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair pair,
+			PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors pblss,
 			int superviseIndex,
 			OutputStream out) throws IOException
 	{
@@ -344,7 +345,7 @@ public class POIWord implements SpecialWordIO{
 		String name=String.format("%d年[%s%s%s至%s]免费师范生教育实习督导任务书",
 				year,school.getSubName(),
 				supervisor.getName(),
-				Supervise.getTypeNameList()[superviseIndex],pair.getPracticeBase().getName());
+				Supervise.getTypeNameList()[superviseIndex],pblss.getPracticeBase().getName());
 		String modelFileName="免费师范生教育实习督导任务书.docx";
 		Map<String,Object> param=new HashMap<String,Object>();
 		try {
@@ -354,9 +355,9 @@ public class POIWord implements SpecialWordIO{
 			param.put("nowMonth",String.valueOf(Manager.getNowTimeMonth()));
 			param.put("nowDay",String.valueOf(Manager.getNowTimeDay()));
 			param.put("supervisor",supervisor);
-			param.put("regionName",pair.getRegion().getName());
-			param.put("regionLeader",pair.getLeader());
-			param.put("practiceBase",pair.getPracticeBase());
+			param.put("regionName",pblss.getRegion().getName());
+			param.put("regionLeader",pblss.getLeader());
+			param.put("practiceBase",pblss.getPracticeBase());
 			param.put("superviseTypeName",Supervise.getTypeNameList()[superviseIndex]);
 			param.put("superviseTask",POI.loadTextFile("superviseTask_"+String.valueOf(
 					superviseIndex)+".txt"));

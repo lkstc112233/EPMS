@@ -6,6 +6,9 @@ import java.util.*;
 import action.*;
 import obj.*;
 import obj.annualTable.*;
+import obj.annualTable.list.Leaf;
+import obj.annualTable.list.List_Region_PracticeBaseRegionLeaderSuperviseSupervisors;
+import obj.annualTable.list.PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors;
 import obj.staticObject.InnerPerson;
 import obj.staticSource.School;
 import token.Role;
@@ -23,9 +26,9 @@ public class Export extends Action{
 	private String schoolName=Role.jwc.getName();
 		public void setSchoolName(String a){this.schoolName=Field.s2S(a);}
 		public String getSchoolName(){return schoolName;}
-	private ListOfRegionAndPracticeBaseAndInnerPerson regionAndPracticeBaseAndInnerPerson;
+	private List_Region_PracticeBaseRegionLeaderSuperviseSupervisors list;
 
-	public ListOfRegionAndPracticeBaseAndInnerPerson getRegionAndPracticeBaseAndInnerPerson(){return this.regionAndPracticeBaseAndInnerPerson;}
+	public List_Region_PracticeBaseRegionLeaderSuperviseSupervisors getList(){return this.list;}
 	public int[] getSuperviseTypeList(){return Supervise.getTypeList();}
 
 	//记忆化部件
@@ -51,15 +54,15 @@ public class Export extends Action{
 		public List<Set<InnerPerson>> getSupervisors(){
 			if(this.supervisors!=null) return this.supervisors;
 			if(Manager.getUser()==null) return this.supervisors=null;
-			if(this.getRegionAndPracticeBaseAndInnerPerson()==null) return this.supervisors=null;
+			if(this.getList()==null) return this.supervisors=null;
 			Role role=Role.getRole(Manager.getUser());
 			if(role==null) return null;
 			this.supervisors=new ArrayList<Set<InnerPerson>>();
 			for(School school:this.getSchools()) {
 				Set<InnerPerson> tmp=new HashSet<InnerPerson>();
-				for(ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair rp:this.getRegionAndPracticeBaseAndInnerPerson().getList()) {
-					for(ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair pair:rp.getList()) {
-						for(InnerPerson inner:pair.getSupervisor()) {
+				for(Leaf<Region, PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors> rp:this.getList().getList()) {
+					for(PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors pair:rp.getList()) {
+						for(InnerPerson inner:pair.getSupervisors()) {
 							if(inner!=null && school.getName().equals(inner.getSchool()))
 								tmp.add(inner);
 						}
@@ -76,23 +79,23 @@ public class Export extends Action{
 		
 	public Export(){
 		super();
-		this.regionAndPracticeBaseAndInnerPerson=Manager.loadSession(ListOfRegionAndPracticeBaseAndInnerPerson.class, SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegionLeaderSuperviseSupervisors.class, SessionListKey);
 		if(Manager.getUser()!=null)
 			this.setSchoolName(Manager.getUser().getSchool());
 	}
 	
 	public String display(){
 		System.out.println(">> Export:display > year="+this.getAnnual().getYear()+",schoolName="+schoolName);
-		this.regionAndPracticeBaseAndInnerPerson=null;
+		this.list=null;
 		try{
-			this.regionAndPracticeBaseAndInnerPerson=new ListOfRegionAndPracticeBaseAndInnerPerson(
+			this.list=new List_Region_PracticeBaseRegionLeaderSuperviseSupervisors(
 					this.getAnnual().getYear());
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 			return this.returnWithTips(NONE,"数据库开小差去了！",e);
 		}
 		if(this.getSchools()==null)
 			return this.returnWithTips(NONE,"读取实习专业列表失败!");
-		Manager.saveSession(SessionListKey,this.regionAndPracticeBaseAndInnerPerson);
+		Manager.saveSession(SessionListKey,this.list);
 		return NONE;
 	}
 	

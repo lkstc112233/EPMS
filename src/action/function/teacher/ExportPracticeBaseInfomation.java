@@ -4,7 +4,8 @@ import java.io.*;
 
 import action.*;
 import obj.*;
-import obj.annualTable.*;
+import obj.annualTable.list.List_Region_PracticeBaseRegionLeaderSuperviseSupervisors;
+import obj.annualTable.list.PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors;
 import obj.staticObject.PracticeBase;
 
 /**
@@ -16,16 +17,16 @@ public class ExportPracticeBaseInfomation extends Action{
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
 	
-	private ListOfRegionAndPracticeBaseAndInnerPerson regionAndPracticeBaseAndInnerPerson;
+	private List_Region_PracticeBaseRegionLeaderSuperviseSupervisors list;
 	
-	public ListOfRegionAndPracticeBaseAndInnerPerson getRegionAndPracticeBaseAndInnerPerson(){return this.regionAndPracticeBaseAndInnerPerson;}
+	public List_Region_PracticeBaseRegionLeaderSuperviseSupervisors getList(){return this.list;}
 	
 
 	static public final String SessionListKey=Export.SessionListKey; 
 	
 	public ExportPracticeBaseInfomation(){
 		super();
-		this.regionAndPracticeBaseAndInnerPerson=Manager.loadSession(ListOfRegionAndPracticeBaseAndInnerPerson.class, SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegionLeaderSuperviseSupervisors.class, SessionListKey);
 	}
 
 	@Override
@@ -59,10 +60,10 @@ public class ExportPracticeBaseInfomation extends Action{
 	}
 	public String download(){//下载模板
 		System.out.println(">> ExportPracticeBaseInfomation:download > practiceBaseName="+this.practiceBaseName);
-		if(this.regionAndPracticeBaseAndInnerPerson==null)
+		if(this.list==null)
 			return this.jumpBackWithTips("该项目未初始化!");
-		ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair
-			pair=this.regionAndPracticeBaseAndInnerPerson.get(practiceBaseName);
+		PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors
+			pair=this.list.get(practiceBaseName);
 		if(pair==null)
 			return this.jumpBackWithTips("实习基地名称不正确!");
 		System.out.println(">> ExportPracticeBaseInfomation:download > create download file.");

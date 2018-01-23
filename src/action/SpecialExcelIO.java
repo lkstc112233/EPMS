@@ -3,7 +3,7 @@ package action;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import obj.annualTable.ListOfRegionAndPracticeBaseAndInnerPerson;
+import obj.annualTable.list.List_Region_PracticeBaseRegionLeaderSuperviseSupervisors;
 import obj.annualTable.list.List_Region_PracticeBaseRegion_Student;
 import obj.staticObject.PracticeBase;
 import obj.staticSource.Major;
@@ -66,7 +66,7 @@ public interface SpecialExcelIO {
 	 */
 	public abstract String createSuperviseList(
 			int year,
-			ListOfRegionAndPracticeBaseAndInnerPerson list,
+			List_Region_PracticeBaseRegionLeaderSuperviseSupervisors list,
 			OutputStream stream)
 					throws IOException;
 	

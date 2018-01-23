@@ -11,7 +11,9 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import obj.*;
 import obj.annualTable.*;
+import obj.annualTable.list.List_Region_PracticeBaseRegionLeaderSuperviseSupervisors;
 import obj.annualTable.list.List_Region_PracticeBaseRegion_Student;
+import obj.annualTable.list.PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors;
 import obj.staticObject.*;
 import obj.staticSource.Major;
 import obj.restraint.BaseRestraint;
@@ -115,13 +117,13 @@ public class POI implements SQLIO, SpecialIO{
 		return excel.createTeacherList(year,status, stream);
 	}
 	@Override
-	public String createSuperviseList(int year,ListOfRegionAndPracticeBaseAndInnerPerson list, OutputStream stream) throws IOException {
+	public String createSuperviseList(int year,List_Region_PracticeBaseRegionLeaderSuperviseSupervisors list, OutputStream stream) throws IOException {
 		return excel.createSuperviseList(year, list, stream);
 	}
 	@Override
-	public String createSupervisorMandate(int year,InnerPerson supervisor,ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair pair,int superviseIndex,
+	public String createSupervisorMandate(int year,InnerPerson supervisor,PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors pblss,int superviseIndex,
 			OutputStream stream) throws IOException {
-		return word.createSupervisorMandate(year, supervisor, pair, superviseIndex, stream);
+		return word.createSupervisorMandate(year, supervisor, pblss, superviseIndex, stream);
 	}
 
 	@Override

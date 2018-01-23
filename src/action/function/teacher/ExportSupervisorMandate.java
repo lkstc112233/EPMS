@@ -4,8 +4,8 @@ import java.io.*;
 
 import action.*;
 import obj.*;
-import obj.annualTable.*;
-import obj.annualTable.ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair;
+import obj.annualTable.list.List_Region_PracticeBaseRegionLeaderSuperviseSupervisors;
+import obj.annualTable.list.PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors;
 import obj.staticObject.InnerPerson;
 
 /**
@@ -17,16 +17,16 @@ public class ExportSupervisorMandate extends Action{
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
 	
-	private ListOfRegionAndPracticeBaseAndInnerPerson regionAndPracticeBaseAndInnerPerson;
+	private List_Region_PracticeBaseRegionLeaderSuperviseSupervisors list;
 	
-	public ListOfRegionAndPracticeBaseAndInnerPerson getRegionAndPracticeBaseAndInnerPerson(){return this.regionAndPracticeBaseAndInnerPerson;}
+	public List_Region_PracticeBaseRegionLeaderSuperviseSupervisors getlist(){return this.list;}
 	
 
 	static public final String SessionListKey=Export.SessionListKey; 
 	
 	public ExportSupervisorMandate(){
 		super();
-		this.regionAndPracticeBaseAndInnerPerson=Manager.loadSession(ListOfRegionAndPracticeBaseAndInnerPerson.class, SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegionLeaderSuperviseSupervisors.class, SessionListKey);
 	}
 
 	@Override
@@ -58,20 +58,20 @@ public class ExportSupervisorMandate extends Action{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private ByteArrayOutputStream downloadOutputStream=null;
-	protected String downloadByIO(SpecialIO io,int year,InnerPerson supervisor,PracticeBasePair pair,int superviseIndex,OutputStream stream) throws IOException{
-		return io.createSupervisorMandate(year,supervisor,pair,superviseIndex,stream);
+	protected String downloadByIO(SpecialIO io,int year,InnerPerson supervisor,PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors pblss,int superviseIndex,OutputStream stream) throws IOException{
+		return io.createSupervisorMandate(year,supervisor,pblss,superviseIndex,stream);
 	}
 	public String download(){//下载模板
 		System.out.println(">> ExportSupervisorMandate:download > practiceBaseName="+this.practiceBaseName+",superviseIndex="+this.superviseIndex);
-		if(this.regionAndPracticeBaseAndInnerPerson==null)
+		if(this.list==null)
 			return this.jumpBackWithTips("该项目未初始化!");
-		ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair
-			pair=this.regionAndPracticeBaseAndInnerPerson.get(practiceBaseName);
+		PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors
+			pair=this.list.get(practiceBaseName);
 		if(pair==null)
 			return this.jumpBackWithTips("实习基地名称不正确!");
-		if(superviseIndex<0||superviseIndex>=pair.getSupervisor().length)
+		if(superviseIndex<0||superviseIndex>=pair.getSupervisors().length)
 			return this.jumpBackWithTips("督导序号不正确");
-		InnerPerson supervisor=pair.getSupervisor()[superviseIndex];
+		InnerPerson supervisor=pair.getSupervisors()[superviseIndex];
 		System.out.println(">> ExportSupervisorMandate:download > create download file.");
 		downloadOutputStream=new ByteArrayOutputStream();
 		try{

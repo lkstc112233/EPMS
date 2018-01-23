@@ -14,9 +14,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import obj.*;
 import obj.annualTable.*;
 import obj.annualTable.list.Leaf;
+import obj.annualTable.list.List_Region_PracticeBaseRegionLeaderSuperviseSupervisors;
 import obj.annualTable.list.List_Region_PracticeBaseRegion_Student;
 import obj.annualTable.list.Node;
 import obj.annualTable.list.PracticeBaseWithRegion;
+import obj.annualTable.list.PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors;
 import obj.restraint.BaseRestraint;
 import obj.staticObject.*;
 import obj.staticSource.*;
@@ -910,7 +912,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 	
 	
 	@Override
-	public String createSuperviseList(int year,ListOfRegionAndPracticeBaseAndInnerPerson list, OutputStream out) throws IOException {
+	public String createSuperviseList(int year,List_Region_PracticeBaseRegionLeaderSuperviseSupervisors list, OutputStream out) throws IOException {
 		final Boolean status=false;
 		String name=String.format("%d年免费师范生教育实习督导任务表",
 				year);
@@ -973,26 +975,26 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			}
 			r++;
 			/*第四行*/
-			for(ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair rp:list.getList()) {
+			for(Leaf<Region, PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors> rp:list.getList()) {
 				int gCnt=1;
 				int rStart=r;
 				int[] mergeR=new int[] {r,r,r,r};
 				String[] mergeId=new String[] {null,null,null,null};
 				boolean[] merge=new boolean[] {false,false,false,false};
-				for(ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair pair:rp.getList()) {
+				for(PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors pair:rp.getList()) {
 					if(status!=null && (status^pair.getPracticeBase().getStatus()))
 						continue;
 					row=st.createRow(r);
 					setHeight(row,-1);
 					InnerPerson[] inner=new InnerPerson[] {pair.getLeader(),null,null,null};
-					for(int j=1;j<inner.length;j++) inner[j]=pair.getSupervisor()[j-1];
+					for(int j=1;j<inner.length;j++) inner[j]=pair.getSupervisors()[j-1];
 					for(int i=0;i<column;i++) {
 						cell=row.createCell(i);
 					//	cell.setCellType(CellType.STRING);
 						cell.setCellStyle(styleContent);
 						if(i==0 && r>rStart) continue;
 						if(i==0)
-							cell.setCellValue(rp.getRegion().getName());
+							cell.setCellValue(rp.getT().getName());
 						else if(i==1)
 							cell.setCellValue(gCnt);
 						else if(i==2)

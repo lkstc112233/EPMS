@@ -1,4 +1,3 @@
-<%@page import="obj.annualTable.ListOfPracticeBaseAndStudents"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags" %>
@@ -47,13 +46,13 @@
 			<td style="border:solid 1px;width:4%;">住宿天数</td>
 			<td style="border:solid 1px;width:4%;">其他费用</td>
 		</tr>
-		<s:iterator value="regionAndPracticeBaseAndInnerPerson.list" var="__rpRow" status="__rpStatus">
+		<s:iterator value="list.list" var="__rpRow" status="__rpStatus">
 		<s:iterator value="#__rpRow.list" var="__pairRow" status="__pairStatus">
 			<tr class="wtableContent">
 				<s:set var="_colspan" value="%{#__rpRow.size}" />
 				<s:if test="#__pairStatus.index == 0">
 					<td rowspan="${_colspan}" style="width:3%;background-color:white;">
-						<s:property value="#__rpRow.region.name" />
+						<s:property value="#__rpRow.t.region.name" />
 					</td>
 				</s:if>
 				<!-- 基地名称 -->
