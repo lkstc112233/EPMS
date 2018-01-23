@@ -10,10 +10,10 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import obj.*;
-import obj.annualTable.*;
 import obj.annualTable.list.List_Region_PracticeBaseRegionLeaderSuperviseSupervisors;
 import obj.annualTable.list.List_Region_PracticeBaseRegion_Student;
 import obj.annualTable.list.PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors;
+import obj.annualTable.list.PracticeBaseWithRegionWithMoneyPB;
 import obj.staticObject.*;
 import obj.staticSource.Major;
 import obj.restraint.BaseRestraint;
@@ -132,8 +132,8 @@ public class POI implements SQLIO, SpecialIO{
 	}
 
 	@Override
-	public String createPracticeBaseMoney(int year,ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair, OutputStream stream) throws IOException {
-		return word.createPracticeBaseMoney(year,pair,stream);
+	public String createPracticeBaseMoney(int year,PracticeBaseWithRegionWithMoneyPB pbrm, OutputStream stream) throws IOException {
+		return word.createPracticeBaseMoney(year,pbrm,stream);
 	}
 
 

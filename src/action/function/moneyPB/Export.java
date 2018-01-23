@@ -4,6 +4,10 @@ import java.sql.*;
 
 import action.*;
 import obj.annualTable.*;
+import obj.annualTable.list.Leaf;
+import obj.annualTable.list.List_Region_PracticeBaseRegionMoneyPB_MoneyPB;
+import obj.annualTable.list.Node;
+import obj.annualTable.list.PracticeBaseWithRegionWithMoneyPB;
 
 /**
  * 经费-教育实习基地经费
@@ -15,9 +19,9 @@ public class Export extends Action{
 	public action.Annual getAnnual(){return this.annual;}
 
 
-	private ListOfPracticeBaseAndMoney practiceBaseAndMoney;
+	private List_Region_PracticeBaseRegionMoneyPB_MoneyPB list;
 	
-	public ListOfPracticeBaseAndMoney getPracticeBaseAndMoney(){return this.practiceBaseAndMoney;}
+	public List_Region_PracticeBaseRegionMoneyPB_MoneyPB getPracticeBaseAndMoney(){return this.list;}
 	
 	//记忆化部件
 	public MoneyPB getMoneyPB() {return new MoneyPB();}
@@ -26,7 +30,7 @@ public class Export extends Action{
 	
 	public Export(){
 		super();
-		this.practiceBaseAndMoney=Manager.loadSession(ListOfPracticeBaseAndMoney.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegionMoneyPB_MoneyPB.class,SessionListKey);
 	}
 	
 	/**
@@ -34,14 +38,14 @@ public class Export extends Action{
 	 */
 	public String display(){
 		System.out.println(">> Export:display > year="+this.getAnnual().getYear());
-		this.practiceBaseAndMoney=null;
+		this.list=null;
 		try{
-			this.practiceBaseAndMoney=new ListOfPracticeBaseAndMoney(
+			this.list=new List_Region_PracticeBaseRegionMoneyPB_MoneyPB(
 					this.getAnnual().getYear());
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 			return this.returnWithTips(NONE,"数据库开小差去了！",e);
 		}
-		Manager.saveSession(SessionListKey,this.practiceBaseAndMoney);
+		Manager.saveSession(SessionListKey,this.list);
 		return NONE;
 	}
 	
@@ -54,13 +58,13 @@ public class Export extends Action{
 	@Override
 	public String execute(){
 		//保存Region信息：moneyBack
-		ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair=
-				this.practiceBaseAndMoney.get(this.practiceBaseName);
+		Leaf<PracticeBaseWithRegionWithMoneyPB, MoneyPB>  pair=
+				this.list.get(this.practiceBaseName);
 		if(pair==null)
 			return this.returnWithTips(NONE,"实习基地选择错误!("+this.practiceBaseName+")");
-		pair.getRegion().setMoneyBack(!pair.getRegion().getMoneyBack());
+		pair.getT().getRegion().setMoneyBack(!pair.getT().getRegion().getMoneyBack());
 		try {
-			pair.getRegion().update();
+			pair.getT().getRegion().update();
 		} catch (IllegalArgumentException | SQLException e) {
 			return this.returnWithTips(NONE,"服务器开小差去了!",e);
 		}
@@ -69,13 +73,13 @@ public class Export extends Action{
 	
 	public String delete() {
 		StringBuilder error=new StringBuilder();
-		for(ListOfPracticeBaseAndMoney.RegionPair rp:this.practiceBaseAndMoney.getList()) {
-			for(ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair:rp.getList()) {
-				for(MoneyPB money:pair.getMoneys()) {
+		for(Node<Region, Leaf<PracticeBaseWithRegionWithMoneyPB, MoneyPB>> rp:this.list.getList()) {
+			for(Leaf<PracticeBaseWithRegionWithMoneyPB, MoneyPB> pair:rp.getList()) {
+				for(MoneyPB money:pair.getList()) {
 					try {
 						money.delete();
 					} catch (IllegalArgumentException | SQLException e) {
-						error.append("\n"+pair.getPracticeBase().getName()+
+						error.append("\n"+pair.getT().getPracticeBase().getName()+
 								"清空失败("+e.getMessage()+")");
 					}
 				}
@@ -95,20 +99,20 @@ public class Export extends Action{
 			return this.jumpBackWithTips("读取教育实习经费标准失败!",e);
 		}
 		StringBuilder error=new StringBuilder();
-		for(ListOfPracticeBaseAndMoney.RegionPair rp:this.practiceBaseAndMoney.getList()) {
-			for(ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair:rp.getList()) {
+		for(Node<Region, Leaf<PracticeBaseWithRegionWithMoneyPB, MoneyPB>> rp:this.list.getList()) {
+			for(Leaf<PracticeBaseWithRegionWithMoneyPB, MoneyPB> pair:rp.getList()) {
 				try {
-					MoneyPB money=base[pair.getPracticeBase().getProvince().contains("北京")?0:1];
+					MoneyPB money=base[pair.getT().getPracticeBase().getProvince().contains("北京")?0:1];
 					money=(MoneyPB)money.clone();
 					money.multiply(
-							pair.getNumberOfStudent(),
-							pair.getNumberOfStudentSYY(),
-							pair.getRegion().getAccommodation());
-					money.setPracticeBase(pair.getPracticeBase().getName());
+							pair.getT().getNumberOfStudent(),
+							pair.getT().getNumberOfStudentSYY(),
+							pair.getT().getRegion().getAccommodation());
+					money.setPracticeBase(pair.getT().getPracticeBase().getName());
 					money.setYear(this.annual.getYear());
 					money.create();
 				} catch (IllegalArgumentException | SQLException | IllegalAccessException e) {
-					error.append("\n"+pair.getPracticeBase().getName()+
+					error.append("\n"+pair.getT().getPracticeBase().getName()+
 							"增加失败("+e.getMessage()+")");
 				}
 			}

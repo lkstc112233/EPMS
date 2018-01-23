@@ -6,6 +6,10 @@ import java.util.*;
 import action.*;
 import obj.*;
 import obj.annualTable.*;
+import obj.annualTable.list.Leaf;
+import obj.annualTable.list.List_Region_PracticeBaseRegionMoneyPB_MoneyPB;
+import obj.annualTable.list.Node;
+import obj.annualTable.list.PracticeBaseWithRegionWithMoneyPB;
 import obj.staticObject.PracticeBase;
 
 public class ExportAllMoneyPB extends Action{
@@ -14,16 +18,16 @@ public class ExportAllMoneyPB extends Action{
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
 	
-	private ListOfPracticeBaseAndMoney practiceBaseAndStudents;
+	private List_Region_PracticeBaseRegionMoneyPB_MoneyPB list;
 	
-	public ListOfPracticeBaseAndMoney getPracticeBaseAndStudents(){return this.practiceBaseAndStudents;}
+	public List_Region_PracticeBaseRegionMoneyPB_MoneyPB getPracticeBaseAndStudents(){return this.list;}
 	
 
 	static public final String SessionListKey=Export.SessionListKey; 
 	
 	public ExportAllMoneyPB(){
 		super();
-		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndMoney.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegionMoneyPB_MoneyPB.class,SessionListKey);
 	}
 
 	@Override
@@ -47,11 +51,11 @@ public class ExportAllMoneyPB extends Action{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private ByteArrayOutputStream downloadOutputStream=null;
-	protected String downloadByIO(SpecialIO io,int year,ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair, OutputStream stream) throws IOException{
-		return io.createPracticeBaseMoney(year,pair,stream);
+	protected String downloadByIO(SpecialIO io,int year,PracticeBaseWithRegionWithMoneyPB pbrm, OutputStream stream) throws IOException{
+		return io.createPracticeBaseMoney(year,pbrm,stream);
 	}
 	public String download(){//下载模板
-		if(this.practiceBaseAndStudents==null)
+		if(this.list==null)
 			return this.jumpBackWithTips("该项目未初始化!");
 		//设置下载文件名称
 		String fileName=String.format("%d年免费师范生教育实习实习基地经费明细表及回执单.zip",
@@ -60,16 +64,16 @@ public class ExportAllMoneyPB extends Action{
 		//准备文件内容
 		final Boolean status=false;
 		Map<String,OutputStream> files=new HashMap<String,OutputStream>();
-		for(ListOfPracticeBaseAndMoney.RegionPair rp:this.practiceBaseAndStudents.getList()) {
-			for(ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair:rp.getList()) {
-				PracticeBase pb=pair.getPracticeBase();
+		for(Node<Region, Leaf<PracticeBaseWithRegionWithMoneyPB, MoneyPB>> rp:this.list.getList()) {
+			for(Leaf<PracticeBaseWithRegionWithMoneyPB, MoneyPB> pair:rp.getList()) {
+				PracticeBase pb=pair.getT().getPracticeBase();
 				if(status!=null && (status^pb.getStatus()))
 					continue;
 				System.out.println(">> ExportAllMoneyPB:download > create download file. practiceBaseName="+pb.getName());
 				OutputStream out=new ByteArrayOutputStream();
 				try{
 					String name=this.downloadByIO((SpecialIO)Base.io(),
-							this.getAnnual().getYear(),pair,out);
+							this.getAnnual().getYear(),pair.getT(),out);
 					files.put(name,out);
 				}catch(IOException e){
 					downloadOutputStream=null;
