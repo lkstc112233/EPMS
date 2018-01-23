@@ -9,7 +9,7 @@ import obj.annualTable.*;
 import obj.staticObject.*;
 import obj.staticSource.*;
 
-public class List_Region_PracticeBaseRegionPlan_Student extends List<Node<Region,Leaf<PracticeBaseWithRegionWithPlan,Student>>>{
+public class List_Region_PracticeBaseRegionPlan_Student extends ListTree<Node<Region,Leaf<PracticeBaseWithRegionWithPlan,Student>>>{
 
 	private java.util.List<Student> undistributedStudents=new ArrayList<Student>();
 		public java.util.List<Student> getUndistributedStudents(){return this.undistributedStudents;}

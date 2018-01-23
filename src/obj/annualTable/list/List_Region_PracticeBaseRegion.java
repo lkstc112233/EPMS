@@ -7,7 +7,7 @@ import obj.*;
 import obj.annualTable.*;
 import obj.staticObject.*;
 
-public class List_Region_PracticeBaseRegion extends List<Leaf<Region,PracticeBaseWithRegion>>{
+public class List_Region_PracticeBaseRegion extends ListTree<Leaf<Region,PracticeBaseWithRegion>>{
 	public List_Region_PracticeBaseRegion(int year,boolean containsNullRegion)
 			throws IllegalArgumentException, InstantiationException, SQLException{
 		this(year,containsNullRegion,new DefaultComparator_LeafRegion<PracticeBaseWithRegion>());
