@@ -9,16 +9,16 @@ import obj.annualTable.*;
 import obj.staticObject.*;
 import obj.staticSource.*;
 
-public class List_Region_PracticeBasePlan_Student extends List<Node<Region,Leaf<PracticeBaseWithRegionWithPlan,Student>>>{
+public class List_Region_PracticeBaseRegionPlan_Student extends List<Node<Region,Leaf<PracticeBaseWithRegionWithPlan,Student>>>{
 
 	private java.util.List<Student> undistributedStudents=new ArrayList<Student>();
 		public java.util.List<Student> getUndistributedStudents(){return this.undistributedStudents;}
 	
-	public List_Region_PracticeBasePlan_Student(int year,Major major,int minPlanNumber)
+	public List_Region_PracticeBaseRegionPlan_Student(int year,Major major,int minPlanNumber)
 			throws IllegalArgumentException, InstantiationException, SQLException{
 		this(year,major,minPlanNumber,new DefaultComparator_LeafRegion<Leaf<PracticeBaseWithRegionWithPlan,Student>>());
 	}
-	public List_Region_PracticeBasePlan_Student(int year,Major major,int minPlanNumber,
+	public List_Region_PracticeBaseRegionPlan_Student(int year,Major major,int minPlanNumber,
 			Comparator<? super Node<Region,Leaf<PracticeBaseWithRegionWithPlan,Student>>> comparator)
 			throws IllegalArgumentException, InstantiationException, SQLException{
 		super();

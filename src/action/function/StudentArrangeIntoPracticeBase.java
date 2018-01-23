@@ -7,7 +7,7 @@ import action.*;
 import obj.*;
 import obj.annualTable.*;
 import obj.annualTable.list.Leaf;
-import obj.annualTable.list.List_Region_PracticeBasePlan_Student;
+import obj.annualTable.list.List_Region_PracticeBaseRegionPlan_Student;
 import obj.annualTable.list.Node;
 import obj.annualTable.list.PracticeBaseWithRegionWithPlan;
 import obj.staticObject.PracticeBase;
@@ -25,14 +25,14 @@ public class StudentArrangeIntoPracticeBase extends Action{
 	
 	private String majorName;
 	private boolean[] checkBox;
-	private List_Region_PracticeBasePlan_Student list;
+	private List_Region_PracticeBaseRegionPlan_Student list;
 	private String practiceBaseName;
 	
 	public void setMajorName(String a){this.majorName=Field.s2S(a);}
 	public String getMajorName(){return majorName;}
 	public void setCheckBox(boolean[] a){this.checkBox=a;}
 	public boolean[] getCheckBox(){return this.checkBox;}
-	public List_Region_PracticeBasePlan_Student getList(){return this.list;}
+	public List_Region_PracticeBaseRegionPlan_Student getList(){return this.list;}
 	public String getPracticeBaseName(){return this.practiceBaseName;}
 	public void setPracticeBaseName(String a){this.practiceBaseName=a;}
 	
@@ -71,7 +71,7 @@ public class StudentArrangeIntoPracticeBase extends Action{
 	
 	public StudentArrangeIntoPracticeBase(){
 		super();
-		this.list=Manager.loadSession(List_Region_PracticeBasePlan_Student.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegionPlan_Student.class,SessionListKey);
 		this.majorName=Manager.loadSession(String.class,SessionMajorNameKey);
 		if(this.majorName==null && this.getMajors()!=null && !this.getMajors().isEmpty())//默认值
 			this.setMajorName(this.getMajors().get(0).getName());
@@ -104,7 +104,7 @@ public class StudentArrangeIntoPracticeBase extends Action{
 			return this.returnWithTips(NONE,"专业("+this.majorName+")不存在！",e);
 		}
 		try {
-			this.list=new List_Region_PracticeBasePlan_Student(
+			this.list=new List_Region_PracticeBaseRegionPlan_Student(
 					this.getAnnual().getYear(),major,/*minPlanNumber*/1);
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 			return this.returnWithTips(NONE,"数据库开小差去了！",e);
