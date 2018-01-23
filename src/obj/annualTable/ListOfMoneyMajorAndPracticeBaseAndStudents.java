@@ -128,19 +128,19 @@ public class ListOfMoneyMajorAndPracticeBaseAndStudents{
 		}
 		return null;
 	}
-	public PracticeBasePairBase get(String practiceBaseName){
+	public PracticeBaseWithRegion get(String practiceBaseName){
 		if(practiceBaseName==null || practiceBaseName.isEmpty()) return null;
 		for(RegionPair rp:this.list) if(rp.getRegion()!=null)
-			for(PracticeBasePairBase p:rp.list){
+			for(PracticeBaseWithRegion p:rp.list){
 				PracticeBase t=p.practiceBase;
 				if(t!=null && t.getName()!=null && t.getName().equals(practiceBaseName))
 					return p;
 			}
 		return null;
 	}
-	public PracticeBasePairBase get(PracticeBase pb){
+	public PracticeBaseWithRegion get(PracticeBase pb){
 		for(RegionPair rp:this.list) if(rp.getRegion()!=null)
-			for(PracticeBasePairBase p:rp.list){
+			for(PracticeBaseWithRegion p:rp.list){
 				PracticeBase t=p.practiceBase;
 				if(pb==null && t==null) return p;
 				if(pb!=null && t!=null && t.getName()!=null && t.getName().equals(pb.getName()))
@@ -151,18 +151,18 @@ public class ListOfMoneyMajorAndPracticeBaseAndStudents{
 	public void put(Region region,PracticeBase pb,Student stu) throws IllegalArgumentException, InstantiationException, SQLException {
 		if(region==null || pb==null)
 			return;
-		PracticeBasePairBase tmp=this.get(pb);
+		PracticeBaseWithRegion tmp=this.get(pb);
 		if(tmp==null){//需要新增一个PracticeBasePair
 			for(RegionPair rp:this.list) {
 				if(rp.getRegion().getName()!=null && rp.getRegion().getName().equals(region.getName())) {
-					rp.getList().add(tmp=new PracticeBasePairBase(region,pb));
+					rp.getList().add(tmp=new PracticeBaseWithRegion(region,pb));
 					break;
 				}
 			}
 			if(tmp==null) {
 				//需要新增一个RegionPair
 				RegionPair rp=new RegionPair(region);
-				rp.getList().add(tmp=new PracticeBasePairBase(region,pb));
+				rp.getList().add(tmp=new PracticeBaseWithRegion(region,pb));
 				this.list.add(rp);
 			}
 		}
