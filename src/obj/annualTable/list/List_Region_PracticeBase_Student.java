@@ -74,7 +74,7 @@ public class List_Region_PracticeBase_Student extends List<Node<Region,Leaf<Prac
 		return null;
 	}
 	public void put(Region region,PracticeBase pb,Student stu) throws IllegalArgumentException, InstantiationException, SQLException {
-		if(region!=null && pb==null)
+		if(region==null || pb==null)
 			return;
 		Node<Region,Leaf<PracticeBaseWithRegion,Student>> tmp=
 				new Node<Region,Leaf<PracticeBaseWithRegion,Student>>(region);

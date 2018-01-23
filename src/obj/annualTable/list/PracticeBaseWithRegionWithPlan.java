@@ -10,6 +10,9 @@ public class PracticeBaseWithRegionWithPlan extends obj.Pair<PracticeBaseWithReg
 		super(new PracticeBaseWithRegion(pb,region),plan);
 	}
 	
+	public PracticeBase getPracticeBaes() {return this.first().first();}
+	public Region getRegion() {return this.first().second();}
+	public Plan getPlan() {return this.second();}
 	
 	@SuppressWarnings("rawtypes")
 	@Override
