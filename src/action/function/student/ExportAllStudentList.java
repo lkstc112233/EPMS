@@ -7,6 +7,10 @@ import java.util.*;
 import action.*;
 import obj.*;
 import obj.annualTable.*;
+import obj.annualTable.list.Leaf;
+import obj.annualTable.list.List_Region_PracticeBase_Student;
+import obj.annualTable.list.Node;
+import obj.annualTable.list.PracticeBaseWithRegion;
 import obj.staticObject.PracticeBase;
 import obj.staticSource.Major;
 
@@ -18,17 +22,17 @@ public class ExportAllStudentList extends Action{
 
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
+
+	private List_Region_PracticeBase_Student list;
 	
-	private ListOfPracticeBaseAndStudents practiceBaseAndStudents;
-	
-	public ListOfPracticeBaseAndStudents getPracticeBaseAndStudents(){return this.practiceBaseAndStudents;}
+	public List_Region_PracticeBase_Student getList(){return this.list;}
 	
 
 	static public final String SessionListKey=Export.SessionListKey; 
 	
 	public ExportAllStudentList(){
 		super();
-		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudents.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBase_Student.class,SessionListKey);
 	}
 
 	@Override
@@ -64,7 +68,7 @@ public class ExportAllStudentList extends Action{
 		return io.createStudentList(year,pb,major,stream);
 	}
 	public String download(){//下载模板
-		if(this.practiceBaseAndStudents==null)
+		if(this.list==null)
 			return this.jumpBackWithTips("该项目未初始化!");
 		//设置下载文件名称
 		Major major=null;
@@ -80,16 +84,16 @@ public class ExportAllStudentList extends Action{
 		this.setDownloadFileName(fileName);
 		//准备文件内容
 		Map<String,OutputStream> files=new HashMap<String,OutputStream>();
-		for(ListOfPracticeBaseAndStudents.RegionPair rp:this.practiceBaseAndStudents.getList()) {
-			for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
-				PracticeBase pb=pair.getPracticeBase();
+		for(Node<Region,Leaf<PracticeBaseWithRegion,Student>> rp:this.list.getList()) {
+			for(Leaf<PracticeBaseWithRegion,Student> pair:rp.getList()) {
+				PracticeBase pb=pair.getT().getFirst();
 				if(status!=null && (status^pb.getStatus()))
 					continue;
 				System.out.println(">> ExportAllStudentList:download > create download file. practiceBaseName="+pb.getName());
 				OutputStream out=new ByteArrayOutputStream();
 				try{
 					String name=this.downloadByIO((SpecialIO)Base.io(),
-							this.getAnnual().getYear(),pair.getPracticeBase(),major,
+							this.getAnnual().getYear(),pair.getT().getFirst(),major,
 							out);
 					files.put(name,out);
 				}catch(IOException e){

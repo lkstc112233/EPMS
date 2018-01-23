@@ -7,6 +7,10 @@ import java.util.*;
 import action.*;
 import obj.*;
 import obj.annualTable.*;
+import obj.annualTable.list.Leaf;
+import obj.annualTable.list.List_Region_PracticeBase_Student;
+import obj.annualTable.list.Node;
+import obj.annualTable.list.PracticeBaseWithRegion;
 import obj.staticSource.Major;
 
 /**
@@ -17,17 +21,17 @@ public class ExportPlanMedia extends Action{
 
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
+
+	private List_Region_PracticeBase_Student list;
 	
-	private ListOfPracticeBaseAndStudents practiceBaseAndStudents;
-	
-	public ListOfPracticeBaseAndStudents getPracticeBaseAndStudents(){return this.practiceBaseAndStudents;}
+	public List_Region_PracticeBase_Student getList(){return this.list;}
 	
 
 	static public final String SessionListKey=Export.SessionListKey; 
 	
 	public ExportPlanMedia(){
 		super();
-		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudents.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBase_Student.class,SessionListKey);
 	}
 
 	@Override
@@ -43,9 +47,9 @@ public class ExportPlanMedia extends Action{
 		List<Major> tmp=new ArrayList<Major>();
 		for(int i=0;i<majors.size();i++) {
 			Major m=null;
-			for(ListOfPracticeBaseAndStudents.RegionPair rp:this.practiceBaseAndStudents.getList()) {
-				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
-					for(Student stu:pair.getStudents()) {
+			for(Node<Region,Leaf<PracticeBaseWithRegion,Student>> rp:this.list.getList()) {
+				for(Leaf<PracticeBaseWithRegion,Student> pair:rp.getList()) {
+					for(Student stu:pair.getList()) {
 						if(majors.get(i).getName().equals(stu.getMajor())) {
 							m=majors.get(i);
 						}if(m!=null) break;
@@ -56,9 +60,9 @@ public class ExportPlanMedia extends Action{
 		majors=tmp;
 		boolean[][][] media=new boolean[majors.size()][][];
 		for(int i=0;i<media.length;i++) {
-			media[i]=new boolean[this.practiceBaseAndStudents.getList().size()][];
+			media[i]=new boolean[this.list.getList().size()][];
 			for(int j=0;j<media[i].length;j++) {
-				media[i][j]=new boolean[this.practiceBaseAndStudents.getList().get(j).getList().size()];
+				media[i][j]=new boolean[this.list.getList().get(j).getList().size()];
 				for(int k=0;k<media[i][j].length;k++)
 					media[i][j][k]=false;
 			}
@@ -70,7 +74,7 @@ public class ExportPlanMedia extends Action{
 				Field.getField(Plan.class,"year"),
 				this.getAnnual().getYear()));
 		for(Plan p:plans){
-			int[] index=this.practiceBaseAndStudents.indexOf(p.getPracticeBase());
+			int[] index=this.list.indexOf(p.getPracticeBase());
 			if(index!=null && index.length>=2)
 				media[majorsMap.get(p.getMajor())][index[0]][index[1]]=
 				p.getMedia();
@@ -92,12 +96,12 @@ public class ExportPlanMedia extends Action{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private ByteArrayOutputStream downloadOutputStream=null;
-	protected String downloadByIO(SpecialIO io,int year,ListOfPracticeBaseAndStudents list,boolean[][][] media,OutputStream stream) throws IOException{
+	protected String downloadByIO(SpecialIO io,int year,List_Region_PracticeBase_Student list,boolean[][][] media,OutputStream stream) throws IOException{
 		return io.createPlanMedia(year,list,media,stream);
 	}
 	public String download(){//下载模板
 		System.out.println(">> ExportPlanDesign:download >");
-		if(this.practiceBaseAndStudents==null)
+		if(this.list==null)
 			return this.jumpBackWithTips("该项目未初始化!");
 		boolean[][][] media;
 		try {
@@ -110,7 +114,7 @@ public class ExportPlanMedia extends Action{
 		this.downloadOutputStream=new ByteArrayOutputStream();
 		try{
 			String fileName=this.downloadByIO((SpecialIO)Base.io(),
-					this.getAnnual().getYear(),this.practiceBaseAndStudents,media,downloadOutputStream);
+					this.getAnnual().getYear(),this.list,media,downloadOutputStream);
 			this.setDownloadFileName(fileName);//设置下载文件名称
 			this.downloadOutputStream.flush();
 		}catch(IOException e){

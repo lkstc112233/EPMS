@@ -6,6 +6,7 @@ import java.util.*;
 import action.*;
 import obj.*;
 import obj.annualTable.*;
+import obj.annualTable.list.List_Region_PracticeBase_Student;
 import obj.staticObject.InnerPerson;
 import obj.staticSource.Major;
 import token.Role;
@@ -23,9 +24,9 @@ public class Export extends Action{
 	private String majorName=this.getAllMajors().getName();
 		public void setMajorName(String a){this.majorName=Field.s2S(a);}
 		public String getMajorName(){return majorName;}
-	private ListOfPracticeBaseAndStudents practiceBaseAndStudents;
+	private List_Region_PracticeBase_Student list;
 	
-	public ListOfPracticeBaseAndStudents getPracticeBaseAndStudents(){return this.practiceBaseAndStudents;}
+	public List_Region_PracticeBase_Student getList(){return this.list;}
 	
 	//记忆化部件
 	public Student getStudent(){return new Student();}
@@ -74,7 +75,7 @@ public class Export extends Action{
 	
 	public Export(){
 		super();
-		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudents.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBase_Student.class,SessionListKey);
 		if(this.getMajors()!=null && !this.getMajors().isEmpty())
 			this.setMajorName(this.getMajors().get(0).getName());
 	}
@@ -86,7 +87,7 @@ public class Export extends Action{
 	 */
 	public String display(){
 		System.out.println(">> Export:display > year="+this.getAnnual().getYear()+",majorName="+majorName);
-		this.practiceBaseAndStudents=null;
+		this.list=null;
 		Major major=null;
 		try{
 			if(this.majorName!=null && !this.majorName.isEmpty())
@@ -95,14 +96,14 @@ public class Export extends Action{
 			return this.returnWithTips(NONE,"专业("+this.majorName+")不存在！",e);
 		}
 		try{
-			this.practiceBaseAndStudents=new ListOfPracticeBaseAndStudents(
+			this.list=new List_Region_PracticeBase_Student(
 					this.getAnnual().getYear(),major);
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 			return this.returnWithTips(NONE,"数据库开小差去了！",e);
 		}
 		if(this.getMajors()==null)
 			return this.returnWithTips(NONE,"读取实习专业列表失败!");
-		Manager.saveSession(SessionListKey,this.practiceBaseAndStudents);
+		Manager.saveSession(SessionListKey,this.list);
 		System.out.println(">> Export:display <NONE");
 		return NONE;
 	}
