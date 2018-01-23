@@ -20,19 +20,11 @@ public class Pair<K,V> implements Map.Entry<K,V>{
 	@Override
 	public K getKey() {
 		return key;
-	}public K first() {
-		return this.getKey();
-	}public K getFirst(){
-		return this.getKey();
 	}
 
 	@Override
 	public V getValue() {
 		return value;
-	}public V second() {
-		return this.getValue();
-	}public V getSecond(){
-		return this.getValue();
 	}
 
 	@Override
@@ -40,10 +32,6 @@ public class Pair<K,V> implements Map.Entry<K,V>{
 		V tmp=this.value;
 		this.value=value;
 		return tmp;
-	}public V second(V value) {
-		return this.setValue(value);
-	}public V setSecond(V value){
-		return this.setValue(value);
 	}
 	
 	@Override

@@ -78,7 +78,7 @@ public class List_Region_PracticeBaseRegionPlan_Student extends ListTree<Node<Re
 		for(int[] index=new int[]{0,0};index[0]<this.getSize();index[0]++){
 			Node<Region, Leaf<PracticeBaseWithRegionWithPlan, Student>> rp=this.getList().get(index[0]);
 			for(index[1]=0;index[1]<rp.getList().size();index[1]++){
-				PracticeBase pb=rp.getList().get(index[1]).getT().getFirst().first();
+				PracticeBase pb=rp.getList().get(index[1]).getT().getPracticeBase();
 				if(pb!=null && pb.getName()!=null && pb.getName().equals(practiceBaseName))
 					return index;
 			}

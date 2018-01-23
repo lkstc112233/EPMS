@@ -5,10 +5,16 @@ import obj.staticObject.PracticeBase;
 
 public final class DefaultComparator_LeafRegion<T> implements java.util.Comparator<Leaf<Region,T>>{
 	
+	@SuppressWarnings("rawtypes")
 	static private <T> PracticeBase GetPracticeBase(T t){
 		if(t==null) return null;
 		if(t instanceof PracticeBase) return (PracticeBase)t;
-		if(t instanceof PracticeBaseWithRegion) return ((PracticeBaseWithRegion)t).first();
+		if(t instanceof obj.Pair) {
+			PracticeBase pb=GetPracticeBase(((obj.Pair)t).getKey());
+			if(pb!=null) return pb;
+			pb=GetPracticeBase(((obj.Pair)t).getValue());
+			if(pb!=null) return pb;
+		}
 		if(t instanceof Leaf) return GetPracticeBase(((Leaf<?,?>)t).getT());
 		return null;
 	}
