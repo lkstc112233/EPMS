@@ -4,7 +4,7 @@ import java.io.*;
 
 import action.*;
 import obj.*;
-import obj.annualTable.list.List_Region_PracticeBase_Student;
+import obj.annualTable.list.List_Region_PracticeBaseRegion_Student;
 
 /**
  * 导出实习生名单
@@ -15,16 +15,16 @@ public class ExportPlanDesign extends Action{
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
 
-	private List_Region_PracticeBase_Student list;
+	private List_Region_PracticeBaseRegion_Student list;
 	
-	public List_Region_PracticeBase_Student getList(){return this.list;}
+	public List_Region_PracticeBaseRegion_Student getList(){return this.list;}
 	
 
 	static public final String SessionListKey=Export.SessionListKey; 
 	
 	public ExportPlanDesign(){
 		super();
-		this.list=Manager.loadSession(List_Region_PracticeBase_Student.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegion_Student.class,SessionListKey);
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class ExportPlanDesign extends Action{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private ByteArrayOutputStream downloadOutputStream=null;
-	protected String downloadByIO(SpecialIO io,int year,List_Region_PracticeBase_Student list,Boolean status,OutputStream stream) throws IOException{
+	protected String downloadByIO(SpecialIO io,int year,List_Region_PracticeBaseRegion_Student list,Boolean status,OutputStream stream) throws IOException{
 		return io.createPlanDesign(year,list,status,stream);
 	}
 	public String download(){//下载模板

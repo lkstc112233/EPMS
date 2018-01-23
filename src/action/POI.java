@@ -11,7 +11,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import obj.*;
 import obj.annualTable.*;
-import obj.annualTable.list.List_Region_PracticeBase_Student;
+import obj.annualTable.list.List_Region_PracticeBaseRegion_Student;
 import obj.staticObject.*;
 import obj.staticSource.Major;
 import obj.restraint.BaseRestraint;
@@ -92,7 +92,7 @@ public class POI implements SQLIO, SpecialIO{
 		return excel.createStudentList(year, pb, major, stream);
 	}
 	@Override
-	public String createStudentInsuranceList(int year, List_Region_PracticeBase_Student list, OutputStream stream) throws IOException {
+	public String createStudentInsuranceList(int year, List_Region_PracticeBaseRegion_Student list, OutputStream stream) throws IOException {
 		return excel.createStudentInsuranceList(year, list, stream);
 	}
 	@Override
@@ -101,12 +101,12 @@ public class POI implements SQLIO, SpecialIO{
 		return word.createPracticeBaseConsultationLetter(year, pb, majorName, stream);
 	}
 	@Override
-	public String createPlanDesign(int year, List_Region_PracticeBase_Student list,Boolean status, OutputStream stream)
+	public String createPlanDesign(int year, List_Region_PracticeBaseRegion_Student list,Boolean status, OutputStream stream)
 			throws IOException {
 		return excel.createPlanDesign(year, list,status, stream);
 	}
 	@Override
-	public String createPlanMedia(int year, List_Region_PracticeBase_Student list, boolean[][][] media,
+	public String createPlanMedia(int year, List_Region_PracticeBaseRegion_Student list, boolean[][][] media,
 			OutputStream stream) throws IOException {
 		return excel.createPlanMedia(year, list, media, stream);
 	}

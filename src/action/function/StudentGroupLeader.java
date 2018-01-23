@@ -9,7 +9,7 @@ import obj.*;
 import obj.annualTable.Region;
 import obj.annualTable.Student;
 import obj.annualTable.list.Leaf;
-import obj.annualTable.list.List_Region_PracticeBase_Student;
+import obj.annualTable.list.List_Region_PracticeBaseRegion_Student;
 import obj.annualTable.list.Node;
 import obj.annualTable.list.PracticeBaseWithRegion;
 import obj.staticObject.InnerPerson;
@@ -26,10 +26,10 @@ public class StudentGroupLeader extends Action{
 	public action.Annual getAnnual(){return this.annual;}
 
 
-	private List_Region_PracticeBase_Student list;
+	private List_Region_PracticeBaseRegion_Student list;
 	private String[] choose=new String[]{null,null};//[0]基地,[1]学生Id
 	
-	public List_Region_PracticeBase_Student getList(){return this.list;}
+	public List_Region_PracticeBaseRegion_Student getList(){return this.list;}
 	public String[] getChoose(){return this.choose;}
 	
 	//记忆化部件
@@ -57,7 +57,7 @@ public class StudentGroupLeader extends Action{
 	
 	public StudentGroupLeader(){
 		super();
-		this.list=Manager.loadSession(List_Region_PracticeBase_Student.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegion_Student.class,SessionListKey);
 	}
 	
 	
@@ -69,7 +69,7 @@ public class StudentGroupLeader extends Action{
 		System.out.println(">> Export:display > year="+this.getAnnual().getYear());
 		this.list=null;
 		try{
-			this.list=new List_Region_PracticeBase_Student(
+			this.list=new List_Region_PracticeBaseRegion_Student(
 					this.getAnnual().getYear(),/*major*/null);
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 			return this.returnWithTips(NONE,"数据库开小差去了！",e);
@@ -114,14 +114,14 @@ public class StudentGroupLeader extends Action{
 		}
 		if(pro==null)
 			return this.jumpBackWithTips("基地("+this.choose[0]+")没有学生学号为("+this.choose[1]+")!");
-		choose_pair.getT().getSecond().setStudentGroupLeaderId(this.choose[1]);
+		choose_pair.getT().getRegion().setStudentGroupLeaderId(this.choose[1]);
 		try {
-			choose_pair.getT().getSecond().update();
+			choose_pair.getT().getRegion().update();
 		}catch(SQLException | IllegalArgumentException e) {
-			return this.jumpBackWithTips("基地("+choose_pair.getT().getFirst().getDescription()+")学生大组长设置失败!");
+			return this.jumpBackWithTips("基地("+choose_pair.getT().getPracticeBase().getDescription()+")学生大组长设置失败!");
 		}
 		return this.jumpToMethodWithTips("display",
-				"基地("+choose_pair.getT().getFirst().getDescription()+")学生大组长("+pro.getDescription()+")设置成功!");
+				"基地("+choose_pair.getT().getPracticeBase().getDescription()+")学生大组长("+pro.getDescription()+")设置成功!");
 	}
 	
 	
@@ -146,7 +146,7 @@ public class StudentGroupLeader extends Action{
 			return this.jumpBackWithTips("读取学生列表失败，已停止!");
 		for(Node<Region,Leaf<PracticeBaseWithRegion,Student>> rp:this.list.getList()){
 			for(Leaf<PracticeBaseWithRegion,Student> pair:rp.getList()) {
-				String groupLeaderId=pair.getT().getSecond().getStudentGroupLeaderId();
+				String groupLeaderId=pair.getT().getRegion().getStudentGroupLeaderId();
 				if(groupLeaderId==null || groupLeaderId.isEmpty())
 					continue;
 				try {
@@ -162,9 +162,9 @@ public class StudentGroupLeader extends Action{
 						}
 					}
 					if(!flag) {
-						error.append("\n基地("+pair.getT().getFirst().getDescription()+")原有学生大组长("+stu.getDescription()+")不存在该大区实习生名单中，已剔除!");
-						pair.getT().getSecond().setStudentGroupLeaderId(null);
-						try{pair.getT().getSecond().update();
+						error.append("\n基地("+pair.getT().getPracticeBase().getDescription()+")原有学生大组长("+stu.getDescription()+")不存在该大区实习生名单中，已剔除!");
+						pair.getT().getRegion().setStudentGroupLeaderId(null);
+						try{pair.getT().getRegion().update();
 						}catch(IllegalArgumentException | SQLException e2) {
 						}
 					}else
@@ -179,7 +179,7 @@ public class StudentGroupLeader extends Action{
 			preparedMajor.add(entry.getValue());
 		for(Node<Region,Leaf<PracticeBaseWithRegion,Student>> rp:this.list.getList()){
 			for(Leaf<PracticeBaseWithRegion,Student> pair:rp.getList()) {
-				if(Field.s2S(pair.getT().getSecond().getStudentGroupLeaderId())==null) {
+				if(Field.s2S(pair.getT().getRegion().getStudentGroupLeaderId())==null) {
 					//每个学院都一定会推荐学生的
 					Collections.sort(preparedMajor);
 					boolean ok=false;
@@ -197,22 +197,22 @@ public class StudentGroupLeader extends Action{
 						}
 						if(gro==null) {
 							if(flag)
-								error.append("\n专业("+p.major.getDescription()+")在基地("+pair.getT().getFirst().getDescription()+")未推荐学生大组长!");
+								error.append("\n专业("+p.major.getDescription()+")在基地("+pair.getT().getPracticeBase().getDescription()+")未推荐学生大组长!");
 						}
 						else {
-							pair.getT().getSecond().setStudentGroupLeaderId(gro.getId());
+							pair.getT().getRegion().setStudentGroupLeaderId(gro.getId());
 							try{
-								pair.getT().getSecond().update();
+								pair.getT().getRegion().update();
 								p.gro++;//TODO check: 排序内容是否更新？
 								ok=true;
 								break;
 							}catch(IllegalArgumentException | SQLException e) {
-								error.append("\n基地("+pair.getT().getFirst().getDescription()+")设定学生大组长("+gro.getDescription()+")时，数据库开小差去了!");
+								error.append("\n基地("+pair.getT().getPracticeBase().getDescription()+")设定学生大组长("+gro.getDescription()+")时，数据库开小差去了!");
 							}
 						}
 					}
 					if(!ok)
-						error.append("\n基地("+pair.getT().getFirst().getDescription()+")未能成功设置学生大组长!");
+						error.append("\n基地("+pair.getT().getPracticeBase().getDescription()+")未能成功设置学生大组长!");
 				}
 			}
 		}

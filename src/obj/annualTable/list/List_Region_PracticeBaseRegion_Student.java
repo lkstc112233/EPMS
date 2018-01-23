@@ -8,12 +8,12 @@ import obj.annualTable.*;
 import obj.staticObject.*;
 import obj.staticSource.*;
 
-public class List_Region_PracticeBase_Student extends List<Node<Region,Leaf<PracticeBaseWithRegion,Student>>>{
-	public List_Region_PracticeBase_Student(int year,Major major)
+public class List_Region_PracticeBaseRegion_Student extends List<Node<Region,Leaf<PracticeBaseWithRegion,Student>>>{
+	public List_Region_PracticeBaseRegion_Student(int year,Major major)
 			throws IllegalArgumentException, InstantiationException, SQLException{
 		this(year,major,new DefaultComparator_LeafRegion<Leaf<PracticeBaseWithRegion,Student>>());
 	}
-	public List_Region_PracticeBase_Student(int year,Major major,
+	public List_Region_PracticeBaseRegion_Student(int year,Major major,
 			Comparator<? super Node<Region,Leaf<PracticeBaseWithRegion,Student>>> comparator)
 			throws IllegalArgumentException, InstantiationException, SQLException{
 		super();

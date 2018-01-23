@@ -6,7 +6,7 @@ import java.util.*;
 import action.*;
 import obj.*;
 import obj.annualTable.*;
-import obj.annualTable.list.List_Region_PracticeBase_Student;
+import obj.annualTable.list.List_Region_PracticeBaseRegion_Student;
 import obj.staticObject.InnerPerson;
 import obj.staticSource.Major;
 import token.Role;
@@ -24,9 +24,9 @@ public class Export extends Action{
 	private String majorName=this.getAllMajors().getName();
 		public void setMajorName(String a){this.majorName=Field.s2S(a);}
 		public String getMajorName(){return majorName;}
-	private List_Region_PracticeBase_Student list;
+	private List_Region_PracticeBaseRegion_Student list;
 	
-	public List_Region_PracticeBase_Student getList(){return this.list;}
+	public List_Region_PracticeBaseRegion_Student getList(){return this.list;}
 	
 	//记忆化部件
 	public Student getStudent(){return new Student();}
@@ -75,7 +75,7 @@ public class Export extends Action{
 	
 	public Export(){
 		super();
-		this.list=Manager.loadSession(List_Region_PracticeBase_Student.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegion_Student.class,SessionListKey);
 		if(this.getMajors()!=null && !this.getMajors().isEmpty())
 			this.setMajorName(this.getMajors().get(0).getName());
 	}
@@ -96,7 +96,7 @@ public class Export extends Action{
 			return this.returnWithTips(NONE,"专业("+this.majorName+")不存在！",e);
 		}
 		try{
-			this.list=new List_Region_PracticeBase_Student(
+			this.list=new List_Region_PracticeBaseRegion_Student(
 					this.getAnnual().getYear(),major);
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 			return this.returnWithTips(NONE,"数据库开小差去了！",e);

@@ -8,7 +8,7 @@ import action.*;
 import obj.*;
 import obj.annualTable.*;
 import obj.annualTable.list.Leaf;
-import obj.annualTable.list.List_Region_PracticeBase_Student;
+import obj.annualTable.list.List_Region_PracticeBaseRegion_Student;
 import obj.annualTable.list.Node;
 import obj.annualTable.list.PracticeBaseWithRegion;
 import obj.staticObject.PracticeBase;
@@ -23,16 +23,16 @@ public class ExportAllStudentList extends Action{
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
 
-	private List_Region_PracticeBase_Student list;
+	private List_Region_PracticeBaseRegion_Student list;
 	
-	public List_Region_PracticeBase_Student getList(){return this.list;}
+	public List_Region_PracticeBaseRegion_Student getList(){return this.list;}
 	
 
 	static public final String SessionListKey=Export.SessionListKey; 
 	
 	public ExportAllStudentList(){
 		super();
-		this.list=Manager.loadSession(List_Region_PracticeBase_Student.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegion_Student.class,SessionListKey);
 	}
 
 	@Override
@@ -86,14 +86,14 @@ public class ExportAllStudentList extends Action{
 		Map<String,OutputStream> files=new HashMap<String,OutputStream>();
 		for(Node<Region,Leaf<PracticeBaseWithRegion,Student>> rp:this.list.getList()) {
 			for(Leaf<PracticeBaseWithRegion,Student> pair:rp.getList()) {
-				PracticeBase pb=pair.getT().getFirst();
+				PracticeBase pb=pair.getT().getPracticeBase();
 				if(status!=null && (status^pb.getStatus()))
 					continue;
 				System.out.println(">> ExportAllStudentList:download > create download file. practiceBaseName="+pb.getName());
 				OutputStream out=new ByteArrayOutputStream();
 				try{
 					String name=this.downloadByIO((SpecialIO)Base.io(),
-							this.getAnnual().getYear(),pair.getT().getFirst(),major,
+							this.getAnnual().getYear(),pair.getT().getPracticeBase(),major,
 							out);
 					files.put(name,out);
 				}catch(IOException e){

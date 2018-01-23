@@ -54,7 +54,7 @@
 		String practiceBaseName="";
 		if(tmpPracticeBase!=null && tmpPracticeBase instanceof Leaf){//Leaf<PracticeBaseWithRegion,Student>
 			@SuppressWarnings("unchecked")
-			String tmp=((Leaf<PracticeBaseWithRegion,Student>)tmpPracticeBase).getT().getFirst().getName();
+			String tmp=((Leaf<PracticeBaseWithRegion,Student>)tmpPracticeBase).getT().getPracticeBase().getName();
 			practiceBaseName=tmp;
 		}
 		%>

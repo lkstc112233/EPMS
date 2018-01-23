@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import obj.annualTable.ListOfRegionAndPracticeBaseAndInnerPerson;
-import obj.annualTable.list.List_Region_PracticeBase_Student;
+import obj.annualTable.list.List_Region_PracticeBaseRegion_Student;
 import obj.staticObject.PracticeBase;
 import obj.staticSource.Major;
 
@@ -28,7 +28,7 @@ public interface SpecialExcelIO {
 	 */
 	public abstract String createStudentInsuranceList(
 			int year, 
-			List_Region_PracticeBase_Student list,
+			List_Region_PracticeBaseRegion_Student list,
 			OutputStream stream)
 					throws IOException;
 
@@ -37,7 +37,7 @@ public interface SpecialExcelIO {
 	 */
 	public abstract String createPlanDesign(
 			int year,
-			List_Region_PracticeBase_Student list,
+			List_Region_PracticeBaseRegion_Student list,
 			Boolean status,
 			OutputStream stream)
 					throws IOException;
@@ -47,7 +47,7 @@ public interface SpecialExcelIO {
 	 */
 	public abstract String createPlanMedia(
 			int year,
-			List_Region_PracticeBase_Student list,
+			List_Region_PracticeBaseRegion_Student list,
 			boolean[][][] media,
 			OutputStream stream)
 					throws IOException;

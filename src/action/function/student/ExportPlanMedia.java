@@ -8,7 +8,7 @@ import action.*;
 import obj.*;
 import obj.annualTable.*;
 import obj.annualTable.list.Leaf;
-import obj.annualTable.list.List_Region_PracticeBase_Student;
+import obj.annualTable.list.List_Region_PracticeBaseRegion_Student;
 import obj.annualTable.list.Node;
 import obj.annualTable.list.PracticeBaseWithRegion;
 import obj.staticSource.Major;
@@ -22,16 +22,16 @@ public class ExportPlanMedia extends Action{
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
 
-	private List_Region_PracticeBase_Student list;
+	private List_Region_PracticeBaseRegion_Student list;
 	
-	public List_Region_PracticeBase_Student getList(){return this.list;}
+	public List_Region_PracticeBaseRegion_Student getList(){return this.list;}
 	
 
 	static public final String SessionListKey=Export.SessionListKey; 
 	
 	public ExportPlanMedia(){
 		super();
-		this.list=Manager.loadSession(List_Region_PracticeBase_Student.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegion_Student.class,SessionListKey);
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class ExportPlanMedia extends Action{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private ByteArrayOutputStream downloadOutputStream=null;
-	protected String downloadByIO(SpecialIO io,int year,List_Region_PracticeBase_Student list,boolean[][][] media,OutputStream stream) throws IOException{
+	protected String downloadByIO(SpecialIO io,int year,List_Region_PracticeBaseRegion_Student list,boolean[][][] media,OutputStream stream) throws IOException{
 		return io.createPlanMedia(year,list,media,stream);
 	}
 	public String download(){//下载模板

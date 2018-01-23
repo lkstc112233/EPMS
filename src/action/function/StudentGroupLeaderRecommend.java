@@ -7,7 +7,7 @@ import action.*;
 import obj.*;
 import obj.annualTable.Student;
 import obj.annualTable.list.Leaf;
-import obj.annualTable.list.List_Region_PracticeBase_Student;
+import obj.annualTable.list.List_Region_PracticeBaseRegion_Student;
 import obj.annualTable.list.PracticeBaseWithRegion;
 import obj.staticObject.InnerPerson;
 import obj.staticSource.Major;
@@ -24,13 +24,13 @@ public class StudentGroupLeaderRecommend extends Action{
 	
 	
 	private String majorName;
-	private List_Region_PracticeBase_Student list;
+	private List_Region_PracticeBaseRegion_Student list;
 	private String[] choose=new String[]{null,null,null};//[0]基地,[1]学生Id,[2]老师Id
 	
 	public void setMajorName(String a){this.majorName=Field.s2S(a);}
 	public String getMajorName(){return majorName;}
 	public String[] getChoose(){return this.choose;}
-	public List_Region_PracticeBase_Student getList(){return this.list;}
+	public List_Region_PracticeBaseRegion_Student getList(){return this.list;}
 	
 	//记忆化部件
 	public Student getStudent(){return new Student();}
@@ -73,7 +73,7 @@ public class StudentGroupLeaderRecommend extends Action{
 	
 	public StudentGroupLeaderRecommend(){
 		super();
-		this.list=Manager.loadSession(List_Region_PracticeBase_Student.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegion_Student.class,SessionListKey);
 		this.majorName=Manager.loadSession(String.class,SessionMajorNameKey);
 		if(this.majorName==null && this.getMajors()!=null && !this.getMajors().isEmpty())//默认值
 			this.setMajorName(this.getMajors().get(0).getName());
@@ -94,7 +94,7 @@ public class StudentGroupLeaderRecommend extends Action{
 			return this.returnWithTips(NONE,"专业("+this.majorName+")不存在！",e);
 		}
 		try {
-			this.list=new List_Region_PracticeBase_Student(
+			this.list=new List_Region_PracticeBaseRegion_Student(
 					this.getAnnual().getYear(),major);
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 			return this.returnWithTips(NONE,"数据库开小差去了！",e);

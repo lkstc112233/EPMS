@@ -56,7 +56,7 @@
 		String practiceBaseName="";
 		if(tmpPracticeBase!=null && tmpPracticeBase instanceof Leaf){//Leaf<PracticeBaseWithRegion,Student>
 			@SuppressWarnings("unchecked")
-			String tmp=((Leaf<PracticeBaseWithRegion,Student>)tmpPracticeBase).getT().getFirst().getName();
+			String tmp=((Leaf<PracticeBaseWithRegion,Student>)tmpPracticeBase).getT().getPracticeBase().getName();
 			practiceBaseName=tmp;
 		}
 		%>
@@ -76,17 +76,17 @@
 			</s:if>
 			<td colspan="100">
 				<div class="listHeader" style="width:80%;background:linear-gradient(to right,#0071bc,rgba(0,0,0,0));border:0;">
-					<s:if test="#__Row.t.first.status">
+					<s:if test="#__Row.t.practiceBase.status">
 						<span style="float:left;color:red;">
-							<s:property value="#__Row.t.first.name" />
+							<s:property value="#__Row.t.practiceBase.name" />
 						</span>
 					</s:if><s:else>
 						<span style="float:left;">
-							<s:property value="#__Row.t.first.name" />
+							<s:property value="#__Row.t.practiceBase.name" />
 						</span>
 					</s:else>
 					<span style="font-size:12px;margin-left:20px;">
-						<s:if test="#__Row.t.first.hx">
+						<s:if test="#__Row.t.practiceBase.hx">
 							回生源地实习基地
 						</s:if><s:else>
 							北京及周边实习基地
@@ -141,7 +141,7 @@
 				<% } %>
 			</td>
 			<!-- 学生大组长 --><td style="width:36px;padding:0;border:0">
-				<s:if test="#__studentRow.id == #__Row.t.second.studentGroupLeaderId"><!-- 已推荐 -->
+				<s:if test="#__studentRow.id == #__Row.t.region.studentGroupLeaderId"><!-- 已推荐 -->
 					<s:submit value="✔"
 						style="padding:0;margin:0;border:3px black double;background:gold;width:30px;height:30px;font-size:30px;line-height:5px;" theme="simple" />
 				</s:if><s:else><!-- 未推荐 -->
