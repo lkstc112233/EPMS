@@ -9,7 +9,7 @@ public class PracticeBaseWithRegion extends obj.Pair<PracticeBase,Region>{
 		super(pb,region);
 	}
 	
-	public PracticeBase getPracticeBaes() {return this.first();}
+	public PracticeBase getPracticeBase() {return this.first();}
 	public Region getRegion() {return this.second();}
 	
 	@SuppressWarnings("rawtypes")

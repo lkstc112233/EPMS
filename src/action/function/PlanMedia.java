@@ -188,7 +188,7 @@ public class PlanMedia extends Action{
 		try {
 			Major major=this.getMajors().get(clickIndex[0]);
 			PracticeBase pb=this.list.getList().get(clickIndex[1])
-					.getList().get(clickIndex[2]).getPracticeBaes();
+					.getList().get(clickIndex[2]).getPracticeBase();
 			if(this.numbers[clickIndex[0]][clickIndex[1]][clickIndex[2]]<=0)
 				return this.jumpToMethodWithTips("display",major.getDescription()+"至"+pb.getDescription()+"无派遣计划!");
 			Plan p=new Plan();

@@ -49,7 +49,7 @@ public class RegionInfo extends Action{
 				for(int j=0;j<this.supervises[type][i].length;j++){
 					Supervise tmp=new Supervise();
 					tmp.setYear(this.getAnnual().getYear());
-					tmp.setPracticeBase(pbrs.get(j).getPracticeBaes().getName());
+					tmp.setPracticeBase(pbrs.get(j).getPracticeBase().getName());
 					tmp.setSuperviseType(type);
 					try {
 						tmp.load();

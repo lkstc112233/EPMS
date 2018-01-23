@@ -45,8 +45,8 @@ public class StudentArrangeIntoPracticeBase extends Action{
 			this.practiceBases=new ArrayList<PracticeBase>();
 			for(Node<Region, Leaf<PracticeBaseWithRegionWithPlan, Student>> rp:this.getList().getList())
 				for(Leaf<PracticeBaseWithRegionWithPlan, Student> p:rp.getList())
-					if(p.getT().getPracticeBaes()!=null)
-						this.practiceBases.add(p.getT().getPracticeBaes());
+					if(p.getT().getPracticeBase()!=null)
+						this.practiceBases.add(p.getT().getPracticeBase());
 			return this.practiceBases;
 		}
 	private List<Major> majors;
@@ -149,7 +149,7 @@ public class StudentArrangeIntoPracticeBase extends Action{
 				if(stu==null||stu.getName()==null)
 					continue;
 				try{
-					if(pair.getT().getPracticeBaes().check(stu) &&
+					if(pair.getT().getPracticeBase().check(stu) &&
 							pair.getT().getPlan().check(stu,pair.getSize()+tmp.size())){
 						stu.setPracticeBase(this.practiceBaseName);
 						stu.update();

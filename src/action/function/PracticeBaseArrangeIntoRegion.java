@@ -85,7 +85,7 @@ public class PracticeBaseArrangeIntoRegion extends Action{
 		for(int i=0;i<nullRegionPracticeBases.size();i++){
 			if(checkBox[i]){
 				//选中了
-				PracticeBase pb=nullRegionPracticeBases.get(i).getPracticeBaes();
+				PracticeBase pb=nullRegionPracticeBases.get(i).getPracticeBase();
 				if(pb==null||pb.getName()==null)
 					continue;
 				//	tmp.add(pb);
@@ -136,7 +136,7 @@ public class PracticeBaseArrangeIntoRegion extends Action{
 		for(int i=0;i<deletePracticeBases.size();i++){
 			if(checkBox[i]){
 				//选中了
-				PracticeBase pb=deletePracticeBases.get(i).getPracticeBaes();
+				PracticeBase pb=deletePracticeBases.get(i).getPracticeBase();
 				if(pb==null||pb.getName()==null)
 					continue;
 				//	tmp.add(pb);

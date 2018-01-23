@@ -89,7 +89,7 @@ public class List_Region_PracticeBasePlan_Student extends List<Node<Region,Leaf<
 		if(practiceBaseName==null || practiceBaseName.isEmpty()) return null;
 		for(Node<Region, Leaf<PracticeBaseWithRegionWithPlan, Student>> rp:this.getList())
 			for(Leaf<PracticeBaseWithRegionWithPlan, Student> pair:rp.getList()){
-				PracticeBase pb=pair.getT().getPracticeBaes();
+				PracticeBase pb=pair.getT().getPracticeBase();
 				if(pb!=null && pb.getName()!=null && pb.getName().equals(practiceBaseName))
 					return pair;
 			}
