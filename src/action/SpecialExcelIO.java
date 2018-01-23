@@ -3,8 +3,8 @@ package action;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import obj.annualTable.ListOfPracticeBaseAndStudents;
 import obj.annualTable.ListOfRegionAndPracticeBaseAndInnerPerson;
+import obj.annualTable.list.List_Region_PracticeBase_Student;
 import obj.staticObject.PracticeBase;
 import obj.staticSource.Major;
 
@@ -28,7 +28,7 @@ public interface SpecialExcelIO {
 	 */
 	public abstract String createStudentInsuranceList(
 			int year, 
-			ListOfPracticeBaseAndStudents list,
+			List_Region_PracticeBase_Student list,
 			OutputStream stream)
 					throws IOException;
 
@@ -37,7 +37,7 @@ public interface SpecialExcelIO {
 	 */
 	public abstract String createPlanDesign(
 			int year,
-			ListOfPracticeBaseAndStudents list,
+			List_Region_PracticeBase_Student list,
 			Boolean status,
 			OutputStream stream)
 					throws IOException;
@@ -47,7 +47,7 @@ public interface SpecialExcelIO {
 	 */
 	public abstract String createPlanMedia(
 			int year,
-			ListOfPracticeBaseAndStudents list,
+			List_Region_PracticeBase_Student list,
 			boolean[][][] media,
 			OutputStream stream)
 					throws IOException;

@@ -13,6 +13,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import obj.*;
 import obj.annualTable.*;
+import obj.annualTable.list.Leaf;
+import obj.annualTable.list.List_Region_PracticeBase_Student;
+import obj.annualTable.list.Node;
+import obj.annualTable.list.PracticeBaseWithRegion;
 import obj.restraint.BaseRestraint;
 import obj.staticObject.*;
 import obj.staticSource.*;
@@ -289,7 +293,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 	}
 	
 	@Override
-	public String createStudentInsuranceList(int year,ListOfPracticeBaseAndStudents list, OutputStream out) throws IOException {
+	public String createStudentInsuranceList(int year,List_Region_PracticeBase_Student list, OutputStream out) throws IOException {
 		if(list==null) throw new IOException("学生列表为空!");
 		String name=String.format("%d年免费师范生教育实习投保确认单",
 				year);
@@ -334,9 +338,9 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 					String.format("%4d.%d.%d-%4d.%d.%d",year,9,1,year,12,1) //北京周边
 			};
 			int index=0;
-			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
-				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
-					for(Student s:pair.getStudents()) {
+			for(Node<Region, Leaf<PracticeBaseWithRegion, Student>> rp:list.getList()) {
+				for(Leaf<PracticeBaseWithRegion, Student> pair:rp.getList()) {
+					for(Student s:pair.getList()) {
 						index++;
 						Major major;
 						try {
@@ -355,7 +359,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 								cell.setCellValue(
 										i<column-2?Field.o2s(fs[i-1].get(s),""):
 											i==column-2?(major.getIsPE()?"体育":"非体育"):
-												time[pair.getPracticeBase().getHx()?0:1]);
+												time[pair.getT().getFirst().getHx()?0:1]);
 							cell.setCellStyle(styleContent);
 						}
 						r++;
@@ -369,7 +373,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 	}
 	
 	@Override
-	public String createPlanDesign(int year, ListOfPracticeBaseAndStudents list,Boolean status, OutputStream out)
+	public String createPlanDesign(int year, List_Region_PracticeBase_Student list,Boolean status, OutputStream out)
 			throws IOException {
 		List<Major> majors=new ArrayList<Major>();
 		try {
@@ -380,11 +384,11 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 		List<Major> tmp=new ArrayList<Major>();
 		for(int i=0;i<majors.size();i++) {
 			Major m=null;
-			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
-				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
-					if(status!=null && (status^pair.getPracticeBase().getStatus()))
+			for(Node<Region, Leaf<PracticeBaseWithRegion, Student>> rp:list.getList()) {
+				for(Leaf<PracticeBaseWithRegion, Student> pair:rp.getList()) {
+					if(status!=null && (status^pair.getT().getFirst().getStatus()))
 						continue;
-					for(Student stu:pair.getStudents()) {
+					for(Student stu:pair.getList()) {
 						if(majors.get(i).getName().equals(stu.getMajor())) {
 							m=majors.get(i);
 						}if(m!=null) break;
@@ -399,12 +403,12 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 		int hxAllNumber=0;
 		for(int i=0;i<majors.size();i++) {
 			numbers[i]=0;
-			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
-				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
-					if(status!=null && (status^pair.getPracticeBase().getStatus()))
+			for(Node<Region, Leaf<PracticeBaseWithRegion, Student>> rp:list.getList()) {
+				for(Leaf<PracticeBaseWithRegion, Student> pair:rp.getList()) {
+					if(status!=null && (status^pair.getT().getFirst().getStatus()))
 						continue;
-					boolean hx=pair.getPracticeBase().getHx();
-					for(Student stu:pair.getStudents()) {
+					boolean hx=pair.getT().getFirst().getHx();
+					for(Student stu:pair.getList()) {
 						if(majors.get(i).getName().equals(stu.getMajor())) {
 							numbers[i]++;
 							if(hx) hxNumber[i]++;
@@ -481,11 +485,11 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			boolean gHx=false;
 			int gCnt=1;
 			int gNumber[]=new int[majors.size()];
-			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
+			for(Node<Region, Leaf<PracticeBaseWithRegion, Student>> rp:list.getList()) {
 				int index=0;
 				PracticeBase pb;
 				do{
-					pb=rp.getList().get(index++).getPracticeBase();
+					pb=rp.getList().get(index++).getT().getFirst();
 				}while(status!=null && (status^pb.getStatus()));
 				int statu=0;
 				if(gProvince==null) statu=1;
@@ -544,22 +548,22 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 					for(int i=0;i<gNumber.length;i++) gNumber[i]=0;
 				}
 				int rStart=r;
-				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
-					if(status!=null && (status^pair.getPracticeBase().getStatus()))
+				for(Leaf<PracticeBaseWithRegion, Student> pair:rp.getList()) {
+					if(status!=null && (status^pair.getT().getFirst().getStatus()))
 						continue;
 					row=st.createRow(r);
 					setHeight(row,-1);
 					int num[]=new int[majors.size()];
 					for(int i=0;i<num.length;i++) {
 						num[i]=0;
-						for(Student stu:pair.getStudents()) if(majors.get(i).getName().equals(stu.getMajor()))
+						for(Student stu:pair.getList()) if(majors.get(i).getName().equals(stu.getMajor()))
 							num[i]++;
 					}
 					StringBuilder teachers=new StringBuilder();
 					boolean first=true;
 					for(Major m:majors) {
 						Set<String> ts=new HashSet<String>();
-						for(Student stu:pair.getStudents()) if(m.getName().equals(stu.getMajor())) {
+						for(Student stu:pair.getList()) if(m.getName().equals(stu.getMajor())) {
 							try {
 								ts.add(new InnerPerson(stu.getTeacherId()).getName());
 							}catch(IllegalArgumentException|SQLException e) {
@@ -585,13 +589,13 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 						cell.setCellStyle(styleContent);
 						if(i==0 && r>rStart) continue;
 						if(i==0)
-							cell.setCellValue(rp.getRegion().getName());
+							cell.setCellValue(rp.getT().getName());
 						else if(i==1)
 							cell.setCellValue(gCnt);
 						else if(i==2)
-							cell.setCellValue(pair.getPracticeBase().getName());
+							cell.setCellValue(pair.getT().getFirst().getName());
 						else if(i==3)
-							cell.setCellValue(pair.getStudents().size());
+							cell.setCellValue(pair.getList().size());
 						else if(i>=column-1)
 							cell.setCellValue(teachers.toString());
 						else if(num[i-4]!=0)
@@ -650,7 +654,7 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 	}
 
 	@Override
-	public String createPlanMedia(int year, ListOfPracticeBaseAndStudents list, boolean[][][] media, OutputStream out)
+	public String createPlanMedia(int year, List_Region_PracticeBase_Student list, boolean[][][] media, OutputStream out)
 			throws IOException {
 		final Boolean status=false;
 		List<Major> majors=new ArrayList<Major>();
@@ -662,11 +666,11 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 		List<Major> tmp=new ArrayList<Major>();
 		for(int i=0;i<majors.size();i++) {
 			Major m=null;
-			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) {
-				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) {
-					if(status!=null && (status^pair.getPracticeBase().getStatus()))
+			for(Node<Region, Leaf<PracticeBaseWithRegion, Student>> rp:list.getList()) {
+				for(Leaf<PracticeBaseWithRegion, Student> pair:rp.getList()) {
+					if(status!=null && (status^pair.getT().getFirst().getStatus()))
 						continue;
-					for(Student stu:pair.getStudents()) {
+					for(Student stu:pair.getList()) {
 						if(majors.get(i).getName().equals(stu.getMajor())) {
 							m=majors.get(i);
 						}if(m!=null) break;
@@ -756,19 +760,19 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 			r++;
 			/*第四行开始每个专业实习生列表*/
 			int rpIndex=-1;
-			for(ListOfPracticeBaseAndStudents.RegionPair rp:list.getList()) { rpIndex++;
+			for(Node<Region, Leaf<PracticeBaseWithRegion, Student>> rp:list.getList()) { rpIndex++;
 				int rStart=r;
 				int pairIndex=-1;
 				int gCnt=1;
-				for(ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair:rp.getList()) { pairIndex++;
-					if(status!=null && (status^pair.getPracticeBase().getStatus()))
+				for(Leaf<PracticeBaseWithRegion, Student> pair:rp.getList()) { pairIndex++;
+					if(status!=null && (status^pair.getT().getFirst().getStatus()))
 						continue;
 					row=st.createRow(r);
 					setHeight(row,-1);
 					int num[]=new int[majors.size()];
 					for(int i=0;i<num.length;i++) {
 						num[i]=0;
-						for(Student stu:pair.getStudents())
+						for(Student stu:pair.getList())
 							if(majors.get(i).getName().equals(stu.getMajor()))
 								num[i]++;
 					}
@@ -781,11 +785,11 @@ public class POIExcel implements SQLIO, SpecialExcelIO{
 							cell.setCellStyle(i==3?styleContentMeida:styleContent);
 						if(i==0 && r>rStart) continue;
 						if(i==0)
-							cell.setCellValue(rp.getRegion().getName());
+							cell.setCellValue(rp.getT().getName());
 						else if(i==1)
 							cell.setCellValue(gCnt);
 						else if(i==2)
-							cell.setCellValue(pair.getPracticeBase().getName());
+							cell.setCellValue(pair.getT().getFirst().getName());
 						else if(i==3)
 							cell.setCellValue(mediaPracticeBase[rpIndex][pairIndex]);
 						else if(num[i-4]!=0)
