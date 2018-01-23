@@ -76,15 +76,12 @@ public class List_Region_PracticeBase_Student extends List<Node<Region,Leaf<Prac
 	public void put(Region region,PracticeBase pb,Student stu) throws IllegalArgumentException, InstantiationException, SQLException {
 		if(region!=null && pb==null)
 			return;
-		Node<Region,Leaf<PracticeBaseWithRegion,Student>> aNewListContentIfNecessary=
+		Node<Region,Leaf<PracticeBaseWithRegion,Student>> tmp=
 				new Node<Region,Leaf<PracticeBaseWithRegion,Student>>(region);
-		if(this.insert(region,aNewListContentIfNecessary)){
-			PracticeBaseWithRegion pbr=new PracticeBaseWithRegion(pb,region);
-			 Leaf<PracticeBaseWithRegion,Student> aNewListContentIfNecessary2=
-					new Leaf<PracticeBaseWithRegion,Student>(pbr);
-			if(aNewListContentIfNecessary.insert(pbr,aNewListContentIfNecessary2)){
-				aNewListContentIfNecessary2.insert(stu);
-			}
-		}
+		tmp=this.insert(region,tmp);
+		PracticeBaseWithRegion pbr=new PracticeBaseWithRegion(pb,region);
+		Leaf<PracticeBaseWithRegion, Student> tmp2=new Leaf<PracticeBaseWithRegion,Student>(pbr);
+		tmp2=tmp.insert(pbr,tmp2);
+		tmp2.insert(stu);
 	}
 }
