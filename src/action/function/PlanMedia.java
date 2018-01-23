@@ -6,7 +6,7 @@ import java.util.*;
 import action.*;
 import obj.*;
 import obj.annualTable.*;
-import obj.annualTable.list.List_Region_PracticeBase;
+import obj.annualTable.list.List_Region_PracticeBaseRegion;
 import obj.staticObject.PracticeBase;
 import obj.staticSource.Major;
 
@@ -21,7 +21,7 @@ public class PlanMedia extends Action{
 	
 	
 	private List<Major> majors;
-	private List_Region_PracticeBase list;
+	private List_Region_PracticeBaseRegion list;
 	private int[][][] numbers;
 	private boolean[][][] media;
 	private int[] mediaMajorCounts;
@@ -30,7 +30,7 @@ public class PlanMedia extends Action{
 	static public final String SessionListKey="PlanAllDesign_List";
 
 	
-	public List_Region_PracticeBase getList(){return this.list;}
+	public List_Region_PracticeBaseRegion getList(){return this.list;}
 	public int[][][] getNumbers(){
 		if(this.majors==null || this.list==null)
 			return this.numbers=null;
@@ -138,14 +138,14 @@ public class PlanMedia extends Action{
 	public PlanMedia(){
 		super();
 		System.out.println(">> PlanAllDesign:constructor > year="+this.getAnnual().getYear());
-		this.list=Manager.loadSession(List_Region_PracticeBase.class, SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegion.class, SessionListKey);
 		this.majors=Manager.loadSession(List.class, SessionMajorsKey);
 		this.getNumbers();
 	}
 	
 	public String display(){
 		try {
-			this.list=new List_Region_PracticeBase(this.getAnnual().getYear(),/*containsNullRegion*/false);
+			this.list=new List_Region_PracticeBaseRegion(this.getAnnual().getYear(),/*containsNullRegion*/false);
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
 			return this.jumpBackWithTips("数据库读取实习基地及大区信息失败",e);
 		}
@@ -188,7 +188,7 @@ public class PlanMedia extends Action{
 		try {
 			Major major=this.getMajors().get(clickIndex[0]);
 			PracticeBase pb=this.list.getList().get(clickIndex[1])
-					.getList().get(clickIndex[2]).getFirst();
+					.getList().get(clickIndex[2]).getPracticeBaes();
 			if(this.numbers[clickIndex[0]][clickIndex[1]][clickIndex[2]]<=0)
 				return this.jumpToMethodWithTips("display",major.getDescription()+"至"+pb.getDescription()+"无派遣计划!");
 			Plan p=new Plan();

@@ -17,12 +17,12 @@ public class PracticeBaseArrangeIntoRegion extends Action{
 	public action.Annual getAnnual(){return this.annual;}
 
 	private boolean[] checkBox;
-	private List_Region_PracticeBase list;
+	private List_Region_PracticeBaseRegion list;
 	private String regionName;
 	
 	public void setCheckBox(boolean[] a){this.checkBox=a;}
 	public boolean[] getCheckBox(){return this.checkBox;}
-	public List_Region_PracticeBase getList(){return this.list;}
+	public List_Region_PracticeBaseRegion getList(){return this.list;}
 	public String getRegionName(){return this.regionName;}
 	public void setRegionName(String a){this.regionName=a;}
 	public PracticeBase getPracticeBase(){return new PracticeBase();}
@@ -32,7 +32,7 @@ public class PracticeBaseArrangeIntoRegion extends Action{
 	
 	public PracticeBaseArrangeIntoRegion(){
 		super();
-		this.list=Manager.loadSession(List_Region_PracticeBase.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegion.class,SessionListKey);
 		this.setupCheckBox();
 	}
 
@@ -51,7 +51,7 @@ public class PracticeBaseArrangeIntoRegion extends Action{
 		System.out.println(">> RegionArrangement:display > year="+this.getAnnual().getYear());
 		this.list=null;
 		try {
-			this.list=new List_Region_PracticeBase(this.getAnnual().getYear(),/*containsNullRegion*/true);
+			this.list=new List_Region_PracticeBaseRegion(this.getAnnual().getYear(),/*containsNullRegion*/true);
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
 			return this.returnWithTips(NONE,"数据库开小差去了！",e);
 		}
@@ -85,7 +85,7 @@ public class PracticeBaseArrangeIntoRegion extends Action{
 		for(int i=0;i<nullRegionPracticeBases.size();i++){
 			if(checkBox[i]){
 				//选中了
-				PracticeBase pb=nullRegionPracticeBases.get(i).first();
+				PracticeBase pb=nullRegionPracticeBases.get(i).getPracticeBaes();
 				if(pb==null||pb.getName()==null)
 					continue;
 				//	tmp.add(pb);
@@ -136,7 +136,7 @@ public class PracticeBaseArrangeIntoRegion extends Action{
 		for(int i=0;i<deletePracticeBases.size();i++){
 			if(checkBox[i]){
 				//选中了
-				PracticeBase pb=deletePracticeBases.get(i).first();
+				PracticeBase pb=deletePracticeBases.get(i).getPracticeBaes();
 				if(pb==null||pb.getName()==null)
 					continue;
 				//	tmp.add(pb);

@@ -8,7 +8,7 @@ import action.Manager;
 import obj.*;
 import obj.annualTable.*;
 import obj.annualTable.list.Leaf;
-import obj.annualTable.list.List_Region_PracticeBase;
+import obj.annualTable.list.List_Region_PracticeBaseRegion;
 import obj.annualTable.list.PracticeBaseWithRegion;
 import obj.staticObject.PracticeBase;
 import obj.staticSource.Major;
@@ -29,13 +29,13 @@ public class PlanAllDesign extends Action{
 	private int[][] majorsRegionsHxCounts;
 	private Boolean[][] majorsRegionsCountsIsError;
 	private int lastNHxRegionIndex=-1;
-	private List_Region_PracticeBase list;
+	private List_Region_PracticeBaseRegion list;
 	private int[][][] numbers;
 	static public final String SessionMajorsKey="PlanAllDesign_Majors";
 	static public final String SessionListKey="PlanAllDesign_List";
 
 	
-	public List_Region_PracticeBase getList(){return this.list;}
+	public List_Region_PracticeBaseRegion getList(){return this.list;}
 	public int[][][] getNumbers(){
 		if(this.majors==null || this.list==null)
 			return this.numbers=null;
@@ -106,7 +106,7 @@ public class PlanAllDesign extends Action{
 			int i=-1;for(Major m:this.getMajors()) {
 				this.majorsRegionsHxCounts[++i]=new int[this.getList().getList().size()];
 				for(int j=0;j<this.majorsRegionsHxCounts[i].length;j++) {
-					PracticeBase pb=this.getList().getList().get(j).getList().get(0).getFirst();
+					PracticeBase pb=this.getList().getList().get(j).getList().get(0).getPracticeBaes();
 					this.majorsRegionsHxCounts[i][j]=Base.list(Student.class,new Restraint(
 						Field.getFields(Student.class,"year","major","hxyx","province"),
 						new Object[]{this.getAnnual().getYear(),m.getName(),true,pb.getProvince()}))
@@ -127,14 +127,14 @@ public class PlanAllDesign extends Action{
 				//先计算北京及周边地区实习大区
 				int cnt=0;
 				for(int j=0;j<this.majorsRegionsCountsIsError[i].length;j++) {
-					if(!this.getList().getList().get(j).getList().get(0).getFirst().getHx())
+					if(!this.getList().getList().get(j).getList().get(0).getPracticeBaes().getHx())
 						for(int k=0;k<this.getList().getList().get(j).getList().size();k++)
 							cnt+=this.getNumbers()[i][j][k];
 				}
 				int CMP=Integer.compare(cnt,this.getMajorsNHxCounts()[i]);
 				//在计算回乡实习大区
 				for(int j=0;j<this.majorsRegionsCountsIsError[i].length;j++) {
-					PracticeBase pb=this.getList().getList().get(j).getList().get(0).getFirst();
+					PracticeBase pb=this.getList().getList().get(j).getList().get(0).getPracticeBaes();
 					int cmp=cnt=0;
 					if(pb.getHx()) {
 						for(int k=0;k<this.getList().getList().get(j).getList().size();k++)
@@ -154,7 +154,7 @@ public class PlanAllDesign extends Action{
 		if(lastNHxRegionIndex>=0) return this.lastNHxRegionIndex;
 		int i=0,res=-1;
 		try{for(Leaf<Region,PracticeBaseWithRegion> rp:this.getList().getList()) {
-				if(!rp.getList().get(0).getFirst().getHx())
+				if(!rp.getList().get(0).getPracticeBaes().getHx())
 					res=i;
 				i++;
 		}}catch (NullPointerException | IndexOutOfBoundsException e){
@@ -169,14 +169,14 @@ public class PlanAllDesign extends Action{
 	public PlanAllDesign(){
 		super();
 		System.out.println(">> PlanAllDesign:constructor > year="+this.getAnnual().getYear());
-		this.list=Manager.loadSession(List_Region_PracticeBase.class, SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegion.class, SessionListKey);
 		this.majors=Manager.loadSession(List.class, SessionMajorsKey);
 		this.getNumbers();
 	}
 	
 	public String display(){
 		try {
-			this.list=new List_Region_PracticeBase(this.getAnnual().getYear(),/*containsNullRegion*/false);
+			this.list=new List_Region_PracticeBaseRegion(this.getAnnual().getYear(),/*containsNullRegion*/false);
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
 			return this.jumpBackWithTips("数据库读取实习基地及大区信息失败",e);
 		}
@@ -213,7 +213,7 @@ public class PlanAllDesign extends Action{
 					Plan p=new Plan();
 					p.setYear(this.getAnnual().getYear());
 					p.setMajor(this.majors.get(i).getName());
-					p.setPracticeBase(this.list.getList().get(j).getList().get(k).getFirst().getName());
+					p.setPracticeBase(this.list.getList().get(j).getList().get(k).getPracticeBaes().getName());
 					try {
 						if(p.existAndLoad()){
 							if(p.getNumber()!=num){
@@ -233,7 +233,7 @@ public class PlanAllDesign extends Action{
 						e.printStackTrace();
 						error.append("\n("+this.getMajors().get(i)+","+
 						this.list.getList().get(j).getT().getDescription()+","+
-						this.list.getList().get(j).getList().get(k).getFirst().getDescription()+
+						this.list.getList().get(j).getList().get(k).getPracticeBaes().getDescription()+
 						")"+e.getMessage());
 						continue;
 					}
@@ -242,11 +242,11 @@ public class PlanAllDesign extends Action{
 		}
 		for(Leaf<Region,PracticeBaseWithRegion> rp:this.list.getList()) {
 			for(PracticeBaseWithRegion pair:rp.getList()) try {
-				pair.getFirst().update();
+				pair.getPracticeBaes().update();
 				ok=true;
 			}catch(IllegalArgumentException | SQLException e) {
 				e.printStackTrace();
-				error.append("\n"+pair.getFirst().getDescription()+"备注修改失败！("+e.getMessage()+")");
+				error.append("\n"+pair.getPracticeBaes().getDescription()+"备注修改失败！("+e.getMessage()+")");
 			}
 		}
 		if(!ok)

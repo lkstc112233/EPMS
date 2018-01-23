@@ -7,7 +7,7 @@ import action.*;
 import obj.*;
 import obj.annualTable.*;
 import obj.annualTable.list.Leaf;
-import obj.annualTable.list.List_Region_PracticeBase;
+import obj.annualTable.list.List_Region_PracticeBaseRegion;
 import obj.annualTable.list.PracticeBaseWithRegion;
 import obj.staticObject.*;
 
@@ -21,12 +21,12 @@ public class RegionInfo extends Action{
 	public action.Annual getAnnual(){return this.annual;}
 	
 	
-	private List_Region_PracticeBase list;
+	private List_Region_PracticeBaseRegion list;
 	private Supervise[][][] supervises;
 	private List<InnerPerson> innerPersons;
 	static public final String SessionListKey="RegionInfo_List";
 
-	public List_Region_PracticeBase getList(){return this.list;}
+	public List_Region_PracticeBaseRegion getList(){return this.list;}
 	public int[] getSuperviseTypeList(){return Supervise.getTypeList();}
 	public String[] getSuperviseTypeNameList(){return Supervise.getTypeNameList();}
 	public List<InnerPerson> getInnerPersons(){
@@ -49,7 +49,7 @@ public class RegionInfo extends Action{
 				for(int j=0;j<this.supervises[type][i].length;j++){
 					Supervise tmp=new Supervise();
 					tmp.setYear(this.getAnnual().getYear());
-					tmp.setPracticeBase(pbrs.get(j).getFirst().getName());
+					tmp.setPracticeBase(pbrs.get(j).getPracticeBaes().getName());
 					tmp.setSuperviseType(type);
 					try {
 						tmp.load();
@@ -65,7 +65,7 @@ public class RegionInfo extends Action{
 
 	public RegionInfo(){
 		super();
-		this.list=Manager.loadSession(List_Region_PracticeBase.class, SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegion.class, SessionListKey);
 		this.getSupervises();
 	}
 	
@@ -73,7 +73,7 @@ public class RegionInfo extends Action{
 		if(this.getInnerPersons()==null)
 			return this.returnWithTips(NONE,"数据库读取校内人员列表失败！");
 		try {
-			this.list=new List_Region_PracticeBase(this.getAnnual().getYear(),/*containsNullRegion*/false);
+			this.list=new List_Region_PracticeBaseRegion(this.getAnnual().getYear(),/*containsNullRegion*/false);
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
 			return this.returnWithTips(NONE,"数据库读取实习基地及大区信息失败！");
 		}

@@ -59,13 +59,13 @@
 						</td>
 					</s:if>
 					<td style="text-align:left;padding-left:10px;">
-						<s:if test="#__practiceBaseRow.first.status">
+						<s:if test="#__practiceBaseRow.practiceBase.status">
 							<div style="color:red;">
-								<s:property value="#__practiceBaseRow.first.name" />
+								<s:property value="#__practiceBaseRow.practiceBase.name" />
 							</div>
 						</s:if><s:else>
 							<div>
-								<s:property value="#__practiceBaseRow.first.name" />
+								<s:property value="#__practiceBaseRow.practiceBase.name" />
 							</div>
 						</s:else>
 					</td>

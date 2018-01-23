@@ -55,12 +55,12 @@
 						</td>
 					</s:if>
 					<td style="width:160px;text-align:left;padding-left:10px;">
-						<s:if test="#__practiceBaseRow.first.status">
+						<s:if test="#__practiceBaseRow.practiceBase.status">
 							<span style="color:red;">
-								<s:property value="#__practiceBaseRow.first.name" />
+								<s:property value="#__practiceBaseRow.practiceBase.name" />
 							</span>
 						</s:if><s:else>
-							<s:property value="#__practiceBaseRow.first.name" />
+							<s:property value="#__practiceBaseRow.practiceBase.name" />
 						</s:else>
 					</td>
 					<!-- 总领队 -->

@@ -7,12 +7,12 @@ import obj.*;
 import obj.annualTable.*;
 import obj.staticObject.*;
 
-public class List_Region_PracticeBase extends List<Leaf<Region,PracticeBaseWithRegion>>{
-	public List_Region_PracticeBase(int year,boolean containsNullRegion)
+public class List_Region_PracticeBaseRegion extends List<Leaf<Region,PracticeBaseWithRegion>>{
+	public List_Region_PracticeBaseRegion(int year,boolean containsNullRegion)
 			throws IllegalArgumentException, InstantiationException, SQLException{
 		this(year,containsNullRegion,new DefaultComparator_LeafRegion<PracticeBaseWithRegion>());
 	}
-	public List_Region_PracticeBase(int year,boolean containsNullRegion,
+	public List_Region_PracticeBaseRegion(int year,boolean containsNullRegion,
 			Comparator<? super Leaf<Region,PracticeBaseWithRegion>> comparator)
 			throws IllegalArgumentException, InstantiationException, SQLException{
 		super();

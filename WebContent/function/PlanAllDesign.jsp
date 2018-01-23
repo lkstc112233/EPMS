@@ -58,13 +58,13 @@
 							</td>
 						</s:if>
 						<td style="text-align:left;padding-left:10px;">
-							<s:if test="#__practiceBaseRow.first.status">
+							<s:if test="#__practiceBaseRow.practiceBase.status">
 								<div style="color:red;">
-									<s:property value="#__practiceBaseRow.first.name" />
+									<s:property value="#__practiceBaseRow.practiceBase.name" />
 								</div>
 							</s:if><s:else>
 								<div>
-									<s:property value="#__practiceBaseRow.first.name" />
+									<s:property value="#__practiceBaseRow.practiceBase.name" />
 								</div>
 							</s:else>
 						</td>
@@ -85,7 +85,7 @@
 						</s:iterator>
 						<!-- 备注 --><td style="padding:0px;">
 							<s:textarea value="%{#__practiceBaseRow.practiceBase.remark}"
-							name="list.list[%{#__regionStatus.index}].list[%{#__practiceBaseStatus.index}].first.remark"
+							name="list.list[%{#__regionStatus.index}].list[%{#__practiceBaseStatus.index}].practiceBase.remark"
 							style="margin:0;padding:0;resize:none;border:0;width:100%;heigth:100%;" theme="simple" />
 						</td>
 					</tr>

@@ -7,7 +7,7 @@ import action.*;
 import obj.*;
 import obj.annualTable.*;
 import obj.annualTable.list.Leaf;
-import obj.annualTable.list.List_Region_PracticeBase;
+import obj.annualTable.list.List_Region_PracticeBaseRegion;
 import obj.annualTable.list.PracticeBaseWithRegion;
 import obj.staticObject.InnerPerson;
 import token.Role;
@@ -22,14 +22,14 @@ public class RegionLeaderAndSupervisorArrangement extends Action{
 	public action.Annual getAnnual(){return this.annual;}
 	
 	
-	private List_Region_PracticeBase list;
+	private List_Region_PracticeBaseRegion list;
 	private Supervise[][][] supervises;
 	private InnerPerson[] innerPersonLeaders;
 	private InnerPerson[][][] innerPersonSupervisors;
 	private List<InnerPerson> innerPersons;
 	static public final String SessionListKey="RegionLeaderAndSupervisorDesign_List";
 
-	public List_Region_PracticeBase getList(){return this.list;}
+	public List_Region_PracticeBaseRegion getList(){return this.list;}
 	public Supervise[][][] getSupervises(){return this.supervises;}
 	public int[] getSuperviseTypeList(){return Supervise.getTypeList();}
 	public InnerPerson[] getInnerPersonLeaders(){return this.innerPersonLeaders;}
@@ -39,7 +39,7 @@ public class RegionLeaderAndSupervisorArrangement extends Action{
 
 	public RegionLeaderAndSupervisorArrangement(){
 		super();
-		this.list=Manager.loadSession(List_Region_PracticeBase.class, SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegion.class, SessionListKey);
 		this.setupSupervises();
 	}
 	static private InnerPerson createInnerPerson(String id){
@@ -67,7 +67,7 @@ public class RegionLeaderAndSupervisorArrangement extends Action{
 				for(int j=0;j<this.supervises[type][i].length;j++){
 					Supervise tmp=new Supervise();
 					tmp.setYear(this.getAnnual().getYear());
-					tmp.setPracticeBase(pbrs.get(j).getFirst().getName());
+					tmp.setPracticeBase(pbrs.get(j).getPracticeBaes().getName());
 					tmp.setSuperviseType(type);
 					try {
 						tmp.load();
@@ -97,7 +97,7 @@ public class RegionLeaderAndSupervisorArrangement extends Action{
 			return this.returnWithTips(NONE,"数据库读取校内人员列表失败！",e);
 		}
 		try{
-			this.list=new List_Region_PracticeBase(this.getAnnual().getYear(),/*containsNullRegion*/false);
+			this.list=new List_Region_PracticeBaseRegion(this.getAnnual().getYear(),/*containsNullRegion*/false);
 		}catch (SQLException | IllegalArgumentException | InstantiationException e) {
 			return this.returnWithTips(NONE,"数据库读取实习基地及大区信息失败！",e);
 		}
