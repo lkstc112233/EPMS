@@ -37,7 +37,7 @@
 		<!-- ###总数量### -->
 		<tr class="wtableContent">
 			<td colspan="2" style="font-weight:900;background:rgba(255,150,150,0.5);">
-				<s:property value="#__regionRow.region.name"/>数字媒体设备数量
+				数字媒体设备数量
 			</td>
 			<td style="font-weight:900;background:rgba(255,150,150,0.5);">
 				<s:property value="mediaCount"/>
@@ -49,23 +49,23 @@
 			</s:iterator>
 		</tr>
 		<!-- ###媒体设备规划### -->
-		<s:iterator value="regionAndPracticeBase.list" var="__regionRow" status="__regionStatus">
+		<s:iterator value="list.list" var="__regionRow" status="__regionStatus">
 			<s:iterator value="#__regionRow.list" var="__practiceBaseRow" status="__practiceBaseStatus">
 				<tr class="wtableContent">
 					<s:if test="#__practiceBaseStatus.index == 0">
 						<s:set var="_colspan" value="%{#__regionRow.size}" />
 						<td rowspan="${_colspan}" style="width:3%;">
-							<s:property value="#__regionRow.region.name" />
+							<s:property value="#__regionRow.t.name" />
 						</td>
 					</s:if>
 					<td style="text-align:left;padding-left:10px;">
-						<s:if test="#__practiceBaseRow.practiceBase.status">
+						<s:if test="#__practiceBaseRow.first.status">
 							<div style="color:red;">
-								<s:property value="#__practiceBaseRow.practiceBase.name" />
+								<s:property value="#__practiceBaseRow.first.name" />
 							</div>
 						</s:if><s:else>
 							<div>
-								<s:property value="#__practiceBaseRow.practiceBase.name" />
+								<s:property value="#__practiceBaseRow.first.name" />
 							</div>
 						</s:else>
 					</td>

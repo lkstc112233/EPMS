@@ -7,7 +7,9 @@ import java.util.Map.Entry;
 import action.*;
 import obj.*;
 import obj.annualTable.*;
-import obj.annualTable.ListOfRegionAndPracticeBases.RegionPair.PracticeBasePair;
+import obj.annualTable.list.Leaf;
+import obj.annualTable.list.List_Region_PracticeBase;
+import obj.annualTable.list.PracticeBaseWithRegion;
 import obj.staticObject.*;
 import obj.staticSource.Major;
 import obj.staticSource.School;
@@ -22,12 +24,12 @@ public class RegionLeaderAndSupervisorDesign extends Action{
 	public action.Annual getAnnual(){return this.annual;}
 	
 	
-	private ListOfRegionAndPracticeBases regionAndPracticeBase;
+	private List_Region_PracticeBase list;
 	private Supervise[][][] supervises;
 	private List<InnerPerson> innerPersons;
 	static public final String SessionListKey="RegionLeaderAndSupervisorDesign_List";
 
-	public ListOfRegionAndPracticeBases getRegionAndPracticeBase(){return this.regionAndPracticeBase;}
+	public List_Region_PracticeBase getList(){return this.list;}
 	public int[] getSuperviseTypeList(){return Supervise.getTypeList();}
 	public String[] getSuperviseTypeNameList(){return Supervise.getTypeNameList();}
 	public List<InnerPerson> getInnerPersons(){
@@ -40,18 +42,18 @@ public class RegionLeaderAndSupervisorDesign extends Action{
 		}return this.innerPersons=null;
 	}
 	public Supervise[][][] getSupervises(){
-		if(this.regionAndPracticeBase==null) return this.supervises=null;
+		if(this.list==null) return this.supervises=null;
 		if(this.supervises!=null) return this.supervises;
 		this.supervises=new Supervise[this.getSuperviseTypeList().length]
-				[this.regionAndPracticeBase.getList().size()][];
+				[this.list.getList().size()][];
 		for(int type:this.getSuperviseTypeList()){
 			for(int i=0;i<this.supervises[type].length;i++){
-				List<PracticeBasePair> pbs=this.regionAndPracticeBase.getList().get(i).getList();
-				this.supervises[type][i]=new Supervise[pbs.size()];
+				List<PracticeBaseWithRegion> pbrs=this.list.getList().get(i).getList();
+				this.supervises[type][i]=new Supervise[pbrs.size()];
 				for(int j=0;j<this.supervises[type][i].length;j++){
 					Supervise tmp=new Supervise();
 					tmp.setYear(this.getAnnual().getYear());
-					tmp.setPracticeBase(pbs.get(j).getPracticeBase().getName());
+					tmp.setPracticeBase(pbrs.get(j).getFirst().getName());
 					tmp.setSuperviseType(type);
 					try {
 						tmp.load();
@@ -67,7 +69,7 @@ public class RegionLeaderAndSupervisorDesign extends Action{
 
 	public RegionLeaderAndSupervisorDesign(){
 		super();
-		this.regionAndPracticeBase=Manager.loadSession(ListOfRegionAndPracticeBases.class, SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBase.class, SessionListKey);
 		this.getSupervises();
 	}
 	
@@ -75,13 +77,13 @@ public class RegionLeaderAndSupervisorDesign extends Action{
 		if(this.getInnerPersons()==null)
 			return this.returnWithTips(NONE,"数据库读取校内人员列表失败！");
 		try {
-			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/false);
+			this.list=new List_Region_PracticeBase(this.getAnnual().getYear(),/*containsNullRegion*/false);
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
 			return this.returnWithTips(NONE,"数据库读取实习基地及大区信息失败！",e);
 		}
 		this.getSupervises();
-		if(this.regionAndPracticeBase!=null)
-			Manager.saveSession(SessionListKey,this.regionAndPracticeBase);
+		if(this.list!=null)
+			Manager.saveSession(SessionListKey,this.list);
 		return NONE;
 	}
 	
@@ -89,11 +91,11 @@ public class RegionLeaderAndSupervisorDesign extends Action{
 	public String execute(){
 		boolean ok=false;
 		StringBuilder error=new StringBuilder();
-		if(this.regionAndPracticeBase==null)
+		if(this.list==null)
 			return this.jumpBackWithTips("实习基地选择错误!");
 		//保存所有的Region的Leader
-		for(ListOfRegionAndPracticeBases.RegionPair rp:this.regionAndPracticeBase.getList()){
-			Region region=rp.getRegion();
+		for(Leaf<Region,PracticeBaseWithRegion> rp:this.list.getList()){
+			Region region=rp.getT();
 			try {
 				region.update();
 				ok=true;
@@ -147,8 +149,8 @@ public class RegionLeaderAndSupervisorDesign extends Action{
 	 * 自动填充空白的总领队和督导学科规划
 	 */
 	public String create() {
-		for(ListOfRegionAndPracticeBases.RegionPair rp:this.regionAndPracticeBase.getList()){
-			Region region=rp.getRegion();
+		for(Leaf<Region,PracticeBaseWithRegion> rp:this.list.getList()){
+			Region region=rp.getT();
 			if(region.getLeaderId()==null || region.getLeaderId().isEmpty())
 				return this.returnWithTips(NONE,"请先将总领队学科规划填充完毕！");
 		}
@@ -176,8 +178,8 @@ public class RegionLeaderAndSupervisorDesign extends Action{
 		}
 		if(prepared.isEmpty())
 			return this.returnWithTips(NONE,"第一阶段读取部院系列表失败，已停止!");
-		int j=0;for(ListOfRegionAndPracticeBases.RegionPair rp:this.regionAndPracticeBase.getList()){
-			String leaderId=rp.getRegion().getLeaderId();
+		int j=0;for(Leaf<Region, PracticeBaseWithRegion> rp:this.list.getList()){
+			String leaderId=rp.getT().getLeaderId();
 			for(int type:this.getSuperviseTypeList()) {
 				for(Supervise sup:this.supervises[type][j]) {
 					if((type==this.getSuperviseTypeList()[0] || type==this.getSuperviseTypeList()[this.getSuperviseTypeList().length-1]) && 
@@ -214,7 +216,7 @@ public class RegionLeaderAndSupervisorDesign extends Action{
 			for(j=0;j<this.getSupervises()[type].length;j++) {
 				for(int k=0;k<this.getSupervises()[type][j].length;k++) {
 					Supervise sup=this.getSupervises()[type][j][k];
-					PracticeBase pb=this.getRegionAndPracticeBase().getList().get(j).getList().get(k).getPracticeBase();
+					PracticeBase pb=this.getList().getList().get(j).getList().get(k).getFirst();
 					if(sup.getSupervisorId()==null || sup.getSupervisorId().isEmpty()) {
 						Collections.sort(preparedSchool);
 						Pair pair=null;

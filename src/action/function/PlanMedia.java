@@ -6,6 +6,7 @@ import java.util.*;
 import action.*;
 import obj.*;
 import obj.annualTable.*;
+import obj.annualTable.list.List_Region_PracticeBase;
 import obj.staticObject.PracticeBase;
 import obj.staticSource.Major;
 
@@ -20,7 +21,7 @@ public class PlanMedia extends Action{
 	
 	
 	private List<Major> majors;
-	private ListOfRegionAndPracticeBases regionAndPracticeBase;
+	private List_Region_PracticeBase list;
 	private int[][][] numbers;
 	private boolean[][][] media;
 	private int[] mediaMajorCounts;
@@ -29,16 +30,16 @@ public class PlanMedia extends Action{
 	static public final String SessionListKey="PlanAllDesign_List";
 
 	
-	public ListOfRegionAndPracticeBases getRegionAndPracticeBase(){return this.regionAndPracticeBase;}
+	public List_Region_PracticeBase getList(){return this.list;}
 	public int[][][] getNumbers(){
-		if(this.majors==null || this.regionAndPracticeBase==null)
+		if(this.majors==null || this.list==null)
 			return this.numbers=null;
 		if(this.numbers!=null) return this.numbers;
 		this.numbers=new int[this.majors.size()]
-				[this.regionAndPracticeBase.getList().size()][];
+				[this.list.getList().size()][];
 		for(int i=0;i<this.majors.size();i++)
-			for(int j=0;j<this.regionAndPracticeBase.getList().size();j++)
-				this.numbers[i][j]=new int[this.regionAndPracticeBase.getList().get(j).getList().size()];
+			for(int j=0;j<this.list.getList().size();j++)
+				this.numbers[i][j]=new int[this.list.getList().get(j).getList().size()];
 		Map<String,Integer> majorsMap=new HashMap<String,Integer>();
 		for(int i=0;i<this.majors.size();i++)
 			majorsMap.put(this.majors.get(i).getName(),i);
@@ -51,7 +52,7 @@ public class PlanMedia extends Action{
 			return this.numbers=null;
 		}
 		for(Plan p:plans){
-			int[] index=this.regionAndPracticeBase.indexOf(p.getPracticeBase());
+			int[] index=this.list.indexOf(p.getPracticeBase());
 			if(index!=null && index.length>=2)
 				this.numbers[majorsMap.get(p.getMajor())][index[0]][index[1]]=
 				p.getNumber();
@@ -82,7 +83,7 @@ public class PlanMedia extends Action{
 			return this.media=null;
 		}
 		for(Plan p:plans){
-			int[] index=this.regionAndPracticeBase.indexOf(p.getPracticeBase());
+			int[] index=this.list.indexOf(p.getPracticeBase());
 			if(index!=null && index.length>=2)
 				this.media[majorsMap.get(p.getMajor())][index[0]][index[1]]=
 				p.getMedia();
@@ -137,14 +138,14 @@ public class PlanMedia extends Action{
 	public PlanMedia(){
 		super();
 		System.out.println(">> PlanAllDesign:constructor > year="+this.getAnnual().getYear());
-		this.regionAndPracticeBase=Manager.loadSession(ListOfRegionAndPracticeBases.class, SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBase.class, SessionListKey);
 		this.majors=Manager.loadSession(List.class, SessionMajorsKey);
 		this.getNumbers();
 	}
 	
 	public String display(){
 		try {
-			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/false);
+			this.list=new List_Region_PracticeBase(this.getAnnual().getYear(),/*containsNullRegion*/false);
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
 			return this.jumpBackWithTips("数据库读取实习基地及大区信息失败",e);
 		}
@@ -154,8 +155,8 @@ public class PlanMedia extends Action{
 			return this.jumpBackWithTips("数据库读取布局规划失败！");
 		if(this.getMedia()==null)
 			return this.jumpBackWithTips("数据库读取数字媒体设备规划失败！");
-		if(this.regionAndPracticeBase!=null)
-			Manager.saveSession(SessionListKey,this.regionAndPracticeBase);
+		if(this.list!=null)
+			Manager.saveSession(SessionListKey,this.list);
 		if(this.majors!=null)
 			Manager.saveSession(SessionMajorsKey,this.majors);
 		return NONE;
@@ -167,7 +168,7 @@ public class PlanMedia extends Action{
 	@Override
 	public String execute(){
 	//	StringBuilder error=new StringBuilder();
-		if(this.regionAndPracticeBase==null||this.numbers==null||this.majors==null)
+		if(this.list==null||this.numbers==null||this.majors==null)
 			return this.jumpBackWithTips("该项目不可用!");
 		return this.jumpToMethodWithTips("display","该项目不可用!");
 	}
@@ -180,14 +181,14 @@ public class PlanMedia extends Action{
 	 * 单击
 	 */
 	public String create(){
-		if(this.regionAndPracticeBase==null||this.numbers==null||this.majors==null)
+		if(this.list==null||this.numbers==null||this.majors==null)
 			return this.jumpBackWithTips("该项目不可用!");
 		if(clickIndex==null || clickIndex.length<3)
 			clickIndex=new int[] {-1,-1,-1};
 		try {
 			Major major=this.getMajors().get(clickIndex[0]);
-			PracticeBase pb=this.regionAndPracticeBase.getList().get(clickIndex[1])
-					.getList().get(clickIndex[2]).getPracticeBase();
+			PracticeBase pb=this.list.getList().get(clickIndex[1])
+					.getList().get(clickIndex[2]).getFirst();
 			if(this.numbers[clickIndex[0]][clickIndex[1]][clickIndex[2]]<=0)
 				return this.jumpToMethodWithTips("display",major.getDescription()+"至"+pb.getDescription()+"无派遣计划!");
 			Plan p=new Plan();

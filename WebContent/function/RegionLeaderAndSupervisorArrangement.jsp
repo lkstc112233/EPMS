@@ -36,22 +36,22 @@
 				<td>中期督导老师</td>
 				<td>返校督导老师</td>
 			</tr>
-			<s:iterator value="regionAndPracticeBase.list" var="__regionRow" status="__regionStatus">
+			<s:iterator value="list.list" var="__regionRow" status="__regionStatus">
 			<s:iterator value="#__regionRow.list" var="__practiceBaseRow" status="__practiceBaseStatus">
 				<tr class="wtableContent">
 					<s:set var="_colspan" value="%{#__regionRow.size}" />
 					<s:if test="#__practiceBaseStatus.index == 0">
 						<td rowspan="${_colspan}" style="width:3%;">
-							<s:property value="#__regionRow.region.name" />
+							<s:property value="#__regionRow.t.name" />
 						</td>
 					</s:if>
 					<td style="width:160px;text-align:left;padding-left:10px;">
-						<s:if test="#__practiceBaseRow.practiceBase.status">
+						<s:if test="#__practiceBaseRow.first.status">
 							<span style="color:red;">
-								<s:property value="#__practiceBaseRow.practiceBase.name" />
+								<s:property value="#__practiceBaseRow.first.name" />
 							</span>
 						</s:if><s:else>
-							<s:property value="#__practiceBaseRow.practiceBase.name" />
+							<s:property value="#__practiceBaseRow.first.name" />
 						</s:else>
 					</td>
 					<!-- 总领队 -->

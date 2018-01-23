@@ -40,23 +40,23 @@
 			<td>备注</td>
 			<td>保存</td>
 		</tr>
-		<s:iterator value="regionAndPracticeBase.list" var="__regionRow" status="__regionStatus">
+		<s:iterator value="list.list" var="__regionRow" status="__regionStatus">
 		<s:iterator value="#__regionRow.list" var="__practiceBaseRow" status="__practiceBaseStatus">
 		<s:form action="function_RegionInfo_execute" method="post" theme="simple">
 			<tr class="wtableContent">
 				<s:set var="_colspan" value="%{#__regionRow.size}" />
 				<s:if test="#__practiceBaseStatus.index == 0">
 					<td rowspan="${_colspan}" style="width:3%;">
-						<s:property value="#__regionRow.region.name" />
+						<s:property value="#__regionRow.t.name" />
 					</td>
 				</s:if>
 				<td style="width:160px;text-align:left;padding-left:10px;">
-					<s:if test="#__practiceBaseRow.practiceBase.status">
+					<s:if test="#__practiceBaseRow.first.status">
 						<span style="color:red;">
-							<s:property value="#__practiceBaseRow.practiceBase.name" />
+							<s:property value="#__practiceBaseRow.first.name" />
 						</span>
 					</s:if><s:else>
-						<s:property value="#__practiceBaseRow.practiceBase.name" />
+						<s:property value="#__practiceBaseRow.first.name" />
 					</s:else>
 				</td>
 				<!-- 总领队 -->
@@ -65,8 +65,8 @@
 						<s:select list="innerPersons"
 							listKey="id" listValue="name"
 							headerKey="" headerValue="-无-"
-							name="regionAndPracticeBase.list[%{#__regionStatus.index}].list[%{#__practiceBaseStatus.index}].region.leaderId"
-							value="%{#__regionRow.region.leaderId}"
+							name="list.list[%{#__regionStatus.index}].list[%{#__practiceBaseStatus.index}].t.leaderId"
+							value="%{#__regionRow.t.leaderId}"
 							style="text-align:center;width:100%;height:100%;border:0;" theme="simple"/>
 					</td>
 				</s:if>
@@ -84,9 +84,9 @@
 				<!-- 入校时间 -->
 				<td><s:textfield theme="simple"
 					style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;"
-					name="regionAndPracticeBase.list[%{#__regionStatus.index}].list[%{#__practiceBaseStatus.index}].region.enterPracticeBaseTime">
+					name="list.list[%{#__regionStatus.index}].list[%{#__practiceBaseStatus.index}].t.enterPracticeBaseTime">
 						<s:param name="value">
-							<s:date name="%{#__practiceBaseRow.region.enterPracticeBaseTime}"
+							<s:date name="%{#__practiceBaseRow.t.enterPracticeBaseTime}"
 							format="yyyy-MM-dd"/>
 						</s:param>
 					</s:textfield>
@@ -94,17 +94,17 @@
 				<!-- 入校地点 -->
 				<td><s:textfield theme="simple"
 					style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;"
-					name="regionAndPracticeBase.list[%{#__regionStatus.index}].list[%{#__practiceBaseStatus.index}].region.enterPracticeBasePlace" />
+					name="list.list[%{#__regionStatus.index}].list[%{#__practiceBaseStatus.index}].t.enterPracticeBasePlace" />
 				</td>
 				<!-- 是否住宿 -->
 				<td style="width:40px;"><s:checkbox theme="simple"
 					style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;"
-					name="regionAndPracticeBase.list[%{#__regionStatus.index}].list[%{#__practiceBaseStatus.index}].region.accommodation" />
+					name="list.list[%{#__regionStatus.index}].list[%{#__practiceBaseStatus.index}].t.accommodation" />
 				</td>
 				<!-- 备注 -->
 				<td style="padding:0;word-wrap:break-word;word-break:break-all;">
 					<s:textarea
-					name="regionAndPracticeBase.list[%{#__regionStatus.index}].list[%{#__practiceBaseStatus.index}].region.remark"
+					name="list.list[%{#__regionStatus.index}].list[%{#__practiceBaseStatus.index}].t.remark"
 					style="margin:0;padding:0;resize:none;border:0;width:100%;heigth:100%;" theme="simple" />
 				</td>
 				<!-- 保存 -->
