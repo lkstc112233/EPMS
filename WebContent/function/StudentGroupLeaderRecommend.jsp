@@ -1,4 +1,8 @@
-<%@page import="obj.annualTable.ListOfPracticeBaseAndStudents"%>
+<%@page import="obj.annualTable.list.Leaf"%>
+<%@page import="obj.annualTable.list.Node"%>
+<%@page import="obj.annualTable.list.PracticeBaseWithRegion"%>
+<%@page import="obj.annualTable.Student"%>
+<%@page import="obj.annualTable.Region"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags" %>
@@ -48,15 +52,21 @@
 	<s:iterator value="#__rpRow.list" var="__Row" status="__Status">
 		<% Object tmpPracticeBase=pageContext.findAttribute("#__Row");
 		String practiceBaseName="";
-		if(tmpPracticeBase!=null && tmpPracticeBase instanceof ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair)
-			practiceBaseName=((ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair)tmpPracticeBase).getPracticeBase().getName();
+		if(tmpPracticeBase!=null && tmpPracticeBase instanceof Leaf){//Leaf<PracticeBaseWithRegion,Student>
+			@SuppressWarnings("unchecked")
+			String tmp=((Leaf<PracticeBaseWithRegion,Student>)tmpPracticeBase).getT().getFirst().getName();
+			practiceBaseName=tmp;
+		}
 		%>
 		<tr>
 			<s:if test="#__Status.index == 0">
-				<% obj.annualTable.ListOfPracticeBaseAndStudents.RegionPair rp=(obj.annualTable.ListOfPracticeBaseAndStudents.RegionPair)
+				<% @SuppressWarnings("unchecked")
+				Node<Region,Leaf<PracticeBaseWithRegion,Student>> rp=(Node<Region,Leaf<PracticeBaseWithRegion,Student>>)
 					request.getAttribute("__rpRow");
+				int tmpStudentCnt=0;
+				for(Leaf<PracticeBaseWithRegion,Student> iter:rp.getList()) tmpStudentCnt+=iter.getSize();
 				pageContext.setAttribute("_rowspan",
-						rp.getAllStudentsCount()+rp.getSize()*3-1); %>
+						tmpStudentCnt+rp.getSize()*3-1); %>
 				<td rowspan="${_rowspan}" class="listHeader"
 				style="width:30px;background:#0071bc;text-indent:0px;text-align:center;" >
 					<s:property value="#__rpRow.region.name" />
