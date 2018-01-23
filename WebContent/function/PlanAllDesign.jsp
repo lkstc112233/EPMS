@@ -48,23 +48,23 @@
 				<td style="background:rgba(255,234,46,0.5);"></td>
 			</tr>
 			<!-- ###规划### -->
-			<s:iterator value="regionAndPracticeBase.list" var="__regionRow" status="__regionStatus">
+			<s:iterator value="list.list" var="__regionRow" status="__regionStatus">
 				<s:iterator value="#__regionRow.list" var="__practiceBaseRow" status="__practiceBaseStatus">
 					<tr class="wtableContent">
 						<s:if test="#__practiceBaseStatus.index == 0">
 							<s:set var="_colspan" value="%{#__regionRow.size}" />
 							<td rowspan="${_colspan}" style="width:3%;">
-								<s:property value="#__regionRow.region.name" />
+								<s:property value="#__regionRow.t.name" />
 							</td>
 						</s:if>
 						<td style="text-align:left;padding-left:10px;">
-							<s:if test="#__practiceBaseRow.practiceBase.status">
+							<s:if test="#__practiceBaseRow.first.status">
 								<div style="color:red;">
-									<s:property value="#__practiceBaseRow.practiceBase.name" />
+									<s:property value="#__practiceBaseRow.first.name" />
 								</div>
 							</s:if><s:else>
 								<div>
-									<s:property value="#__practiceBaseRow.practiceBase.name" />
+									<s:property value="#__practiceBaseRow.first.name" />
 								</div>
 							</s:else>
 						</td>
@@ -85,19 +85,19 @@
 						</s:iterator>
 						<!-- 备注 --><td style="padding:0px;">
 							<s:textarea value="%{#__practiceBaseRow.practiceBase.remark}"
-							name="regionAndPracticeBase.list[%{#__regionStatus.index}].list[%{#__practiceBaseStatus.index}].practiceBase.remark"
+							name="list.list[%{#__regionStatus.index}].list[%{#__practiceBaseStatus.index}].first.remark"
 							style="margin:0;padding:0;resize:none;border:0;width:100%;heigth:100%;" theme="simple" />
 						</td>
 					</tr>
 				</s:iterator>
 				<!-- ###总数量### -->
-				<s:if test="#__regionRow.region.hx == null">
+				<s:if test="#__regionRow.t.hx == null">
 					<tr><td colspan="100">ERROR！</td></tr>
-				</s:if><s:elseif test="#__regionRow.region.hx == true">
+				</s:if><s:elseif test="#__regionRow.t.hx == true">
 					<!-- 回乡的 -->
 					<tr class="wtableContent">
 						<td colspan="2" style="font-weight:700;background:rgba(255,234,46,0.22);">
-							<s:property value="#__regionRow.region.name"/>合计
+							<s:property value="#__regionRow.t.name"/>合计
 						</td>
 						<s:iterator value="majors" status="__majorStatus">
 							<!-- 相等 --><s:if test="majorsRegionsCountsIsError[#__majorStatus.index][#__regionStatus.index]==null">
@@ -120,7 +120,7 @@
 					<!-- 非回乡的 --><s:if test="#__regionStatus.index == lastNHxRegionIndex">
 					<tr class="wtableContent">
 						<td colspan="2" style="font-weight:700;background:rgba(255,234,46,0.5);">
-							<s:property value="#__regionRow.region.name"/>北京及周边地区实习人数
+							<s:property value="#__regionRow.t.name"/>北京及周边地区实习人数
 						</td>
 						<s:iterator value="majorsNHxCounts" var="__nhxcount" status="__majorStatus">
 							<s:if test="majorsRegionsCountsIsError[#__majorStatus.index][#__regionStatus.index] == null">
