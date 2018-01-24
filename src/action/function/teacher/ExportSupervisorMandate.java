@@ -31,7 +31,7 @@ public class ExportSupervisorMandate extends Action{
 
 	@Override
 	public String execute(){
-		return this.jumpBackWithTips("该项目不可用!");
+		return this.returnWithTips(NONE,"该项目不可用!");
 	}
 	
 	
@@ -64,13 +64,13 @@ public class ExportSupervisorMandate extends Action{
 	public String download(){//下载模板
 		System.out.println(">> ExportSupervisorMandate:download > practiceBaseName="+this.practiceBaseName+",superviseIndex="+this.superviseIndex);
 		if(this.list==null)
-			return this.jumpBackWithTips("该项目未初始化!");
+			return this.returnWithTips(NONE,"该项目未初始化!");
 		PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors
-			pair=this.list.get(practiceBaseName);
+			pair=this.list.getByPracticeBaseName(practiceBaseName);
 		if(pair==null)
-			return this.jumpBackWithTips("实习基地名称不正确!");
+			return this.returnWithTips(NONE,"实习基地名称不正确!");
 		if(superviseIndex<0||superviseIndex>=pair.getSupervisors().length)
-			return this.jumpBackWithTips("督导序号不正确");
+			return this.returnWithTips(NONE,"督导序号不正确");
 		InnerPerson supervisor=pair.getSupervisors()[superviseIndex];
 		System.out.println(">> ExportSupervisorMandate:download > create download file.");
 		downloadOutputStream=new ByteArrayOutputStream();
@@ -81,7 +81,7 @@ public class ExportSupervisorMandate extends Action{
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
 			downloadOutputStream=null;
-			return this.jumpBackWithTips("服务器开小差去了，暂时无法下载！",e);
+			return this.returnWithTips(NONE,"服务器开小差去了，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportSupervisorMandate:download <downloadAttachment");
 		return "downloadAttachment";

@@ -40,7 +40,7 @@ public class SupervisePage extends Action{
 	
 	public String display(){
 		if(Manager.getUser()==null || Role.getRole(Manager.getUser())!=Role.jwc)
-			return this.jumpBackWithTips("无权查看督导详细信息!");
+			return this.returnWithTips(NONE,"无权查看督导详细信息!");
 		System.out.println(">> Export:display > year="+this.getAnnual().getYear());
 		this.list=null;
 		try{
@@ -63,7 +63,7 @@ public class SupervisePage extends Action{
 	@Override
 	public String execute(){
 		if(Manager.getUser()==null || Role.getRole(Manager.getUser())!=Role.jwc)
-			return this.jumpBackWithTips("无权查看督导详细信息!");
+			return this.returnWithTips(NONE,"无权查看督导详细信息!");
 		if(this.list==null)
 			return this.returnWithTips(NONE,"该项目不可用!");
 		PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors  pair=this.list.getByPracticeBaseName(practiceBaseName);

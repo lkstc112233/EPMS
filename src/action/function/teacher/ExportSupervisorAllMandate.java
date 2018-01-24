@@ -37,7 +37,7 @@ public class ExportSupervisorAllMandate extends Action{
 
 	@Override
 	public String execute(){
-		return this.jumpBackWithTips("该项目不可用!");
+		return this.returnWithTips(NONE,"该项目不可用!");
 	}
 	
 	
@@ -67,14 +67,14 @@ public class ExportSupervisorAllMandate extends Action{
 	public String download(){//下载模板
 		System.out.println(">> ExportSupervisorAllMandate:download > supervisorId="+this.supervisorId);
 		if(this.list==null)
-			return this.jumpBackWithTips("该项目未初始化!");
+			return this.returnWithTips(NONE,"该项目未初始化!");
 		InnerPerson supervisor;
 		School school;
 		try {
 			supervisor=new InnerPerson(supervisorId);
 			school=new School(supervisor.getSchool());
 		}catch(IllegalArgumentException | SQLException e) {
-			return this.jumpBackWithTips("督导老师工号("+supervisorId+")不正确",e);
+			return this.returnWithTips(NONE,"督导老师工号("+supervisorId+")不正确",e);
 		}
 		//设置下载文件名称
 		String fileName=String.format("%d年[%s%s]免费师范生教育实习督导任务书.zip",
@@ -97,7 +97,7 @@ public class ExportSupervisorAllMandate extends Action{
 							files.put(name,out);
 						}catch(IOException e){
 							downloadOutputStream=null;
-							return this.jumpBackWithTips("创建文件失败，暂时无法下载！",e);
+							return this.returnWithTips(NONE,"创建文件失败，暂时无法下载！",e);
 						}
 					}
 					superviseIndex++;
@@ -109,7 +109,7 @@ public class ExportSupervisorAllMandate extends Action{
 			this.downloadOutputStream.flush();
 		} catch (IOException e) {
 			this.downloadOutputStream=null;
-			return this.jumpBackWithTips("压缩文件失败，暂时无法下载！",e);
+			return this.returnWithTips(NONE,"压缩文件失败，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportSupervisorAllMandate:download <downloadAttachment");
 		return "downloadAttachment";

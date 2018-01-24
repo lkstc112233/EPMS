@@ -130,16 +130,16 @@ public class StudentArrangeIntoPracticeBase extends Action{
 			return display();
 		System.out.println(">> RegionArrangement:execute > practiceBaseName= "+this.practiceBaseName);
 		if(this.practiceBaseName==null || this.practiceBaseName.isEmpty())
-			return this.jumpBackWithTips("请选择一个实习基地！");
+			return this.returnWithTips(NONE,"请选择一个实习基地！");
 		Leaf<PracticeBaseWithRegionWithPlan, Student> pair=
 				this.list.getByPracticeBaseName(this.practiceBaseName);
 		if(pair==null || pair.getT().getPlan()==null)
-			return this.jumpBackWithTips("基地("+this.practiceBaseName+")没有("+this.majorName+")专业派遣计划！");
+			return this.returnWithTips(NONE,"基地("+this.practiceBaseName+")没有("+this.majorName+")专业派遣计划！");
 		//RegionArrangement:execute
 		boolean flag=false;
 		for(boolean s:checkBox) flag|=s;
 		if(!flag)
-			return this.jumpBackWithTips("请至少选择一个实习生分配到实习基地！");
+			return this.returnWithTips(NONE,"请至少选择一个实习生分配到实习基地！");
 		List<Student> tmp=new ArrayList<Student>();
 		StringBuilder sb=new StringBuilder();
 		StringBuilder error=new StringBuilder();
@@ -184,15 +184,15 @@ public class StudentArrangeIntoPracticeBase extends Action{
 			return display();
 		System.out.println(">> RegionArrangement:delete > practiceBaseName= "+this.practiceBaseName);
 		if(this.practiceBaseName==null || this.practiceBaseName.isEmpty())
-			return this.jumpBackWithTips("未选中实习生！");
+			return this.returnWithTips(NONE,"未选中实习生！");
 		boolean flag=false;
 		for(boolean s:checkBox) flag|=s;
 		if(!flag)
-			return this.jumpBackWithTips("请至少选择一个实习生来移除！");
+			return this.returnWithTips(NONE,"请至少选择一个实习生来移除！");
 		Leaf<PracticeBaseWithRegionWithPlan, Student> pair=
-				this.list.get(this.practiceBaseName);
+				this.list.getByPracticeBaseName(this.practiceBaseName);
 		if(pair==null)
-			return this.jumpBackWithTips("选中了一个不存在的实习基地("+this.practiceBaseName+")！");
+			return this.returnWithTips(NONE,"选中了一个不存在的实习基地("+this.practiceBaseName+")！");
 		List<Student> tmp=new ArrayList<Student>();
 		StringBuilder sb=new StringBuilder();
 		for(int i=0;i<pair.getSize();i++){

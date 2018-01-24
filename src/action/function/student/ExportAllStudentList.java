@@ -37,7 +37,7 @@ public class ExportAllStudentList extends Action{
 
 	@Override
 	public String execute(){
-		return this.jumpBackWithTips("该项目不可用!");
+		return this.returnWithTips(NONE,"该项目不可用!");
 	}
 	
 	
@@ -69,13 +69,13 @@ public class ExportAllStudentList extends Action{
 	}
 	public String download(){//下载模板
 		if(this.list==null)
-			return this.jumpBackWithTips("该项目未初始化!");
+			return this.returnWithTips(NONE,"该项目未初始化!");
 		//设置下载文件名称
 		Major major=null;
 		if(majorName!=null) try {
 			major=new Major(majorName);
 		} catch (IllegalArgumentException | SQLException e1) {
-			return this.jumpBackWithTips("专业名称有误!");
+			return this.returnWithTips(NONE,"专业名称有误!");
 		}
 		String fileName=String.format("%d年%s免费师范生教育实习学生名单%s.zip",
 				this.getAnnual().getYear(),
@@ -98,7 +98,7 @@ public class ExportAllStudentList extends Action{
 					files.put(name,out);
 				}catch(IOException e){
 					downloadOutputStream=null;
-					return this.jumpBackWithTips("创建文件失败，暂时无法下载！",e);
+					return this.returnWithTips(NONE,"创建文件失败，暂时无法下载！",e);
 				}
 			}
 		}
@@ -107,7 +107,7 @@ public class ExportAllStudentList extends Action{
 			this.downloadOutputStream.flush();
 		} catch (IOException e) {
 			this.downloadOutputStream=null;
-			return this.jumpBackWithTips("压缩文件失败，暂时无法下载！",e);
+			return this.returnWithTips(NONE,"压缩文件失败，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportAllStudentList:download <downloadAttachment");
 		return "downloadAttachment";

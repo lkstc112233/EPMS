@@ -35,7 +35,7 @@ public class ExportStudentList extends Action{
 
 	@Override
 	public String execute(){
-		return this.jumpBackWithTips("该项目不可用!");
+		return this.returnWithTips(NONE,"该项目不可用!");
 	}
 	
 	
@@ -68,16 +68,16 @@ public class ExportStudentList extends Action{
 	public String download(){//下载模板
 		System.out.println(">> ExportStudentList:download > practiceBaseName="+this.practiceBaseName);
 		if(this.list==null)
-			return this.jumpBackWithTips("该项目未初始化!");
+			return this.returnWithTips(NONE,"该项目未初始化!");
 		Leaf<PracticeBaseWithRegion,Student> pair=
-				this.list.get(this.practiceBaseName);
+				this.list.getByPracticeBaseName(this.practiceBaseName);
 		if(pair==null)
-			return this.jumpBackWithTips("实习基地名称有误!");
+			return this.returnWithTips(NONE,"实习基地名称有误!");
 		Major major=null;
 		if(majorName!=null) try {
 			major=new Major(majorName);
 		} catch (IllegalArgumentException | SQLException e1) {
-			return this.jumpBackWithTips("专业名称有误!");
+			return this.returnWithTips(NONE,"专业名称有误!");
 		}
 		System.out.println(">> ExportStudentList:download > create download file.");
 		this.downloadOutputStream=new ByteArrayOutputStream();
@@ -89,7 +89,7 @@ public class ExportStudentList extends Action{
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
 			this.downloadOutputStream=null;
-			return this.jumpBackWithTips("服务器开小差去了，暂时无法下载！",e);
+			return this.returnWithTips(NONE,"服务器开小差去了，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportStudentList:download <downloadAttachment");
 		return "downloadAttachment";

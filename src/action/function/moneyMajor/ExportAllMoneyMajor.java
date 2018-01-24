@@ -28,7 +28,7 @@ public class ExportAllMoneyMajor extends Action{
 
 	@Override
 	public String execute(){
-		return this.jumpBackWithTips("该项目不可用!");
+		return this.returnWithTips(NONE,"该项目不可用!");
 	}
 	
 	
@@ -52,7 +52,7 @@ public class ExportAllMoneyMajor extends Action{
 	}
 	public String download(){//下载模板
 		if(this.practiceBaseAndStudents==null)
-			return this.jumpBackWithTips("该项目未初始化!");
+			return this.returnWithTips(NONE,"该项目未初始化!");
 		//设置下载文件名称
 		String fileName=String.format("%d年免费师范生教育实习实习基地经费明细表及回执单.zip",
 				this.getAnnual().getYear());
@@ -73,7 +73,7 @@ public class ExportAllMoneyMajor extends Action{
 					files.put(name,out);
 				}catch(IOException e){
 					downloadOutputStream=null;
-					return this.jumpBackWithTips("创建文件失败，暂时无法下载！",e);
+					return this.returnWithTips(NONE,"创建文件失败，暂时无法下载！",e);
 				}
 			}
 		}
@@ -82,7 +82,7 @@ public class ExportAllMoneyMajor extends Action{
 			this.downloadOutputStream.flush();
 		} catch (IOException e) {
 			this.downloadOutputStream=null;
-			return this.jumpBackWithTips("压缩文件失败，暂时无法下载！",e);
+			return this.returnWithTips(NONE,"压缩文件失败，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportAllMoneyPB:download <downloadAttachment");
 		return "downloadAttachment";

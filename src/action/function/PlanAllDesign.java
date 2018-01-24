@@ -179,20 +179,20 @@ public class PlanAllDesign extends Action{
 		try {
 			this.list=new List_Region_PracticeBaseRegion(this.getAnnual().getYear(),/*containsNullRegion*/false);
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
-			return this.jumpBackWithTips("数据库读取实习基地及大区信息失败",e);
+			return this.returnWithTips(NONE,"数据库读取实习基地及大区信息失败",e);
 		}
 		if(this.getMajors()==null)
-			return this.jumpBackWithTips("数据库读取专业列表失败！");
+			return this.returnWithTips(NONE,"数据库读取专业列表失败！");
 		if(this.getNumbers()==null)
-			return this.jumpBackWithTips("数据库读取布局规划失败！");
+			return this.returnWithTips(NONE,"数据库读取布局规划失败！");
 		if(this.getMajorsCounts()==null)
-			return this.jumpBackWithTips("数据库读取专业实习生人数失败！");
+			return this.returnWithTips(NONE,"数据库读取专业实习生人数失败！");
 		if(this.getMajorsNHxCounts()==null)
-			return this.jumpBackWithTips("数据库读取在北京及周边地区实习人数失败！");
+			return this.returnWithTips(NONE,"数据库读取在北京及周边地区实习人数失败！");
 		if(this.getMajorsRegionsHxCounts()==null)
-			return this.jumpBackWithTips("数据库读取回生源地实习人数失败！");
+			return this.returnWithTips(NONE,"数据库读取回生源地实习人数失败！");
 		if(getMajorsRegionsCountsIsError()==null)
-			return this.jumpBackWithTips("数据库检测实习生人数与规划人数失败！");
+			return this.returnWithTips(NONE,"数据库检测实习生人数与规划人数失败！");
 		if(this.list!=null)
 			Manager.saveSession(SessionListKey,this.list);
 		if(this.majors!=null)

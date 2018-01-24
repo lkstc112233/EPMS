@@ -121,7 +121,7 @@ public class StudentGroupLeaderRecommend extends Action{
 		Leaf<PracticeBaseWithRegion,Student> pair=
 				this.list.getByPracticeBaseName(this.choose[0]);//choose[0]是基地名称
 		if(pair==null)
-			return this.jumpBackWithTips("请选择正确的实习基地！");
+			return this.returnWithTips(NONE,"请选择正确的实习基地！");
 		//StudenGroupLeaderRecommend:execute
 		if(this.choose[2]==null || this.choose[2].isEmpty()) { 
 			//推荐大组长：choose[1]学生
@@ -131,7 +131,7 @@ public class StudentGroupLeaderRecommend extends Action{
 				break;
 			}
 			if(!ok) 
-				return this.jumpBackWithTips("基地("+this.choose[0]+")没有学生学号为("+this.choose[1]+")!");
+				return this.returnWithTips(NONE,"基地("+this.choose[0]+")没有学生学号为("+this.choose[1]+")!");
 			StringBuilder error=new StringBuilder();
 			for(Student stu:pair.getList()) {
 				boolean flag=stu.getId().equals(this.choose[1]);
@@ -153,7 +153,7 @@ public class StudentGroupLeaderRecommend extends Action{
 			try {
 				teacher=new InnerPerson(this.choose[2]);
 			}catch(SQLException | IllegalArgumentException e) {
-				return this.jumpBackWithTips("指导教师输入错误!",e);
+				return this.returnWithTips(NONE,"指导教师输入错误!",e);
 			}
 			StringBuilder error=new StringBuilder();
 			for(Student stu:pair.getList()) {
@@ -175,7 +175,7 @@ public class StudentGroupLeaderRecommend extends Action{
 			try {
 				teacher=new InnerPerson(this.choose[2]);
 			}catch(SQLException | IllegalArgumentException e) {
-				return this.jumpBackWithTips("指导教师输入错误!",e);
+				return this.returnWithTips(NONE,"指导教师输入错误!",e);
 			}
 			Student opStudent=null;
 			for(Student stu:pair.getList()) if(stu.getId().equals(this.choose[1])) {
@@ -183,14 +183,14 @@ public class StudentGroupLeaderRecommend extends Action{
 				break;
 			}
 			if(opStudent==null)
-				return this.jumpBackWithTips("基地("+this.choose[0]+")没有学生学号为("+this.choose[1]+")!");
+				return this.returnWithTips(NONE,"基地("+this.choose[0]+")没有学生学号为("+this.choose[1]+")!");
 			if(teacher.getId().equals(opStudent.getTeacherId()))
-				return this.jumpBackWithTips(opStudent.getName()+"指导教师没有变化!");
+				return this.returnWithTips(NONE,opStudent.getName()+"指导教师没有变化!");
 			opStudent.setTeacherId(teacher.getId());
 			try {
 				opStudent.update();
 			}catch(SQLException | IllegalArgumentException e) {
-				return this.jumpBackWithTips(opStudent.getName()+"设置指导老师失败!",e);
+				return this.returnWithTips(NONE,opStudent.getName()+"设置指导老师失败!",e);
 			}
 			return this.jumpToMethodWithTips("display",opStudent.getName()+"指导老师设置为"+teacher.getDescription());
 		}

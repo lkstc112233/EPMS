@@ -92,7 +92,7 @@ public class RegionLeaderAndSupervisorDesign extends Action{
 		boolean ok=false;
 		StringBuilder error=new StringBuilder();
 		if(this.list==null)
-			return this.jumpBackWithTips("实习基地选择错误!");
+			return this.returnWithTips(NONE,"实习基地选择错误!");
 		//保存所有的Region的Leader
 		for(Leaf<Region,PracticeBaseWithRegion> rp:this.list.getList()){
 			Region region=rp.getT();

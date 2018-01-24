@@ -109,7 +109,7 @@ public class Export extends Action{
 		try {
 			base = MoneyPB.getMoneyPBBase();
 		} catch (Exception e) {
-			return this.jumpBackWithTips("读取教育实习经费标准失败!",e);
+			return this.returnWithTips(NONE,"读取教育实习经费标准失败!",e);
 		}
 		StringBuilder error=new StringBuilder();
 		for(ListOfPracticeBaseAndMoney.RegionPair rp:this.practiceBaseAndMoney.getList()) {

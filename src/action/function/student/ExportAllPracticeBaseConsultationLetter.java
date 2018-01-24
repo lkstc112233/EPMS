@@ -35,7 +35,7 @@ public class ExportAllPracticeBaseConsultationLetter extends Action{
 
 	@Override
 	public String execute(){
-		return this.jumpBackWithTips("该项目不可用!");
+		return this.returnWithTips(NONE,"该项目不可用!");
 	}
 	
 	
@@ -64,7 +64,7 @@ public class ExportAllPracticeBaseConsultationLetter extends Action{
 	}
 	public String download(){//下载模板
 		if(this.list==null)
-			return this.jumpBackWithTips("该项目未初始化!");
+			return this.returnWithTips(NONE,"该项目未初始化!");
 		//设置下载文件名称
 		String fileName=String.format("%d年免费师范生教育实习商洽函.zip",
 				this.getAnnual().getYear(),majorName);
@@ -85,7 +85,7 @@ public class ExportAllPracticeBaseConsultationLetter extends Action{
 					files.put(name,out);
 				}catch(IOException e){
 					downloadOutputStream=null;
-					return this.jumpBackWithTips("创建文件失败，暂时无法下载！",e);
+					return this.returnWithTips(NONE,"创建文件失败，暂时无法下载！",e);
 				}
 			}
 		}
@@ -94,7 +94,7 @@ public class ExportAllPracticeBaseConsultationLetter extends Action{
 			this.downloadOutputStream.flush();
 		} catch (IOException e) {
 			this.downloadOutputStream=null;
-			return this.jumpBackWithTips("压缩文件失败，暂时无法下载！",e);
+			return this.returnWithTips(NONE,"压缩文件失败，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportAllPracticeBaseConsultationLetter:download <downloadAttachment");
 		return "downloadAttachment";

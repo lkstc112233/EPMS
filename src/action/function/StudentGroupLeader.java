@@ -99,12 +99,12 @@ public class StudentGroupLeader extends Action{
 	@Override
 	public String execute(){
 		if(this.list==null)
-			return this.jumpBackWithTips("数据库开小差去了!");
+			return this.returnWithTips(NONE,"数据库开小差去了!");
 		System.out.println(">> StudentGroupLeaderRecommend:execute > choose= ["+this.choose[0]+","+this.choose[1]+"]");
 		Leaf<PracticeBaseWithRegion,Student> choose_pair=
 				this.list.getByPracticeBaseName(this.choose[0]);//choose[0]是基地名称
 		if(choose_pair==null)
-			return this.jumpBackWithTips("请选择正确的实习基地！");
+			return this.returnWithTips(NONE,"请选择正确的实习基地！");
 		//StudenGroupLeaderRecommend:execute
 		//推荐大组长：choose[1]学生
 		Student pro=null;
@@ -113,12 +113,12 @@ public class StudentGroupLeader extends Action{
 			break;
 		}
 		if(pro==null)
-			return this.jumpBackWithTips("基地("+this.choose[0]+")没有学生学号为("+this.choose[1]+")!");
+			return this.returnWithTips(NONE,"基地("+this.choose[0]+")没有学生学号为("+this.choose[1]+")!");
 		choose_pair.getT().getRegion().setStudentGroupLeaderId(this.choose[1]);
 		try {
 			choose_pair.getT().getRegion().update();
 		}catch(SQLException | IllegalArgumentException e) {
-			return this.jumpBackWithTips("基地("+choose_pair.getT().getPracticeBase().getDescription()+")学生大组长设置失败!");
+			return this.returnWithTips(NONE,"基地("+choose_pair.getT().getPracticeBase().getDescription()+")学生大组长设置失败!");
 		}
 		return this.jumpToMethodWithTips("display",
 				"基地("+choose_pair.getT().getPracticeBase().getDescription()+")学生大组长("+pro.getDescription()+")设置成功!");
@@ -127,7 +127,7 @@ public class StudentGroupLeader extends Action{
 	
 	public String create(){
 		if(this.list==null)
-			return this.jumpBackWithTips("数据库开小差去了!");
+			return this.returnWithTips(NONE,"数据库开小差去了!");
 		StringBuilder error=new StringBuilder();
 		Map<String,Pair> prepared=new HashMap<String,Pair>();
 		for(Node<Region,Leaf<PracticeBaseWithRegion,Student>> rp:this.list.getList()){
@@ -138,12 +138,12 @@ public class StudentGroupLeader extends Action{
 					else
 						prepared.get(s.getMajor()).stu++;
 				}catch(IllegalArgumentException | SQLException e) {
-					return this.jumpBackWithTips("读取专业列表失败，已停止!");
+					return this.returnWithTips(NONE,"读取专业列表失败，已停止!");
 				}
 			}
 		}
 		if(prepared.isEmpty())
-			return this.jumpBackWithTips("读取学生列表失败，已停止!");
+			return this.returnWithTips(NONE,"读取学生列表失败，已停止!");
 		for(Node<Region,Leaf<PracticeBaseWithRegion,Student>> rp:this.list.getList()){
 			for(Leaf<PracticeBaseWithRegion,Student> pair:rp.getList()) {
 				String groupLeaderId=pair.getT().getRegion().getStudentGroupLeaderId();
@@ -170,7 +170,7 @@ public class StudentGroupLeader extends Action{
 					}else
 						prepared.get(stu.getMajor()).gro++;
 				}catch(IllegalArgumentException | SQLException e) {
-					return this.jumpBackWithTips("服务器开小差去了，无法读取学生大组长！\n"+error.toString(),e);
+					return this.returnWithTips(NONE,"服务器开小差去了，无法读取学生大组长！\n"+error.toString(),e);
 				}
 			}
 		}

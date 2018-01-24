@@ -56,7 +56,7 @@ public class MoneyPBBaseInfo extends Action{
 					base[i].create();
 			}
 		} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
-			return this.jumpBackWithTips("创建教育实习经费标准条目失败!",e);
+			return this.returnWithTips(NONE,"创建教育实习经费标准条目失败!",e);
 		}
 		return this.returnWithTips(NONE,"创建教育实习经费标准条目成功!");
 	}

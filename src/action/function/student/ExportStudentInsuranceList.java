@@ -29,7 +29,7 @@ public class ExportStudentInsuranceList extends Action{
 
 	@Override
 	public String execute(){
-		return this.jumpBackWithTips("该项目不可用!");
+		return this.returnWithTips(NONE,"该项目不可用!");
 	}
 	
 
@@ -53,7 +53,7 @@ public class ExportStudentInsuranceList extends Action{
 	public String download(){//下载模板
 		System.out.println(">> ExportStudentInsuranceList:download >");
 		if(this.list==null)
-			return this.jumpBackWithTips("该项目未初始化!");
+			return this.returnWithTips(NONE,"该项目未初始化!");
 		System.out.println(">> ExportStudentInsuranceList:download > create download file.");
 		this.downloadOutputStream=new ByteArrayOutputStream();
 		try{
@@ -63,7 +63,7 @@ public class ExportStudentInsuranceList extends Action{
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
 			this.downloadOutputStream=null;
-			return this.jumpBackWithTips("服务器开小差去了，暂时无法下载！",e);
+			return this.returnWithTips(NONE,"服务器开小差去了，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportStudentInsuranceList:download <downloadAttachment");
 		return "downloadAttachment";

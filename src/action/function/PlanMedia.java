@@ -147,14 +147,14 @@ public class PlanMedia extends Action{
 		try {
 			this.list=new List_Region_PracticeBaseRegion(this.getAnnual().getYear(),/*containsNullRegion*/false);
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
-			return this.jumpBackWithTips("数据库读取实习基地及大区信息失败",e);
+			return this.returnWithTips(NONE,"数据库读取实习基地及大区信息失败",e);
 		}
 		if(this.getMajors()==null)
-			return this.jumpBackWithTips("数据库读取专业列表失败！");
+			return this.returnWithTips(NONE,"数据库读取专业列表失败！");
 		if(this.getNumbers()==null)
-			return this.jumpBackWithTips("数据库读取布局规划失败！");
+			return this.returnWithTips(NONE,"数据库读取布局规划失败！");
 		if(this.getMedia()==null)
-			return this.jumpBackWithTips("数据库读取数字媒体设备规划失败！");
+			return this.returnWithTips(NONE,"数据库读取数字媒体设备规划失败！");
 		if(this.list!=null)
 			Manager.saveSession(SessionListKey,this.list);
 		if(this.majors!=null)
@@ -169,7 +169,7 @@ public class PlanMedia extends Action{
 	public String execute(){
 	//	StringBuilder error=new StringBuilder();
 		if(this.list==null||this.numbers==null||this.majors==null)
-			return this.jumpBackWithTips("该项目不可用!");
+			return this.returnWithTips(NONE,"该项目不可用!");
 		return this.jumpToMethodWithTips("display","该项目不可用!");
 	}
 
@@ -182,7 +182,7 @@ public class PlanMedia extends Action{
 	 */
 	public String create(){
 		if(this.list==null||this.numbers==null||this.majors==null)
-			return this.jumpBackWithTips("该项目不可用!");
+			return this.returnWithTips(NONE,"该项目不可用!");
 		if(clickIndex==null || clickIndex.length<3)
 			clickIndex=new int[] {-1,-1,-1};
 		try {
@@ -205,9 +205,9 @@ public class PlanMedia extends Action{
 				return this.jumpToMethodWithTips("display","数据库开小差去了，修改失败!");
 			}
 		}catch(IndexOutOfBoundsException e) {
-			return this.jumpBackWithTips("点击错误!");
+			return this.returnWithTips(NONE,"点击错误!");
 		}catch(NullPointerException e) {
-			return this.jumpBackWithTips("读取错误!");
+			return this.returnWithTips(NONE,"读取错误!");
 		}
 		return this.jumpToMethodWithTips("display","修改成功！");
 	}
