@@ -6,6 +6,9 @@ import java.sql.SQLException;
 import action.*;
 import obj.*;
 import obj.annualTable.*;
+import obj.annualTable.list.Leaf;
+import obj.annualTable.list.List_Region_PracticeBaseRegion_Student;
+import obj.annualTable.list.PracticeBaseWithRegion;
 import obj.staticObject.PracticeBase;
 import obj.staticSource.Major;
 
@@ -17,22 +20,22 @@ public class ExportStudentList extends Action{
 
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
+
+	private List_Region_PracticeBaseRegion_Student list;
 	
-	private ListOfPracticeBaseAndStudents practiceBaseAndStudents;
-	
-	public ListOfPracticeBaseAndStudents getPracticeBaseAndStudents(){return this.practiceBaseAndStudents;}
+	public List_Region_PracticeBaseRegion_Student getList(){return this.list;}
 	
 
 	static public final String SessionListKey=Export.SessionListKey; 
 	
 	public ExportStudentList(){
 		super();
-		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudents.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegion_Student.class,SessionListKey);
 	}
 
 	@Override
 	public String execute(){
-		return this.jumpBackWithTips("该项目不可用!");
+		return this.returnWithTips(NONE,"该项目不可用!");
 	}
 	
 	
@@ -64,29 +67,29 @@ public class ExportStudentList extends Action{
 	}
 	public String download(){//下载模板
 		System.out.println(">> ExportStudentList:download > practiceBaseName="+this.practiceBaseName);
-		if(this.practiceBaseAndStudents==null)
-			return this.jumpBackWithTips("该项目未初始化!");
-		ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair=
-				this.practiceBaseAndStudents.get(this.practiceBaseName);
+		if(this.list==null)
+			return this.returnWithTips(NONE,"该项目未初始化!");
+		Leaf<PracticeBaseWithRegion,Student> pair=
+				this.list.getByPracticeBaseName(this.practiceBaseName);
 		if(pair==null)
-			return this.jumpBackWithTips("实习基地名称有误!");
+			return this.returnWithTips(NONE,"实习基地名称有误!");
 		Major major=null;
 		if(majorName!=null) try {
 			major=new Major(majorName);
 		} catch (IllegalArgumentException | SQLException e1) {
-			return this.jumpBackWithTips("专业名称有误!");
+			return this.returnWithTips(NONE,"专业名称有误!");
 		}
 		System.out.println(">> ExportStudentList:download > create download file.");
 		this.downloadOutputStream=new ByteArrayOutputStream();
 		try{
 			String fileName=this.downloadByIO((SpecialIO)Base.io(),
-					this.getAnnual().getYear(),pair.getPracticeBase(),major,
+					this.getAnnual().getYear(),pair.getT().getPracticeBase(),major,
 					downloadOutputStream);
 			this.setDownloadFileName(fileName);//设置下载文件名称
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
 			this.downloadOutputStream=null;
-			return this.jumpBackWithTips("服务器开小差去了，暂时无法下载！",e);
+			return this.returnWithTips(NONE,"服务器开小差去了，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportStudentList:download <downloadAttachment");
 		return "downloadAttachment";

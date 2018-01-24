@@ -4,7 +4,7 @@ import java.io.*;
 
 import action.*;
 import obj.*;
-import obj.annualTable.*;
+import obj.annualTable.list.List_Region_PracticeBaseRegionLeaderSuperviseSupervisors;
 
 /**
  * 导出实习生名单
@@ -16,20 +16,20 @@ public class ExportAllSuperviseList extends Action{
 	public action.Annual getAnnual(){return this.annual;}
 	
 
-	private ListOfRegionAndPracticeBaseAndInnerPerson regionAndPracticeBaseAndInnerPerson;
+	private List_Region_PracticeBaseRegionLeaderSuperviseSupervisors list;
 
-	public ListOfRegionAndPracticeBaseAndInnerPerson getRegionAndPracticeBaseAndInnerPerson(){return this.regionAndPracticeBaseAndInnerPerson;}	
+	public List_Region_PracticeBaseRegionLeaderSuperviseSupervisors getList(){return this.list;}	
 
 	static public final String SessionListKey=Export.SessionListKey; 
 	
 	public ExportAllSuperviseList(){
 		super();
-		this.regionAndPracticeBaseAndInnerPerson=Manager.loadSession(ListOfRegionAndPracticeBaseAndInnerPerson.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegionLeaderSuperviseSupervisors.class,SessionListKey);
 	}
 
 	@Override
 	public String execute(){
-		return this.jumpBackWithTips("该项目不可用!");
+		return this.returnWithTips(NONE,"该项目不可用!");
 	}
 	
 	
@@ -47,22 +47,22 @@ public class ExportAllSuperviseList extends Action{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private ByteArrayOutputStream downloadOutputStream=null;
-	protected String downloadByIO(SpecialIO io,int year,ListOfRegionAndPracticeBaseAndInnerPerson regionAndPracticeBaseAndInnerPerson,OutputStream stream) throws IOException{
-		return io.createSuperviseList(year,regionAndPracticeBaseAndInnerPerson,stream);
+	protected String downloadByIO(SpecialIO io,int year,List_Region_PracticeBaseRegionLeaderSuperviseSupervisors list,OutputStream stream) throws IOException{
+		return io.createSuperviseList(year,list,stream);
 	}
 	public String download(){//下载模板
-		if(this.regionAndPracticeBaseAndInnerPerson==null)
-			return this.jumpBackWithTips("该项目未初始化!");
+		if(this.list==null)
+			return this.returnWithTips(NONE,"该项目未初始化!");
 		System.out.println(">> ExportAllSuperviseList:download > create download file.");
 		this.downloadOutputStream=new ByteArrayOutputStream();
 		try{
 			String fileName=this.downloadByIO((SpecialIO)Base.io(),
-					this.getAnnual().getYear(),this.regionAndPracticeBaseAndInnerPerson,downloadOutputStream);
+					this.getAnnual().getYear(),this.list,downloadOutputStream);
 			this.setDownloadFileName(fileName);//设置下载文件名称
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
 			this.downloadOutputStream=null;
-			return this.jumpBackWithTips("服务器开小差去了，暂时无法下载！",e);
+			return this.returnWithTips(NONE,"服务器开小差去了，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportAllStudentList:download <downloadAttachment");
 		return "downloadAttachment";

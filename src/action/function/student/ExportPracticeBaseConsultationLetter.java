@@ -5,6 +5,9 @@ import java.io.*;
 import action.*;
 import obj.*;
 import obj.annualTable.*;
+import obj.annualTable.list.Leaf;
+import obj.annualTable.list.List_Region_PracticeBaseRegion_Student;
+import obj.annualTable.list.PracticeBaseWithRegion;
 import obj.staticObject.PracticeBase;
 
 /**
@@ -15,22 +18,22 @@ public class ExportPracticeBaseConsultationLetter extends Action{
 
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
+
+	private List_Region_PracticeBaseRegion_Student list;
 	
-	private ListOfPracticeBaseAndStudents practiceBaseAndStudents;
-	
-	public ListOfPracticeBaseAndStudents getPracticeBaseAndStudents(){return this.practiceBaseAndStudents;}
+	public List_Region_PracticeBaseRegion_Student getList(){return this.list;}
 	
 
 	static public final String SessionListKey=Export.SessionListKey; 
 	
 	public ExportPracticeBaseConsultationLetter(){
 		super();
-		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudents.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegion_Student.class,SessionListKey);
 	}
 
 	@Override
 	public String execute(){
-		return this.jumpBackWithTips("该项目不可用!");
+		return this.returnWithTips(NONE,"该项目不可用!");
 	}
 	
 	
@@ -62,25 +65,25 @@ public class ExportPracticeBaseConsultationLetter extends Action{
 	}
 	public String download(){//下载模板
 		System.out.println(">> ExportPracticeBaseConsultationLetter:download > practiceBaseName="+this.practiceBaseName);
-		if(this.practiceBaseAndStudents==null)
-			return this.jumpBackWithTips("该项目未初始化!");
-		ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair pair=
-				this.practiceBaseAndStudents.get(this.practiceBaseName);
+		if(this.list==null)
+			return this.returnWithTips(NONE,"该项目未初始化!");
+		Leaf<PracticeBaseWithRegion,Student> pair=
+				this.list.getByPracticeBaseName(this.practiceBaseName);
 		if(pair==null)
-			return this.jumpBackWithTips("实习基地名称有误!");
+			return this.returnWithTips(NONE,"实习基地名称有误!");
 		final Boolean status=false;
-		if(status!=null && (status^pair.getPracticeBase().getStatus()))
-			return this.jumpBackWithTips("实习基地是非正式实习基地，不能提供商洽函！");
+		if(status!=null && (status^pair.getT().getPracticeBase().getStatus()))
+			return this.returnWithTips(NONE,"实习基地是非正式实习基地，不能提供商洽函！");
 		System.out.println(">> ExportPracticeBaseConsultationLetter:download > create download file.");
 		downloadOutputStream=new ByteArrayOutputStream();
 		try{
 			String fileName=this.downloadByIO((SpecialIO)Base.io(),
-					this.getAnnual().getYear(),pair.getPracticeBase(),this.majorName,downloadOutputStream);
+					this.getAnnual().getYear(),pair.getT().getPracticeBase(),this.majorName,downloadOutputStream);
 			this.setDownloadFileName(fileName);//设置下载文件名称
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
 			downloadOutputStream=null;
-			return this.jumpBackWithTips("服务器开小差去了，暂时无法下载！",e);
+			return this.returnWithTips(NONE,"服务器开小差去了，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportPracticeBaseConsultationLetter:download <downloadAttachment");
 		return "downloadAttachment";

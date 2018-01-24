@@ -1,4 +1,8 @@
-<%@page import="obj.annualTable.ListOfPracticeBaseAndStudents"%>
+<%@page import="obj.annualTable.list.Leaf"%>
+<%@page import="obj.annualTable.list.Node"%>
+<%@page import="obj.annualTable.list.PracticeBaseWithRegion"%>
+<%@page import="obj.annualTable.Student"%>
+<%@page import="obj.annualTable.Region"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags" %>
@@ -110,37 +114,43 @@
 		
 	<!-- ###### 已分配实习生 ###### -->
 	<table width="80%"><tbody>
-	<s:iterator value="practiceBaseAndStudents.list" var="__rpRow" status="__rpStatus">
+	<s:iterator value="list.list" var="__rpRow" status="__rpStatus">
 	<s:iterator value="#__rpRow.list" var="__Row" status="__Status">
 		<% Object tmpPracticeBase=pageContext.findAttribute("#__Row");
 		String practiceBaseName="";
-		if(tmpPracticeBase!=null && tmpPracticeBase instanceof ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair)
-			practiceBaseName=((ListOfPracticeBaseAndStudents.RegionPair.PracticeBasePair)tmpPracticeBase).getPracticeBase().getName();
+		if(tmpPracticeBase!=null && tmpPracticeBase instanceof Leaf){//Leaf<PracticeBaseWithRegion,Student>
+			@SuppressWarnings("unchecked")
+			String tmp=((Leaf<PracticeBaseWithRegion,Student>)tmpPracticeBase).getT().getPracticeBase().getName();
+			practiceBaseName=tmp;
+		}
 		%>
 		<tr>
 			<s:if test="#__Status.index == 0">
-				<% obj.annualTable.ListOfPracticeBaseAndStudents.RegionPair rp=(obj.annualTable.ListOfPracticeBaseAndStudents.RegionPair)
+				<% @SuppressWarnings("unchecked")
+				Node<Region,Leaf<PracticeBaseWithRegion,Student>> rp=(Node<Region,Leaf<PracticeBaseWithRegion,Student>>)
 					request.getAttribute("__rpRow");
+				int tmpStudentCnt=0;
+				for(Leaf<PracticeBaseWithRegion,Student> iter:rp.getList()) tmpStudentCnt+=iter.getSize();
 				pageContext.setAttribute("_rowspan",
-						rp.getAllStudentsCount()+rp.getSize()*3-1); %>
+						tmpStudentCnt+rp.getSize()*3-1); %>
 				<td rowspan="${_rowspan}" class="listHeader"
 				style="width:30px;background:#0071bc;text-indent:0px;text-align:center;" >
-					<s:property value="#__Row.region.name" />
+					<s:property value="#__rpRow.t.name" />
 				</td>
 			</s:if>
 			<td colspan="100">
 				<div class="listHeader" style="width:100%;background:linear-gradient(to right,#0071bc,rgba(0,0,0,0));border:0;">
 					<s:if test="#__Row.practiceBase.status">
 						<span style="float:left;color:red;">
-							<s:property value="#__Row.practiceBase.name" />
+							<s:property value="#__Row.t.practiceBase.name" />
 						</span>
 					</s:if><s:else>
 						<span style="float:left;">
-							<s:property value="#__Row.practiceBase.name" />
+							<s:property value="#__Row.t.practiceBase.name" />
 						</span>
 					</s:else>
 					<span style="float:left;font-size:12px;margin-left:20px;">
-						<s:if test="#__Row.practiceBase.hx">
+						<s:if test="#__Row.t.practiceBase.hx">
 							回生源地实习基地
 						</s:if><s:else>
 							北京及周边实习基地
@@ -151,16 +161,16 @@
 					</span>
 					<span style="float:left;font-size:12px;margin-left:20px;margin-top:5px;">
 						<s:form action="function_student_ExportStudentList_download" method="post" theme="simple">
-							<s:hidden name="practiceBaseName" value="%{#__Row.practiceBase.name}" theme="simple"/>
+							<s:hidden name="practiceBaseName" value="%{#__Row.t.practiceBase.name}" theme="simple"/>
 							<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
 							<s:submit value="下载实习生名单" theme="simple"
 							style="width:auto;background:rgba(255,255,255,0.85);border:double 3px #0071bc;font-weight:600;height:25px;"/>
 						</s:form>
 					</span>
 					<span style="float:left;font-size:12px;margin-left:5px;margin-top:5px;">
-						<s:if test="#__Row.practiceBase.status==false">
+						<s:if test="#__Row.t.practiceBase.status==false">
 							<s:form action="function_student_ExportPracticeBaseConsultationLetter_download" method="post" theme="simple">
-								<s:hidden name="practiceBaseName" value="%{#__Row.practiceBase.name}" theme="simple"/>
+								<s:hidden name="practiceBaseName" value="%{#__Row.t.practiceBase.name}" theme="simple"/>
 								<s:hidden name="majorName" value="%{majorName}" theme="simple"/>
 								<s:submit value="下载商洽函" theme="simple"
 								style="width:auto;background:rgba(255,255,255,0.85);border:double 3px #0071bc;font-weight:600;height:25px;"/>
@@ -195,7 +205,7 @@
 				学生大组长
 			</td>
 		</tr>
-		<s:iterator value="#__Row.students" var="__studentRow" status="__studentStatus">
+		<s:iterator value="#__Row.list" var="__studentRow" status="__studentStatus">
 		<tr class="wtableContent">
 			<% Object tmpStu=pageContext.findAttribute("#__Row");
 			String studentId="";
@@ -233,7 +243,7 @@
 				style="width:100%;height:100%;border:0;background:#00000000;color:black;font-size:14px;" theme="simple" />
 			</td>
 			<!-- 推荐大组长 --><td style="width:36px;padding:0;border:0">
-				<s:if test="#__studentRow.id==#__Row.region.studentGroupLeaderId"><!-- 已推荐 -->
+				<s:if test="#__studentRow.id==#__Row.t.region.studentGroupLeaderId"><!-- 已推荐 -->
 					<s:submit value="✔"
 						style="padding:0;margin:0;border:3px black double;background:gold;width:30px;height:30px;font-size:30px;line-height:5px;" theme="simple" />
 				</s:if><s:else><!-- 未推荐 -->

@@ -1,4 +1,3 @@
-<%@page import="obj.annualTable.ListOfPracticeBaseAndStudents"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags" %>
@@ -47,13 +46,13 @@
 			<td style="border:solid 1px;width:4%;">住宿天数</td>
 			<td style="border:solid 1px;width:4%;">其他费用</td>
 		</tr>
-		<s:iterator value="regionAndPracticeBaseAndInnerPerson.list" var="__rpRow" status="__rpStatus">
+		<s:iterator value="list.list" var="__rpRow" status="__rpStatus">
 		<s:iterator value="#__rpRow.list" var="__pairRow" status="__pairStatus">
 			<tr class="wtableContent">
 				<s:set var="_colspan" value="%{#__rpRow.size}" />
 				<s:if test="#__pairStatus.index == 0">
 					<td rowspan="${_colspan}" style="width:3%;background-color:white;">
-						<s:property value="#__rpRow.region.name" />
+						<s:property value="#__rpRow.t.name" />
 					</td>
 				</s:if>
 				<!-- 基地名称 -->
@@ -62,94 +61,102 @@
 				</td>
 				<!-- 督导 -->
 				<td style="padding:0;background-color:white;word-wrap:break-word;">
-					<s:property value="#__pairRow.supervisor[typeIndex].school" />
+					<s:property value="#__pairRow.supervisors[typeIndex].school" />
 				</td>
 				<td style="padding:0;background-color:lightyellow;word-wrap:break-word;font-weight:bold;">
-					<s:property value="#__pairRow.supervisor[typeIndex].name" />
+					<s:property value="#__pairRow.supervisors[typeIndex].name" />
 				</td>
 				<td style="padding:0;background-color:white;word-wrap:break-word;">
-					<s:property value="#__pairRow.supervisor[typeIndex].id" />
+					<s:property value="#__pairRow.supervisors[typeIndex].id" />
 				</td>
 				<td style="padding:0;background-color:white;word-wrap:break-word;">
-					<s:property value="#__pairRow.supervisor[typeIndex].phone" />
+					<s:property value="#__pairRow.supervisors[typeIndex].phone" />
 				</td>
 				<td style="padding:0;background-color:white;word-wrap:break-word;">
-					<s:property value="#__pairRow.supervisor[typeIndex].email" />
+					<s:property value="#__pairRow.supervisors[typeIndex].email" />
 				</td>
 				<!-- 经费 -->
 				<s:form action="function_Supervise1Page_execute" method="post" theme="simple">
 					<td style="padding:0;background-color:white;">
-						<s:if test="#__pairRow.supervise[typeIndex].moneyPlane == 0">
-							<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].moneyPlane"
+						<s:if test="#__pairRow.supervises[typeIndex].moneyPlane == 0">
+							<s:textfield name="list.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervises[%{typeIndex}].moneyPlane"
 							value=""
 							style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
 						</s:if><s:else>
-							<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].moneyPlane"
+							<s:textfield name="list.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervises[%{typeIndex}].moneyPlane"
+							value="%{#__pairRow.supervises[typeIndex].moneyPlane}"
 							style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
 						</s:else>
 					</td>
 					<td style="padding:0;background-color:white;">
-						<s:if test="#__pairRow.supervise[typeIndex].moneyBooking == 0">
-							<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].moneyBooking"
+						<s:if test="#__pairRow.supervises[typeIndex].moneyBooking == 0">
+							<s:textfield name="list.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervises[%{typeIndex}].moneyBooking"
 							value=""
 							style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
 						</s:if><s:else>
-							<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].moneyBooking"
+							<s:textfield name="list.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervises[%{typeIndex}].moneyBooking"
+							value="%{#__pairRow.supervises[typeIndex].moneyBooking}"
 							style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
 						</s:else>
 					</td>
 					<td style="padding:0;background-color:white;">
-						<s:if test="#__pairRow.supervise[typeIndex].moneyInsurance == 0">
-							<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].moneyInsurance"
+						<s:if test="#__pairRow.supervises[typeIndex].moneyInsurance == 0">
+							<s:textfield name="list.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervises[%{typeIndex}].moneyInsurance"
 							value=""
 							style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
 						</s:if><s:else>
-							<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].moneyInsurance"
+							<s:textfield name="list.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervises[%{typeIndex}].moneyInsurance"
+							value="%{#__pairRow.supervises[typeIndex].moneyInsurance}"
 							style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
 						</s:else>
 					</td>
 					<td style="padding:0;background-color:white;">
-						<s:if test="#__pairRow.supervise[typeIndex].moneyTrain == 0">
-							<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].moneyTrain"
+						<s:if test="#__pairRow.supervises[typeIndex].moneyTrain == 0">
+							<s:textfield name="list.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervises[%{typeIndex}].moneyTrain"
 							value=""
 							style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
 						</s:if><s:else>
-							<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].moneyTrain"
+							<s:textfield name="list.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervises[%{typeIndex}].moneyTrain"
+							value="%{#__pairRow.supervises[typeIndex].moneyTrain}"
 							style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
 						</s:else>
 					</td>
 					<td style="padding:0;background-color:white;">
-						<s:if test="#__pairRow.supervise[typeIndex].moneyAccommodation == 0">
-							<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].moneyAccommodation"
+						<s:if test="#__pairRow.supervises[typeIndex].moneyAccommodation == 0">
+							<s:textfield name="list.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervises[%{typeIndex}].moneyAccommodation"
 							value=""
 							style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
 						</s:if><s:else>
-							<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].moneyAccommodation"
+							<s:textfield name="list.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervises[%{typeIndex}].moneyAccommodation"
+							value="%{#__pairRow.supervises[typeIndex].moneyAccommodation}"
 							style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
 						</s:else>
 					</td>
 					<td style="padding:0;background-color:white;">
-						<s:if test="#__pairRow.supervise[typeIndex].moneyAccommodationNum == 0">
-							<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].moneyAccommodationNum"
+						<s:if test="#__pairRow.supervises[typeIndex].moneyAccommodationNum == 0">
+							<s:textfield name="list.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervises[%{typeIndex}].moneyAccommodationNum"
 							value=""
 							style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
 						</s:if><s:else>
-							<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].moneyAccommodationNum"
+							<s:textfield name="list.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervises[%{typeIndex}].moneyAccommodationNum"
+							value="%{#__pairRow.supervises[typeIndex].moneyAccommodationNum}"
 							style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
 						</s:else>
 					</td>
 					<td style="padding:0;background-color:white;">
-						<s:if test="#__pairRow.supervise[typeIndex].moneyElse == 0">
-							<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].moneyElse"
+						<s:if test="#__pairRow.supervises[typeIndex].moneyElse == 0">
+							<s:textfield name="list.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervises[%{typeIndex}].moneyElse"
 							value=""
 							style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
 						</s:if><s:else>
-							<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].moneyElse"
+							<s:textfield name="list.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervises[%{typeIndex}].moneyElse"
+							value="%{#__pairRow.supervises[typeIndex].moneyElse}"
 							style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
 						</s:else>
 					</td>
 					<td style="padding:0;background-color:white;">
-						<s:textfield name="regionAndPracticeBaseAndInnerPerson.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervise[%{typeIndex}].remark"
+						<s:textfield name="list.list[%{#__rpStatus.index}].list[%{#__pairStatus.index}].supervises[%{typeIndex}].remark"
+						value="%{#__pairRow.supervises[typeIndex].remark}"
 						style="width:100%;height:100%;margin:0px;padding:0px;text-align:center;font-size:14px;border:0px;" />
 					</td>
 					<td>

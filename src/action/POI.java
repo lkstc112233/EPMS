@@ -10,7 +10,10 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 import obj.*;
-import obj.annualTable.*;
+import obj.annualTable.list.List_Region_PracticeBaseRegionLeaderSuperviseSupervisors;
+import obj.annualTable.list.List_Region_PracticeBaseRegion_Student;
+import obj.annualTable.list.PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors;
+import obj.annualTable.list.PracticeBaseWithRegionWithMoneyPB;
 import obj.staticObject.*;
 import obj.staticSource.Major;
 import obj.restraint.BaseRestraint;
@@ -91,7 +94,7 @@ public class POI implements SQLIO, SpecialIO{
 		return excel.createStudentList(year, pb, major, stream);
 	}
 	@Override
-	public String createStudentInsuranceList(int year, ListOfPracticeBaseAndStudents list, OutputStream stream) throws IOException {
+	public String createStudentInsuranceList(int year, List_Region_PracticeBaseRegion_Student list, OutputStream stream) throws IOException {
 		return excel.createStudentInsuranceList(year, list, stream);
 	}
 	@Override
@@ -100,12 +103,12 @@ public class POI implements SQLIO, SpecialIO{
 		return word.createPracticeBaseConsultationLetter(year, pb, majorName, stream);
 	}
 	@Override
-	public String createPlanDesign(int year, ListOfPracticeBaseAndStudents list,Boolean status, OutputStream stream)
+	public String createPlanDesign(int year, List_Region_PracticeBaseRegion_Student list,Boolean status, OutputStream stream)
 			throws IOException {
 		return excel.createPlanDesign(year, list,status, stream);
 	}
 	@Override
-	public String createPlanMedia(int year, ListOfPracticeBaseAndStudents list, boolean[][][] media,
+	public String createPlanMedia(int year, List_Region_PracticeBaseRegion_Student list, boolean[][][] media,
 			OutputStream stream) throws IOException {
 		return excel.createPlanMedia(year, list, media, stream);
 	}
@@ -114,13 +117,13 @@ public class POI implements SQLIO, SpecialIO{
 		return excel.createTeacherList(year,status, stream);
 	}
 	@Override
-	public String createSuperviseList(int year,ListOfRegionAndPracticeBaseAndInnerPerson list, OutputStream stream) throws IOException {
+	public String createSuperviseList(int year,List_Region_PracticeBaseRegionLeaderSuperviseSupervisors list, OutputStream stream) throws IOException {
 		return excel.createSuperviseList(year, list, stream);
 	}
 	@Override
-	public String createSupervisorMandate(int year,InnerPerson supervisor,ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair pair,int superviseIndex,
+	public String createSupervisorMandate(int year,InnerPerson supervisor,PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors pblss,int superviseIndex,
 			OutputStream stream) throws IOException {
-		return word.createSupervisorMandate(year, supervisor, pair, superviseIndex, stream);
+		return word.createSupervisorMandate(year, supervisor, pblss, superviseIndex, stream);
 	}
 
 	@Override
@@ -129,8 +132,8 @@ public class POI implements SQLIO, SpecialIO{
 	}
 
 	@Override
-	public String createPracticeBaseMoney(int year,ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair, OutputStream stream) throws IOException {
-		return word.createPracticeBaseMoney(year,pair,stream);
+	public String createPracticeBaseMoney(int year,PracticeBaseWithRegionWithMoneyPB pbrm, OutputStream stream) throws IOException {
+		return word.createPracticeBaseMoney(year,pbrm,stream);
 	}
 
 

@@ -23,7 +23,7 @@ public class ExportTeacherList extends Action{
 
 	@Override
 	public String execute(){
-		return this.jumpBackWithTips("该项目不可用!");
+		return this.returnWithTips(NONE,"该项目不可用!");
 	}
 
 	
@@ -62,7 +62,7 @@ public class ExportTeacherList extends Action{
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
 			this.downloadOutputStream=null;
-			return this.jumpBackWithTips("服务器开小差去了，暂时无法下载！",e);
+			return this.returnWithTips(NONE,"服务器开小差去了，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportTeacherList:download <downloadAttachment");
 		return "downloadAttachment";

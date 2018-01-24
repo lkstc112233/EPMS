@@ -12,6 +12,8 @@ import org.apache.poi.xwpf.usermodel.*;
 
 import obj.*;
 import obj.annualTable.*;
+import obj.annualTable.list.PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors;
+import obj.annualTable.list.PracticeBaseWithRegionWithMoneyPB;
 import obj.staticObject.*;
 import obj.staticSource.*;
 
@@ -331,7 +333,7 @@ public class POIWord implements SpecialWordIO{
 	@Override
 	public String createSupervisorMandate(int year,
 			InnerPerson supervisor,
-			ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair pair,
+			PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors pblss,
 			int superviseIndex,
 			OutputStream out) throws IOException
 	{
@@ -344,7 +346,7 @@ public class POIWord implements SpecialWordIO{
 		String name=String.format("%d年[%s%s%s至%s]免费师范生教育实习督导任务书",
 				year,school.getSubName(),
 				supervisor.getName(),
-				Supervise.getTypeNameList()[superviseIndex],pair.getPracticeBase().getName());
+				Supervise.getTypeNameList()[superviseIndex],pblss.getPracticeBase().getName());
 		String modelFileName="免费师范生教育实习督导任务书.docx";
 		Map<String,Object> param=new HashMap<String,Object>();
 		try {
@@ -354,9 +356,9 @@ public class POIWord implements SpecialWordIO{
 			param.put("nowMonth",String.valueOf(Manager.getNowTimeMonth()));
 			param.put("nowDay",String.valueOf(Manager.getNowTimeDay()));
 			param.put("supervisor",supervisor);
-			param.put("regionName",pair.getRegion().getName());
-			param.put("regionLeader",pair.getLeader());
-			param.put("practiceBase",pair.getPracticeBase());
+			param.put("regionName",pblss.getRegion().getName());
+			param.put("regionLeader",pblss.getLeader());
+			param.put("practiceBase",pblss.getPracticeBase());
 			param.put("superviseTypeName",Supervise.getTypeNameList()[superviseIndex]);
 			param.put("superviseTask",POI.loadTextFile("superviseTask_"+String.valueOf(
 					superviseIndex)+".txt"));
@@ -477,12 +479,12 @@ public class POIWord implements SpecialWordIO{
 
 	@Override
 	public String createPracticeBaseMoney(int year,
-			ListOfPracticeBaseAndMoney.RegionPair.PracticeBasePair pair,
+			PracticeBaseWithRegionWithMoneyPB pbrm,
 			OutputStream out) throws IOException {
 		//start
 		String name=String.format("%d年免费师范生教育实习基地经费明细单(%s)",
 				year,
-				pair.getPracticeBase().getName());
+				pbrm.getPracticeBase().getName());
 		String modelFileName="免费师范生教育实习基地经费明细单.docx";
 		Map<String,Object> param=new HashMap<String,Object>();
 		try {
@@ -491,21 +493,21 @@ public class POIWord implements SpecialWordIO{
 			param.put("nowYear",String.valueOf(Manager.getNowTimeYear()));
 			param.put("nowMonth",String.valueOf(Manager.getNowTimeMonth()));
 			param.put("nowDay",String.valueOf(Manager.getNowTimeDay()));
-			param.put("practiceBaseName",pair.getPracticeBase().getName());
-			param.put("sum",pair.getSum());
-			param.put("studentNum",pair.getNumberOfStudent());
-			param.put("syyNum",pair.getNumberOfStudentSYY());
-			param.put("sumSmall",String.format("%.2f",pair.getSum().getSum()));
-			param.put("sumChinese",arabNumToChineseRMB(pair.getSum().getSum()));
+			param.put("practiceBaseName",pbrm.getPracticeBase().getName());
+			param.put("sum",pbrm.getSum());
+			param.put("studentNum",pbrm.getNumberOfStudent());
+			param.put("syyNum",pbrm.getNumberOfStudentSYY());
+			param.put("sumSmall",String.format("%.2f",pbrm.getSum().getSum()));
+			param.put("sumChinese",arabNumToChineseRMB(pbrm.getSum().getSum()));
 			MoneyPB base[];
 			try {
 				base = MoneyPB.getMoneyPBBase();
 			} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 				throw new IOException("读取教育实习经费标准失败!("+e+")");
 			}
-			param.put("base",base[pair.getPracticeBase().getProvince().contains("北京")?0:1]);
-			param.put("startMonth",Manager.getTimeMonth(pair.getRegion().getEnterPracticeBaseTime()));
-			param.put("startDay",Manager.getTimeDay(pair.getRegion().getEnterPracticeBaseTime()));
+			param.put("base",base[pbrm.getPracticeBase().getProvince().contains("北京")?0:1]);
+			param.put("startMonth",Manager.getTimeMonth(pbrm.getRegion().getEnterPracticeBaseTime()));
+			param.put("startDay",Manager.getTimeDay(pbrm.getRegion().getEnterPracticeBaseTime()));
 			try{
 				Time a=new Time(year,ACCESS.jysx);
 				param.put("endMonth",Manager.getTimeMonth(a.getTime2()));

@@ -6,6 +6,10 @@ import java.util.*;
 import action.*;
 import obj.*;
 import obj.annualTable.*;
+import obj.annualTable.list.Leaf;
+import obj.annualTable.list.List_Region_PracticeBaseRegionPlan_Student;
+import obj.annualTable.list.Node;
+import obj.annualTable.list.PracticeBaseWithRegionWithPlan;
 import obj.staticObject.PracticeBase;
 import obj.staticSource.Major;
 import token.Role;
@@ -21,14 +25,14 @@ public class StudentArrangeIntoPracticeBase extends Action{
 	
 	private String majorName;
 	private boolean[] checkBox;
-	private ListOfPracticeBaseAndStudentsAndPlan practiceBaseAndStudents;
+	private List_Region_PracticeBaseRegionPlan_Student list;
 	private String practiceBaseName;
 	
 	public void setMajorName(String a){this.majorName=Field.s2S(a);}
 	public String getMajorName(){return majorName;}
 	public void setCheckBox(boolean[] a){this.checkBox=a;}
 	public boolean[] getCheckBox(){return this.checkBox;}
-	public ListOfPracticeBaseAndStudentsAndPlan getPracticeBaseAndStudents(){return this.practiceBaseAndStudents;}
+	public List_Region_PracticeBaseRegionPlan_Student getList(){return this.list;}
 	public String getPracticeBaseName(){return this.practiceBaseName;}
 	public void setPracticeBaseName(String a){this.practiceBaseName=a;}
 	
@@ -37,12 +41,13 @@ public class StudentArrangeIntoPracticeBase extends Action{
 	private List<PracticeBase> practiceBases;
 		public List<PracticeBase> getPracticeBases(){
 			if(this.practiceBases!=null) return this.practiceBases;
-			if(this.practiceBaseAndStudents==null) return null;
+			if(this.list==null) return null;
 			this.practiceBases=new ArrayList<PracticeBase>();
-			for(ListOfPracticeBaseAndStudentsAndPlan.RegionPair rp:this.getPracticeBaseAndStudents().getList())
-				for(ListOfPracticeBaseAndStudentsAndPlan.RegionPair.PracticeBasePair p:rp.getList())
-					if(p.getPracticeBase()!=null)
-						this.practiceBases.add(p.getPracticeBase());
+			for(Node<Region, Leaf<PracticeBaseWithRegionWithPlan, Student>> rp:this.getList().getList())
+				for(Leaf<PracticeBaseWithRegionWithPlan, Student> p:rp.getList())
+					if(p.getT().getPracticeBase()!=null)
+						if(p.getSize()<p.getT().getPlan().getNumber())
+							this.practiceBases.add(p.getT().getPracticeBase());
 			return this.practiceBases;
 		}
 	private List<Major> majors;
@@ -67,7 +72,7 @@ public class StudentArrangeIntoPracticeBase extends Action{
 	
 	public StudentArrangeIntoPracticeBase(){
 		super();
-		this.practiceBaseAndStudents=Manager.loadSession(ListOfPracticeBaseAndStudentsAndPlan.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegionPlan_Student.class,SessionListKey);
 		this.majorName=Manager.loadSession(String.class,SessionMajorNameKey);
 		if(this.majorName==null && this.getMajors()!=null && !this.getMajors().isEmpty())//默认值
 			this.setMajorName(this.getMajors().get(0).getName());
@@ -76,10 +81,10 @@ public class StudentArrangeIntoPracticeBase extends Action{
 
 	private void setupCheckBox(){
 		this.checkBox=null;
-		if(this.practiceBaseAndStudents!=null){
-			int len=this.practiceBaseAndStudents.getUndistributedStudents().size();
-			for(ListOfPracticeBaseAndStudentsAndPlan.RegionPair rp:this.practiceBaseAndStudents.getList())
-				for(ListOfPracticeBaseAndStudentsAndPlan.RegionPair.PracticeBasePair p:rp.getList())
+		if(this.list!=null){
+			int len=this.list.getUndistributedStudents().size();
+			for(Node<Region, Leaf<PracticeBaseWithRegionWithPlan, Student>> rp:this.list.getList())
+				for(Leaf<PracticeBaseWithRegionWithPlan, Student> p:rp.getList())
 					len=Math.max(len,p.getSize());
 			this.checkBox=new boolean[len];
 		}
@@ -92,7 +97,7 @@ public class StudentArrangeIntoPracticeBase extends Action{
 	public String display(){
 		this.practiceBaseName=null;
 		System.out.println(">> RegionArrangement:display > year="+this.getAnnual().getYear()+",majorName="+majorName);
-		this.practiceBaseAndStudents=null;
+		this.list=null;
 		Major major=null;
 		try{
 			major=new Major(this.majorName);
@@ -100,7 +105,7 @@ public class StudentArrangeIntoPracticeBase extends Action{
 			return this.returnWithTips(NONE,"专业("+this.majorName+")不存在！",e);
 		}
 		try {
-			this.practiceBaseAndStudents=new ListOfPracticeBaseAndStudentsAndPlan(
+			this.list=new List_Region_PracticeBaseRegionPlan_Student(
 					this.getAnnual().getYear(),major,/*minPlanNumber*/1);
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 			return this.returnWithTips(NONE,"数据库开小差去了！",e);
@@ -109,7 +114,7 @@ public class StudentArrangeIntoPracticeBase extends Action{
 			return this.returnWithTips(NONE,"读取实习基地列表失败!");
 		if(this.getMajors()==null)
 			return this.returnWithTips(NONE,"读取实习专业列表失败!");
-		Manager.saveSession(SessionListKey,this.practiceBaseAndStudents);
+		Manager.saveSession(SessionListKey,this.list);
 		Manager.saveSession(SessionMajorNameKey,this.majorName);
 		this.setupCheckBox();
 		System.out.println(">> RegionArrangement:display <NONE");
@@ -121,32 +126,32 @@ public class StudentArrangeIntoPracticeBase extends Action{
 	 */
 	@Override
 	public String execute(){
-		if(this.practiceBaseAndStudents==null)
+		if(this.list==null)
 			return display();
 		System.out.println(">> RegionArrangement:execute > practiceBaseName= "+this.practiceBaseName);
 		if(this.practiceBaseName==null || this.practiceBaseName.isEmpty())
-			return this.jumpBackWithTips("请选择一个实习基地！");
-		ListOfPracticeBaseAndStudentsAndPlan.RegionPair.PracticeBasePair pair=
-				this.practiceBaseAndStudents.get(this.practiceBaseName);
-		if(pair==null || pair.getPlan()==null)
-			return this.jumpBackWithTips("基地("+this.practiceBaseName+")没有("+this.majorName+")专业派遣计划！");
+			return this.returnWithTips(NONE,"请选择一个实习基地！");
+		Leaf<PracticeBaseWithRegionWithPlan, Student> pair=
+				this.list.getByPracticeBaseName(this.practiceBaseName);
+		if(pair==null || pair.getT().getPlan()==null)
+			return this.returnWithTips(NONE,"基地("+this.practiceBaseName+")没有("+this.majorName+")专业派遣计划！");
 		//RegionArrangement:execute
 		boolean flag=false;
 		for(boolean s:checkBox) flag|=s;
 		if(!flag)
-			return this.jumpBackWithTips("请至少选择一个实习生分配到实习基地！");
+			return this.returnWithTips(NONE,"请至少选择一个实习生分配到实习基地！");
 		List<Student> tmp=new ArrayList<Student>();
 		StringBuilder sb=new StringBuilder();
 		StringBuilder error=new StringBuilder();
-		for(int i=0;i<this.practiceBaseAndStudents.getUndistributedStudents().size();i++){
+		for(int i=0;i<this.list.getUndistributedStudents().size();i++){
 			if(checkBox[i]){
 				//选中了
-				Student stu=this.practiceBaseAndStudents.getUndistributedStudents().get(i);
+				Student stu=this.list.getUndistributedStudents().get(i);
 				if(stu==null||stu.getName()==null)
 					continue;
 				try{
-					if(pair.getPracticeBase().check(stu) &&
-							pair.getPlan().check(stu,pair.getStudents().size()+tmp.size())){
+					if(pair.getT().getPracticeBase().check(stu) &&
+							pair.getT().getPlan().check(stu,pair.getSize()+tmp.size())){
 						stu.setPracticeBase(this.practiceBaseName);
 						stu.update();
 					}
@@ -162,8 +167,8 @@ public class StudentArrangeIntoPracticeBase extends Action{
 			}
 		}
 		for(Student s:tmp) {
-			pair.getStudents().add(s);
-			this.practiceBaseAndStudents.getUndistributedStudents().remove(s);
+			pair.getList().add(s);
+			this.list.getUndistributedStudents().remove(s);
 		}
 		Manager.removeSession(SessionListKey);
 		return this.jumpToMethodWithTips("display",
@@ -175,25 +180,25 @@ public class StudentArrangeIntoPracticeBase extends Action{
 	 * 用于从大区移除基地
 	 */
 	public String delete(){
-		if(this.practiceBaseAndStudents==null)
+		if(this.list==null)
 			return display();
 		System.out.println(">> RegionArrangement:delete > practiceBaseName= "+this.practiceBaseName);
 		if(this.practiceBaseName==null || this.practiceBaseName.isEmpty())
-			return this.jumpBackWithTips("未选中实习生！");
+			return this.returnWithTips(NONE,"未选中实习生！");
 		boolean flag=false;
 		for(boolean s:checkBox) flag|=s;
 		if(!flag)
-			return this.jumpBackWithTips("请至少选择一个实习生来移除！");
-		ListOfPracticeBaseAndStudentsAndPlan.RegionPair.PracticeBasePair pair=
-				this.practiceBaseAndStudents.get(this.practiceBaseName);
+			return this.returnWithTips(NONE,"请至少选择一个实习生来移除！");
+		Leaf<PracticeBaseWithRegionWithPlan, Student> pair=
+				this.list.getByPracticeBaseName(this.practiceBaseName);
 		if(pair==null)
-			return this.jumpBackWithTips("选中了一个不存在的实习基地("+this.practiceBaseName+")！");
+			return this.returnWithTips(NONE,"选中了一个不存在的实习基地("+this.practiceBaseName+")！");
 		List<Student> tmp=new ArrayList<Student>();
 		StringBuilder sb=new StringBuilder();
-		for(int i=0;i<pair.getStudents().size();i++){
+		for(int i=0;i<pair.getSize();i++){
 			if(checkBox[i]){
 				//选中了
-				Student stu=pair.getStudents().get(i);
+				Student stu=pair.getList().get(i);
 				if(stu==null||stu.getName()==null)
 					continue;
 				try{
@@ -209,7 +214,7 @@ public class StudentArrangeIntoPracticeBase extends Action{
 			}
 		}
 		for(Student s:tmp)
-			pair.getStudents().remove(s);
+			pair.getList().remove(s);
 		Manager.removeSession(SessionListKey);
 		return this.jumpToMethodWithTips("display",
 				(sb.length()>0?(sb.toString()+" 已经从实习基地("+this.practiceBaseName+")移出！"):"error"));

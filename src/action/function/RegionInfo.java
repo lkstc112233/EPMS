@@ -6,7 +6,9 @@ import java.util.*;
 import action.*;
 import obj.*;
 import obj.annualTable.*;
-import obj.annualTable.ListOfRegionAndPracticeBases.RegionPair.PracticeBasePair;
+import obj.annualTable.list.Leaf;
+import obj.annualTable.list.List_Region_PracticeBaseRegion;
+import obj.annualTable.list.PracticeBaseWithRegion;
 import obj.staticObject.*;
 
 /**
@@ -19,12 +21,12 @@ public class RegionInfo extends Action{
 	public action.Annual getAnnual(){return this.annual;}
 	
 	
-	private ListOfRegionAndPracticeBases regionAndPracticeBase;
+	private List_Region_PracticeBaseRegion list;
 	private Supervise[][][] supervises;
 	private List<InnerPerson> innerPersons;
 	static public final String SessionListKey="RegionInfo_List";
 
-	public ListOfRegionAndPracticeBases getRegionAndPracticeBase(){return this.regionAndPracticeBase;}
+	public List_Region_PracticeBaseRegion getList(){return this.list;}
 	public int[] getSuperviseTypeList(){return Supervise.getTypeList();}
 	public String[] getSuperviseTypeNameList(){return Supervise.getTypeNameList();}
 	public List<InnerPerson> getInnerPersons(){
@@ -36,18 +38,18 @@ public class RegionInfo extends Action{
 		}return this.innerPersons=null;
 	}
 	public Supervise[][][] getSupervises(){
-		if(this.regionAndPracticeBase==null) return this.supervises=null;
+		if(this.list==null) return this.supervises=null;
 		if(this.supervises!=null) return this.supervises;
 		this.supervises=new Supervise[this.getSuperviseTypeList().length]
-				[this.regionAndPracticeBase.getList().size()][];
+				[this.list.getList().size()][];
 		for(int type:this.getSuperviseTypeList()){
 			for(int i=0;i<this.supervises[type].length;i++){
-				List<PracticeBasePair> pbs=this.regionAndPracticeBase.getList().get(i).getList();
-				this.supervises[type][i]=new Supervise[pbs.size()];
+				List<PracticeBaseWithRegion> pbrs=this.list.getList().get(i).getList();
+				this.supervises[type][i]=new Supervise[pbrs.size()];
 				for(int j=0;j<this.supervises[type][i].length;j++){
 					Supervise tmp=new Supervise();
 					tmp.setYear(this.getAnnual().getYear());
-					tmp.setPracticeBase(pbs.get(j).getPracticeBase().getName());
+					tmp.setPracticeBase(pbrs.get(j).getPracticeBase().getName());
 					tmp.setSuperviseType(type);
 					try {
 						tmp.load();
@@ -63,7 +65,7 @@ public class RegionInfo extends Action{
 
 	public RegionInfo(){
 		super();
-		this.regionAndPracticeBase=Manager.loadSession(ListOfRegionAndPracticeBases.class, SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegion.class, SessionListKey);
 		this.getSupervises();
 	}
 	
@@ -71,60 +73,63 @@ public class RegionInfo extends Action{
 		if(this.getInnerPersons()==null)
 			return this.returnWithTips(NONE,"数据库读取校内人员列表失败！");
 		try {
-			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/false);
+			this.list=new List_Region_PracticeBaseRegion(this.getAnnual().getYear(),/*containsNullRegion*/false);
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
 			return this.returnWithTips(NONE,"数据库读取实习基地及大区信息失败！");
 		}
 		this.getSupervises();
-		if(this.regionAndPracticeBase!=null)
-			Manager.saveSession(SessionListKey,this.regionAndPracticeBase);
+		if(this.list!=null)
+			Manager.saveSession(SessionListKey,this.list);
 		return NONE;
 	}
-	
-	private String practiceBaseName;
-		public String getPracticeBaseName() {return this.practiceBaseName;}
-		public void setPracticeBaseName(String a) {this.practiceBaseName=Field.s2S(a);}
 	
 	@Override
 	public String execute(){
 		boolean ok=false;
 		StringBuilder error=new StringBuilder();
-		if(this.regionAndPracticeBase==null)
+		if(this.list==null)
 			return display();
-		//保存Region
-		ListOfRegionAndPracticeBases.RegionPair.PracticeBasePair pair=this.regionAndPracticeBase.get(this.practiceBaseName);
-		if(pair==null)
-			return this.returnWithTips(NONE,"实习基地选择错误!("+this.practiceBaseName+")");
-		Region region=pair.getRegion();
-		try {
-			region.update();
-			ok=true;
-		} catch (IllegalArgumentException | SQLException e) {
-			e.printStackTrace();
-			if(error.length()>0) error.append(',');
-			error.append(region.getName()+"的相关信息保存失败!("+e.getMessage()+")");
-		}
-		//保存Supervise
-		int[] index=this.regionAndPracticeBase.indexOf(this.practiceBaseName);
-		for(int type:this.getSuperviseTypeList()){
-			Supervise tmp=null;
+		for(int i=0;i<this.list.getSize();i++) {
+			Leaf<Region, PracticeBaseWithRegion> rp=this.list.getList().get(i);
+			Region r=rp.getT();
 			try {
-				tmp=this.supervises[type][index[0]][index[1]];
-			} catch (IndexOutOfBoundsException e) {
-				return this.returnWithTips(NONE,"实习基地选择错误!("+this.practiceBaseName+")");
-			}
-			try {
-				if(tmp.getSupervisorId()==null||tmp.getSupervisorId().isEmpty())
-					tmp.delete();
-				else if(!tmp.exist())
-					tmp.create();
-				else
-					tmp.update();
-			} catch (SQLException | IllegalAccessException | InstantiationException e) {
+				r.update();
+				ok=true;
+			} catch (IllegalArgumentException | SQLException e) {
 				e.printStackTrace();
 				if(error.length()>0) error.append(',');
-				error.append(tmp.getPracticeBase()+"的"+Supervise.getTypeNameList()[type]
-						+"的相关信息保存失败!("+e.getMessage()+")");
+				error.append(r.getName()+"的相关信息保存失败!("+e.getMessage()+")");
+			}
+			for(int j=0;j<rp.getSize();j++) {
+				PracticeBaseWithRegion pair=rp.getList().get(j);
+				//保存Region
+				Region region=pair.getRegion();
+				region.setLeaderId(r.getLeaderId());
+				try {
+					region.update();
+					ok=true;
+				} catch (IllegalArgumentException | SQLException e) {
+					e.printStackTrace();
+					if(error.length()>0) error.append(',');
+					error.append(region.getName()+"的相关信息保存失败!("+e.getMessage()+")");
+				}
+				//保存Supervise
+				for(int type:this.getSuperviseTypeList()){
+					Supervise tmp=this.supervises[type][i][j];
+					try {
+						if(tmp.getSupervisorId()==null||tmp.getSupervisorId().isEmpty())
+							tmp.delete();
+						else if(!tmp.exist())
+							tmp.create();
+						else
+							tmp.update();
+					} catch (SQLException | IllegalAccessException | InstantiationException e) {
+						e.printStackTrace();
+						if(error.length()>0) error.append(',');
+						error.append(tmp.getPracticeBase()+"的"+Supervise.getTypeNameList()[type]
+								+"的相关信息保存失败!("+e.getMessage()+")");
+					}
+				}
 			}
 		}
 		return this.jumpToMethodWithTips("display",

@@ -103,6 +103,7 @@ public class Manager {
 		InnerPerson usr=Manager.getUser();
 		Integer year=Manager.getYear();
 		LinkedList<String> list=Manager.getChainList();
+		String actionName=Manager.getActionName();
 		//clear
 		Manager.clearSession();
 		//reload
@@ -111,6 +112,7 @@ public class Manager {
 		if(year!=null)
 			Manager.setYear(year);
 		Manager.saveSession(Manager.chainListKey,list);
+		Manager.saveSession(ActionNameKey,actionName);
 	}
 	
 	static public void saveSession(String key,Object value){

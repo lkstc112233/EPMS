@@ -8,7 +8,9 @@ import java.util.Map;
 import action.*;
 import obj.*;
 import obj.annualTable.*;
-import obj.annualTable.ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair;
+import obj.annualTable.list.Leaf;
+import obj.annualTable.list.List_Region_PracticeBaseRegionLeaderSuperviseSupervisors;
+import obj.annualTable.list.PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors;
 import obj.staticObject.InnerPerson;
 import obj.staticSource.School;
 
@@ -21,21 +23,21 @@ public class ExportSupervisorAllMandate extends Action{
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
 	
-	private ListOfRegionAndPracticeBaseAndInnerPerson regionAndPracticeBaseAndInnerPerson;
+	private List_Region_PracticeBaseRegionLeaderSuperviseSupervisors list;
 	
-	public ListOfRegionAndPracticeBaseAndInnerPerson getRegionAndPracticeBaseAndInnerPerson(){return this.regionAndPracticeBaseAndInnerPerson;}
+	public List_Region_PracticeBaseRegionLeaderSuperviseSupervisors getList(){return this.list;}
 	
 
 	static public final String SessionListKey=Export.SessionListKey; 
 	
 	public ExportSupervisorAllMandate(){
 		super();
-		this.regionAndPracticeBaseAndInnerPerson=Manager.loadSession(ListOfRegionAndPracticeBaseAndInnerPerson.class, SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegionLeaderSuperviseSupervisors.class, SessionListKey);
 	}
 
 	@Override
 	public String execute(){
-		return this.jumpBackWithTips("该项目不可用!");
+		return this.returnWithTips(NONE,"该项目不可用!");
 	}
 	
 	
@@ -59,20 +61,20 @@ public class ExportSupervisorAllMandate extends Action{
 		}
 		public String getDownloadFileName(){return this.downloadFileName;}
 	private ByteArrayOutputStream downloadOutputStream=null;
-	protected String downloadByIO(SpecialIO io,int year,InnerPerson supervisor,PracticeBasePair pair,int superviseIndex,OutputStream stream) throws IOException{
-		return io.createSupervisorMandate(year,supervisor,pair,superviseIndex,stream);
+	protected String downloadByIO(SpecialIO io,int year,InnerPerson supervisor,PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors pblss,int superviseIndex,OutputStream stream) throws IOException{
+		return io.createSupervisorMandate(year,supervisor,pblss,superviseIndex,stream);
 	}
 	public String download(){//下载模板
 		System.out.println(">> ExportSupervisorAllMandate:download > supervisorId="+this.supervisorId);
-		if(this.regionAndPracticeBaseAndInnerPerson==null)
-			return this.jumpBackWithTips("该项目未初始化!");
+		if(this.list==null)
+			return this.returnWithTips(NONE,"该项目未初始化!");
 		InnerPerson supervisor;
 		School school;
 		try {
 			supervisor=new InnerPerson(supervisorId);
 			school=new School(supervisor.getSchool());
 		}catch(IllegalArgumentException | SQLException e) {
-			return this.jumpBackWithTips("督导老师工号("+supervisorId+")不正确",e);
+			return this.returnWithTips(NONE,"督导老师工号("+supervisorId+")不正确",e);
 		}
 		//设置下载文件名称
 		String fileName=String.format("%d年[%s%s]免费师范生教育实习督导任务书.zip",
@@ -82,10 +84,10 @@ public class ExportSupervisorAllMandate extends Action{
 		this.setDownloadFileName(fileName);
 		//准备文件内容
 		Map<String,OutputStream> files=new HashMap<String,OutputStream>();
-		for(ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair rp:this.regionAndPracticeBaseAndInnerPerson.getList()) {
-			for(ListOfRegionAndPracticeBaseAndInnerPerson.RegionPair.PracticeBasePair pair:rp.getList()) {
+		for(Leaf<Region, PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors> rp:this.list.getList()) {
+			for(PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors pair:rp.getList()) {
 				int superviseIndex=0;
-				for(InnerPerson inner:pair.getSupervisor()) {
+				for(InnerPerson inner:pair.getSupervisors()) {
 					if(inner.getId().equals(supervisor.getId())) {
 						System.out.println(">> ExportAllStudentList:download > create download file. practiceBaseName="+pair.getPracticeBase().getName()+","+Supervise.getTypeNameList()[superviseIndex]);
 						OutputStream out=new ByteArrayOutputStream();
@@ -95,7 +97,7 @@ public class ExportSupervisorAllMandate extends Action{
 							files.put(name,out);
 						}catch(IOException e){
 							downloadOutputStream=null;
-							return this.jumpBackWithTips("创建文件失败，暂时无法下载！",e);
+							return this.returnWithTips(NONE,"创建文件失败，暂时无法下载！",e);
 						}
 					}
 					superviseIndex++;
@@ -107,7 +109,7 @@ public class ExportSupervisorAllMandate extends Action{
 			this.downloadOutputStream.flush();
 		} catch (IOException e) {
 			this.downloadOutputStream=null;
-			return this.jumpBackWithTips("压缩文件失败，暂时无法下载！",e);
+			return this.returnWithTips(NONE,"压缩文件失败，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportSupervisorAllMandate:download <downloadAttachment");
 		return "downloadAttachment";

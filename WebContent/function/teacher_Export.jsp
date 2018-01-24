@@ -1,4 +1,3 @@
-<%@page import="obj.annualTable.ListOfPracticeBaseAndStudents"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags" %>
@@ -121,13 +120,13 @@
 				点击下载督导任务书</span>-->
 			</td>
 		</tr>
-		<s:iterator value="regionAndPracticeBaseAndInnerPerson.list" var="__rpRow" status="__rpStatus">
+		<s:iterator value="list.list" var="__rpRow" status="__rpStatus">
 		<s:iterator value="#__rpRow.list" var="__pairRow" status="__pairStatus">
 			<tr class="wtableContent">
 				<s:set var="_colspan" value="%{#__rpRow.size}" />
 				<s:if test="#__pairStatus.index == 0">
 					<td rowspan="${_colspan}" style="width:3%;background-color:white;">
-						<s:property value="#__rpRow.region.name" />
+						<s:property value="#__rpRow.t.name" />
 					</td>
 				</s:if>
 				<!-- 基地名称 -->
@@ -149,7 +148,7 @@
 					</s:else>
 				</s:if>
 				<!-- 督导 -->
-				<s:iterator value="#__pairRow.supervisor" var="__supervisor" status="__typeStatus">
+				<s:iterator value="#__pairRow.supervisors" var="__supervisor" status="__typeStatus">
 					<s:if test="schoolName == #__supervisor.school">
 						<td style="padding:0;background-color:lightyellow;font-weight:800;">
 							<a href="<s:url action='function_teacher_ExportSupervisorMandate_download'/>?superviseIndex=<s:property value='#__typeStatus.index'/>&practiceBaseName=<s:property value='#__pairRow.practiceBase.name'/>">

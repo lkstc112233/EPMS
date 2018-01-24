@@ -36,13 +36,13 @@
 				<td>中期督导老师</td>
 				<td>返校督导老师</td>
 			</tr>
-			<s:iterator value="regionAndPracticeBase.list" var="__regionRow" status="__regionStatus">
+			<s:iterator value="list.list" var="__regionRow" status="__regionStatus">
 			<s:iterator value="#__regionRow.list" var="__practiceBaseRow" status="__practiceBaseStatus">
 				<tr class="wtableContent">
 					<s:set var="_colspan" value="%{#__regionRow.size}" />
 					<s:if test="#__practiceBaseStatus.index == 0">
 						<td rowspan="${_colspan}" style="width:3%;">
-							<s:property value="#__regionRow.region.name" />
+							<s:property value="#__regionRow.t.name" />
 						</td>
 					</s:if>
 					<td style="width:160px;text-align:left;padding-left:10px;">
@@ -61,8 +61,8 @@
 								<s:select list="innerPersons"
 									listKey="id" listValue="name"
 									headerKey="" headerValue="-未定-"
-									name="regionAndPracticeBase.list[%{#__regionStatus.index}].region.leaderId"
-									value="%{#__regionRow.region.leaderId}"
+									name="list.list[%{#__regionStatus.index}].t.leaderId"
+									value="%{#__regionRow.t.leaderId}"
 									style="text-align:center;width:100%;height:100%;border:0;" theme="simple"/>
 							</s:if><s:else>
 								<s:property value="%{innerPersonLeaders[#__regionStatus.index].name}" />

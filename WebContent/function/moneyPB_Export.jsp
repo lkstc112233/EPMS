@@ -1,4 +1,3 @@
-<%@page import="obj.annualTable.ListOfPracticeBaseAndStudents"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags" %>
@@ -85,31 +84,31 @@
 			<td>回执单</td>
 			<td>备注</td>
 		</tr>
-		<s:iterator value="practiceBaseAndMoney.list" var="__rpRow" status="__rpStatus">
+		<s:iterator value="list.list" var="__rpRow" status="__rpStatus">
 		<s:iterator value="#__rpRow.list" var="__pairRow" status="__pairStatus">
 			<tr class="wtableContent">
 				<s:set var="_colspan" value="%{#__rpRow.size}" />
 				<s:if test="#__pairStatus.index == 0">
 					<td rowspan="${_colspan}" style="width:3%;background-color:white;">
-						<s:property value="#__rpRow.region.name" />
+						<s:property value="#__rpRow.t.name" />
 					</td>
 				</s:if>
 				<!-- 基地名称 -->
 				<td style="padding:0;font-weight:800;">
-					<a href="<s:url action='function_moneyPB_ExportMoneyPB_download'/>?practiceBaseName=<s:property value='#__pairRow.practiceBase.name'/>">
-						<s:property value="#__pairRow.practiceBase.name" />
+					<a href="<s:url action='function_moneyPB_ExportMoneyPB_download'/>?practiceBaseName=<s:property value='#__pairRow.t.practiceBase.name'/>">
+						<s:property value="#__pairRow.t.practiceBase.name" />
 					</a>
 				</td>
 				<!-- 实习人数(实验员) -->
 				<td style="font-weight:800;">
-					<s:property value="#__pairRow.numberOfStudent" />
+					<s:property value="#__pairRow.t.numberOfStudent" />
 					(
-					<s:property value="#__pairRow.numberOfStudentSYY" />
+					<s:property value="#__pairRow.t.numberOfStudentSYY" />
 					)
 				</td>
 				<!-- 各项 -->
 				<% i=0; %>
-				<s:iterator value="%{#__pairRow.sum.fieldsValue}" var="__Col">
+				<s:iterator value="%{#__pairRow.t.sum.fieldsValue}" var="__Col">
 					<% if(MoneyPBFieldDisplay[i++]){ %>
 					<td style="word-wrap:break-word;word-break:break-all;">
 					<% }else{ %>
@@ -120,27 +119,27 @@
 				</s:iterator>
 				<!-- 总计 -->
 				<td style="padding:0;background-color:lightyellow;font-weight:800;">
-					<a href="<s:url action='function_moneyPB_MoneyPBInfo_execute'/>?practiceBaseName=<s:property value='#__pairRow.practiceBase.name'/>">
-						<s:property value="#__pairRow.sum.sum" />
+					<a href="<s:url action='function_moneyPB_MoneyPBInfo_execute'/>?practiceBaseName=<s:property value='#__pairRow.t.practiceBase.name'/>">
+						<s:property value="#__pairRow.t.sum.sum" />
 					</a>
 				</td>
 				<!-- 回执单 -->
 				<td style="padding:0;">
 					<s:form action="function_moneyPB_Export_execute" method="post" theme="simple">
-						<s:if test="#__pairRow.region.moneyBack==true">
+						<s:if test="#__pairRow.t.region.moneyBack==true">
 							<s:submit value="✔"
 							style="color:green;padding:0;margin:0;border:3px black double;background:white;width:30px;height:30px;font-size:30px;line-height:5px;" theme="simple" />
 						</s:if><s:else>
 							<s:submit value="  "
 							style="padding:0;margin:0;border:3px black double;background:white;width:30px;height:30px;" theme="simple" />
 						</s:else>
-						<s:hidden name="practiceBaseName" value="%{#__pairRow.practiceBase.name}" />
+						<s:hidden name="practiceBaseName" value="%{#__pairRow.t.practiceBase.name}" />
 					</s:form>
 				</td>
 				<!-- 备注 -->
 				<td style="padding:0;word-wrap:break-word;word-break:break-all;">
-					<s:iterator value="#__pairRow.moneys" var="__money" status="__moneyStatus">
-						<s:if test="__moneyStatus.index == 0">
+					<s:iterator value="#__pairRow.list" var="__money" status="__moneyStatus">
+						<s:if test="#__moneyStatus.index != 0">
 							<br />
 						</s:if>
 						<s:property value="#__money.remark" />
