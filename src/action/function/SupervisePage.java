@@ -22,7 +22,7 @@ public class SupervisePage extends Action{
 	private List_Region_PracticeBaseRegionLeaderSuperviseSupervisors list;
 	private int typeIndex=0;
 
-	public List_Region_PracticeBaseRegionLeaderSuperviseSupervisors getlist(){return this.list;}
+	public List_Region_PracticeBaseRegionLeaderSuperviseSupervisors getList(){return this.list;}
 	public String[] getSuperviseTypeNameList(){return Supervise.getTypeNameList();}
 	public int getTypeIndex() {return this.typeIndex;}
 	public void setTypeIndex(String a) {this.typeIndex=Field.s2i(a,0);}
@@ -66,7 +66,7 @@ public class SupervisePage extends Action{
 			return this.jumpBackWithTips("无权查看督导详细信息!");
 		if(this.list==null)
 			return this.returnWithTips(NONE,"该项目不可用!");
-		PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors  pair=this.list.get(practiceBaseName);
+		PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors  pair=this.list.getByPracticeBaseName(practiceBaseName);
 		if(pair==null)
 			return this.returnWithTips(NONE,"实习基地("+practiceBaseName+")选择不正确!");
 		try {

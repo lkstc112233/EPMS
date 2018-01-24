@@ -78,7 +78,7 @@
 					</td>
 					<!-- 内容 -->
 					<% int i=0; %>
-					<s:iterator value="%{#__pbrRow.first.fieldsValue}" var="__Col">
+					<s:iterator value="%{#__pbrRow.practiceBase.fieldsValue}" var="__Col">
 						<% if(PracticeBaseFieldDisplay[i++]){ %>
 						<td style="word-wrap:break-word;word-break:break-all;">
 						<% }else{ %>
@@ -89,7 +89,7 @@
 							</s:if><s:elseif test="#__Col.equals(\"✘\")">
 								<div style="color:red;">✘</div>
 							</s:elseif><s:else>
-								<s:if test="#__pbrRow.t.first.status">
+								<s:if test="#__pbrRow.practiceBase.status">
 									<div style="color:red;">
 										<s:property value="#__Col" />
 									</div>
@@ -128,7 +128,7 @@
 					</td>
 					<!-- 内容 -->
 					<% int i=0; %>
-					<s:iterator value="%{#__pbrRow.first.fieldsValue}" var="__Col">
+					<s:iterator value="%{#__pbrRow.practiceBase.fieldsValue}" var="__Col">
 						<% if(PracticeBaseFieldDisplay[i++]){ %>
 						<td style="word-wrap:break-word;word-break:break-all;">
 						<% }else{ %>
@@ -139,7 +139,7 @@
 							</s:if><s:elseif test="#__Col.equals(\"✘\")">
 								<div style="color:red;">✘</div>
 							</s:elseif><s:else>
-								<s:if test="#__pbrRow.t.first.status">
+								<s:if test="#__pbrRow.practiceBase.status">
 									<div style="color:red;">
 										<s:property value="#__Col" />
 									</div>

@@ -102,7 +102,7 @@ public class StudentGroupLeader extends Action{
 			return this.jumpBackWithTips("数据库开小差去了!");
 		System.out.println(">> StudentGroupLeaderRecommend:execute > choose= ["+this.choose[0]+","+this.choose[1]+"]");
 		Leaf<PracticeBaseWithRegion,Student> choose_pair=
-				this.list.get(this.choose[0]);//choose[0]是大区名称
+				this.list.getByPracticeBaseName(this.choose[0]);//choose[0]是基地名称
 		if(choose_pair==null)
 			return this.jumpBackWithTips("请选择正确的实习基地！");
 		//StudenGroupLeaderRecommend:execute

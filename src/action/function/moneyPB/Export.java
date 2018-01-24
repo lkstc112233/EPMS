@@ -21,7 +21,7 @@ public class Export extends Action{
 
 	private List_Region_PracticeBaseRegionMoneyPB_MoneyPB list;
 	
-	public List_Region_PracticeBaseRegionMoneyPB_MoneyPB getPracticeBaseAndMoney(){return this.list;}
+	public List_Region_PracticeBaseRegionMoneyPB_MoneyPB getList(){return this.list;}
 	
 	//记忆化部件
 	public MoneyPB getMoneyPB() {return new MoneyPB();}
@@ -45,6 +45,7 @@ public class Export extends Action{
 		} catch (IllegalArgumentException | InstantiationException | SQLException e) {
 			return this.returnWithTips(NONE,"数据库开小差去了！",e);
 		}
+		Manager.resetSession();
 		Manager.saveSession(SessionListKey,this.list);
 		return NONE;
 	}
@@ -59,7 +60,7 @@ public class Export extends Action{
 	public String execute(){
 		//保存Region信息：moneyBack
 		Leaf<PracticeBaseWithRegionWithMoneyPB, MoneyPB>  pair=
-				this.list.get(this.practiceBaseName);
+				this.list.getByPracticeBaseName(this.practiceBaseName);
 		if(pair==null)
 			return this.returnWithTips(NONE,"实习基地选择错误!("+this.practiceBaseName+")");
 		pair.getT().getRegion().setMoneyBack(!pair.getT().getRegion().getMoneyBack());
@@ -96,7 +97,7 @@ public class Export extends Action{
 		try {
 			base = MoneyPB.getMoneyPBBase();
 		} catch (Exception e) {
-			return this.jumpBackWithTips("读取教育实习经费标准失败!",e);
+			return this.returnWithTips(NONE,"读取教育实习经费标准失败!",e);
 		}
 		StringBuilder error=new StringBuilder();
 		for(Node<Region, Leaf<PracticeBaseWithRegionWithMoneyPB, MoneyPB>> rp:this.list.getList()) {

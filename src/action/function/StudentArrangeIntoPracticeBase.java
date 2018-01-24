@@ -46,7 +46,8 @@ public class StudentArrangeIntoPracticeBase extends Action{
 			for(Node<Region, Leaf<PracticeBaseWithRegionWithPlan, Student>> rp:this.getList().getList())
 				for(Leaf<PracticeBaseWithRegionWithPlan, Student> p:rp.getList())
 					if(p.getT().getPracticeBase()!=null)
-						this.practiceBases.add(p.getT().getPracticeBase());
+						if(p.getSize()<p.getT().getPlan().getNumber())
+							this.practiceBases.add(p.getT().getPracticeBase());
 			return this.practiceBases;
 		}
 	private List<Major> majors;

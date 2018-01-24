@@ -90,7 +90,7 @@
 				<s:set var="_colspan" value="%{#__rpRow.size}" />
 				<s:if test="#__pairStatus.index == 0">
 					<td rowspan="${_colspan}" style="width:3%;background-color:white;">
-						<s:property value="#__rpRow.t.region.name" />
+						<s:property value="#__rpRow.t.name" />
 					</td>
 				</s:if>
 				<!-- 基地名称 -->
@@ -138,8 +138,8 @@
 				</td>
 				<!-- 备注 -->
 				<td style="padding:0;word-wrap:break-word;word-break:break-all;">
-					<s:iterator value="#__pairRow.t.list" var="__money" status="__moneyStatus">
-						<s:if test="__moneyStatus.index == 0">
+					<s:iterator value="#__pairRow.list" var="__money" status="__moneyStatus">
+						<s:if test="#__moneyStatus.index != 0">
 							<br />
 						</s:if>
 						<s:property value="#__money.remark" />

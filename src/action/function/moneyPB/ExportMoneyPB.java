@@ -18,7 +18,7 @@ public class ExportMoneyPB extends Action{
 	
 	private List_Region_PracticeBaseRegionMoneyPB_MoneyPB list;
 	
-	public List_Region_PracticeBaseRegionMoneyPB_MoneyPB getPracticeBaseAndStudents(){return this.list;}
+	public List_Region_PracticeBaseRegionMoneyPB_MoneyPB getList(){return this.list;}
 	
 
 	static public final String SessionListKey=Export.SessionListKey; 
@@ -30,7 +30,7 @@ public class ExportMoneyPB extends Action{
 
 	@Override
 	public String execute(){
-		return this.jumpBackWithTips("该项目不可用!");
+		return this.returnWithTips(NONE,"该项目不可用!");
 	}
 	
 	
@@ -60,14 +60,14 @@ public class ExportMoneyPB extends Action{
 	public String download(){//下载模板
 		System.out.println(">> ExportMoneyPB:download > practiceBaseName="+this.practiceBaseName);
 		if(this.list==null)
-			return this.jumpBackWithTips("该项目未初始化!");
+			return this.returnWithTips(NONE,"该项目未初始化!");
 		Leaf<PracticeBaseWithRegionWithMoneyPB, MoneyPB> pair=
-				this.list.get(this.practiceBaseName);
+				this.list.getByPracticeBaseName(this.practiceBaseName);
 		if(pair==null)
-			return this.jumpBackWithTips("实习基地名称有误!");
+			return this.returnWithTips(NONE,"实习基地名称有误!");
 		final Boolean status=false;
 		if(status!=null && (status^pair.getT().getPracticeBase().getStatus()))
-			return this.jumpBackWithTips("实习基地是非正式实习基地，不能提供经费明细！");
+			return this.returnWithTips(NONE,"实习基地是非正式实习基地，不能提供经费明细！");
 		System.out.println(">> ExportMoneyPB:download > create download file.");
 		downloadOutputStream=new ByteArrayOutputStream();
 		try{
@@ -77,7 +77,7 @@ public class ExportMoneyPB extends Action{
 			this.downloadOutputStream.flush();
 		}catch(IOException e){
 			downloadOutputStream=null;
-			return this.jumpBackWithTips("服务器开小差去了，暂时无法下载！",e);
+			return this.returnWithTips(NONE,"服务器开小差去了，暂时无法下载！",e);
 		}
 		System.out.println(">> ExportMoneyPB:download <downloadAttachment");
 		return "downloadAttachment";

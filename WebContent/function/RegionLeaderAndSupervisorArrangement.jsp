@@ -61,8 +61,8 @@
 								<s:select list="innerPersons"
 									listKey="id" listValue="name"
 									headerKey="" headerValue="-未定-"
-									name="regionAndPracticeBase.list[%{#__regionStatus.index}].region.leaderId"
-									value="%{#__regionRow.region.leaderId}"
+									name="list.list[%{#__regionStatus.index}].t.leaderId"
+									value="%{#__regionRow.t.leaderId}"
 									style="text-align:center;width:100%;height:100%;border:0;" theme="simple"/>
 							</s:if><s:else>
 								<s:property value="%{innerPersonLeaders[#__regionStatus.index].name}" />

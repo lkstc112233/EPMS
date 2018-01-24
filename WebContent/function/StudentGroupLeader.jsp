@@ -146,7 +146,7 @@
 						style="padding:0;margin:0;border:3px black double;background:gold;width:30px;height:30px;font-size:30px;line-height:5px;" theme="simple" />
 				</s:if><s:else><!-- 未推荐 -->
 					<s:form action="function_StudentGroupLeader_execute" method="post" theme="simple">
-						<s:hidden name="choose[0]" value="%{#__Row.practiceBase.name}" theme="simple" />
+						<s:hidden name="choose[0]" value="%{#__Row.t.practiceBase.name}" theme="simple" />
 						<s:hidden name="choose[1]" value="%{#__studentRow.id}" theme="simple" />
 						<s:submit value=" "
 						style="padding:0;margin:0;border:3px black double;background:white;width:30px;height:30px;" theme="simple" />

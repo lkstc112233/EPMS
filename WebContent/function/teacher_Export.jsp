@@ -126,7 +126,7 @@
 				<s:set var="_colspan" value="%{#__rpRow.size}" />
 				<s:if test="#__pairStatus.index == 0">
 					<td rowspan="${_colspan}" style="width:3%;background-color:white;">
-						<s:property value="#__rpRow.t.region.name" />
+						<s:property value="#__rpRow.t.name" />
 					</td>
 				</s:if>
 				<!-- 基地名称 -->

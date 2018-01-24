@@ -78,7 +78,7 @@ public class PracticeBaseArrangeIntoRegion extends Action{
 		for(boolean s:checkBox) flag|=s;
 		if(!flag)
 			return this.returnWithTips(NONE,"请至少选择一个实习基地添加到大区！");
-		java.util.List<PracticeBaseWithRegion> nullRegionPracticeBases=this.list.get((Region)null).getList();
+		java.util.List<PracticeBaseWithRegion> nullRegionPracticeBases=this.list.getByRegion((Region)null).getList();
 		//	List<PracticeBase> tmp=new ArrayList<PracticeBase>();
 		StringBuilder sb=new StringBuilder();
 		StringBuilder error=new StringBuilder();
