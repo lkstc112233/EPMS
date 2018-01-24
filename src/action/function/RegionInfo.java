@@ -83,50 +83,53 @@ public class RegionInfo extends Action{
 		return NONE;
 	}
 	
-	private String practiceBaseName;
-		public String getPracticeBaseName() {return this.practiceBaseName;}
-		public void setPracticeBaseName(String a) {this.practiceBaseName=Field.s2S(a);}
-	
 	@Override
 	public String execute(){
 		boolean ok=false;
 		StringBuilder error=new StringBuilder();
 		if(this.list==null)
 			return display();
-		//保存Region
-		Leaf<Region,PracticeBaseWithRegion> pair=this.list.get(this.practiceBaseName);
-		if(pair==null)
-			return this.returnWithTips(NONE,"实习基地选择错误!("+this.practiceBaseName+")");
-		Region region=pair.getT();
-		try {
-			region.update();
-			ok=true;
-		} catch (IllegalArgumentException | SQLException e) {
-			e.printStackTrace();
-			if(error.length()>0) error.append(',');
-			error.append(region.getName()+"的相关信息保存失败!("+e.getMessage()+")");
-		}
-		//保存Supervise
-		int[] index=this.list.indexOf(this.practiceBaseName);
-		for(int type:this.getSuperviseTypeList()){
-			Supervise tmp=null;
+		for(int i=0;i<this.list.getSize();i++) {
+			Leaf<Region, PracticeBaseWithRegion> rp=this.list.getList().get(i);
+			Region r=rp.getT();
 			try {
-				tmp=this.supervises[type][index[0]][index[1]];
-			} catch (IndexOutOfBoundsException e) {
-				return this.returnWithTips(NONE,"实习基地选择错误!("+this.practiceBaseName+")");
-			}
-			try {
-				if(tmp.getSupervisorId()==null||tmp.getSupervisorId().isEmpty())
-					tmp.delete();
-				else if(!tmp.exist())
-					tmp.create();
-				else
-					tmp.update();
-			} catch (SQLException | IllegalAccessException | InstantiationException e) {
+				r.update();
+				ok=true;
+			} catch (IllegalArgumentException | SQLException e) {
 				e.printStackTrace();
 				if(error.length()>0) error.append(',');
-				error.append(tmp.getPracticeBase()+"的"+Supervise.getTypeNameList()[type]
-						+"的相关信息保存失败!("+e.getMessage()+")");
+				error.append(r.getName()+"的相关信息保存失败!("+e.getMessage()+")");
+			}
+			for(int j=0;j<rp.getSize();j++) {
+				PracticeBaseWithRegion pair=rp.getList().get(j);
+				//保存Region
+				Region region=pair.getRegion();
+				region.setLeaderId(r.getLeaderId());
+				try {
+					region.update();
+					ok=true;
+				} catch (IllegalArgumentException | SQLException e) {
+					e.printStackTrace();
+					if(error.length()>0) error.append(',');
+					error.append(region.getName()+"的相关信息保存失败!("+e.getMessage()+")");
+				}
+				//保存Supervise
+				for(int type:this.getSuperviseTypeList()){
+					Supervise tmp=this.supervises[type][i][j];
+					try {
+						if(tmp.getSupervisorId()==null||tmp.getSupervisorId().isEmpty())
+							tmp.delete();
+						else if(!tmp.exist())
+							tmp.create();
+						else
+							tmp.update();
+					} catch (SQLException | IllegalAccessException | InstantiationException e) {
+						e.printStackTrace();
+						if(error.length()>0) error.append(',');
+						error.append(tmp.getPracticeBase()+"的"+Supervise.getTypeNameList()[type]
+								+"的相关信息保存失败!("+e.getMessage()+")");
+					}
+				}
 			}
 		}
 		return this.jumpToMethodWithTips("display",
