@@ -94,7 +94,7 @@ public class List_Region_PracticeBaseRegionMoneyPB_MoneyPB extends ListTree<Node
 		return null;
 	}
 	public void put(Region region,PracticeBase pb,MoneyPB money) throws IllegalArgumentException, InstantiationException, SQLException {
-		if(region==null || pb==null || money==null)
+		if(region==null || pb==null)
 			return;
 		Node<Region, Leaf<PracticeBaseWithRegionWithMoneyPB, MoneyPB>> tmp=
 				new Node<Region,Leaf<PracticeBaseWithRegionWithMoneyPB,MoneyPB>>(region);
@@ -104,6 +104,7 @@ public class List_Region_PracticeBaseRegionMoneyPB_MoneyPB extends ListTree<Node
 		Leaf<PracticeBaseWithRegionWithMoneyPB,MoneyPB> tmp2=
 				new Leaf<PracticeBaseWithRegionWithMoneyPB,MoneyPB>(pbrm);
 		tmp2=tmp.insert(pbrm,tmp2);
-		tmp2.insert(money);
+		if(money!=null)
+			tmp2.insert(money);
 	}
 }

@@ -42,7 +42,7 @@ public class List_Region_PracticeBaseRegionPlan_Student extends ListTree<Node<Re
 						new Object[]{major.getName(),year})
 				.append(JoinParam.Type.LeftJoin,
 						PracticeBase.class,
-						Field.getField(Student.class,"practiceBase"),
+						Field.getField(Plan.class,"practiceBase"),
 						Field.getField(PracticeBase.class,"name"))
 				.append(JoinParam.Type.LeftJoin,
 						Region.class,
@@ -105,6 +105,7 @@ public class List_Region_PracticeBaseRegionPlan_Student extends ListTree<Node<Re
 		Leaf<PracticeBaseWithRegionWithPlan,Student> tmp2=
 				new Leaf<PracticeBaseWithRegionWithPlan,Student>(pbrp);
 		tmp2=tmp.insert(pbrp,tmp2);
-		tmp2.insert(stu);
+		if(stu!=null)
+			tmp2.insert(stu);
 	}
 }

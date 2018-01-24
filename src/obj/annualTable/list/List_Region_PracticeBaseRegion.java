@@ -20,7 +20,7 @@ public class List_Region_PracticeBaseRegion extends ListTree<Leaf<Region,Practic
 			this.getList().add(new Leaf<Region,PracticeBaseWithRegion>(null));
 		java.util.List<Base[]> tmp=Base.list(
 				new JoinParam(PracticeBase.class)
-				.append(JoinParam.Type.LeftJoin,
+				.append(containsNullRegion?JoinParam.Type.LeftJoin:JoinParam.Type.InnerJoin,
 						Region.class,
 						Field.getField(Region.class,"practiceBase"),
 						Field.getField(PracticeBase.class,"name"),
