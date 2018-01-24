@@ -1,19 +1,24 @@
 package obj.annualTable.list;
 
 public class Node<T,L extends Leaf<?,?>> extends Leaf<T,L>{
-	
-	public Node(T t) {
+
+	protected Node(T t) {
 		super(t);
+	}
+	public Node(T t,java.util.Comparator<?> comparator) {
+		super(t, comparator);
 	}
 	/**
 	 * 获取List中的某个元素，其Node.t属性和输入TOfListContent相同(equals)
 	 * 相当于contains
 	 */
+	@SuppressWarnings("unchecked")
 	public L get(final Object tOfListContent) {
 		for(L content:this.getList()) {
 			if(tOfListContent==null && content.getT()==null) return content;
 			if(tOfListContent!=null && content.getT()!=null) {
-				if(tOfListContent.equals(content))
+				if(comparator==null?content.getT().equals(tOfListContent):
+					(comparator.compare(content.getT(),tOfListContent)==0))
 					return content;
 			}
 		}

@@ -5,19 +5,6 @@ import obj.staticObject.PracticeBase;
 
 public final class DefaultComparator_LeafRegion<T> implements java.util.Comparator<Leaf<Region,T>>{
 	
-	@SuppressWarnings("rawtypes")
-	static private <T> PracticeBase GetPracticeBase(T t){
-		if(t==null) return null;
-		if(t instanceof PracticeBase) return (PracticeBase)t;
-		if(t instanceof obj.Pair) {
-			PracticeBase pb=GetPracticeBase(((obj.Pair)t).getKey());
-			if(pb!=null) return pb;
-			pb=GetPracticeBase(((obj.Pair)t).getValue());
-			if(pb!=null) return pb;
-		}
-		if(t instanceof Leaf) return GetPracticeBase(((Leaf<?,?>)t).getT());
-		return null;
-	}
 	
 	@Override
 	public int compare(Leaf<Region,T> o1, Leaf<Region,T> o2) {
@@ -35,8 +22,8 @@ public final class DefaultComparator_LeafRegion<T> implements java.util.Comparat
 		}else {
 			if(o2.getList().isEmpty()) return 1;
 			else {
-				PracticeBase pb1=GetPracticeBase(o1.getList().get(0));
-				PracticeBase pb2=GetPracticeBase(o2.getList().get(0));
+				PracticeBase pb1=Pair.GetPracticeBase(o1.getList().get(0));
+				PracticeBase pb2=Pair.GetPracticeBase(o2.getList().get(0));
 				boolean hx=pb1.getHx();
 				boolean hx2=pb2.getHx();
 				if(hx && !hx2) return 1;
