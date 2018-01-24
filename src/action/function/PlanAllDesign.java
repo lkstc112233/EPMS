@@ -54,6 +54,7 @@ public class PlanAllDesign extends Action{
 					Field.getField(Plan.class,"year"),
 					this.getAnnual().getYear()));
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
+			e.printStackTrace();
 			return this.numbers=null;
 		}
 		for(Plan p:plans){

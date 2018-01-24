@@ -69,7 +69,7 @@ public class List_Region_PracticeBaseRegionLeaderSuperviseSupervisors extends Li
 		}
 		return null;
 	}
-	public PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors get(String practiceBaseName){
+	public PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors getByPracticeBaseName(String practiceBaseName){
 		if(practiceBaseName==null || practiceBaseName.isEmpty()) return null;
 		for(Leaf<Region, PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors> rp:this.getList())
 			for(PracticeBaseWithRegionWithLeaderWithSuperviseWithSupervisors pair:rp.getList()){

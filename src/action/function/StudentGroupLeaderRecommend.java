@@ -119,7 +119,7 @@ public class StudentGroupLeaderRecommend extends Action{
 			return display();
 		System.out.println(">> StudentGroupLeaderRecommend:execute > choose= ["+this.choose[0]+","+this.choose[1]+","+this.choose[2]+"]");
 		Leaf<PracticeBaseWithRegion,Student> pair=
-				this.list.get(this.choose[0]);//choose[0]是基地名称
+				this.list.getByPracticeBaseName(this.choose[0]);//choose[0]是基地名称
 		if(pair==null)
 			return this.jumpBackWithTips("请选择正确的实习基地！");
 		//StudenGroupLeaderRecommend:execute

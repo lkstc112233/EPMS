@@ -132,7 +132,7 @@ public class StudentArrangeIntoPracticeBase extends Action{
 		if(this.practiceBaseName==null || this.practiceBaseName.isEmpty())
 			return this.jumpBackWithTips("请选择一个实习基地！");
 		Leaf<PracticeBaseWithRegionWithPlan, Student> pair=
-				this.list.get(this.practiceBaseName);
+				this.list.getByPracticeBaseName(this.practiceBaseName);
 		if(pair==null || pair.getT().getPlan()==null)
 			return this.jumpBackWithTips("基地("+this.practiceBaseName+")没有("+this.majorName+")专业派遣计划！");
 		//RegionArrangement:execute

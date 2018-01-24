@@ -52,7 +52,10 @@ public class List_Region_PracticeBaseRegion extends ListTree<Leaf<Region,Practic
 		}
 		return null;
 	}
-	
+
+	public Leaf<Region,PracticeBaseWithRegion> getByRegion(Region region){
+		return super.get(region);
+	}
 	public Leaf<Region,PracticeBaseWithRegion> getByRegionName(String regionName){
 		if(regionName==null || regionName.isEmpty()) return null;
 		for(Leaf<Region,PracticeBaseWithRegion> rp:this.getList()){

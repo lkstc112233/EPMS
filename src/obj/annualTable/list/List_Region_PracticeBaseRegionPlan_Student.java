@@ -85,7 +85,7 @@ public class List_Region_PracticeBaseRegionPlan_Student extends ListTree<Node<Re
 		}
 		return null;
 	}
-	public Leaf<PracticeBaseWithRegionWithPlan, Student> get(String practiceBaseName){
+	public Leaf<PracticeBaseWithRegionWithPlan, Student> getByPracticeBaseName(String practiceBaseName){
 		if(practiceBaseName==null || practiceBaseName.isEmpty()) return null;
 		for(Node<Region, Leaf<PracticeBaseWithRegionWithPlan, Student>> rp:this.getList())
 			for(Leaf<PracticeBaseWithRegionWithPlan, Student> pair:rp.getList()){

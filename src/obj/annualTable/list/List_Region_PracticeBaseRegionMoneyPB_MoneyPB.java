@@ -83,7 +83,7 @@ public class List_Region_PracticeBaseRegionMoneyPB_MoneyPB extends ListTree<Node
 		}
 		return null;
 	}
-	public Leaf<PracticeBaseWithRegionWithMoneyPB, MoneyPB> get(String practiceBaseName){
+	public Leaf<PracticeBaseWithRegionWithMoneyPB, MoneyPB> getByPracticeBaseName(String practiceBaseName){
 		if(practiceBaseName==null || practiceBaseName.isEmpty()) return null;
 		for(Node<Region, Leaf<PracticeBaseWithRegionWithMoneyPB, MoneyPB>> rp:this.getList())
 			for(Leaf<PracticeBaseWithRegionWithMoneyPB, MoneyPB> pair:rp.getList()){

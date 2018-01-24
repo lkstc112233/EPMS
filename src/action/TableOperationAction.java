@@ -283,8 +283,13 @@ public abstract class TableOperationAction extends Action{
 		}
 		if(!error.isEmpty()){
 			StringBuilder errorMsg=new StringBuilder("上传情况：\n\n");
+			int cnt=0;
 			for(int i=0;i<error.size();i++)
-				errorMsg.append("Row["+i+"]:"+error.get(i)+"\n");
+				if(error.get(i).contains("成功"))
+					cnt++;
+				else
+					errorMsg.append("Row["+i+"]:"+error.get(i)+"\n");
+			errorMsg.append("成功"+cnt+"条!");
 			return this.jumpToMethodWithTips("display",errorMsg.toString());
 		}
 		Manager.tips("上传成功！");
