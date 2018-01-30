@@ -45,8 +45,8 @@
 						<s:select id="annualYear" name="annual.year" cssClass="title_button" style="width:120px;margin-bottom:2px;"
 						list="{'2016','2017','2018','2019','2020','2021'}" theme="simple"
 						onchange="window.location.href=window.location.href.substring(0,(
-						window.location.href.indexOf('?')<0?window.location.length:window.location.href.indexOf('?'))
-						)+'?annual.year='+this.value"/>
+						window.location.href.lastIndexOf('/')<0?window.location.length:window.location.href.lastIndexOf('/'))
+						)+'/menu.action?annual.year='+this.value"/>
 					</div>
 				</div>
 			</td>
@@ -62,6 +62,18 @@
 					</li>
 				</ul>
 			</td></tr>
+			<s:if test="times.isEmpty() == false">
+				<tr><td valign="top" colspan="100">
+					<ul class="listContent">
+						<li>
+							<span class="time">[All time]</span>
+							<a href='<s:url action="sudo_TimeReset_execute"/>' onclick="this.href=this.href+'?annual.year='+document.getElementById('annualYear').value">
+								重设今年项目
+							</a>
+						</li>
+					</ul>
+				</td></tr>
+			</s:if>
 		</s:if>
 		<s:iterator value="times" var="__tableRow" status="__status">
 			<tr>
@@ -69,21 +81,25 @@
 				<td valign="middle"><ul class="listContent">
 					<li>
 						<span class="time">
-							<s:if test="#__tableRow.time1!=null">
-								[<b><s:date name="%{#__tableRow.time1}" format="yyyy-MM-dd"/></b>&nbsp;
-								<s:date name="%{#__tableRow.time1}" format="HH:mm:ss"/>&nbsp;
+							<s:if test="#__tableRow.key.time1!=null">
+								[<b><s:date name="%{#__tableRow.key.time1}" format="yyyy-MM-dd"/></b>&nbsp;
+								<s:date name="%{#__tableRow.key.time1}" format="HH:mm:ss"/>&nbsp;
 								->
-								&nbsp;<b><s:date name="%{#__tableRow.time2}" format="yyyy-MM-dd"/></b>
-								&nbsp;<s:date name="%{#__tableRow.time2}" format="HH:mm:ss"/>
+								&nbsp;<b><s:date name="%{#__tableRow.key.time2}" format="yyyy-MM-dd"/></b>
+								&nbsp;<s:date name="%{#__tableRow.key.time2}" format="HH:mm:ss"/>
 								]
 							</s:if>
 							<s:else>
 								&nbsp;
 							</s:else>
 						</span>
-						<a href='<s:url action="function_%{#__tableRow.actionClass}_display"/>' onclick="this.href=this.href+'?annual.year='+document.getElementById('annualYear').value">
-							<s:property value="%{#__tableRow.project}" />
-						</a>
+						<s:if test="#__tableRow.value.actionClass == null || #__tableRow.value.actionClass.isEmpty() == true">
+							<s:property value="%{#__tableRow.value.project}" />
+						</s:if><s:else>
+							<a href='<s:url action="function_%{#__tableRow.value.actionClass}_display"/>' onclick="this.href=this.href+'?annual.year='+document.getElementById('annualYear').value">
+								<s:property value="%{#__tableRow.value.project}" />
+							</a>
+						</s:else>
 					</li>  
 				</ul></td>
 			</tr>

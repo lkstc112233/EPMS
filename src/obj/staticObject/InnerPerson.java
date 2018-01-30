@@ -16,15 +16,15 @@ public class InnerPerson extends Base implements Base.ListableWithNoSave{
 	@SQLField(value="姓名",weight=3,notNull=true)
 	private String name;
 	@SQLField(value="校内人员类别",weight=10,notNull=true,source="InnerOffice.name")
-	private String office;
+	private String office="教师";
 	@SQLField(value="学院",weight=11,notNull=true,source="School.name")
 	private String school;
-	@SQLField(value="座机",weight=12)
-	private String phone;
+	@SQLField(value="座机",weight=12,notNull=true)
+	private String phone="";
 	@SQLField(value="手机",weight=13,notNull=true)
-	private String mobile;
-	@SQLField(value="邮箱",weight=14)
-	private String email;
+	private String mobile="";
+	@SQLField(value="邮箱",weight=14,notNull=true)
+	private String email="";
 	
 	
 	public String getId(){return id;}
@@ -34,27 +34,35 @@ public class InnerPerson extends Base implements Base.ListableWithNoSave{
 	public String getName(){return name;}
 	public void setName(String a){this.name=a;}
 	public String getOffice(){return office;}
-	public void setOffice(String a){this.office=Field.s2S(a);}
+	public void setOffice(String a){this.office=Field.s2s(a,"教师");}
 	public String getSchool(){return school;}
 	public void setSchool(String a){this.school=Field.s2S(a);}
 	public String getPhone(){return phone;}
-	public void setPhone(String a){this.phone=a;}
+	public void setPhone(String a){this.phone=Field.s2s(a,"");}
 	public String getMobile(){return mobile;}
-	public void setMobile(String a){this.mobile=a;}
+	public void setMobile(String a){this.mobile=Field.s2s(a,"");}
 	public String getEmail(){return email;}
-	public void setEmail(String a){this.email=a;}
+	public void setEmail(String a){this.email=Field.s2s(a,"");}
 	
 	
 	static public final String UndefinedName="%未定%";
 	
-	
-	public InnerPerson(){
+
+	public InnerPerson() {
 		super();
 	}
-	public InnerPerson(String id) throws IllegalArgumentException, SQLException{
+	public InnerPerson(String id) throws IllegalArgumentException, SQLException {
+		this();
+		try{
+			for(InnerPerson a:Base.list(InnerPerson.class)) if(a.getId().equals(id)) {
+				a.copyTo(this);
+				return;
+			}
+		}catch(Exception e) {}
 		this.setId(id);
 		this.load();
 	}
+	
 	
 	public boolean checkPassword(){
 		StringBuilder sb=new StringBuilder();

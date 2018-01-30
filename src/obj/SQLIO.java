@@ -9,12 +9,15 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import obj.restraint.BaseRestraint;
 
 public interface SQLIO{
-	
+
 	/**
 	 * 获取模板文件 
 	 * @return OutputStream
 	 */
-	public void getModelExcel(Class<? extends Base> clazz,OutputStream out) throws IOException ;
+	public String getModelExcel(Class<? extends Base> clazz,
+			Collection<Field> displayFields,
+			OutputStream out) throws IOException ;
+	
 	
 	/**
 	 * 在输入流中按照标签读取excel表格内容，形成T的列表
@@ -31,7 +34,11 @@ public interface SQLIO{
 	 * @throws IllegalAccessException
 	 */
 	public <T extends Base>
-	List<T> readExcel(Class<T> clazz, InputStream in,List<Integer> error,BaseRestraint restraint)
+	List<T> readExcel(Class<T> clazz,
+			Collection<Field> displayFields,
+			InputStream in,
+			List<String> error,
+			BaseRestraint restraint)
 			throws IOException, EncryptedDocumentException, InvalidFormatException, InstantiationException, IllegalAccessException;
 	
 	

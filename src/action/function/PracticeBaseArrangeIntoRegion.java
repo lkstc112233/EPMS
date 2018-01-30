@@ -1,46 +1,47 @@
 package action.function;
 
 import java.sql.*;
-import java.util.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
-import action.Manager;
+import action.*;
 import obj.annualTable.*;
+import obj.annualTable.list.*;
 import obj.staticObject.PracticeBase;
 
-public class PracticeBaseArrangeIntoRegion extends ActionSupport{
+/**
+ * 分配实习基地到大区
+ */
+public class PracticeBaseArrangeIntoRegion extends Action{
 	private static final long serialVersionUID = 5998268336475528662L;
 
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
 
 	private boolean[] checkBox;
-	private ListOfRegionAndPracticeBases regionAndPracticeBase;
+	private List_Region_PracticeBaseRegion list;
 	private String regionName;
 	
 	public void setCheckBox(boolean[] a){this.checkBox=a;}
 	public boolean[] getCheckBox(){return this.checkBox;}
-	public ListOfRegionAndPracticeBases getRegionAndPracticeBase(){return this.regionAndPracticeBase;}
+	public List_Region_PracticeBaseRegion getList(){return this.list;}
 	public String getRegionName(){return this.regionName;}
 	public void setRegionName(String a){this.regionName=a;}
 	public PracticeBase getPracticeBase(){return new PracticeBase();}
 	
 
-	static public final String SessionListKey="RegionArrangement_RegionAndPracticeBases"; 
+	static public final String SessionListKey="RegionArrangement_lists"; 
 	
 	public PracticeBaseArrangeIntoRegion(){
 		super();
-		this.regionAndPracticeBase=Manager.loadSession(ListOfRegionAndPracticeBases.class,SessionListKey);
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegion.class,SessionListKey);
 		this.setupCheckBox();
 	}
 
 	private void setupCheckBox(){
 		this.checkBox=null;
-		if(this.regionAndPracticeBase!=null){
+		if(this.list!=null){
 			int len=0;
-			for(ListOfRegionAndPracticeBases.Pair p:this.regionAndPracticeBase.getList())
-				len=Math.max(len,p.getPracticeBases().size());
+			for(Leaf<Region, PracticeBaseWithRegion> rp:this.list.getList())
+				len=Math.max(len,rp.getSize());
 			this.checkBox=new boolean[len];
 		}
 	}
@@ -48,16 +49,14 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 	public String display(){
 		this.regionName=null;
 		System.out.println(">> RegionArrangement:display > year="+this.getAnnual().getYear());
-		this.regionAndPracticeBase=null;
+		this.list=null;
 		try {
-			this.regionAndPracticeBase=new ListOfRegionAndPracticeBases(this.getAnnual().getYear(),/*containsNullRegion*/true);
+			this.list=new List_Region_PracticeBaseRegion(this.getAnnual().getYear(),/*containsNullRegion*/true);
 		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
-			return Manager.tips("数据库开小差去了！",
-					e,NONE);
+			return this.returnWithTips(NONE,"数据库开小差去了！",e);
 		}
-		Manager.saveSession(SessionListKey,this.regionAndPracticeBase);
+		Manager.saveSession(SessionListKey,this.list);
 		this.setupCheckBox();
-		System.out.println(">> RegionArrangement:display <NONE");
 		return NONE;
 	}
 	
@@ -66,12 +65,11 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 	 */
 	@Override
 	public String execute(){
-		if(this.regionAndPracticeBase==null)
+		if(this.list==null)
 			return display();
 		System.out.println(">> RegionArrangement:execute > regionName= "+this.regionName);
 		if(this.regionName==null || this.regionName.isEmpty())
-			return Manager.tips("请输入大区名称！",
-					NONE);
+			return this.returnWithTips(NONE,"请输入大区名称！");
 		System.out.println(">> RegionArrangement:execute > checkBox=[");
 		for(boolean s:checkBox) System.out.println(s);
 		System.out.println(">> RegionArrangement:execute > ]");
@@ -79,16 +77,15 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 		boolean flag=false;
 		for(boolean s:checkBox) flag|=s;
 		if(!flag)
-			return Manager.tips("请至少选择一个实习基地添加到大区！",
-					NONE);
-		List<PracticeBase> nullRegionPracticeBases=this.regionAndPracticeBase.get((Region)null).getPracticeBases();
+			return this.returnWithTips(NONE,"请至少选择一个实习基地添加到大区！");
+		java.util.List<PracticeBaseWithRegion> nullRegionPracticeBases=this.list.getByRegion((Region)null).getList();
 		//	List<PracticeBase> tmp=new ArrayList<PracticeBase>();
 		StringBuilder sb=new StringBuilder();
 		StringBuilder error=new StringBuilder();
 		for(int i=0;i<nullRegionPracticeBases.size();i++){
 			if(checkBox[i]){
 				//选中了
-				PracticeBase pb=nullRegionPracticeBases.get(i);
+				PracticeBase pb=nullRegionPracticeBases.get(i).getPracticeBase();
 				if(pb==null||pb.getName()==null)
 					continue;
 				//	tmp.add(pb);
@@ -108,22 +105,21 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 				sb.append(pb.getName());
 			}
 		}
-		Manager.tips(sb.toString()+" 已经添加到大区("+this.regionName+")！"+
-			(error.length()>0?("\n错误信息："+error.toString()):""));
 		Manager.removeSession(SessionListKey);
-		return display();
+		return this.jumpToMethodWithTips("display",
+				(sb.length()>0?(sb.toString()+" 已经添加到大区("+this.regionName+")！"):"")+
+				(error.length()>0?("\n\n错误信息：\n"+error.toString()):""));
 	}
 	
 	/**
 	 * 用于从大区移除基地
 	 */
 	public String delete(){
-		if(this.regionAndPracticeBase==null)
+		if(this.list==null)
 			return display();
 		System.out.println(">> RegionArrangement:delete > regionName= "+this.regionName);
 		if(this.regionName==null || this.regionName.isEmpty())
-			return Manager.tips("未选中大区！",
-					NONE);
+			return this.returnWithTips(NONE,"未选中大区！");
 		System.out.println(">> RegionArrangement:delete > checkBox=[");
 		for(boolean s:checkBox) System.out.println(s);
 		System.out.println(">> RegionArrangement:delete > ]");
@@ -131,18 +127,16 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 		boolean flag=false;
 		for(boolean s:checkBox) flag|=s;
 		if(!flag)
-			return Manager.tips("请至少选择一个实习基地来移除！",
-					NONE);
-		List<PracticeBase> deletePracticeBases=this.regionAndPracticeBase.get(this.regionName).getPracticeBases();
+			return this.returnWithTips(NONE,"请至少选择一个实习基地来移除！");
+		java.util.List<PracticeBaseWithRegion> deletePracticeBases=this.list.getByRegionName(this.regionName).getList();
 		if(deletePracticeBases==null)
-			return Manager.tips("选中了一个不存在的大区（"+this.regionName+"）！",
-					NONE);
+			return this.returnWithTips(NONE,"选中了一个不存在的大区("+this.regionName+")!");
 		//	List<PracticeBase> tmp=new ArrayList<PracticeBase>();
 		StringBuilder sb=new StringBuilder();
 		for(int i=0;i<deletePracticeBases.size();i++){
 			if(checkBox[i]){
 				//选中了
-				PracticeBase pb=deletePracticeBases.get(i);
+				PracticeBase pb=deletePracticeBases.get(i).getPracticeBase();
 				if(pb==null||pb.getName()==null)
 					continue;
 				//	tmp.add(pb);
@@ -160,9 +154,8 @@ public class PracticeBaseArrangeIntoRegion extends ActionSupport{
 				sb.append(pb.getName());
 			}
 		}
-		Manager.tips(sb.toString()+" 已经从大区("+this.regionName+")移除！");
 		Manager.removeSession(SessionListKey);
-		return display();
+		return this.jumpToMethodWithTips("display",sb.toString()+" 已经从大区("+this.regionName+")移除！");
 	}
 	
 	

@@ -34,8 +34,9 @@
 			<!-- //TODO error会跳转到login.jsp -->
 			<result name="error" type="redirect"> menu.action</result>
 			<result name="invalid.token"> invalidToken.jsp</result>
-			<result name="jump" type="redirect"> ${jumpURL}</result>
 			<result name="login"> login.jsp </result>
+			<result name="jump" type="redirectAction"> ${chainAction}</result>
+			<result name="menu" type="redirectAction"> menu</result>
 		</global-results>
 		
 		<!-- ################################################################################ -->
@@ -59,13 +60,17 @@
 			<interceptor-ref name="defaultStack" />
 		</action>
 		
+		<!--动作：back-->
+		<action name="back" class="action.login.MenuAction" method="back">
+		</action>
+		
 		<!--动作：menu配置-->
 		<action name="menu" class="action.login.MenuAction" method="execute">
 			<result name="jwc">		menu.jsp</result>
-			<result name="jwy">		menu.jsp</result>
-			<result name="jxyz">	menu.jsp</result>
+			<result name="lxr">		menu.jsp</result>
 			<result name="ld">		menu.jsp</result>
 			<result name="js">		menu.jsp</result>
+			<result name="xs">		menu.jsp</result>
 			<result> login.jsp</result>
 		</action>
 		
@@ -83,6 +88,31 @@
 			<result> sudo/SQLOperation.jsp</result>
 			<allowed-methods> display,execute, </allowed-methods>
 		</action>
+		
+		
+		<!--动作：Table Operation配置-->
+		<!-- 第一个星号：sudo或function -->
+		<!-- 第二个星号：调用的Action类所在包 -->
+		<!-- 第三个星号：调用的Action类 -->
+		<!-- 第四个星号：调用的Method方法 -->
+		<action name="*_*_*_**" class="action.{1}.{2}.{3}" method="{4}">
+			<result name="back" type="redirect"> menu.action</result>	<!--用于timeout和back -->
+			<result name="none"> {1}/{2}_{3}.jsp</result>
+			<result> {1}/{2}_{3}.jsp</result>
+			<result name="input"> login.jsp </result>
+			<result name="downloadAttachment" type="stream">
+				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
+				<param name="inputName">downloadAttachment </param> <!-- 调用的getter名称，返回InputStream -->
+				<param name="contentDisposition">attachment;filename="${downloadFileName}" </param> <!-- 附件方式下载，文件名使用EL获取 --> 
+			</result>
+			<result name="downloadInline" type="stream">
+				<param name="contentType">application/octet-stream </param> <!-- 下载的是文件 -->
+				<param name="inputName">downloadInline </param> <!-- 调用的getter名称，返回InputStream -->
+				<param name="contentDisposition">inline;filename="${downloadFileName}" </param> <!-- 内联方式下载，文件名使用EL获取 --> 
+			</result>
+			<allowed-methods> display,execute,download,upload,update,delete,create, </allowed-methods>
+		</action>
+		
 		
 		<!--动作：Table Operation配置-->
 		<!-- 第一个星号：sudo或function -->
@@ -105,6 +135,7 @@
 			</result>
 			<allowed-methods> display,execute,download,upload,update,delete,create, </allowed-methods>
 		</action>
+		
 		
 		
 		

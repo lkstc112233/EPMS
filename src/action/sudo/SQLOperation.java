@@ -3,13 +3,12 @@ package action.sudo;
 import java.sql.*;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionSupport;
-
+import action.Action;
 import action.Manager;
 import persistence.DB;
 
 
-public class SQLOperation extends ActionSupport{
+public class SQLOperation extends Action{
 	private static final long serialVersionUID = -2075656836784414352L;
 	static public final String SESSION_List="SQLOperation_List";
 	
@@ -33,7 +32,7 @@ public class SQLOperation extends ActionSupport{
 		String check=Manager.SQLCheck(sql);
 		if(!Manager.SQLCheck_Success.equals(check)){
 			System.out.println(">> SQLOperstionSelectAction:execute > sql不合法:"+check);
-			return Manager.tips(check+"，请重新输入！",display());
+			return this.jumpToMethodWithTips("display",check+"，请重新输入！");
 		}
 		try{
 			Statement st=DB.con().createStatement();
@@ -61,8 +60,14 @@ public class SQLOperation extends ActionSupport{
 				list.add(obj);
 			}
 		}catch(SQLException e){
-			return Manager.tips("数据库开小差去了，请重新输入！",
-					e,display());
+			try {
+				Statement st=DB.con().createStatement();
+				int num=st.executeUpdate(sql);
+				System.out.println(">> SQLOperstionSelectAction:execute > 更新"+num+"重值");
+				Manager.tips("更新"+num+"个值!");
+			}catch(SQLException e2) {
+				return this.jumpToMethodWithTips("display","数据库开小差去了，请重新输入！",e2);
+			}
 		}
 		return SUCCESS;
 	}

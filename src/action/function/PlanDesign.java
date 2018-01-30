@@ -18,7 +18,7 @@ public class PlanDesign extends action.TableOperationAction{
 	protected Search createSearch() throws Exception {
 		JoinParam param=new JoinParam(obj.annualTable.Plan.class);
 		obj.staticObject.InnerPerson user=Manager.getUser();
-		token.Role role=token.Role.getRoleByInnerPerson(user);
+		token.Role role=token.Role.getRole(user);
 		return new Search(param,new obj.restraint.YearAndSchoolAndMajorRestraint(param,3,
 				this.getAnnual().getYear(),
 				role==token.Role.jwc ? null : new obj.staticSource.School(user.getSchool())

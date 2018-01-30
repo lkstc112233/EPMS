@@ -21,6 +21,7 @@ body {
 .right{
 	/*主要用于抬头右侧，用户信息栏*/
 	float: right;
+	padding-right:10px;
 }
 #title_tabel{
 	height: 140px;
@@ -207,7 +208,7 @@ body {
 .button{
     display: block;
     width: 100%;
-    align: center;
+    text-align: center;
     padding: 6px 6px;
     font-size: 16px;
     line-height: 1.3333333;
@@ -243,7 +244,7 @@ body {
     padding-left: 4px;
     padding-right: 4px;
     margin: 0px;
-    line-height: 50px;
+    line-height: 30px;
 }
 .wtableBorder{
     border: #797979 solid 1px;

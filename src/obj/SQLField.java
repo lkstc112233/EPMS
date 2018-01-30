@@ -42,6 +42,12 @@ public @interface SQLField {
 	boolean autoInit() default false;
 	
 	/**
+	 * 是否自增
+	 * 默认为false
+	 */
+	boolean autoIncrease() default false;
+	
+	/**
 	 * Static Source的类名
 	 */
 	String source() default "";

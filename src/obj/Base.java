@@ -3,10 +3,11 @@ package obj;
 import java.sql.*;
 import java.util.*;
 
+import action.POI;
 import persistence.DB;
 
 @SuppressWarnings("unchecked")
-public abstract class Base {
+public abstract class Base extends Object implements Comparable<Base>, Cloneable{
 	protected Base(){
 		
 	}
@@ -67,11 +68,17 @@ public abstract class Base {
 	public Field getField(String fieldName){
 		return Base.getField(this.getClass(),fieldName);
 	}
-	
-	public final Object[] getFieldsValue(){
+
+	public final String[] getFieldsValue(){
 		Field[] fs=this.getFields();
-		Object[] res=new Object[fs.length];
-		for(int i=0;i<fs.length;i++) res[i]=fs[i].get(this);
+		String[] res=new String[fs.length];
+		for(int i=0;i<fs.length;i++) res[i]=Field.o2s(fs[i].get(this),"","✔","✘");
+		return res;
+	}
+	public final String[] getFieldsValueSimple(){
+		Field[] fs=this.getFields();
+		String[] res=new String[fs.length];
+		for(int i=0;i<fs.length;i++) res[i]=Field.o2s(fs[i].get(this),"");
 		return res;
 	}
 	/**
@@ -79,7 +86,8 @@ public abstract class Base {
 	 */
 	public boolean checkKeyField(){
 		for(Field f:this.getFields()) if(f.isKey())
-			if(Field.nullValue(f.get(this)))
+		//	if(Field.nullValue(f.get(this)))
+			if(f.get(this)==null)
 				return false;
 		return true;
 	}
@@ -88,7 +96,8 @@ public abstract class Base {
 	 */
 	public boolean checkNotNullField(){
 		for(Field f:this.getFields()) if(f.notNull())
-			if(Field.nullValue(f.get(this)))
+		//	if(Field.nullValue(f.get(this)))
+			if(f.get(this)==null)
 				return false;
 		return true;
 	}
@@ -147,20 +156,47 @@ public abstract class Base {
 		}
 		return true;
 	}
-
-
+	private final int HashBase=7;
+	@Override
+	public int hashCode() {
+		int res=0,base=1;
+		for(Field f:this.getFields()) if(f.isKey())
+			res+=f.get(this).hashCode()*(base*=HashBase);
+		return res;
+	}
+	@Override
+	public int compareTo(Base b) {
+		for(Field f:this.getFields()) {
+			Object o=f.get(this);
+			Object o2=f.get(b);
+			if(o==null)
+				if(o2==null) continue;
+				else return -1;
+			@SuppressWarnings("rawtypes")
+			int cmp=(o instanceof Comparable)?
+					((Comparable)o).compareTo(o2):
+						Integer.compare(o.hashCode(),o2.hashCode());
+			if(cmp!=0) return cmp;
+			else continue;
+		}
+		return 0;
+	}
+	@Override
+	public Base clone() {
+		try{
+			Base res=this.getClass().newInstance();
+			this.copyTo(res);
+			return res;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 	
 	
 	//=============================================================
 	// 清除、存在
 	// 增删改查
 	//=============================================================
-	public void clear(){
-		for(Field f:this.getFields())try{
-			f.set(this,null);
-		} catch (IllegalArgumentException e) {}
-	}
-	
 	public boolean existAndLoad() throws IllegalArgumentException, SQLException{
 		return this.load(true)>0;
 	}
@@ -206,6 +242,7 @@ public abstract class Base {
 			for(Field f:this.getFields()) if(!f.isKey())
 				f.set(this,rs.getObject(f.getName()));
 		}
+	//	if(num==0) throw new SQLException("未查询到值！");
 		return num;
 	}
 	
@@ -227,7 +264,7 @@ public abstract class Base {
 		sb.append(this.getSQLTableName());
 		sb.append(" SET ");
 		boolean first=true;
-		for(Field f:this.getFields()){
+		for(Field f:this.getFields()) if(!f.autoIncrease()){
 			if(first) first=false;
 			else sb.append(" , ");
 			sb.append(f.getName());
@@ -243,7 +280,7 @@ public abstract class Base {
 		}
 		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
 		int parameterIndex=1;
-		for(Field f:this.getFields())
+		for(Field f:this.getFields()) if(!f.autoIncrease())
 			pst.setObject(parameterIndex++,f.get(base));
 		for(Field f:this.getFields()) if(f.isKey())
 			pst.setObject(parameterIndex++,f.get(this));
@@ -284,14 +321,14 @@ public abstract class Base {
 		sb.append(this.getSQLTableName());
 		sb.append(" (");
 		boolean first=true;
-		for(Field f:this.getFields()){
+		for(Field f:this.getFields()) if(!f.autoIncrease()){
 			if(first) first=false;
 			else sb.append(",");
 			sb.append(f.getName());
 		}
 		sb.append(") VALUES (");
 		first=true;
-		for(@SuppressWarnings("unused")Field f:this.getFields()){
+		for(Field f:this.getFields()) if(!f.autoIncrease()){
 			if(first) first=false;
 			else sb.append(",");
 			sb.append("?");
@@ -299,10 +336,11 @@ public abstract class Base {
 		sb.append(")");
 		PreparedStatement pst=DB.con().prepareStatement(sb.toString());
 		int SQLParameterIndex=1;
-		for(Field f:this.getFields())
+		for(Field f:this.getFields()) if(!f.autoIncrease())
 			pst.setObject(SQLParameterIndex++,f.get(this));
 		int num=pst.executeUpdate();
 		System.err.println("更新了"+num+"重值！("+pst.toString()+")");
+		this.load();
 		Base.MapList.remove(this.getClass());
 	}
 	
@@ -394,6 +432,10 @@ public abstract class Base {
 			for(Restraint.Part part:restraint.getWhere()) if(part!=null)
 				parameterIndex=part.setSQLParam(pst,parameterIndex);
 		ResultSet rs=pst.executeQuery();
+		rs.last();
+		int num=rs.getRow();
+		System.err.println("list了"+num+"重值！("+pst.toString()+")");
+		rs.beforeFirst();
 		List<Base[]> res=new ArrayList<Base[]>();
 		while(rs.next()){
 			Base[] x=param.newInstance();
@@ -405,10 +447,14 @@ public abstract class Base {
 					Object o=null;
 					try{o=rs.getObject(columnName);}catch(SQLException e){}
 					if(flag && o!=null) flag=false;
+					if(f.isKey() && o==null) {flag=true;break;}
 					try{
 						f.set(x[i],o);
 					}catch(IllegalArgumentException e){
-						throw e;
+						flag=false;
+						try{f.set(x[i],null);
+						}catch(IllegalArgumentException e2){
+						}
 					}
 				}
 				//若x[i]的属性全部都是null，则x[i]应为null

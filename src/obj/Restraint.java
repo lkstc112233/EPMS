@@ -23,6 +23,7 @@ public class Restraint{
 			if(this==Equal) return a.equals(b);
 			//TODO SQL Like
 			if(this==Like) return a.equals(b);
+			if(this==NotLike) return !a.equals(b);
 			return false;
 		}
 	}
@@ -55,6 +56,7 @@ public class Restraint{
 			if(this.type.checkBase(this.field.get(b),value)) return true;
 			if(setIfFalse){
 		//TODO	if(this.type==Type.Equal)
+				if(this.type!=Type.NotLike)
 					this.field.set(b,this.value);
 			}
 			return false;
@@ -182,5 +184,13 @@ public class Restraint{
 		this(new Part(f,v),order);
 	}public Restraint(Field f,Object v){
 		this(new Part(f,v),(Field)null);
+	}
+	
+	public Restraint(Field f[],Object[] v,Field[] order) {
+		this(new Part[Math.min(f.length,v.length)],order);
+		for(int i=0;i<this.where.length;i++)
+			this.where[i]=new Part(f[i],v[i]);
+	}public Restraint(Field f[],Object[] v){
+		this(f,v,(Field[])null);
 	}
 }

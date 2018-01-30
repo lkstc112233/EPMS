@@ -1,8 +1,11 @@
 package obj;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
@@ -14,6 +17,10 @@ public class Field implements Comparable<Field>{
 		public Class<? extends Base> getClazz(){return clazz;}
 	public final java.lang.reflect.Field field;
 	public final SQLField s;
+	
+	public Annotation getAnnotation(Class<? extends Annotation> annotationClass) {
+		return field.getAnnotation(annotationClass);
+	}
 	@Override
 	public String toString(){
 		return this.getClazz().getSimpleName()+"."+this.getName();
@@ -36,6 +43,12 @@ public class Field implements Comparable<Field>{
 		for(Field f:Field.getFields(clazz)) if(f.getName().equals(fieldName))
 			return f;
 		return null;
+	}
+	static public Field[] getFields(Class<? extends Base> clazz,String fieldName,String... fieldNames){
+		Field[] fs=new Field[fieldNames.length+1];
+		for(int i=0;i<fs.length;i++)
+			fs[i]=i==0?Field.getField(clazz,fieldName):Field.getField(clazz,fieldNames[i-1]);
+		return fs;
 	}
 	
 	static private Map<Class<? extends Base>,Field[]> MapFields=new HashMap<Class<? extends Base>,Field[]>();
@@ -63,44 +76,45 @@ public class Field implements Comparable<Field>{
 	/**
 	 * Override
 	 */
-	static public boolean nullValue(Object value){
-		return value==null || String.valueOf(value).isEmpty();
-	}
+//	static public boolean nullValue(Object value){
+//		return value==null || String.valueOf(value).isEmpty();
+//	}
 	public Object get(Base b) throws IllegalArgumentException{
 		field.setAccessible(true);
+		if(b==null) return null;
 		Object o=null;
 		try{o=field.get(b);}catch(IllegalAccessException e){e.printStackTrace();}
-		if(Field.nullValue(o))
-			this.set(b,o=null);
+	//	if(Field.nullValue(o)) this.set(b,o=null);
 		return o;
 	}
 	public Base set(Base b,Object value) throws IllegalArgumentException{
 		field.setAccessible(true);
-		if(Field.nullValue(value)) value=null;
+		if(b==null) return b;
+	//	if(Field.nullValue(value)) value=null;
 		try{field.set(b,value);
 		}catch(IllegalAccessException e){e.printStackTrace();}
 		return b;
 	}
 	public Base setBySetter(Base b,Object value) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, NoSuchMethodException{
 		field.setAccessible(true);
-		if(Field.nullValue(value)) value=null;
+	//	if(Field.nullValue(value)) value=null;
 		String methodName="set"+this.getName().substring(0,1).toUpperCase()+this.getName().substring(1);
 		java.lang.reflect.Method m=null;
 		boolean string=false;
 		try {
 			m=b.getClass().getMethod(methodName,value.getClass());
-		} catch (NoSuchMethodException | SecurityException e) {
+		} catch (NoSuchMethodException | SecurityException | NullPointerException e) {
 			try{
 				m=b.getClass().getMethod(methodName,String.class);
 				string=true;
-			} catch (NoSuchMethodException | SecurityException ee) {
+			} catch (NoSuchMethodException | SecurityException | NullPointerException ee) {
 				try{
 					m=b.getClass().getMethod(methodName,Object.class);
 				} catch (NoSuchMethodException | SecurityException eee) {
 				}
 			}
 		}if(m==null) throw new NoSuchMethodException("Cannot find the method with name\""+methodName+"\"");
-		m.invoke(b,string?String.valueOf(value):value);
+		m.invoke(b,(string&&value!=null)?String.valueOf(value):value);
 		return b;
 	}
 	@Override
@@ -112,7 +126,8 @@ public class Field implements Comparable<Field>{
 	}
 	@Override
 	public int compareTo(Field f){
-		int cmp=Integer.compare(this.getWeigth(),f==null?Integer.MIN_VALUE:f.getWeigth());
+		if(f==null) return 1;
+		int cmp=Integer.compare(this.getWeigth(),f.getWeigth());
 		if(cmp!=0) return cmp;
 		return Integer.compare(this.field.hashCode(),f.field.hashCode());
 	}
@@ -134,6 +149,8 @@ public class Field implements Comparable<Field>{
 	public boolean	autoInit(){return s.autoInit();}
 	public boolean	getNotNull(){return s.notNull();}
 	public boolean	notNull(){return s.notNull();}
+	public boolean autoIncrease() {return s.autoIncrease();}
+	public boolean getAutoIncrease() {return s.autoIncrease();}
 	public Field	getSource(){return this.source();}
 	public Field	source(){
 		String[] ss=s.source().split("\\.");
@@ -141,22 +158,44 @@ public class Field implements Comparable<Field>{
 		return Field.getField(Base.getClassForName(ss[0]),ss[1]);
 	}
 	
-	
+	public Class<?> getFieldClass(){
+		return this.field==null?null:this.field.getType();
+	}
+	public boolean isFieldClassBoolean() {
+		return Boolean.class.equals(this.getFieldClass());
+	}
+	public boolean isFieldClassBool() {
+		return boolean.class.equals(this.getFieldClass());
+	}
 
 	/**
 	 * 获取该Field的source对应列表
 	 */
-	static public class Pair{
-		String key,value;
-		public Pair(Object a,String b){key=a==null?null:String.valueOf(a);value=b;}
-		public String getKey(){return key;}
-		public String getValue(){return value;}
+	static private class Pair extends obj.Pair<String,String>{
+		public Pair(Object a,String b){
+			super(a==null?null:String.valueOf(a),b);
+		}
 	}
 	static private Map<Field,List<Pair>> MapSourceList=new HashMap<Field,List<Pair>>();
 	public List<Pair> getSourceList(){
 		if(MapSourceList.containsKey(this)) return MapSourceList.get(this);
 		Field sourceField=this.source();
-		if(sourceField==null) return null;
+		if(sourceField==null) {
+			if(this.isFieldClassBoolean()) {
+				List<Pair> res=new ArrayList<Pair>();
+				res.add(new Pair(true,"✔"));
+				res.add(new Pair(false,"✘"));
+				MapSourceList.put(this,res);
+				return res;
+			}else if(this.isFieldClassBool()) {
+				List<Pair> res=new ArrayList<Pair>();
+				res.add(new Pair(true,"✔"));
+				res.add(new Pair(false,"✘"));
+				MapSourceList.put(this,res);
+				return res;
+			}else
+				return null;
+		}
 		List<Pair> res=new ArrayList<Pair>();
 		for(Base b:this.sourceList())
 			res.add(new Pair(sourceField.get(b),b.getDescription()));
@@ -173,9 +212,23 @@ public class Field implements Comparable<Field>{
 		}return null;
 	}
 	
-	
+
+	static public String o2s(Object a,String defaultResult,String boolTrue,String boolFalse){
+		if(a==null) return defaultResult;
+		if(a instanceof Boolean) return ((Boolean)a)?boolTrue:boolFalse;
+		return Field.o2S(a);
+	}
+	static public String o2s(Object a,String defaultResult){
+		return Field.o2s(a, defaultResult, "true", "false");
+	}
+	static public String o2S(Object a){
+		return Field.s2S(a==null?null:a.toString());
+	}
 	static public String s2S(String a){
-		return a==null||a.isEmpty()?null:a;
+		return a==null||a.isEmpty()||a.toLowerCase().equals("null")?null:a;
+	}
+	static public String s2s(String a,String defaultResult){
+		return a==null||a.isEmpty()?defaultResult:a;
 	}
 	static public int s2i(String a,int defaultResult){
 		Integer res=s2I(a);
@@ -183,8 +236,22 @@ public class Field implements Comparable<Field>{
 	}
 	static public Integer s2I(String a){
 		if(a==null||a.isEmpty()) return null;
+		if(a.toLowerCase().equals("null")) return null;
 		try{
 			return Integer.valueOf(a);
+		}catch(Exception e){
+			e.printStackTrace();
+		}return null;
+	}
+	static public float s2f(String a,float defaultResult){
+		Float res=s2F(a);
+		return res==null?defaultResult:res;
+	}
+	static public Float s2F(String a){
+		if(a==null||a.isEmpty()) return null;
+		if(a.toLowerCase().equals("null")) return null;
+		try{
+			return Float.valueOf(a);
 		}catch(Exception e){
 			e.printStackTrace();
 		}return null;
@@ -195,6 +262,7 @@ public class Field implements Comparable<Field>{
 	}
 	static public Boolean s2B(String a){
 		if(a==null||a.isEmpty()) return null;
+		if(a.toLowerCase().equals("null")) return null;
 		try{
 			return Boolean.valueOf(a);
 		}catch(Exception e){
@@ -203,10 +271,17 @@ public class Field implements Comparable<Field>{
 	}
 	static public Timestamp s2TS(String a){
 		if(a==null||a.isEmpty()) return null;
+		if(a.toLowerCase().equals("null")) return null;
 		try{
 			return Timestamp.valueOf(a);
 		}catch(Exception e){
-			e.printStackTrace();
+			try {
+				Date date=new SimpleDateFormat("yyyy-MM-dd").parse(a);
+				return new Timestamp(date.getTime());
+			} catch (ParseException ex) {
+				System.err.println(e.getMessage()+"\n"+ex.getMessage());
+				ex.printStackTrace();
+			}
 		}return null;
 	}
 	

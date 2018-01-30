@@ -1,13 +1,13 @@
 package action.login;
 
 import java.sql.SQLException;
-import com.opensymphony.xwork2.ActionSupport;
 
+import action.Action;
 import action.Manager;
 import obj.Field;
 import obj.staticObject.InnerPerson;
 
-public class LoginAction extends ActionSupport{
+public class LoginAction extends Action{
 	private static final long serialVersionUID = -2488160597018042665L;
 
 	private InnerPerson inner;
@@ -60,8 +60,10 @@ public class LoginAction extends ActionSupport{
 			return LOGIN;
 		}
 		System.out.println(">> LoginAction:execute <SUCCESS");
-		return SUCCESS;//只有SUCCESS会redirect到menu
+		return this.jumpToAction("menu");
+	//	return SUCCESS;//只有SUCCESS会redirect到menu
 	}
+	
 	
 	
 	public String logout(){

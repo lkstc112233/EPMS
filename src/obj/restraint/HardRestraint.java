@@ -22,17 +22,19 @@ public class HardRestraint extends AllRestraint{
 	protected void setupHardPart(Restraint.Part[] hardPart){
 		if(hardPart==null) return;
 		this.isHardPart=new boolean[this.getRestraint().getWhere().length];
-		int i=0;
-		for(Restraint.Part p:this.getRestraint().getWhere()){
+		Restraint.Part[] tmp=this.getRestraint().getWhere();
+		for(int i=0;i<tmp.length;i++){
+			Restraint.Part p=tmp[i];
 			boolean flag=false;
 			for(Restraint.Part h:hardPart){
 				if(p.getField().equals(h.getField())){
+				//	h.copyTo(p);
+					tmp[i]=h;
 					flag=true;
-					h.copyTo(p);
 					break;
 				}
 			}
-			this.isHardPart[i++]=flag;
+			this.isHardPart[i]=flag;
 		}
 	}
 	
@@ -49,7 +51,8 @@ public class HardRestraint extends AllRestraint{
 					e.printStackTrace();
 					continue;
 				}
-				res=false;
+				if(!setIfFalse)
+					res=false;
 			}
 		}
 		return res;

@@ -1,82 +1,142 @@
 package action.function;
 
-import java.sql.*;
+import java.sql.SQLException;
 import java.util.*;
 
-import com.opensymphony.xwork2.ActionSupport;
+import action.*;
+import obj.*;
+import obj.annualTable.*;
+import obj.annualTable.list.Leaf;
+import obj.annualTable.list.List_Region_PracticeBaseRegion;
+import obj.annualTable.list.PracticeBaseWithRegion;
+import obj.staticObject.*;
 
-import action.Manager;
-import obj.annualTable.Region;
-import obj.staticObject.InnerPerson;
-
-public class RegionInfo extends ActionSupport{
-	private static final long serialVersionUID = 5998268336475528662L;
+/**
+ * 设置当年实习基地信息表（总领队、督导老师、入校时间、入校地点等）
+ */
+public class RegionInfo extends Action{
+	private static final long serialVersionUID = 8833385464572061925L;
 
 	private action.Annual annual=new action.Annual();
 	public action.Annual getAnnual(){return this.annual;}
-
 	
-	private Region region;
+	
+	private List_Region_PracticeBaseRegion list;
+	private Supervise[][][] supervises;
 	private List<InnerPerson> innerPersons;
-	private String newRegionName=null;
-	
-	public Region getRegion(){return this.region;}
-	public List<InnerPerson> getInnerPersons(){return this.innerPersons;}
-	public String getNewRegionName(){return this.newRegionName;}
-	public void setNewRegionName(String a){this.newRegionName=a;}
-	
-	public RegionInfo() throws SQLException, NoSuchFieldException, SecurityException{
+	static public final String SessionListKey="RegionInfo_List";
+
+	public List_Region_PracticeBaseRegion getList(){return this.list;}
+	public int[] getSuperviseTypeList(){return Supervise.getTypeList();}
+	public String[] getSuperviseTypeNameList(){return Supervise.getTypeNameList();}
+	public List<InnerPerson> getInnerPersons(){
+		if(this.innerPersons!=null) return this.innerPersons;
+		try {
+			return this.innerPersons=Base.list(InnerPerson.class);
+		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
+			e.printStackTrace();
+		}return this.innerPersons=null;
+	}
+	public Supervise[][][] getSupervises(){
+		if(this.list==null) return this.supervises=null;
+		if(this.supervises!=null) return this.supervises;
+		this.supervises=new Supervise[this.getSuperviseTypeList().length]
+				[this.list.getList().size()][];
+		for(int type:this.getSuperviseTypeList()){
+			for(int i=0;i<this.supervises[type].length;i++){
+				List<PracticeBaseWithRegion> pbrs=this.list.getList().get(i).getList();
+				this.supervises[type][i]=new Supervise[pbrs.size()];
+				for(int j=0;j<this.supervises[type][i].length;j++){
+					Supervise tmp=new Supervise();
+					tmp.setYear(this.getAnnual().getYear());
+					tmp.setPracticeBase(pbrs.get(j).getPracticeBase().getName());
+					tmp.setSuperviseType(type);
+					try {
+						tmp.load();
+					} catch (SQLException | IllegalArgumentException e) {
+						e.printStackTrace();
+					}
+					this.supervises[type][i][j]=tmp;
+				}
+			}
+		}
+		return this.supervises;
+	}
+
+	public RegionInfo(){
 		super();
-		System.out.println(">> RegionInfo:constructor > year="+this.getAnnual().getYear());
-		this.region=new Region();
+		this.list=Manager.loadSession(List_Region_PracticeBaseRegion.class, SessionListKey);
+		this.getSupervises();
+	}
+	
+	public String display(){
+		if(this.getInnerPersons()==null)
+			return this.returnWithTips(NONE,"数据库读取校内人员列表失败！");
+		try {
+			this.list=new List_Region_PracticeBaseRegion(this.getAnnual().getYear(),/*containsNullRegion*/false);
+		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
+			return this.returnWithTips(NONE,"数据库读取实习基地及大区信息失败！");
+		}
+		this.getSupervises();
+		if(this.list!=null)
+			Manager.saveSession(SessionListKey,this.list);
+		return NONE;
 	}
 	
 	@Override
 	public String execute(){
-		if(this.region==null)
+		boolean ok=false;
+		StringBuilder error=new StringBuilder();
+		if(this.list==null)
 			return display();
-		System.out.println(">> RegionInfo:execute > region= "+this.region);
-		try {
-			Region tmp=new Region();
-			this.region.copyTo(tmp);
-			if(newRegionName!=null || !newRegionName.isEmpty())
-				tmp.setName(this.newRegionName);
-			this.region.update(tmp);
-		} catch (IllegalArgumentException | SQLException e) {
-			return Manager.tips("服务器开了点小差！",
-					e,display());
+		for(int i=0;i<this.list.getSize();i++) {
+			Leaf<Region, PracticeBaseWithRegion> rp=this.list.getList().get(i);
+			Region r=rp.getT();
+			try {
+				r.update();
+				ok=true;
+			} catch (IllegalArgumentException | SQLException e) {
+				e.printStackTrace();
+				if(error.length()>0) error.append(',');
+				error.append(r.getName()+"的相关信息保存失败!("+e.getMessage()+")");
+			}
+			for(int j=0;j<rp.getSize();j++) {
+				PracticeBaseWithRegion pair=rp.getList().get(j);
+				//保存Region
+				Region region=pair.getRegion();
+				region.setLeaderId(r.getLeaderId());
+				try {
+					region.update();
+					ok=true;
+				} catch (IllegalArgumentException | SQLException e) {
+					e.printStackTrace();
+					if(error.length()>0) error.append(',');
+					error.append(region.getName()+"的相关信息保存失败!("+e.getMessage()+")");
+				}
+				//保存Supervise
+				for(int type:this.getSuperviseTypeList()){
+					Supervise tmp=this.supervises[type][i][j];
+					try {
+						if(tmp.getSupervisorId()==null||tmp.getSupervisorId().isEmpty())
+							tmp.delete();
+						else if(!tmp.exist())
+							tmp.create();
+						else
+							tmp.update();
+					} catch (SQLException | IllegalAccessException | InstantiationException e) {
+						e.printStackTrace();
+						if(error.length()>0) error.append(',');
+						error.append(tmp.getPracticeBase()+"的"+Supervise.getTypeNameList()[type]
+								+"的相关信息保存失败!("+e.getMessage()+")");
+					}
+				}
+			}
 		}
-		Manager.tips("修改成功！");
-		return display();
+		return this.jumpToMethodWithTips("display",
+				"修改"+(ok?"成功":"失败")+"！"
+				+(error.length()>0?("\n"+error.toString()):""));
 	}
-		
-	/**
-	 * 用于显示
-	 */
-	public String display(){
-		try {
-			this.innerPersons=InnerPerson.list(InnerPerson.class);
-		} catch (SQLException | IllegalArgumentException | InstantiationException e) {
-			return Manager.tips("数据库读取校内人员列表失败！",
-					e,NONE);
-		}
-		if(this.region==null || this.region.getName()==null || this.region.getName().isEmpty())
-			return Manager.tips("大区名称不正确！",
-					NONE);
-		String regionName=region.getName();
-		try {
-			region=Region.LoadOneRegionByName(regionName);
-		} catch (IllegalArgumentException | IllegalAccessException | SQLException e) {
-			return Manager.tips("服务器开了点小差！",
-					NONE);
-		}
-		if(region==null)
-			return Manager.tips("不存在大区名为"+regionName+"！",
-					NONE);
-		System.out.println(">> RegionInfo:display > region="+this.region);
-		System.out.println(">> RegionInfo:display <NONE");
-		return NONE;
-	}
+
 	
 	
 }

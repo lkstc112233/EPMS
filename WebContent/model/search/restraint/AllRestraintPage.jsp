@@ -22,7 +22,8 @@
 								<s:select
 								list="search.baseRestraint.restraint.typeList"
 								headerKey="" headerValue="-约束-"
-								listKey="key" listValue="value" value="%{#__Row.type}"
+								listKey="key" listValue="value"
+								value="%{#__restraintPartRow.type}"
 								name="search.baseRestraint.restraint.where[%{#__restraintPartStatus.index}].type"
 								style="text-align:center;background-color:rgba(0,0,0,0);margin-top:5px;padding-bottom:3px;" theme="simple" />
 							</div><div style="float:left;text-align:center;height:32px">
@@ -45,7 +46,7 @@
 								list="allSelectFields"
 								listKey="allName" listValue="description"
 								headerKey="" headerValue="-排序-"
-								value="%{search.baseRestraint.restraint.order[#__restraintOrderStatus.index]}"
+								value="%{__restraintOrderRow}"
 								name="search.baseRestraint.restraint.order[%{#__restraintOrderStatus.index}]"
 								style="text-align:center;background-color:rgba(0,0,0,0);margin-top:5px;padding-bottom:3px;" theme="simple" />
 							</div>
@@ -61,7 +62,8 @@
 			&nbsp;
 		</td></tr>
 		<tr><td colspan="100" style="width:20%;border:0;">
-			<s:submit value="查询" cssClass="title_button" style="width:20%" />
+			<s:submit value="查询" theme="simple"
+			style="width:20%;background: white;border: double 6px #0071bc;font-weight: 600;height: 40px;"/>
 		</td></tr>
 	</s:form></tbody></table>
 	

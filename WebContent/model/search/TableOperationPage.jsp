@@ -28,7 +28,8 @@
 				</jsp:include>
 			<% }else{ %>
 				<s:form action="%{#request.actionName}_execute" method="post" theme="simple">
-					<s:submit value="查询" cssClass="title_button" theme="simple" style="width:20%"/>
+					<s:submit value="查询" theme="simple"
+					style="width:20%;background: white;border: double 6px #0071bc;font-weight: 600;height: 40px;"/>
 				</s:form>
 			<% } %>
 		</td></tr>
@@ -42,7 +43,8 @@
 			<s:iterator value="search.param.list" var="__Part" status="__PartStatus">
 				<% pageContext.setAttribute("_colspan",obj.Field.getFields(((obj.JoinParam.Part)request.getAttribute("__Part")).getClazz()).length+2); %>
 				<td colspan="${_colspan}">
-					<div class="listHeader"><div class="listHeaderLeft">
+					<div class="listHeader" style="width:80%;background:linear-gradient(to right,#0071bc,rgba(0,0,0,0));border:0;">
+					<div class="listHeaderLeft">
 						<s:property value="#__Part.SQLTableName" />
 					</div></div>
 				</td>
@@ -58,11 +60,11 @@
 						<ul class="listContent">
 							<li>
 								<span class="time">	<!-- 模板下载 -->
-									[<a href="<s:url action='%{#request.actionName}_download'/>?tableName=<s:property value='tableName'/>">
-									down</a>]
+									[<a href="<s:url action='%{#request.actionName}_download'/>?fileTableName=<s:property value='#__Part.SQLTableName'/>">
+									模板</a>]
 								</span>
 								<s:form action="%{#request.actionName}_upload" method="post" theme="simple" enctype="multipart/form-data">
-									<s:hidden name="tableName" value="%{tableName}" />
+									<s:hidden name="fileTableName" value="%{#__Part.SQLTableName}" />
 									新增
 									<s:file label="上传数据" theme="simple" name="uploadFile" class="buttonInline"/>
 									<s:submit value="上传" cssClass="buttonInline"/>
@@ -74,17 +76,20 @@
 				</s:iterator>
 			</tr>
 		<% } %>
-		<tr class="wtableHeader">
-			<td style="width:13px;border:0;">序号</td>
+		<tr class="wtableHeader" >
+			<td style="width:13px;border:0;line-height:50px;">序号</td>
 			<s:iterator value="search.param.list" var="__Part" status="__PartStatus">
 				<td colspan="2" style="border:0;">操作</td>
 				<s:iterator value="#__Part.fields" var="__Field" status="__FieldStatus">
-					<td style="border:0;">
-						<s:property value="#__Field.description"/>
-						<s:if test="#__Field.notNull == true">
-						*
-						</s:if>
-					</td>
+					<s:if test="fieldsDisplay[#__PartStatus.index][#__FieldStatus.index] == false">
+					</s:if><s:else>
+						<td style="border:0;">
+							<s:property value="#__Field.description"/>
+							<s:if test="#__Field.notNull == true">
+							*
+							</s:if>
+						</td>
+					</s:else>
 				</s:iterator>
 			</s:iterator>
 		</tr>
@@ -102,20 +107,27 @@
 							</td>
 							<s:iterator value="operateBase.fields" var="__opField" status="__opFieldStatus">
 								<s:if test="fieldsDisplay[#__PartStatus.index][#__opFieldStatus.index] == false">
-								<td style="border:0;">&nbsp;</td>
 								</s:if><s:else>
 									<td style="border:0;padding:0;">
-										<s:if test="#__opField.source == null">
+										<s:if test="#__opField.source != null || #__opField.isFieldClassBool() || #__opField.isFieldClassBoolean()">
+											<s:if test="#__opField.notNull">
+												<s:select list="%{#__opField.sourceList}"
+												listKey="key" listValue="value"
+												name="operateBase.%{#__opField.name}"
+												value="%{operateBase.fieldsValueSimple[#__opFieldStatus.index]}"
+												style="text-align:center;height:100%;width:-webkit-fill-available;" theme="simple" />
+											</s:if><s:else>
+												<s:select list="%{#__opField.sourceList}"
+												listKey="key" listValue="value"
+												headerKey="" headerValue="无"
+												name="operateBase.%{#__opField.name}"
+												value="%{operateBase.fieldsValue[#__opFieldStatus.index]}"
+												style="text-align:center;height:100%;width:-webkit-fill-available;" theme="simple" />
+											</s:else>
+										</s:if><s:else>
 											<s:textfield name="operateBase.%{#__opField.name}"
 											value="%{operateBase.fieldsValue[#__opFieldStatus.index]}"
-											style="text-align:center;border:0px;width:100%;height:100%;" theme="simple" />
-										</s:if><s:else>
-											<s:select list="%{#__opField.sourceList}"
-											listKey="key" listValue="value"
-											headerKey="" headerValue="无"
-											name="operateBase.%{#__opField.name}"
-											value="%{operateBase.fieldsValue[#__opFieldStatus.index]}"
-											style="text-align:center;border:0px;width:100%;height:100%" theme="simple" />
+											style="text-align:center;height:100%;width:100%" theme="simple" />
 										</s:else>
 									</td>
 								</s:else>
@@ -138,10 +150,14 @@
 				这里会显示结果集
 			</td></tr>
 		</s:if><s:else>
+			<% int i=0; %>
 			<s:iterator value="search.result" var="__Row" status="__Status">
 				<tr class="wtableContent">
 					<td style="width:13px;">
 						<s:property value="%{#__Status.count}" />
+						<% pageContext.setAttribute("_id",String.format("choose%d",i++)); %>
+						<div id="${_id}">
+						</div>
 					</td>
 					<s:iterator value="search.param.list" var="__Part" status="__PartStatus">
 						<td style="width:27px;">
@@ -168,21 +184,28 @@
 								</td>
 								<s:iterator value="#__Row[#__PartStatus.index].fields" var="__opField" status="__opFieldStatus">
 									<s:if test="fieldsDisplay[#__PartStatus.index][#__opFieldStatus.index] == false">
-									<td></td>
 									</s:if><s:else>
-										<td style="padding:0;">
-											<s:if test="#__opField.source == null">
+										<td style="padding:0;white-space: nowrap;background:white;">
+											<s:if test="#__opField.source != null || #__opField.isFieldClassBool() || #__opField.isFieldClassBoolean()">
+												<s:if test="#__opField.notNull">
+													<s:select list="%{#__opField.sourceList}"
+													listKey="key" listValue="value"
+													name="search.result[%{#__Status.index}][%{#__PartStatus.index}].%{#__opField.name}"
+													value="%{#__Row[#__PartStatus.index].fieldsValueSimple[#__opFieldStatus.index]}"
+													style="text-align:center;border:0px;height:100%;width:-webkit-fill-available;" theme="simple" />
+												</s:if><s:else>
+													<s:select list="%{#__opField.sourceList}"
+													listKey="key" listValue="value"
+													name="search.result[%{#__Status.index}][%{#__PartStatus.index}].%{#__opField.name}"
+													value="%{#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]}"
+													headerKey="" headerValue="无"
+													style="text-align:center;border:0px;height:100%;width:-webkit-fill-available;" theme="simple" />
+												</s:else>
+											</s:if><s:else>
 												<s:textfield
 												name="search.result[%{#__Status.index}][%{#__PartStatus.index}].%{#__opField.name}"
 												value="%{#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]}"
-												style="text-align:center;border:0px;width:100%;height:100%;" theme="simple" />
-											</s:if><s:else>
-												<s:select list="%{#__opField.sourceList}"
-												listKey="key" listValue="value"
-												name="search.result[%{#__Status.index}][%{#__PartStatus.index}].%{#__opField.name}"
-												value="%{#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]}"
-												headerKey="" headerValue="无"
-												style="text-align:center;border:0px;width:100%;height:100%;" theme="simple" />
+												style="text-align:center;border:0px;height:100%;width:100%" theme="simple" />
 											</s:else>
 										</td>
 									</s:else>
@@ -199,9 +222,16 @@
 							</td>
 							<s:iterator value="%{#__Row[#__PartStatus.index].fields}" var="__opField" status="__opFieldStatus">
 								<s:if test="fieldsDisplay[#__PartStatus.index][#__opFieldStatus.index] == false">
-								<td></td>
 								</s:if><s:else>
-									<td><s:property value="#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]" /></td>
+									<td style="white-space: nowrap;">
+										<s:if test="#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index].equals(\"✔\")">
+											<div style="color:green;">✔</div>
+										</s:if><s:elseif test="#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index].equals(\"✘\")">
+											<div style="color:red;">✘</div>
+										</s:elseif><s:else>
+											<s:property value="#__Row[#__PartStatus.index].fieldsValue[#__opFieldStatus.index]" />
+										</s:else>
+									</td>
 								</s:else>
 							</s:iterator>
 						</s:else>
@@ -210,6 +240,29 @@
 			</s:iterator>
 		</s:else>
 	</tbody></table></div>
+	
+	
+	
+	
+	
+	
+	
+<% //跳转到当前操作的条目,choose[0]表示块index、choose[1]表示行号
+Object tmp=pageContext.findAttribute("jumpX");
+Integer x=null;
+if(tmp!=null){
+	if(tmp instanceof Integer[])
+		x=((Integer[])tmp)[1];
+	else if(tmp instanceof Integer)
+		x=(Integer)tmp;
+}
+if(x!=null){ %>
+	<script>
+		var jumpX=document.getElementById("choose<%=x%>");
+		if(jumpX!=null)
+			jumpX.scrollIntoView();
+	</script>
+<% } %>
 	
 	
 </div>
